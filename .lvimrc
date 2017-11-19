@@ -1,0 +1,55 @@
+" Configuration file to make ALE for Vim (https://github.com/w0rp/ale) behave
+" for development on the `selene` library. This is a 'local' Vimscript file that
+" will be read automatically when using `vim-localvimrc`
+" (https://github.com/embear/vim-localvimrc). ALE needs to be otherwise set up.
+" Use at your own risk.
+
+" Get path of this file
+let s:path = expand('<sfile>:p:h')
+
+" Set options for ALE's C linters
+let s:c_opts = [
+  \ '-std=c11',
+  \ '-Wall',
+  \ '-Wextra',
+  \ '-Werror',
+  \ ]
+let s:c_clang_opts = []
+let s:c_gcc_opts = []
+
+let g:ale_c_clang_options = join(s:c_opts + s:c_clang_opts, ' ')
+let g:ale_c_gcc_options = join(s:c_opts + s:c_clang_opts, ' ')
+
+" Set options for ALE's C++ linters
+let s:cpp_opts = [
+  \ '-std=c++14',
+  \ '-Wall',
+  \ '-Wextra',
+  \ '-Werror',
+  \ '-fexceptions',
+  \ '-I' . $HOME . '/homebrew/include',
+  \ '-I' . s:path . '/src',
+  \ '-I' . s:path . '/external/Catch2/single_include',
+  \ '-DSELENE_WITH_LIBJPEG',
+  \ '-DSELENE_WITH_LIBJPEG_TURBO',
+  \ '-DSELENE_WITH_LIBPNG',
+  \ ]
+let s:cpp_clang_opts = []
+let s:cpp_gcc_opts = ['-Wno-attributes']
+
+let g:ale_cpp_clang_options = join(s:cpp_opts + s:cpp_clang_opts, ' ')
+let g:ale_cpp_gcc_options = join(s:cpp_opts + s:cpp_gcc_opts, ' ')
+let g:ale_cpp_clangtidy_options = join(s:cpp_opts, ' ')
+let g:ale_cpp_clangtidy_checks = [
+  \ '*',
+  \ '-android-*',
+  \ '-*-no-malloc',
+  \ '-cppcoreguidelines-owning-memory',
+  \ '-cppcoreguidelines-pro-bounds-pointer-arithmetic',
+  \ '-cppcoreguidelines-pro-type-vararg',
+  \ '-google-readability-todo',
+  \ '-google-runtime-references',
+  \ '-hicpp-vararg',
+  \ '-llvm-header-guard',
+  \ '-readability-implicit-bool-conversion',
+  \ ]

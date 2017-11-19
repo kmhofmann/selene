@@ -1,0 +1,6 @@
+*.swp
+.idea
+build
+cmake-build-*
+compile_commands.json
+doc_gen

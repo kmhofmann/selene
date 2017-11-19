@@ -1,0 +1,45 @@
+// This file is part of the `Selene` library.
+// Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
+// Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
+
+#ifndef SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
+#define SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
+
+#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+
+#include <selene/base/MessageLog.hpp>
+#include <selene/img/detail/JPEGCommon.hpp>
+
+#include <jpeglib.h>
+
+#include <csetjmp>
+#include <cstdio>
+
+namespace selene {
+namespace img {
+namespace detail {
+
+J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space);
+JPEGColorSpace color_space_lib_to_pub(J_COLOR_SPACE color_space);
+
+// Error handling structures
+
+struct JPEGErrorManager
+{
+  jpeg_error_mgr pub;
+  std::jmp_buf setjmp_buffer;
+
+  bool error_state = false;
+  MessageLog message_log;
+};
+
+void error_exit(j_common_ptr cinfo);
+void output_message(j_common_ptr cinfo);
+
+} // namespace detail
+} // namespace img
+} // namespace selene
+
+#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+
+#endif // SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
