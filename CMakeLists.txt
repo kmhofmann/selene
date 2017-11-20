@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(selene CXX)
 
 option(SELENE_ENABLE_TESTS "Build selene tests" ON)
-option(SELENE_SEARCH_LIBJPEGTURBO "Enable searching for libjpeg-turbo" ON)
+option(SELENE_SEARCH_LIBJPEG_TURBO "Enable searching for libjpeg-turbo" ON)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 14)
@@ -43,7 +43,7 @@ endif()
 
 find_package(Boost REQUIRED filesystem system)
 
-if (SELENE_SEARCH_LIBJPEGTURBO)
+if (SELENE_SEARCH_LIBJPEG_TURBO)
     find_package(JPEGTurbo)
     if (JPEGTurbo_FOUND)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSELENE_WITH_LIBJPEG_TURBO")

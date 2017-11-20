@@ -174,12 +174,15 @@ failure_state:;
 
 void set_source(JPEGDecompressionObject& obj, io::MemoryReader& source)
 {
+  // Unfortunately, the libjpeg API is not const-correct before version 9b (or before libjpeg-turbo 1.5.0).
+  auto handle = const_cast<unsigned char*>(source.handle());
+
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
     goto failure_state;
   }
 
-  jpeg_mem_src(&obj.impl_->cinfo, source.handle(), static_cast<unsigned long>(source.size()));
+  jpeg_mem_src(&obj.impl_->cinfo, handle, static_cast<unsigned long>(source.size()));
 
 failure_state:;
 }
