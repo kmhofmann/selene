@@ -1,30 +1,30 @@
-#ifndef SELENE_THREAD_IMPL_TASK_QUEUE_HPP
-#define SELENE_THREAD_IMPL_TASK_QUEUE_HPP
+#ifndef SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
+#define SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
 
 #include <condition_variable>
 #include <deque>
 #include <limits>
 #include <mutex>
 
-#include <selene/thread/Impl/Callable.hpp>
+#include <selene/thread/detail/Callable.hpp>
 
 namespace selene {
 namespace thread {
 
-namespace Impl {
+namespace detail {
 
 // Inspired by Sean Parent's talk "Better Code: Concurrency"
 // (https://www.slideshare.net/sermp/better-code-concurrency)
 class TaskQueue
 {
 public:
-  TaskQueue() = default;
+  TaskQueue();
   ~TaskQueue() = default;
 
-  TaskQueue(const TaskQueue&);
-  TaskQueue& operator=(const TaskQueue& other);
+  TaskQueue(const TaskQueue&) = delete;
+  TaskQueue& operator=(const TaskQueue& other) = delete;
 
-  TaskQueue(TaskQueue&& q) noexcept;
+  TaskQueue(TaskQueue&& other) noexcept;
   TaskQueue& operator=(TaskQueue&& other) noexcept;
 
   template <typename Func> bool try_push(Func&& task);
@@ -39,37 +39,30 @@ private:
   std::deque<Callable> tasks_;
   mutable std::mutex mutex_;
   std::condition_variable cond_;
-  bool finished_ = false;
+  std::atomic<bool> finished_;
 };
 
 
-inline TaskQueue::TaskQueue(const TaskQueue&)
+inline TaskQueue::TaskQueue()
+  : finished_(false)
 {
 }
 
 
-inline TaskQueue& TaskQueue::operator=(const TaskQueue& other)
+inline TaskQueue::TaskQueue(TaskQueue&& other) noexcept
 {
-  if (& other != this)
-  {
-    finished_ = other.finished_;
-  }
+  std::lock_guard<std::mutex> lock(other.mutex_);
 
-  return * this;
-}
-
-
-inline TaskQueue::TaskQueue(TaskQueue&& q) noexcept
-{
-  std::lock_guard<std::mutex> lock(q.mutex_);
+  tasks_ = std::move(other.tasks_);
+  finished_.store(other.finished_);
 }
 
 
 inline TaskQueue& TaskQueue::operator=(TaskQueue&& other) noexcept
 {
-  if (& other == this)
+  if (&other == this)
   {
-    return * this;
+    return *this;
   }
 
   std::lock(mutex_, other.mutex_);
@@ -77,9 +70,9 @@ inline TaskQueue& TaskQueue::operator=(TaskQueue&& other) noexcept
   std::lock_guard<std::mutex> lock1(other.mutex_, std::adopt_lock);
 
   tasks_ = std::move(other.tasks_);
-  finished_ = other.finished_;
+  finished_.store(other.finished_);
 
-  return * this;
+  return *this;
 }
 
 
@@ -149,17 +142,13 @@ inline bool TaskQueue::pop(Callable& task)
 
 inline void TaskQueue::set_finished()
 {
-  {
-    std::lock_guard<std::mutex> lock(mutex_);
-    finished_ = true;
-  }
-
+  finished_ = true;
   cond_.notify_all();
 }
 
-} // namespace Impl
+} // namespace detail
 
 } // namespace thread
 } // namespace selene
 
-#endif // SELENE_THREAD_IMPL_TASK_QUEUE_HPP
+#endif // SELENE_THREAD_DETAIL_TASK_QUEUE_HPP

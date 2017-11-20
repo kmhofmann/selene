@@ -88,8 +88,8 @@ add_library(selene_thread INTERFACE)
 target_sources(selene_thread
         INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/selene/thread/ThreadPool.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/Impl/Callable.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/Impl/TaskQueue.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/Callable.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/TaskQueue.hpp
         )
 target_include_directories(selene_thread INTERFACE ${SELENE_DIR}/src)
 

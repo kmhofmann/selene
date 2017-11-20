@@ -1,12 +1,12 @@
-#ifndef SELENE_THREAD_IMPL_CALLABLE_HPP
-#define SELENE_THREAD_IMPL_CALLABLE_HPP
+#ifndef SELENE_THREAD_DETAIL_CALLABLE_HPP
+#define SELENE_THREAD_DETAIL_CALLABLE_HPP
 
 #include <memory>
 
 namespace selene {
 namespace thread {
 
-namespace Impl {
+namespace detail {
 
 // Inspired by "C++ Concurrency in Action", first edition, listing 9.2
 class Callable
@@ -72,9 +72,9 @@ private:
   std::unique_ptr<CallableBase> callable_;
 };
 
-} // namespace Impl
+} // namespace detail
 
 } // namespace thread
 } // namespace selene
 
-#endif // SELENE_THREAD_IMPL_CALLABLE_HPP
+#endif // SELENE_THREAD_DETAIL_CALLABLE_HPP
