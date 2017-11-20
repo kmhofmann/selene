@@ -58,12 +58,12 @@ struct JPEGDecompressionOptions
   BoundingBox<Index> region;
 
   explicit JPEGDecompressionOptions(JPEGColorSpace out_color_space_ = JPEGColorSpace::Auto
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
                                     , const BoundingBox<Index>& region_ = BoundingBox<Index>()
 #endif
                                     )
       : out_color_space(out_color_space_)
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
       , region(region_)
 #endif
   {

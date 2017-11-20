@@ -99,7 +99,7 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
 
   jpeg_start_decompress(&cinfo);
 
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
   if (!region_.empty() && region_.width() < cinfo.output_width)
   {
     // Enable partial decompression of each scanline
@@ -137,7 +137,7 @@ void JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
     goto failure_state;
   }
 
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
   jpeg_skip_scanlines(&cinfo, static_cast<JDIMENSION>(skip_lines_top));
 #endif
 
@@ -146,7 +146,7 @@ void JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
     jpeg_read_scanlines(&cinfo, &row_pointers[cinfo.output_scanline - skip_lines_top], 1);
   }
 
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
   jpeg_skip_scanlines(&cinfo, static_cast<JDIMENSION>(skip_lines_bottom));
 #endif
 

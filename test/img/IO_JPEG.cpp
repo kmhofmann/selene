@@ -177,7 +177,7 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   }
 }
 
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
 TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 {
   const auto tmp_path = get_tmp_path();
