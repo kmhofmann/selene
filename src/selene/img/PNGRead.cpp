@@ -276,6 +276,8 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
     png_set_invert_mono(png_ptr);
   }
 
+  png_set_interlace_handling(png_ptr);
+
   return true;
 
 failure_state:
@@ -358,7 +360,7 @@ PNGOutputInfo PNGDecompressionCycle::get_output_info() const
   return output_info_;
 }
 
-void PNGDecompressionCycle::decompress(RowPointers& row_pointers)
+bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
   auto png_ptr = obj_.impl_->png_ptr;
   auto end_info = obj_.impl_->end_info;
@@ -374,9 +376,10 @@ void PNGDecompressionCycle::decompress(RowPointers& row_pointers)
   // TODO: Make use of these
 
   png_read_end(png_ptr, end_info);
+  return true;
 
-  failure_state:
-  ;
+failure_state:
+  return false;
 }
 
 // -------------------------------

@@ -133,7 +133,7 @@ public:
   ~JPEGDecompressionCycle();
 
   JPEGOutputInfo get_output_info() const;
-  void decompress(RowPointers& row_pointers);
+  bool decompress(RowPointers& row_pointers);
 
 private:
   JPEGDecompressionObject& obj_;
@@ -228,7 +228,12 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source, JPEGDecomp
   img.allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_pixel_format,
                output_sample_type);
   auto row_pointers = get_row_pointers(img);
-  cycle.decompress(row_pointers);
+  const auto dec_success = cycle.decompress(row_pointers);
+
+  if (!dec_success)
+  {
+    img.clear();  // invalidates image data
+  }
 
   detail::assign_message_log(obj, messages);
   return img;

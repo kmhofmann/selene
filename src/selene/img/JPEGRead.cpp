@@ -124,7 +124,7 @@ JPEGOutputInfo JPEGDecompressionCycle::get_output_info() const
   return JPEGOutputInfo(cinfo.output_width, cinfo.output_height, cinfo.out_color_components);
 }
 
-void JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
+bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
   auto& cinfo = obj_.impl_->cinfo;
 
@@ -150,10 +150,11 @@ void JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
   jpeg_skip_scanlines(&cinfo, static_cast<JDIMENSION>(skip_lines_bottom));
 #endif
 
-  return;
+  return true;
 
 failure_state:
   jpeg_abort_decompress(&cinfo);
+  return false;
 }
 
 // -------------------------------

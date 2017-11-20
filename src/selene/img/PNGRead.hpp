@@ -148,7 +148,7 @@ public:
 
   bool error_state() const;
   PNGOutputInfo get_output_info() const;
-  void decompress(RowPointers& row_pointers);
+  bool decompress(RowPointers& row_pointers);
 
 private:
   PNGDecompressionObject& obj_;
@@ -263,7 +263,12 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompres
   img.allocate(output_width, output_height, static_cast<std::uint16_t>(output_nr_channels),
                static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_pixel_format, output_sample_type);
   auto row_pointers = get_row_pointers(img);
-  cycle.decompress(row_pointers);
+  const auto dec_success = cycle.decompress(row_pointers);
+
+  if (!dec_success)
+  {
+    img.clear();  // invalidates image data
+  }
 
   detail::assign_message_log(obj, messages);
   return img;
