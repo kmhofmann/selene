@@ -25,6 +25,8 @@
 
 #include <Utils.hpp>
 
+#include <iostream>
+
 using namespace selene;
 using namespace selene::img;
 using namespace selene::io;
@@ -44,6 +46,12 @@ fs::path in_filename()
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
   return (env_var) ? fs::path(env_var) / "bike_duck.png" : fs::path("../data/bike_duck.png");
+}
+
+fs::path test_suite_dir()
+{
+  const auto env_var = std::getenv("SELENE_DATA_PATH");
+  return (env_var) ? fs::path(env_var) / "png_suite" : fs::path("../data/png_suite");
 }
 
 } // namespace _
@@ -223,6 +231,44 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
                                 &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
+}
+
+TEST_CASE("PNG reading of the official test suite", "[img]")
+{
+  const auto test_suite_path = test_suite_dir();
+  for (boost::filesystem::directory_entry& e : boost::filesystem::directory_iterator(test_suite_path))
+  {
+    if (e.path().extension() == ".png")
+    {
+      FileReader source(e.path().c_str());
+      REQUIRE(source.is_open());
+
+      MessageLog messages_read;
+      auto img_data = read_png(source, PNGDecompressionOptions(), &messages_read);
+
+      const auto filename_first_letter = e.path().stem().c_str()[0];
+      const auto is_broken = (filename_first_letter == 'x');  // Broken image files begin with 'x'
+      REQUIRE(messages_read.messages().empty() == !is_broken);
+
+      if (!is_broken)
+      {
+        REQUIRE(img_data.width() > 0);
+        REQUIRE(img_data.height() > 0);
+        REQUIRE(img_data.stride_bytes() > 0);
+        REQUIRE(img_data.nr_channels() > 0);
+        REQUIRE(img_data.nr_bytes_per_channel() > 0);
+        REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
+        REQUIRE(img_data.is_packed());
+        REQUIRE(!img_data.is_view());
+        REQUIRE(!img_data.is_empty());
+        REQUIRE(img_data.is_valid());
+      }
+      else
+      {
+        REQUIRE(!img_data.is_valid());
+      }
+    }
+  }
 }
 
 #endif // defined(SELENE_WITH_LIBPNG)
