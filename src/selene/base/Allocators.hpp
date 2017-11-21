@@ -12,7 +12,7 @@ namespace selene {
 
 class MemoryBlock;
 
-/** Provides default means for memory allocation and deallocation throughout the library.
+/** \brief Provides default means for memory allocation and deallocation throughout the library.
  *
  *  Used in various places inside the library. Not recommended for memory management outside of the library.
  */
@@ -22,7 +22,7 @@ struct DefaultAllocator
   static void deallocate(std::uint8_t*& data);
 };
 
-/** Represents a contiguous block of memory, specified by a pointer to its beginning, and by its size.
+/** \brief Represents a contiguous block of memory, specified by a pointer to its beginning, and by its size.
  *
  * Memory blocks are returned by various (allocating) functions inside the library; these functions are mostly
  * internal and not user-facing.
@@ -58,7 +58,7 @@ private:
 // ----------
 // Implementation
 
-/** Allocates the specified number of bytes and returns a MemoryBlock.
+/** \brief Allocates the specified number of bytes and returns a MemoryBlock.
  *
  * \param nr_bytes The number of bytes to allocate.
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
@@ -75,7 +75,7 @@ inline MemoryBlock DefaultAllocator::allocate(std::size_t nr_bytes)
   return MemoryBlock(ptr, (ptr == nullptr) ? 0 : nr_bytes);
 }
 
-/** Deallocates the previously allocated memory block.
+/** \brief Deallocates the previously allocated memory block.
  *
  * \param data A pointer to previously allocated data.
  */
@@ -115,7 +115,7 @@ inline MemoryBlock& MemoryBlock::operator=(MemoryBlock&& other) noexcept
   return *this;
 }
 
-/** Returns a read-write pointer to the allocated memory.
+/** \brief Returns a read-write pointer to the allocated memory.
  *
  * \return Pointer to the allocated memory.
  */
@@ -124,7 +124,7 @@ inline std::uint8_t* MemoryBlock::data() const
   return data_;
 }
 
-/** Returns the size of the allocated memory.
+/** \brief Returns the size of the allocated memory.
  *
  * \return Size of the allocated memory in bytes.
  */
@@ -133,9 +133,11 @@ inline std::size_t MemoryBlock::size() const
   return size_;
 }
 
-/** Returns the data of the MemoryBlock instance, and set the MemoryBlock instance to empty.
+/** \brief Returns (and releases) the data of the MemoryBlock instance, and set the MemoryBlock instance to empty.
+ *
  * The function can be used when the MemoryBlock instance should go out of scope, but the memory (pointer) should be
- * retained.
+ * retained. The memory will have to be deallocated manually, since it is now not bound to the MemoryBlock instance
+ * anymore.
  *
  * \return Pointer to the data, previously contained in the MemoryBlock instance.
  */

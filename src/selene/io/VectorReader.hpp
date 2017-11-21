@@ -24,8 +24,8 @@ public:
 
   VectorReader(const VectorReader&) = delete;
   VectorReader& operator=(const VectorReader&) = delete;
-  VectorReader(VectorReader&&) = default;
-  VectorReader& operator=(VectorReader&&) = default;
+  VectorReader(VectorReader&&) noexcept = default;
+  VectorReader& operator=(VectorReader&&) noexcept = default;
 
   const std::vector<std::uint8_t>* handle() noexcept;
 

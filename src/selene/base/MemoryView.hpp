@@ -9,22 +9,26 @@
 
 namespace selene {
 
-/** Represents a non-owned, read-only block of memory.
+/** \brief Represents a non-owned, read-only block of memory.
  */
 struct MemoryView
 {
-  std::uint8_t* const data; ///< Non-owning pointer to memory.
-  const std::size_t size; ///< Size of the non-owned memory block.
+  std::uint8_t* const data;  ///< Non-owning pointer to memory.
+  const std::size_t size;  ///< Size of the non-owned memory block.
 
-  /** Constructor, taking a pointer to memory and a size.
-   *
-   * \param data_ Pointer to memory.
-   * \param size_ Corresponding size.
-   */
-  MemoryView(std::uint8_t* const data_, std::size_t size_)
-      : data(data_), size(size_)
-  { }
+  MemoryView(std::uint8_t* const data_, std::size_t size_);
 };
+
+
+/** \brief Constructor, taking a pointer to memory and a size.
+  *
+  * \param data_ Pointer to memory.
+  * \param size_ Corresponding size.
+  */
+inline MemoryView::MemoryView(std::uint8_t* const data_, std::size_t size_)
+    : data(data_), size(size_)
+{
+}
 
 } // namespace selene
 

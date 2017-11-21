@@ -7,10 +7,12 @@
 namespace selene {
 namespace io {
 
+/** \brief Describes the IO write mode: write from start, or append.
+ */
 enum class WriterMode : unsigned char
 {
-  Write = 0,
-  Append = 1
+  Write = 0,  ///< Overwrite/destroy existing contents.
+  Append = 1  ///< Append to existing contents.
 };
 
 } // namespace io

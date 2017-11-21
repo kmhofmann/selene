@@ -10,8 +10,7 @@
 
 namespace selene {
 
-/** \class MessageLog
- * Very simple message log, containing a collection of messages.
+/** \brief Very simple message log, containing a collection of messages.
  *
  * Used inside the library, for example, to return warning or error messages when reading or writing image data.
  */
@@ -34,7 +33,7 @@ private:
 // ---------------
 // Implementation:
 
-/** Returns the message collection.
+/** \brief Returns the message collection.
  *
  * \return A reference to the internally managed message log (in form of a std::vector<std::string>&).
  */
@@ -43,7 +42,7 @@ inline const MessageLog::Messages& MessageLog::messages() const
   return messages_;
 }
 
-/** Adds a message to the message log.
+/** \brief Adds a message to the message log.
  *
  * \param message Message text.
  */
@@ -52,7 +51,7 @@ inline void MessageLog::add_message(const char* message)
   messages_.emplace_back(std::string(message));
 }
 
-/** Adds a message to the message log.
+/** \brief Adds a message to the message log.
  *
  * \param message Message text.
  */

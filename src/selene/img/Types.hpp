@@ -11,9 +11,9 @@ namespace selene {
 namespace img {
 
 // use 32-bit values as indices for data access, for now
-using Index = std::uint32_t;
-using Length = std::uint32_t;
-using Stride = std::uint32_t;
+using Index = std::uint32_t;  ///< Type representing a scalar as part of an image coordinate (x or y).
+using Length = std::uint32_t;  ///< Type representing a length in x or y-direction.
+using Stride = std::uint32_t;  ///< Type representing an image stride (nr of bytes per row).
 
 } // namespace img
 } // namespace selene

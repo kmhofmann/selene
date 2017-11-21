@@ -24,8 +24,8 @@ public:
 
   MemoryReader(const MemoryReader&) = delete;
   MemoryReader& operator=(const MemoryReader&) = delete;
-  MemoryReader(MemoryReader&&) = default;
-  MemoryReader& operator=(MemoryReader&&) = default;
+  MemoryReader(MemoryReader&&) noexcept = default;
+  MemoryReader& operator=(MemoryReader&&) noexcept = default;
 
   const std::uint8_t* handle() noexcept;
 

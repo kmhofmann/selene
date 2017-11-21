@@ -25,8 +25,8 @@ public:
 
   MemoryWriter(const MemoryWriter&) = delete;
   MemoryWriter& operator=(const MemoryWriter&) = delete;
-  MemoryWriter(MemoryWriter&&) = default;
-  MemoryWriter& operator=(MemoryWriter&&) = default;
+  MemoryWriter(MemoryWriter&&) noexcept = default;
+  MemoryWriter& operator=(MemoryWriter&&) noexcept = default;
 
   std::uint8_t* handle() noexcept;
 

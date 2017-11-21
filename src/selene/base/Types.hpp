@@ -7,8 +7,8 @@
 
 namespace selene {
 
-using float32_t = float;
-using float64_t = double;
+using float32_t = float;  ///< 32-bit floating point type.
+using float64_t = double;  ///< 64-bit floating point type.
 
 static_assert(sizeof(float32_t) == 4, "type size mismatch");
 static_assert(sizeof(float64_t) == 8, "type size mismatch");

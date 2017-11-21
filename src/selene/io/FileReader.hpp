@@ -25,8 +25,8 @@ public:
 
   FileReader(const FileReader&) = delete;
   FileReader& operator=(const FileReader&) = delete;
-  FileReader(FileReader&&) = default;
-  FileReader& operator=(FileReader&&) = default;
+  FileReader(FileReader&&) noexcept = default;
+  FileReader& operator=(FileReader&&) noexcept = default;
 
   std::FILE* handle() noexcept;
 

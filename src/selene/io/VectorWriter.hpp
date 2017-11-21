@@ -25,8 +25,8 @@ public:
 
   VectorWriter(const VectorWriter&) = delete;
   VectorWriter& operator=(const VectorWriter&) = delete;
-  VectorWriter(VectorWriter&&) = default;
-  VectorWriter& operator=(VectorWriter&&) = default;
+  VectorWriter(VectorWriter&&) noexcept = default;
+  VectorWriter& operator=(VectorWriter&&) noexcept = default;
 
   std::vector<std::uint8_t>* handle() noexcept;
 

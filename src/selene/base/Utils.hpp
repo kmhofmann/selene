@@ -9,7 +9,7 @@
 
 namespace selene {
 
-/** \p Clamp a value between a minimum and a maximum value.
+/** \brief Clamp a value between a minimum and a maximum value.
  *
  * Mathematically, the function returns max(a, min(b, x)), where x is the input value and a, b are minimum and maximum,
  * respectively.

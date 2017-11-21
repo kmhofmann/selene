@@ -26,8 +26,8 @@ public:
 
   FileWriter(const FileWriter&) = delete;
   FileWriter& operator=(const FileWriter&) = delete;
-  FileWriter(FileWriter&&) = default;
-  FileWriter& operator=(FileWriter&&) = default;
+  FileWriter(FileWriter&&) noexcept = default;
+  FileWriter& operator=(FileWriter&&) noexcept = default;
 
   std::FILE* handle() noexcept;
 
