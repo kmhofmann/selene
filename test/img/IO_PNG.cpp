@@ -25,8 +25,6 @@
 
 #include <Utils.hpp>
 
-#include <iostream>
-
 using namespace selene;
 using namespace selene::img;
 using namespace selene::io;
@@ -248,10 +246,10 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
 
       const auto filename_first_letter = e.path().stem().c_str()[0];
       const auto is_broken = (filename_first_letter == 'x');  // Broken image files begin with 'x'
-      REQUIRE(messages_read.messages().empty() == !is_broken);
 
       if (!is_broken)
       {
+        //REQUIRE(messages_read.messages().empty());  // Might not be guaranteed, so this is disabled
         REQUIRE(img_data.width() > 0);
         REQUIRE(img_data.height() > 0);
         REQUIRE(img_data.stride_bytes() > 0);
@@ -265,6 +263,7 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
       }
       else
       {
+        REQUIRE(!messages_read.messages().empty());
         REQUIRE(!img_data.is_valid());
       }
     }
