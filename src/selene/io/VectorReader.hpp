@@ -2,7 +2,8 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#pragma once
+#ifndef SELENE_IO_VECTOR_READER_HPP
+#define SELENE_IO_VECTOR_READER_HPP
 
 #include <selene/base/Assert.hpp>
 
@@ -202,3 +203,5 @@ inline std::size_t read(VectorReader& source, T* values, std::size_t nr_values) 
 
 } // namespace io
 } // namespace selene
+
+#endif // SELENE_IO_VECTOR_READER_HPP

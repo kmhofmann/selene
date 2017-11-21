@@ -2,7 +2,8 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#pragma once
+#ifndef SELENE_IO_WRITER_MODE_HPP
+#define SELENE_IO_WRITER_MODE_HPP
 
 namespace selene {
 namespace io {
@@ -17,3 +18,5 @@ enum class WriterMode : unsigned char
 
 } // namespace io
 } // namespace selene
+
+#endif // SELENE_IO_WRITER_MODE_HPP

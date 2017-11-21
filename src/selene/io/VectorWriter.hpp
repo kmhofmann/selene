@@ -2,7 +2,8 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#pragma once
+#ifndef SELENE_IO_VECTOR_WRITER_HPP
+#define SELENE_IO_VECTOR_WRITER_HPP
 
 #include <selene/base/Assert.hpp>
 #include <selene/io/WriterMode.hpp>
@@ -204,3 +205,5 @@ inline std::size_t write(VectorWriter& sink, const T* values, std::size_t nr_val
 
 } // namespace io
 } // namespace selene
+
+#endif // SELENE_IO_VECTOR_WRITER_HPP
