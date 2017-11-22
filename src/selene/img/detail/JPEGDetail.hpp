@@ -5,7 +5,7 @@
 #ifndef SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
 #define SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
 
-#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/MessageLog.hpp>
 #include <selene/img/detail/JPEGCommon.hpp>
@@ -40,6 +40,6 @@ void output_message(j_common_ptr cinfo);
 } // namespace img
 } // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#endif // defined(SELENE_WITH_LIBJPEG)SELENE_WITH_LIBJPEG_TURBO
 
 #endif // SELENE_IMG_DETAIL_JPEG_DETAIL_HPP

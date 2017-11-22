@@ -5,7 +5,7 @@
 #ifndef SELENE_IMG_DETAIL_JPEG_COMMON_HPP
 #define SELENE_IMG_DETAIL_JPEG_COMMON_HPP
 
-#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/MessageLog.hpp>
 
@@ -22,7 +22,7 @@ enum class JPEGColorSpace : std::uint8_t
   YCbCr,
   CMYK,
   YCCK,
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
   BGR,
   RGBA,
   BGRA,
@@ -41,7 +41,7 @@ inline JPEGColorSpace pixel_format_to_color_space(PixelFormat pixel_format)
     case PixelFormat::YCbCr: return JPEGColorSpace::YCbCr;
     case PixelFormat::CMYK: return JPEGColorSpace::CMYK;
     case PixelFormat::YCCK: return JPEGColorSpace::YCCK;
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     case PixelFormat::BGR: return JPEGColorSpace::BGR;
     case PixelFormat::RGBA: return JPEGColorSpace::RGBA;
     case PixelFormat::BGRA: return JPEGColorSpace::BGRA;
@@ -61,7 +61,7 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
     case JPEGColorSpace::YCbCr: return PixelFormat::YCbCr;
     case JPEGColorSpace::CMYK: return PixelFormat::CMYK;
     case JPEGColorSpace::YCCK: return PixelFormat::YCCK;
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     case JPEGColorSpace::BGR: return PixelFormat::BGR;
     case JPEGColorSpace::RGBA: return PixelFormat::RGBA;
     case JPEGColorSpace::BGRA: return PixelFormat::BGRA;
@@ -75,6 +75,6 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
 } // namespace img
 } // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#endif // defined(SELENE_WITH_LIBJPEG)
 
 #endif // SELENE_IMG_DETAIL_JPEG_COMMON_HPP

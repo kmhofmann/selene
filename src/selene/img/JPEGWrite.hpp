@@ -5,7 +5,7 @@
 #ifndef SELENE_IMG_JPEG_WRITE_HPP
 #define SELENE_IMG_JPEG_WRITE_HPP
 
-#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
@@ -178,6 +178,6 @@ bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img
 } // namespace img
 } // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#endif // defined(SELENE_WITH_LIBJPEG)
 
 #endif // SELENE_IMG_JPEG_WRITE_HPP

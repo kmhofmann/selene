@@ -2,7 +2,7 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img/JPEGWrite.hpp>
 #include <selene/img/detail/JPEGDetail.hpp>
@@ -210,4 +210,4 @@ bool flush_data_buffer(JPEGCompressionObject& obj, io::VectorWriter& sink)
 } // namespace img
 } // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#endif // defined(SELENE_WITH_LIBJPEG)

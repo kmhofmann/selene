@@ -2,7 +2,7 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img/detail/JPEGDetail.hpp>
 
@@ -22,7 +22,7 @@ J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space)
     case JPEGColorSpace::YCbCr: return JCS_YCbCr;
     case JPEGColorSpace::CMYK: return JCS_CMYK;
     case JPEGColorSpace::YCCK: return JCS_YCCK;
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     case JPEGColorSpace::BGR: return JCS_EXT_BGR;
     case JPEGColorSpace::RGBA: return JCS_EXT_RGBA;
     case JPEGColorSpace::BGRA: return JCS_EXT_BGRA;
@@ -43,7 +43,7 @@ JPEGColorSpace color_space_lib_to_pub(J_COLOR_SPACE color_space)
     case JCS_YCbCr: return JPEGColorSpace::YCbCr;
     case JCS_CMYK: return JPEGColorSpace::CMYK;
     case JCS_YCCK: return JPEGColorSpace::YCCK;
-#if defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     case JCS_EXT_BGR: return JPEGColorSpace::BGR;
     case JCS_EXT_RGBA: return JPEGColorSpace::RGBA;
     case JCS_EXT_BGRA: return JPEGColorSpace::BGRA;
@@ -74,4 +74,4 @@ void output_message(j_common_ptr cinfo)
 } // namespace img
 } // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#endif // defined(SELENE_WITH_LIBJPEG)

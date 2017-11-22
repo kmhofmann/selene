@@ -2,7 +2,7 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#if defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#if defined(SELENE_WITH_LIBJPEG)
 
 #include <catch.hpp>
 
@@ -177,7 +177,7 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   }
 }
 
-#if defined(SELENE_WITH_LIBJPEG_TURBO) && defined(SELENE_LIBJPEG_TURBO_PARTIAL_DECODING)
+#if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
 TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 {
   const auto tmp_path = get_tmp_path();
@@ -269,4 +269,4 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(messages_write.messages().empty());
 }
 
-#endif // defined(SELENE_WITH_LIBJPEG) || defined(SELENE_WITH_LIBJPEG_TURBO)
+#endif // defined(SELENE_WITH_LIBJPEG)
