@@ -7,6 +7,7 @@
 
 #include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
+#include <selene/base/MemoryBlock.hpp>
 
 #include <selene/img/PixelFormat.hpp>
 #include <selene/img/Types.hpp>
@@ -371,7 +372,7 @@ inline const std::uint8_t* ImageData::byte_ptr(Index x, Index y) const
 inline void ImageData::allocate_bytes(std::size_t nr_bytes)
 {
   SELENE_ASSERT(owns_memory_);
-  auto memory = DefaultAllocator::allocate(nr_bytes);
+  auto memory = NewAllocator::allocate(nr_bytes);
   SELENE_ASSERT(memory.size() == nr_bytes);
   data_ = memory.transfer_data();
 }
@@ -379,7 +380,7 @@ inline void ImageData::allocate_bytes(std::size_t nr_bytes)
 inline void ImageData::deallocate_bytes()
 {
   SELENE_ASSERT(owns_memory_);
-  DefaultAllocator::deallocate(data_);
+  NewAllocator::deallocate(data_);
 }
 
 inline void ImageData::deallocate_bytes_if_owned()

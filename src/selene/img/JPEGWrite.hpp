@@ -9,7 +9,6 @@
 
 #include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
-#include <selene/base/MemoryView.hpp>
 #include <selene/base/Utils.hpp>
 
 #include <selene/img/BoundingBox.hpp>

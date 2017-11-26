@@ -4,17 +4,19 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_library(selene_base INTERFACE)
+add_library(selene_base "")
 target_sources(selene_base
+        PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
         INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Assert.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MessageLog.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Utils.hpp
         )
-target_include_directories(selene_base INTERFACE ${SELENE_DIR}/src)
+target_include_directories(selene_base PUBLIC ${SELENE_DIR}/src)
 
 #------------------------------------------------------------------------------
 
@@ -66,6 +68,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Types.hpp
         )
 target_include_directories(selene_img PUBLIC ${SELENE_DIR}/src)
+target_link_libraries(selene_img selene_base)
 
 if (JPEGTurbo_FOUND)
     target_include_directories(selene_img PRIVATE ${JPEGTurbo_INCLUDE_DIR})
