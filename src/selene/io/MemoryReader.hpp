@@ -52,7 +52,7 @@ public:
 private:
   const std::uint8_t* data_ = nullptr;
   std::ptrdiff_t len_ = 0;
-  mutable const std::uint8_t* ptr_ = nullptr;
+  const std::uint8_t* ptr_ = nullptr;
 };
 
 template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>

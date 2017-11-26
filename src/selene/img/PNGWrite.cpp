@@ -209,6 +209,7 @@ void PNGCompressionCycle::compress(const ConstRowPointers& row_pointers)
   auto png_ptr = obj_.impl_->png_ptr;
   auto info_ptr = obj_.impl_->info_ptr;
 
+  // Hack to accommodate non-const correct API
   const auto png_row_pointers = const_cast<png_bytepp>(row_pointers.data());
   png_write_image(png_ptr, png_row_pointers);
 

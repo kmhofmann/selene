@@ -145,7 +145,8 @@ void JPEGCompressionCycle::compress(const ConstRowPointers& row_pointers)
   while (cinfo.next_scanline < cinfo.image_height)
   {
     auto row_ptr_c = row_pointers[cinfo.next_scanline];
-    row_ptr[0] = const_cast<JSAMPLE*>(row_ptr_c); // HACK!
+    // Hack to accommodate non-const correct API
+    row_ptr[0] = const_cast<JSAMPLE*>(row_ptr_c);
     const auto nr_scanlines_written = jpeg_write_scanlines(&cinfo, row_ptr.data(), 1);
     SELENE_FORCED_ASSERT(nr_scanlines_written == 1);
   }
