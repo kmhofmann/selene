@@ -36,8 +36,8 @@ public:
 
   MemoryWriter(const MemoryWriter&) = delete;
   MemoryWriter& operator=(const MemoryWriter&) = delete;
-  MemoryWriter(MemoryWriter&&) noexcept = default;
-  MemoryWriter& operator=(MemoryWriter&&) noexcept = default;
+  MemoryWriter(MemoryWriter&&) noexcept = default;   ///< Move constructor.
+  MemoryWriter& operator=(MemoryWriter&&) noexcept = default;   ///< Move assignment operator.
 
   std::uint8_t* handle() noexcept;
 
@@ -257,6 +257,7 @@ inline void MemoryWriter::flush() noexcept
  * In generic code, prefer using the corresponding non-member function.
  *
  * \tparam T The type of the data element to be written. Needs to be trivially copyable.
+ * \param value The data element to be written.
  * \return True, if read operation was successful, false otherwise.
  */
 template <typename T, typename>
@@ -300,7 +301,8 @@ inline std::size_t MemoryWriter::write(const T* values, std::size_t nr_values) n
 /** \brief Writes an element of type T to `sink`.
  *
  * \tparam T The type of the data element to be written. Needs to be trivially copyable.
- * \param source The sink MemoryWriter instance.
+ * \param sink The sink MemoryWriter instance.
+ * \param value The data element to be written.
  * \return True, if read operation was successful, false otherwise.
  */
 template <typename T, typename>

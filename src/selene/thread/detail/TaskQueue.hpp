@@ -14,6 +14,8 @@ namespace thread {
 
 namespace detail {
 
+/// \cond INTERNAL
+
 // Inspired by Sean Parent's talk "Better Code: Concurrency"
 // (https://www.slideshare.net/sermp/better-code-concurrency)
 class TaskQueue
@@ -42,7 +44,6 @@ private:
   std::condition_variable cond_;
   std::atomic<bool> finished_;
 };
-
 
 inline TaskQueue::TaskQueue()
   : finished_(false)
@@ -146,6 +147,8 @@ inline void TaskQueue::set_finished()
   finished_ = true;
   cond_.notify_all();
 }
+
+/// \endcond
 
 } // namespace detail
 

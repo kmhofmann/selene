@@ -19,6 +19,8 @@ namespace selene {
 namespace img {
 namespace detail {
 
+/// \cond INTERNAL
+
 J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space);
 JPEGColorSpace color_space_lib_to_pub(J_COLOR_SPACE color_space);
 
@@ -35,6 +37,8 @@ struct JPEGErrorManager
 
 void error_exit(j_common_ptr cinfo);
 void output_message(j_common_ptr cinfo);
+
+/// \endcond
 
 } // namespace detail
 } // namespace img

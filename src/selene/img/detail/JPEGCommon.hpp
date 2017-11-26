@@ -14,6 +14,8 @@
 namespace selene {
 namespace img {
 
+/// \cond INTERNAL
+
 enum class JPEGColorSpace : std::uint8_t
 {
   Unknown,
@@ -71,6 +73,8 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
     default: return PixelFormat::Unknown;
   }
 }
+
+/// \endcond
 
 } // namespace img
 } // namespace selene

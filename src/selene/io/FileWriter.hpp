@@ -33,8 +33,8 @@ public:
 
   FileWriter(const FileWriter&) = delete;
   FileWriter& operator=(const FileWriter&) = delete;
-  FileWriter(FileWriter&&) noexcept = default;
-  FileWriter& operator=(FileWriter&&) noexcept = default;
+  FileWriter(FileWriter&&) noexcept = default;   ///< Move constructor.
+  FileWriter& operator=(FileWriter&&) noexcept = default;   ///< Move assignment operator.
 
   std::FILE* handle() noexcept;
 
@@ -254,13 +254,13 @@ inline void FileWriter::flush() noexcept
   }
 }
 
-/** \brief Writes `nr_values` elements of type T.
+/** \brief Writes an element of type T.
  *
  * In generic code, prefer using the corresponding non-member function.
  *
- * \tparam T The type of the data elements to be written. Needs to be trivially copyable.
- * \param nr_values The number of data elements to write.
- * \return The number of data elements that were successfully written.
+ * \tparam T The type of the data element to be written. Needs to be trivially copyable.
+ * \param value The data element to be written.
+ * \return True, if read operation was successful, false otherwise.
  */
 template <typename T, typename>
 inline bool FileWriter::write(const T& value) noexcept
@@ -293,6 +293,7 @@ inline std::size_t FileWriter::write(const T* values, std::size_t nr_values) noe
  *
  * \tparam T The type of the data element to be written. Needs to be trivially copyable.
  * \param sink The sink FileWriter instance.
+ * \param value The data element to be written.
  * \return True, if read operation was successful, false otherwise.
  */
 template <typename T, typename>

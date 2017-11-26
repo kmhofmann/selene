@@ -32,8 +32,8 @@ public:
 
   FileReader(const FileReader&) = delete;
   FileReader& operator=(const FileReader&) = delete;
-  FileReader(FileReader&&) noexcept = default;
-  FileReader& operator=(FileReader&&) noexcept = default;
+  FileReader(FileReader&&) noexcept = default;   ///< Move constructor.
+  FileReader& operator=(FileReader&&) noexcept = default;   ///< Move assignment operator.
 
   std::FILE* handle() noexcept;
 

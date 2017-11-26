@@ -36,8 +36,8 @@ public:
 
   VectorWriter(const VectorWriter&) = delete;
   VectorWriter& operator=(const VectorWriter&) = delete;
-  VectorWriter(VectorWriter&&) noexcept = default;
-  VectorWriter& operator=(VectorWriter&&) noexcept = default;
+  VectorWriter(VectorWriter&&) noexcept = default;   ///< Move constructor.
+  VectorWriter& operator=(VectorWriter&&) noexcept = default;   ///< Move assignment operator.
 
   std::vector<std::uint8_t>* handle() noexcept;
 
@@ -230,6 +230,7 @@ inline void VectorWriter::flush() noexcept
  * In generic code, prefer using the corresponding non-member function.
  *
  * \tparam T The type of the data element to be written. Needs to be trivially copyable.
+ * \param value The data element to be written.
  * \return True, if read operation was successful, false otherwise.
  */
 template <typename T, typename>
@@ -293,7 +294,8 @@ inline bool VectorWriter::write_bytes(const std::uint8_t* ptr, std::size_t len)
 /** \brief Writes an element of type T to `sink`.
  *
  * \tparam T The type of the data element to be written. Needs to be trivially copyable.
- * \param source The sink VectorWriter instance.
+ * \param sink The sink VectorWriter instance.
+ * \param value The data element to be written.
  * \return True, if read operation was successful, false otherwise.
  */
 template <typename T, typename>

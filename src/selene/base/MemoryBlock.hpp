@@ -12,6 +12,11 @@
 
 namespace selene {
 
+template <typename Allocator> class MemoryBlock;
+
+template <typename Allocator>
+MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size);
+
 /** \brief Represents a contiguous block of memory, specified by a pointer to its beginning, and by its size.
  *
  * Memory blocks are returned by various (allocating) functions inside the library; these functions are mostly
@@ -44,8 +49,7 @@ private:
   std::size_t size_;
 
   MemoryBlock(std::uint8_t* data, std::size_t size);
-  friend struct MallocAllocator;
-  friend struct NewAllocator;
+  friend MemoryBlock<Allocator> construct_memory_block_from_existing_memory<Allocator>(std::uint8_t*, std::size_t);
 };
 
 
@@ -117,6 +121,22 @@ inline std::uint8_t* MemoryBlock<Allocator>::transfer_data()
   data_ = nullptr;
   size_ = 0;
   return data;
+}
+
+/** \brief Constructs a `MemoryBlock<Allocator>` instance from existing memory.
+ *
+ * It is important that the supplied memory was allocated with a compatible allocation function; otherwise, the
+ * deallocation is undefined behavior.
+ *
+ * @tparam Allocator The allocator type that was used to construct the existing memory region.
+ * @param data Pointer to the beginning of the memory region.
+ * @param size Size of the memory region.
+ * @return A `MemoryBlock<Allocator>` instance.
+ */
+template <typename Allocator>
+inline MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size)
+{
+  return MemoryBlock<Allocator>(data, size);
 }
 
 } // namespace selene

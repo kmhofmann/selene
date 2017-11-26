@@ -32,8 +32,8 @@ public:
 
   VectorReader(const VectorReader&) = delete;
   VectorReader& operator=(const VectorReader&) = delete;
-  VectorReader(VectorReader&&) noexcept = default;
-  VectorReader& operator=(VectorReader&&) noexcept = default;
+  VectorReader(VectorReader&&) noexcept = default;   ///< Move constructor.
+  VectorReader& operator=(VectorReader&&) noexcept = default;   ///< Move assignment operator.
 
   const std::vector<std::uint8_t>* handle() noexcept;
 

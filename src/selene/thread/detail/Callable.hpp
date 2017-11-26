@@ -8,6 +8,8 @@ namespace thread {
 
 namespace detail {
 
+/// \cond INTERNAL
+
 // Inspired by "C++ Concurrency in Action", first edition, listing 9.2
 class Callable
 {
@@ -71,6 +73,8 @@ private:
 
   std::unique_ptr<CallableBase> callable_;
 };
+
+/// \endcond
 
 } // namespace detail
 

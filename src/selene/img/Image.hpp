@@ -24,6 +24,16 @@ class ImageData;
 template <typename T> class Image;
 template <typename T> void clone(const Image<T>& src, Image<T>& dst);
 
+/** \brief Statically typed image class.
+ *
+ * An instance of `Image<T>` represents a statically typed image with pixel elements of type `T`.
+ * Since the number of channels is determined by the pixel type `T` (e.g. `Pixel<T>`), the storage of multiple
+ * channels/samples is always interleaved, as opposed to planar.
+ * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
+ *
+ * The memory of an `Image<T>` instance may either be owned or non-owned; in the latter case, the instance is a "view"
+ * on image data.
+ */
 template <typename T>
 class Image
 {
@@ -31,7 +41,8 @@ public:
   Image();
   Image(Length width, Length height);
   Image(Length width, Length height, T value);
-  Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes, bool take_ownership = false);
+  Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes);
+  Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes);
 
   Image(const Image<T>& other);
   Image<T>& operator=(const Image<T>& other);
@@ -54,7 +65,8 @@ public:
   void fill(T value);
   void resize(Length width, Length height);
   void resize(Length width, Length height, Stride stride_bytes);
-  void set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes, bool take_ownership = false);
+  void set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes);
+  void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes);
 
   T* data();
   const T* data() const;
@@ -95,7 +107,7 @@ private:
   std::uint32_t compute_data_offset(Index y) const;
   std::uint32_t compute_data_offset(Index x, Index y) const;
 
-  std::uint8_t* relinquish_data_ownership();
+  MemoryBlock<NewAllocator> relinquish_data_ownership();
 
   friend void clone<>(const Image<T>& src, Image<T>& dst);
   template <typename PixelType> friend ImageData to_image_data(Image<T>&&, PixelFormat);
@@ -125,65 +137,79 @@ void crop(Image<T>& img, Index x0, Index y0, Length width, Length height);
 // ----------
 // Aliases:
 
-using Image_8u1 = Image<Pixel<std::uint8_t, 1>>;
-using Image_8u2 = Image<Pixel<std::uint8_t, 2>>;
-using Image_8u3 = Image<Pixel<std::uint8_t, 3>>;
-using Image_8u4 = Image<Pixel<std::uint8_t, 4>>;
+using Image_8u1 = Image<Pixel<std::uint8_t, 1>>;  ///< 8-bit unsigned 1-channel image.
+using Image_8u2 = Image<Pixel<std::uint8_t, 2>>;  ///< 8-bit unsigned 2-channel image.
+using Image_8u3 = Image<Pixel<std::uint8_t, 3>>;  ///< 8-bit unsigned 3-channel image.
+using Image_8u4 = Image<Pixel<std::uint8_t, 4>>;  ///< 8-bit unsigned 4-channel image.
 
-using Image_8s1 = Image<Pixel<std::int8_t, 1>>;
-using Image_8s2 = Image<Pixel<std::int8_t, 2>>;
-using Image_8s3 = Image<Pixel<std::int8_t, 3>>;
-using Image_8s4 = Image<Pixel<std::int8_t, 4>>;
+using Image_8s1 = Image<Pixel<std::int8_t, 1>>;  ///< 8-bit signed 1-channel image.
+using Image_8s2 = Image<Pixel<std::int8_t, 2>>;  ///< 8-bit signed 2-channel image.
+using Image_8s3 = Image<Pixel<std::int8_t, 3>>;  ///< 8-bit signed 3-channel image.
+using Image_8s4 = Image<Pixel<std::int8_t, 4>>;  ///< 8-bit signed 4-channel image.
 
-using Image_16u1 = Image<Pixel<std::uint16_t, 1>>;
-using Image_16u2 = Image<Pixel<std::uint16_t, 2>>;
-using Image_16u3 = Image<Pixel<std::uint16_t, 3>>;
-using Image_16u4 = Image<Pixel<std::uint16_t, 4>>;
+using Image_16u1 = Image<Pixel<std::uint16_t, 1>>;  ///< 16-bit unsigned 1-channel image.
+using Image_16u2 = Image<Pixel<std::uint16_t, 2>>;  ///< 16-bit unsigned 2-channel image.
+using Image_16u3 = Image<Pixel<std::uint16_t, 3>>;  ///< 16-bit unsigned 3-channel image.
+using Image_16u4 = Image<Pixel<std::uint16_t, 4>>;  ///< 16-bit unsigned 4-channel image.
 
-using Image_16s1 = Image<Pixel<std::int16_t, 1>>;
-using Image_16s2 = Image<Pixel<std::int16_t, 2>>;
-using Image_16s3 = Image<Pixel<std::int16_t, 3>>;
-using Image_16s4 = Image<Pixel<std::int16_t, 4>>;
+using Image_16s1 = Image<Pixel<std::int16_t, 1>>;  ///< 16-bit signed 1-channel image.
+using Image_16s2 = Image<Pixel<std::int16_t, 2>>;  ///< 16-bit signed 2-channel image.
+using Image_16s3 = Image<Pixel<std::int16_t, 3>>;  ///< 16-bit signed 3-channel image.
+using Image_16s4 = Image<Pixel<std::int16_t, 4>>;  ///< 16-bit signed 4-channel image.
 
-using Image_32u1 = Image<Pixel<std::uint32_t, 1>>;
-using Image_32u2 = Image<Pixel<std::uint32_t, 2>>;
-using Image_32u3 = Image<Pixel<std::uint32_t, 3>>;
-using Image_32u4 = Image<Pixel<std::uint32_t, 4>>;
+using Image_32u1 = Image<Pixel<std::uint32_t, 1>>;  ///< 32-bit unsigned 1-channel image.
+using Image_32u2 = Image<Pixel<std::uint32_t, 2>>;  ///< 32-bit unsigned 2-channel image.
+using Image_32u3 = Image<Pixel<std::uint32_t, 3>>;  ///< 32-bit unsigned 3-channel image.
+using Image_32u4 = Image<Pixel<std::uint32_t, 4>>;  ///< 32-bit unsigned 4-channel image.
 
-using Image_32s1 = Image<Pixel<std::int32_t, 1>>;
-using Image_32s2 = Image<Pixel<std::int32_t, 2>>;
-using Image_32s3 = Image<Pixel<std::int32_t, 3>>;
-using Image_32s4 = Image<Pixel<std::int32_t, 4>>;
+using Image_32s1 = Image<Pixel<std::int32_t, 1>>;  ///< 32-bit signed 1-channel image.
+using Image_32s2 = Image<Pixel<std::int32_t, 2>>;  ///< 32-bit signed 2-channel image.
+using Image_32s3 = Image<Pixel<std::int32_t, 3>>;  ///< 32-bit signed 3-channel image.
+using Image_32s4 = Image<Pixel<std::int32_t, 4>>;  ///< 32-bit signed 4-channel image.
 
-using Image_64u1 = Image<Pixel<std::uint64_t, 1>>;
-using Image_64u2 = Image<Pixel<std::uint64_t, 2>>;
-using Image_64u3 = Image<Pixel<std::uint64_t, 3>>;
-using Image_64u4 = Image<Pixel<std::uint64_t, 4>>;
+using Image_64u1 = Image<Pixel<std::uint64_t, 1>>;  ///< 64-bit unsigned 1-channel image.
+using Image_64u2 = Image<Pixel<std::uint64_t, 2>>;  ///< 64-bit unsigned 2-channel image.
+using Image_64u3 = Image<Pixel<std::uint64_t, 3>>;  ///< 64-bit unsigned 3-channel image.
+using Image_64u4 = Image<Pixel<std::uint64_t, 4>>;  ///< 64-bit unsigned 4-channel image.
 
-using Image_64s1 = Image<Pixel<std::int64_t, 1>>;
-using Image_64s2 = Image<Pixel<std::int64_t, 2>>;
-using Image_64s3 = Image<Pixel<std::int64_t, 3>>;
-using Image_64s4 = Image<Pixel<std::int64_t, 4>>;
+using Image_64s1 = Image<Pixel<std::int64_t, 1>>;  ///< 64-bit signed 1-channel image.
+using Image_64s2 = Image<Pixel<std::int64_t, 2>>;  ///< 64-bit signed 2-channel image.
+using Image_64s3 = Image<Pixel<std::int64_t, 3>>;  ///< 64-bit signed 3-channel image.
+using Image_64s4 = Image<Pixel<std::int64_t, 4>>;  ///< 64-bit signed 4-channel image.
 
-using Image_32f1 = Image<Pixel<float32_t, 1>>;
-using Image_32f2 = Image<Pixel<float32_t, 2>>;
-using Image_32f3 = Image<Pixel<float32_t, 3>>;
-using Image_32f4 = Image<Pixel<float32_t, 4>>;
+using Image_32f1 = Image<Pixel<float32_t, 1>>;  ///< 32-bit floating point 1-channel image.
+using Image_32f2 = Image<Pixel<float32_t, 2>>;  ///< 32-bit floating point 2-channel image.
+using Image_32f3 = Image<Pixel<float32_t, 3>>;  ///< 32-bit floating point 3-channel image.
+using Image_32f4 = Image<Pixel<float32_t, 4>>;  ///< 32-bit floating point 4-channel image.
 
-using Image_64f1 = Image<Pixel<float64_t, 1>>;
-using Image_64f2 = Image<Pixel<float64_t, 2>>;
-using Image_64f3 = Image<Pixel<float64_t, 3>>;
-using Image_64f4 = Image<Pixel<float64_t, 4>>;
+using Image_64f1 = Image<Pixel<float64_t, 1>>;  ///< 64-bit floating point 1-channel image.
+using Image_64f2 = Image<Pixel<float64_t, 2>>;  ///< 64-bit floating point 2-channel image.
+using Image_64f3 = Image<Pixel<float64_t, 3>>;  ///< 64-bit floating point 3-channel image.
+using Image_64f4 = Image<Pixel<float64_t, 4>>;  ///< 64-bit floating point 4-channel image.
 
 // ----------
 // Implementation:
 
+/** \brief Default constructor.
+ *
+ * Creates an empty image of width and height 0. The image data will be owned, i.e. `is_view() == false`.
+ *
+ * @tparam T The pixel type.
+ */
 template <typename T>
 Image<T>::Image()
     : data_(nullptr), stride_bytes_(0), width_(0), height_(0), owns_memory_(true)
 {
 }
 
+/** \brief Constructs an image of the specified width and height.
+ *
+ * The image data will be owned, i.e. `is_view() == false`.
+ *
+ * @tparam T The pixel type.
+ * @param width Desired image width.
+ * @param height Desired image height.
+ */
 template <typename T>
 Image<T>::Image(Length width, Length height)
     : data_(nullptr), stride_bytes_(PixelTraits<T>::nr_bytes * width),
@@ -192,6 +218,15 @@ Image<T>::Image(Length width, Length height)
   allocate_bytes(stride_bytes_ * height_);
 }
 
+/** \brief Constructs an image of the specified width and height, where each pixel has value `value`.
+ *
+ * The image data will be owned, i.e. `is_view() == false`.
+ *
+ * @tparam T The pixel type.
+ * @param width Desired image width.
+ * @param height Desired image height.
+ * @param value The value each pixel should take.
+ */
 template <typename T>
 Image<T>::Image(Length width, Length height, T value)
     : data_(nullptr), stride_bytes_(PixelTraits<T>::nr_bytes * width),
@@ -201,13 +236,48 @@ Image<T>::Image(Length width, Length height, T value)
   fill(value);
 }
 
+/** \brief Constructs an image view (non-owned data) from supplied memory.
+ *
+ * @tparam T The pixel type.
+ * @param data Pointer to the existing image data.
+ * @param width Image width.
+ * @param height Image height.
+ * @param stride_bytes The stride (row length) in bytes.
+ */
 template <typename T>
-Image<T>::Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes, bool take_ownership)
-    : data_(data), stride_bytes_(stride_bytes), width_(width), height_(height), owns_memory_(take_ownership)
+Image<T>::Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes)
+    : data_(data), stride_bytes_(stride_bytes), width_(width), height_(height), owns_memory_(false)
 {
   SELENE_ASSERT(width_ > 0 && height_ > 0 && stride_bytes_ > 0);
 }
 
+/** \brief Constructs an image (owned data) from supplied memory.
+ *
+ * @tparam T The pixel type.
+ * @param data A `MemoryBlock<NewAllocator>` with the existing data.
+ * @param width Image width.
+ * @param height Image height.
+ * @param stride_bytes The stride (row length) in bytes.
+ */
+template <typename T>
+Image<T>::Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes)
+    : data_(data.transfer_data()), stride_bytes_(stride_bytes), width_(width), height_(height),
+      owns_memory_(true)
+{
+  SELENE_ASSERT(width_ > 0 && height_ > 0 && stride_bytes_ > 0);
+}
+
+/** \brief Copy constructor.
+ *
+ * Constructs an image instance from the supplied image instance.
+ *
+ * The ownership semantics will stay the same; i.e. if the supplied image has owned data, then so will the constructed
+ * image (the data will be copied, s.t. `is_view() == false`), but if the supplied image points to non-owned data, then
+ * the constructed image will be a view (`is_view() == true`).
+ *
+ * @tparam T The pixel type.
+ * @param other The source image.
+ */
 template <typename T>
 inline Image<T>::Image(const Image<T>& other)
     : data_(other.data_), stride_bytes_(other.stride_bytes_), width_(other.width_), height_(other.height_),
@@ -223,9 +293,20 @@ inline Image<T>::Image(const Image<T>& other)
   allocate_bytes(height_ * stride_bytes_);
   // Copy the image data
   copy_rows_from(other);
-
 }
 
+/** \brief Copy assignment operator
+ *
+ * Assigns another image instance.
+ *
+ * The ownership semantics will stay the same; i.e. if the supplied image has owned data, then so will the constructed
+ * image (the data will be copied, s.t. `is_view() == false`), but if the supplied image points to non-owned data, then
+ * the constructed image will be a view (`is_view() == true`).
+ *
+ * @tparam T The pixel type.
+ * @param other The image to assign from.
+ * @return A reference to this image.
+ */
 template <typename T>
 inline Image<T>& Image<T>::operator=(const Image<T>& other)
 {
@@ -265,6 +346,11 @@ inline Image<T>& Image<T>::operator=(const Image<T>& other)
   return *this;
 }
 
+/** \brief Move constructor.
+ *
+ * @tparam T The pixel type.
+ * @param other The image to move from.
+ */
 template <typename T>
 inline Image<T>::Image(Image<T>&& other) noexcept
     : data_(other.data_), stride_bytes_(other.stride_bytes_), width_(other.width_), height_(other.height_),
@@ -273,6 +359,12 @@ inline Image<T>::Image(Image<T>&& other) noexcept
   other.reset();
 }
 
+/**\brief Move assignment operator.
+ *
+ * @tparam T The pixel type.
+ * @param other The image to move assign from.
+ * @return A reference to this image.
+ */
 template <typename T>
 inline Image<T>& Image<T>::operator=(Image<T>&& other) noexcept
 {
@@ -298,6 +390,12 @@ inline Image<T>& Image<T>::operator=(Image<T>&& other) noexcept
   return *this;
 }
 
+/** \brief Destructor.
+ *
+ * Owned data will be deallocated at destruction time.
+ *
+ * @tparam T The pixel type.
+ */
 template <typename T>
 inline Image<T>::~Image()
 {
@@ -399,7 +497,7 @@ void Image<T>::resize(Length width, Length height, Stride stride_bytes)
 }
 
 template <typename T>
-inline void Image<T>::set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes, bool take_ownership)
+inline void Image<T>::set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes)
 {
   // Clean up own data
   deallocate_bytes_if_owned();
@@ -409,7 +507,21 @@ inline void Image<T>::set_view(std::uint8_t* data, Length width, Length height, 
   stride_bytes_ = stride_bytes;
   width_ = width;
   height_ = height;
-  owns_memory_ = take_ownership;
+  owns_memory_ = false;
+}
+
+template <typename T>
+inline void Image<T>::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes)
+{
+  // Clean up own data
+  deallocate_bytes_if_owned();
+
+  // Set local values
+  data_ = data.transfer_data();
+  stride_bytes_ = stride_bytes;
+  width_ = width;
+  height_ = height;
+  owns_memory_ = true;
 }
 
 template <typename T>
@@ -575,12 +687,15 @@ inline std::uint32_t Image<T>::compute_data_offset(Index x, Index y) const
 }
 
 template <typename T>
-inline std::uint8_t* Image<T>::relinquish_data_ownership()
+inline MemoryBlock<NewAllocator> Image<T>::relinquish_data_ownership()
 {
-  auto ptr = data_;
+  SELENE_FORCED_ASSERT(owns_memory_);
+  const auto ptr = data_;
+  const auto len = total_bytes();
+
   owns_memory_ = false;
   clear();
-  return ptr;
+  return construct_memory_block_from_existing_memory<NewAllocator>(ptr, len);
 }
 
 // ----------

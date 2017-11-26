@@ -37,10 +37,10 @@ public:
   constexpr explicit Pixel(const std::array<T, nr_channels>& arr);
   ~Pixel() = default;
 
-  Pixel(const Pixel<T, nr_channels_>&) = default;
-  Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;
-  Pixel(Pixel<T, nr_channels_>&&) noexcept = default;
-  Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;
+  Pixel(const Pixel<T, nr_channels_>&) = default;   ///< Copy constructor.
+  Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;   ///< Copy assignment operator.
+  Pixel(Pixel<T, nr_channels_>&&) noexcept = default;   ///< Move constructor.
+  Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;   ///< Move assignment operator.
 
   T* data() noexcept;
   const T* data() const noexcept;
@@ -66,55 +66,55 @@ bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>&
 // ----------
 // Aliases:
 
-using Pixel_8u1 = Pixel<std::uint8_t, 1>;  ///< 8-bit unsigned 1-channel image.
-using Pixel_8u2 = Pixel<std::uint8_t, 2>;  ///< 8-bit unsigned 2-channel image.
-using Pixel_8u3 = Pixel<std::uint8_t, 3>;  ///< 8-bit unsigned 3-channel image.
-using Pixel_8u4 = Pixel<std::uint8_t, 4>;  ///< 8-bit unsigned 4-channel image.
+using Pixel_8u1 = Pixel<std::uint8_t, 1>;  ///< 8-bit unsigned 1-channel pixel.
+using Pixel_8u2 = Pixel<std::uint8_t, 2>;  ///< 8-bit unsigned 2-channel pixel.
+using Pixel_8u3 = Pixel<std::uint8_t, 3>;  ///< 8-bit unsigned 3-channel pixel.
+using Pixel_8u4 = Pixel<std::uint8_t, 4>;  ///< 8-bit unsigned 4-channel pixel.
 
-using Pixel_8s1 = Pixel<std::int8_t, 1>;  ///< 8-bit signed 1-channel image.
-using Pixel_8s2 = Pixel<std::int8_t, 2>;  ///< 8-bit signed 2-channel image.
-using Pixel_8s3 = Pixel<std::int8_t, 3>;  ///< 8-bit signed 3-channel image.
-using Pixel_8s4 = Pixel<std::int8_t, 4>;  ///< 8-bit signed 4-channel image.
+using Pixel_8s1 = Pixel<std::int8_t, 1>;  ///< 8-bit signed 1-channel pixel.
+using Pixel_8s2 = Pixel<std::int8_t, 2>;  ///< 8-bit signed 2-channel pixel.
+using Pixel_8s3 = Pixel<std::int8_t, 3>;  ///< 8-bit signed 3-channel pixel.
+using Pixel_8s4 = Pixel<std::int8_t, 4>;  ///< 8-bit signed 4-channel pixel.
 
-using Pixel_16u1 = Pixel<std::uint16_t, 1>;  ///< 16-bit unsigned 1-channel image.
-using Pixel_16u2 = Pixel<std::uint16_t, 2>;  ///< 16-bit unsigned 2-channel image.
-using Pixel_16u3 = Pixel<std::uint16_t, 3>;  ///< 16-bit unsigned 3-channel image.
-using Pixel_16u4 = Pixel<std::uint16_t, 4>;  ///< 16-bit unsigned 4-channel image.
+using Pixel_16u1 = Pixel<std::uint16_t, 1>;  ///< 16-bit unsigned 1-channel pixel.
+using Pixel_16u2 = Pixel<std::uint16_t, 2>;  ///< 16-bit unsigned 2-channel pixel.
+using Pixel_16u3 = Pixel<std::uint16_t, 3>;  ///< 16-bit unsigned 3-channel pixel.
+using Pixel_16u4 = Pixel<std::uint16_t, 4>;  ///< 16-bit unsigned 4-channel pixel.
 
-using Pixel_16s1 = Pixel<std::int16_t, 1>;  ///< 16-bit signed 1-channel image.
-using Pixel_16s2 = Pixel<std::int16_t, 2>;  ///< 16-bit signed 2-channel image.
-using Pixel_16s3 = Pixel<std::int16_t, 3>;  ///< 16-bit signed 3-channel image.
-using Pixel_16s4 = Pixel<std::int16_t, 4>;  ///< 16-bit signed 4-channel image.
+using Pixel_16s1 = Pixel<std::int16_t, 1>;  ///< 16-bit signed 1-channel pixel.
+using Pixel_16s2 = Pixel<std::int16_t, 2>;  ///< 16-bit signed 2-channel pixel.
+using Pixel_16s3 = Pixel<std::int16_t, 3>;  ///< 16-bit signed 3-channel pixel.
+using Pixel_16s4 = Pixel<std::int16_t, 4>;  ///< 16-bit signed 4-channel pixel.
 
-using Pixel_32u1 = Pixel<std::uint32_t, 1>;  ///< 32-bit unsigned 1-channel image.
-using Pixel_32u2 = Pixel<std::uint32_t, 2>;  ///< 32-bit unsigned 2-channel image.
-using Pixel_32u3 = Pixel<std::uint32_t, 3>;  ///< 32-bit unsigned 3-channel image.
-using Pixel_32u4 = Pixel<std::uint32_t, 4>;  ///< 32-bit unsigned 4-channel image.
+using Pixel_32u1 = Pixel<std::uint32_t, 1>;  ///< 32-bit unsigned 1-channel pixel.
+using Pixel_32u2 = Pixel<std::uint32_t, 2>;  ///< 32-bit unsigned 2-channel pixel.
+using Pixel_32u3 = Pixel<std::uint32_t, 3>;  ///< 32-bit unsigned 3-channel pixel.
+using Pixel_32u4 = Pixel<std::uint32_t, 4>;  ///< 32-bit unsigned 4-channel pixel.
 
-using Pixel_32s1 = Pixel<std::int32_t, 1>;  ///< 32-bit signed 1-channel image.
-using Pixel_32s2 = Pixel<std::int32_t, 2>;  ///< 32-bit signed 2-channel image.
-using Pixel_32s3 = Pixel<std::int32_t, 3>;  ///< 32-bit signed 3-channel image.
-using Pixel_32s4 = Pixel<std::int32_t, 4>;  ///< 32-bit signed 4-channel image.
+using Pixel_32s1 = Pixel<std::int32_t, 1>;  ///< 32-bit signed 1-channel pixel.
+using Pixel_32s2 = Pixel<std::int32_t, 2>;  ///< 32-bit signed 2-channel pixel.
+using Pixel_32s3 = Pixel<std::int32_t, 3>;  ///< 32-bit signed 3-channel pixel.
+using Pixel_32s4 = Pixel<std::int32_t, 4>;  ///< 32-bit signed 4-channel pixel.
 
-using Pixel_64u1 = Pixel<std::uint64_t, 1>;  ///< 64-bit unsigned 1-channel image.
-using Pixel_64u2 = Pixel<std::uint64_t, 2>;  ///< 64-bit unsigned 2-channel image.
-using Pixel_64u3 = Pixel<std::uint64_t, 3>;  ///< 64-bit unsigned 3-channel image.
-using Pixel_64u4 = Pixel<std::uint64_t, 4>;  ///< 64-bit unsigned 4-channel image.
+using Pixel_64u1 = Pixel<std::uint64_t, 1>;  ///< 64-bit unsigned 1-channel pixel.
+using Pixel_64u2 = Pixel<std::uint64_t, 2>;  ///< 64-bit unsigned 2-channel pixel.
+using Pixel_64u3 = Pixel<std::uint64_t, 3>;  ///< 64-bit unsigned 3-channel pixel.
+using Pixel_64u4 = Pixel<std::uint64_t, 4>;  ///< 64-bit unsigned 4-channel pixel.
 
-using Pixel_64s1 = Pixel<std::int64_t, 1>;  ///< 64-bit signed 1-channel image.
-using Pixel_64s2 = Pixel<std::int64_t, 2>;  ///< 64-bit signed 2-channel image.
-using Pixel_64s3 = Pixel<std::int64_t, 3>;  ///< 64-bit signed 3-channel image.
-using Pixel_64s4 = Pixel<std::int64_t, 4>;  ///< 64-bit signed 4-channel image.
+using Pixel_64s1 = Pixel<std::int64_t, 1>;  ///< 64-bit signed 1-channel pixel.
+using Pixel_64s2 = Pixel<std::int64_t, 2>;  ///< 64-bit signed 2-channel pixel.
+using Pixel_64s3 = Pixel<std::int64_t, 3>;  ///< 64-bit signed 3-channel pixel.
+using Pixel_64s4 = Pixel<std::int64_t, 4>;  ///< 64-bit signed 4-channel pixel.
 
-using Pixel_32f1 = Pixel<float32_t, 1>;  ///< 32-bit floating point 1-channel image.
-using Pixel_32f2 = Pixel<float32_t, 2>;  ///< 32-bit floating point 2-channel image.
-using Pixel_32f3 = Pixel<float32_t, 3>;  ///< 32-bit floating point 3-channel image.
-using Pixel_32f4 = Pixel<float32_t, 4>;  ///< 32-bit floating point 4-channel image.
+using Pixel_32f1 = Pixel<float32_t, 1>;  ///< 32-bit floating point 1-channel pixel.
+using Pixel_32f2 = Pixel<float32_t, 2>;  ///< 32-bit floating point 2-channel pixel.
+using Pixel_32f3 = Pixel<float32_t, 3>;  ///< 32-bit floating point 3-channel pixel.
+using Pixel_32f4 = Pixel<float32_t, 4>;  ///< 32-bit floating point 4-channel pixel.
 
-using Pixel_64f1 = Pixel<float64_t, 1>;  ///< 64-bit floating point 1-channel image.
-using Pixel_64f2 = Pixel<float64_t, 2>;  ///< 64-bit floating point 2-channel image.
-using Pixel_64f3 = Pixel<float64_t, 3>;  ///< 64-bit floating point 3-channel image.
-using Pixel_64f4 = Pixel<float64_t, 4>;  ///< 64-bit floating point 4-channel image.
+using Pixel_64f1 = Pixel<float64_t, 1>;  ///< 64-bit floating point 1-channel pixel.
+using Pixel_64f2 = Pixel<float64_t, 2>;  ///< 64-bit floating point 2-channel pixel.
+using Pixel_64f3 = Pixel<float64_t, 3>;  ///< 64-bit floating point 3-channel pixel.
+using Pixel_64f4 = Pixel<float64_t, 4>;  ///< 64-bit floating point 4-channel pixel.
 
 // ----------
 // Implementation:
@@ -138,7 +138,7 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args)
  *
  * This constructor takes a std::array<> with exactly Pixel::nr_channels values of type Pixel::value_type as input.
  *
- * \param args The channel values as std::array<>.
+ * \param arr The channel values as std::array<>.
  */
 template <typename T, std::uint32_t nr_channels_>
 inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr)

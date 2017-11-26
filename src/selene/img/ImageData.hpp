@@ -13,13 +13,27 @@
 #include <selene/img/Types.hpp>
 
 #include <cstdint>
+#include <utility>
 
 namespace selene {
 namespace img {
 
 template <typename T> class Image;
 
-// Class representing interleaved image data with arbitrary number of channels or bytes per channel
+/** \brief Dynamically typed image class.
+ *
+ * An instance of `ImageData` represents a dynamically typed image with pixel elements in interleaved storage.
+ * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
+ *
+ * Each image pixel can have an arbitrary number of channels, and each channel/sample in a pixel can have an arbitrary
+ * number of bytes.
+ *
+ * Optionally, an image can have be tagged with a particular `PixelFormat` or a partiular `SampleType`.
+ * This is mostly a semantic tag and has little influence on the data content.
+ *
+ * The memory of an `ImageData` instance may either be owned or non-owned; in the latter case, the instance is a "view"
+ * on image data.
+ */
 class ImageData
 {
 public:
@@ -31,10 +45,16 @@ public:
             SampleType sample_type = SampleType::Unknown);
   ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
             std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown, bool take_ownership = false);
+            SampleType sample_type = SampleType::Unknown);
   ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
             std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown, bool take_ownership = false);
+            SampleType sample_type = SampleType::Unknown);
+  ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
+            std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
+            SampleType sample_type = SampleType::Unknown);
+  ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
+            std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
+            SampleType sample_type = SampleType::Unknown);
   ~ImageData();
 
   ImageData(const ImageData&);
@@ -65,10 +85,17 @@ public:
 
   void set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown, bool take_ownership = false);
+                SampleType sample_type = SampleType::Unknown);
   void set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown, bool take_ownership = false);
+                SampleType sample_type = SampleType::Unknown);
+
+  void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
+                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
+                SampleType sample_type = SampleType::Unknown);
+  void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
+                std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
+                SampleType sample_type = SampleType::Unknown);
 
   std::uint8_t* byte_ptr();
   const std::uint8_t* byte_ptr() const;
@@ -97,7 +124,7 @@ private:
   std::uint32_t compute_data_offset(Index y) const;
   std::uint32_t compute_data_offset(Index x, Index y) const;
 
-  std::uint8_t* relinquish_data_ownership();
+  MemoryBlock<NewAllocator> relinquish_data_ownership();
 
   template <typename PixelType> friend Image<PixelType> to_image(ImageData&&);
 };
@@ -115,18 +142,28 @@ inline ImageData::ImageData(Length width, Length height, std::uint16_t nr_channe
 }
 
 inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type,
-                            bool take_ownership)
+                            std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
 {
-  set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type, take_ownership);
+  set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type);
 }
 
 inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                             std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                            SampleType sample_type, bool take_ownership)
+                            SampleType sample_type)
 {
-  set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type,
-           take_ownership);
+  set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+}
+
+inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
+    std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
+{
+  set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type);
+}
+
+inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
+    std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format, SampleType sample_type)
+{
+  set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
 }
 
 inline ImageData::~ImageData()
@@ -308,8 +345,7 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
 }
 
 inline void ImageData::set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type,
-                                bool take_ownership)
+                                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
 {
   deallocate_bytes_if_owned();
   data_ = data;
@@ -320,12 +356,12 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
   sample_type_ = sample_type;
-  owns_memory_ = take_ownership;
+  owns_memory_ = false;
 }
 
 inline void ImageData::set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                                SampleType sample_type, bool take_ownership)
+                                SampleType sample_type)
 {
   deallocate_bytes_if_owned();
   data_ = data;
@@ -336,7 +372,39 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
   sample_type_ = sample_type;
-  owns_memory_ = take_ownership;
+  owns_memory_ = false;
+}
+
+inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height,
+                                std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format,
+                                SampleType sample_type)
+{
+  deallocate_bytes_if_owned();
+  data_ = data.transfer_data();
+  width_ = width;
+  height_ = height;
+  stride_bytes_ = nr_bytes_per_channel * nr_channels * width;
+  nr_channels_ = nr_channels;
+  nr_bytes_per_channel_ = nr_bytes_per_channel;
+  pixel_format_ = pixel_format;
+  sample_type_ = sample_type;
+  owns_memory_ = true;
+}
+
+inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height,
+                                std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel, Stride stride_bytes,
+                                PixelFormat pixel_format, SampleType sample_type)
+{
+  deallocate_bytes_if_owned();
+  data_ = data.transfer_data();
+  width_ = width;
+  height_ = height;
+  stride_bytes_ = stride_bytes;
+  nr_channels_ = nr_channels;
+  nr_bytes_per_channel_ = nr_bytes_per_channel;
+  pixel_format_ = pixel_format;
+  sample_type_ = sample_type;
+  owns_memory_ = true;
 }
 
 inline const std::uint8_t* ImageData::byte_ptr() const
@@ -415,12 +483,15 @@ inline std::uint32_t ImageData::compute_data_offset(Index x, Index y) const
   return stride_bytes_ * y + nr_bytes_per_channel_ * nr_channels_ * x;
 }
 
-inline std::uint8_t* ImageData::relinquish_data_ownership()
+inline MemoryBlock<NewAllocator> ImageData::relinquish_data_ownership()
 {
-  auto ptr = data_;
+  SELENE_FORCED_ASSERT(owns_memory_);
+  const auto ptr = data_;
+  const auto len = total_bytes();
+
   owns_memory_ = false;
   clear();
-  return ptr;
+  return construct_memory_block_from_existing_memory<NewAllocator>(ptr, len);
 }
 
 } // namespace img

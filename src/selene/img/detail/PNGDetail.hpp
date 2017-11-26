@@ -16,6 +16,8 @@ namespace selene {
 namespace img {
 namespace detail {
 
+/// \cond INTERNAL
+
 struct PNGErrorManager
 {
   bool error_state = false;
@@ -24,6 +26,8 @@ struct PNGErrorManager
 
 void error_handler(png_structp png_ptr, const char* msg);
 void warning_handler(png_structp png_ptr, const char* msg);
+
+/// \endcond
 
 } // namespace detail
 } // namespace img

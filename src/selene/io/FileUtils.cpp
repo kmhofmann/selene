@@ -15,7 +15,7 @@ namespace io {
  *
  * If the file can not be opened or read, the function will throw a `std::runtime_error` exception.
  *
- * \param A string representing the path to the file that should be read.
+ * \param path A string representing the path to the file that should be read.
  * \return A `std::vector<std::uint8_t>` with the contents of the file.
  */
 std::vector<std::uint8_t> read_file_contents(const std::string& path)

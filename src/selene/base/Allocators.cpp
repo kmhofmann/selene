@@ -19,11 +19,11 @@ MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes)
 {
   if (nr_bytes == 0)
   {
-    return MemoryBlock<MallocAllocator>(nullptr, 0);
+    return construct_memory_block_from_existing_memory<MallocAllocator>(nullptr, 0);
   }
 
   auto ptr = static_cast<std::uint8_t*>(std::malloc(nr_bytes));
-  return MemoryBlock<MallocAllocator>(ptr, (ptr == nullptr) ? 0 : nr_bytes);
+  return construct_memory_block_from_existing_memory<MallocAllocator>(ptr, (ptr == nullptr) ? 0 : nr_bytes);
 }
 
 /** \brief Deallocates the previously allocated memory block using `std::free`.
@@ -51,11 +51,11 @@ MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes)
 {
   if (nr_bytes == 0)
   {
-    return MemoryBlock<NewAllocator>(nullptr, 0);
+    return construct_memory_block_from_existing_memory<NewAllocator>(nullptr, 0);
   }
 
   auto ptr = new(std::nothrow) std::uint8_t[nr_bytes];
-  return MemoryBlock<NewAllocator>(ptr, (ptr == nullptr) ? 0 : nr_bytes);
+  return construct_memory_block_from_existing_memory<NewAllocator>(ptr, (ptr == nullptr) ? 0 : nr_bytes);
 }
 
 /** \brief Deallocates the previously allocated memory block using `delete`.
