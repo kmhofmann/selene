@@ -17,6 +17,16 @@
 namespace selene {
 namespace io {
 
+/** \brief Class for writing binary data to memory, stored in a std::vector<std::uint8_t>.
+ *
+ * Class for writing binary data to memory, stored in a std::vector<std::uint8_t>. Provides the usual operations for
+ * random memory access. As much of the interface as possible is equal to the FileWriter and MemoryWriter classes. This
+ * enables user code to abstract from the particular type of "writer" by means of static polymorphism (e.g. treating
+ * the "writer" type as a template).
+ *
+ * The sink type, std::vector<std::uint8_t> will automatically extend when its capacity is exceeded, which is the main
+ * difference to the MemoryWriter; here, the sink type is a raw pointer with fixed memory length.
+ */
 class VectorWriter
 {
 public:
@@ -65,16 +75,39 @@ std::size_t write(VectorWriter& sink, const T* values, std::size_t nr_values) no
 // ----------
 // Implementation:
 
+/** \brief Opens the specified vector for writing.
+ *
+ * See also VectorWriter::open.
+ *
+ * \param data The `std::vector<std::uint8_t>`, containing the data to be read.
+ * \param mode The writing mode, WriterMode::Write or WriterMode::Append. WriteMode::Write effectively clears the
+ *             vector, while WriterMode::Append preserves its contents.
+ */
 inline VectorWriter::VectorWriter(std::vector<std::uint8_t>& data, WriterMode mode)
 {
   open(data, mode);
 }
 
+/** \brief Returns a native handle to the vector.
+ *
+ * \return The native vector handle in form of a `const std::vector<std::uint8_t>*`.
+ *         Will return `nullptr` if no vector is currently opened.
+ */
 inline std::vector<std::uint8_t>* VectorWriter::handle() noexcept
 {
   return data_;
 }
 
+/** \brief Opens the specified vector for writing.
+ *
+ * Any already open vector will be closed.
+ * Currently, no failure conditions exist for opening of a vector, so the function will always return `true`.
+ *
+ * \param data The `std::vector<std::uint8_t>`, containing the data to be read
+ * \param mode The writing mode, WriterMode::Write or WriterMode::Append. WriteMode::Write effectively clears the
+ *             vector, while WriterMode::Append preserves its contents.
+ * \return True, if the vector was successfully opened; false otherwise.
+ */
 inline bool VectorWriter::open(std::vector<std::uint8_t>& data, WriterMode mode) noexcept
 {
   data_ = &data;
@@ -88,35 +121,72 @@ inline bool VectorWriter::open(std::vector<std::uint8_t>& data, WriterMode mode)
   return true;
 }
 
+/** \brief Closes an open vector.
+ *
+ * The function will have no effect, if no vector is currently opened.
+ */
 inline void VectorWriter::close() noexcept
 {
   data_ = nullptr;
   pos_ = 0;
 }
 
+/** \brief Returns whether a vector is open.
+ *
+ * \return True, if a vector is open; false otherwise.
+ */
 inline bool VectorWriter::is_open() const noexcept
 {
   return data_ != nullptr;
 }
 
+/** \brief Returns whether the end of the vector has been reached.
+ *
+ * Since the vector extends its own capacity, there is no state in which the end of its data region can be reached.
+ * Therefore the function generally returns true, unless no vector is open.
+ *
+ * \return True, if no vector is open; false otherwise.
+ */
 inline bool VectorWriter::is_eof() const noexcept
 {
   return !data_;
 }
 
+/** \brief Returns the current value of the position inside the vector data region.
+ *
+ * \return The numeric value of the position inside the vector data region, or -1 on failure (also, if no memory region
+ *         is open).
+ */
 inline std::ptrdiff_t VectorWriter::position() const noexcept
 {
+  if (data_ == nullptr)
+  {
+    return -1;
+  }
+
   return pos_;
 }
 
+/** \brief Resets the current position inside the vector data to the beginning of the data region.
+ *
+ * The function will have no effect if no vector is open.
+ */
 inline void VectorWriter::rewind() noexcept
 {
   pos_ = 0;
 }
 
+/** \brief Performs an absolute seek operation to the specified offset.
+ *
+ * The function sets the internal data pointer to the specified offset.
+ * Failure cases include no vector being open, or the offset being outside the vector data region.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
 inline bool VectorWriter::seek_abs(std::ptrdiff_t offset) noexcept
 {
-  if (offset < 0 || offset > static_cast<std::ptrdiff_t>(data_->size()))
+  if (!is_open() || offset < 0 || offset > static_cast<std::ptrdiff_t>(data_->size()))
   {
     return false;
   }
@@ -125,11 +195,19 @@ inline bool VectorWriter::seek_abs(std::ptrdiff_t offset) noexcept
   return true;
 }
 
+/** \brief Performs a relative seek operation by the specified offset.
+ *
+ * The function moves the internal data pointer by the specified relative offset.
+ * Failure cases include no vector being open, or the resulting position being outside the vector data region.
+ *
+ * \param offset The relative offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
 inline bool VectorWriter::seek_rel(std::ptrdiff_t offset) noexcept
 {
   const auto new_pos = pos_ + offset;
 
-  if (new_pos < 0 || new_pos > static_cast<std::ptrdiff_t>(data_->size()))
+  if (!is_open() || new_pos < 0 || new_pos > static_cast<std::ptrdiff_t>(data_->size()))
   {
     return false;
   }
@@ -138,10 +216,22 @@ inline bool VectorWriter::seek_rel(std::ptrdiff_t offset) noexcept
   return true;
 }
 
+/** \brief Performs a flush operation.
+ *
+ * VectorWriter::flush is a no-op, since writing to a vector is not buffered.
+ * The function exists for interface completeness.
+ */
 inline void VectorWriter::flush() noexcept
 {
 }
 
+/** \brief Writes an element of type T.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data element to be written. Needs to be trivially copyable.
+ * \return True, if read operation was successful, false otherwise.
+ */
 template <typename T, typename>
 inline bool VectorWriter::write(const T& value) noexcept
 {
@@ -152,6 +242,15 @@ inline bool VectorWriter::write(const T& value) noexcept
   return write_bytes(ptr, len);
 }
 
+/** \brief Writes `nr_values` elements of type T.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data elements to be written. Needs to be trivially copyable.
+ * \param[out] values A pointer to the memory location where the elements to be written can be read from.
+ * \param nr_values The number of data elements to write.
+ * \return The number of data elements that were successfully written.
+ */
 template <typename T, typename>
 inline std::size_t VectorWriter::write(const T* values, std::size_t nr_values) noexcept
 {
@@ -191,12 +290,26 @@ inline bool VectorWriter::write_bytes(const std::uint8_t* ptr, std::size_t len)
 
 // ----------
 
+/** \brief Writes an element of type T to `sink`.
+ *
+ * \tparam T The type of the data element to be written. Needs to be trivially copyable.
+ * \param source The sink VectorWriter instance.
+ * \return True, if read operation was successful, false otherwise.
+ */
 template <typename T, typename>
 inline bool write(VectorWriter& sink, const T& value) noexcept
 {
   return sink.write(value);
 };
 
+/** \brief Writes `nr_values` elements of type T to `sink`.
+ *
+ * \tparam T The type of the data elements to be written. Needs to be trivially copyable.
+ * \param sink The sink VectorWriter instance.
+ * \param[out] values A pointer to the memory location where the elements to be written can be read from.
+ * \param nr_values The number of data elements to write.
+ * \return The number of data elements that were successfully written.
+ */
 template <typename T, typename>
 inline std::size_t write(VectorWriter& sink, const T* values, std::size_t nr_values) noexcept
 {

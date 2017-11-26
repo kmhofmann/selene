@@ -11,6 +11,13 @@
 namespace selene {
 namespace io {
 
+/** \brief Reads the binary contents of a file and returns them.
+ *
+ * If the file can not be opened or read, the function will throw a `std::runtime_error` exception.
+ *
+ * \param A string representing the path to the file that should be read.
+ * \return A `std::vector<std::uint8_t>` with the contents of the file.
+ */
 std::vector<std::uint8_t> read_file_contents(const std::string& path)
 {
   constexpr std::size_t buffer_size = 32768;

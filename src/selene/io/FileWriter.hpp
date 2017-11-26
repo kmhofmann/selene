@@ -18,6 +18,12 @@
 namespace selene {
 namespace io {
 
+/** \brief Class for writing binary data to files.
+ *
+ * Class for writing binary data to files. Provides the usual operations for random file access. As much of the
+ * interface as possible is equal to the MemoryWriter and VectorWriter classes. This enables user code to abstract from
+ * the particular type of "writer" by means of static polymorphism (e.g. treating the "writer" type as a template).
+ */
 class FileWriter
 {
 public:
@@ -63,6 +69,14 @@ std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noex
 // ----------
 // Implementation:
 
+/** \brief Opens the specified file for writing.
+ *
+ * If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+ * See also FileWriter::open.
+ *
+ * \param filename The name of the file to be opened for reading.
+ * \param mode The writing mode, WriterMode::Write or WriterMode::Append.
+ */
 inline FileWriter::FileWriter(const char* filename, WriterMode mode)
 {
   if (!open(filename, mode))
@@ -71,6 +85,7 @@ inline FileWriter::FileWriter(const char* filename, WriterMode mode)
   }
 }
 
+/** \brief Destructor; closes the previously opened file stream. */
 inline FileWriter::~FileWriter()
 {
   if (fp_)
@@ -79,11 +94,26 @@ inline FileWriter::~FileWriter()
   }
 }
 
+/** \brief Returns a native handle to the file stream.
+ *
+ * \return The native file stream handle in form of a `std::FILE*`.
+ *         Will return `nullptr` if no file stream is currently opened.
+ */
 inline std::FILE* FileWriter::handle() noexcept
 {
   return fp_;
 }
 
+/** \brief Opens the specified file for writing.
+ *
+ * Any already open file will be closed.
+ * Opening a file stream can fail for various reasons. The failure cases generally match the failure cases of
+ * `std::fopen`.
+ *
+ * \param filename The name of the file to be opened for reading.
+ * \param mode The writing mode, WriterMode::Write or WriterMode::Append.
+ * \return True, if the file was successfully opened; false otherwise.
+ */
 inline bool FileWriter::open(const char* filename, WriterMode mode) noexcept
 {
   if (is_open())
@@ -106,6 +136,10 @@ inline bool FileWriter::open(const char* filename, WriterMode mode) noexcept
   return (fp_ != nullptr);
 }
 
+/** \brief Closes an open file stream.
+ *
+ * The function will have no effect, if no file stream is currently opened.
+ */
 inline void FileWriter::close() noexcept
 {
   if (fp_)
@@ -115,11 +149,19 @@ inline void FileWriter::close() noexcept
   }
 }
 
+/** \brief Returns whether a file stream is open.
+ *
+ * \return True, if a file stream is open; false otherwise.
+ */
 inline bool FileWriter::is_open() const noexcept
 {
   return (fp_ != nullptr);
 }
 
+/** \brief Returns whether the end of the file stream has been reached.
+ *
+ * \return True, if the end of the file stream has been reached (or if no file stream is open); false otherwise.
+ */
 inline bool FileWriter::is_eof() const noexcept
 {
   if (!fp_)
@@ -130,16 +172,24 @@ inline bool FileWriter::is_eof() const noexcept
   return std::feof(fp_) != 0;
 }
 
+/** \brief Returns the current value of the file position indicator.
+ *
+ * \return The numeric value of the file position indicator, or -1 on failure (also, if no file stream is open).
+ */
 inline std::ptrdiff_t FileWriter::position() const noexcept
 {
   if (!fp_)
   {
-    return std::ptrdiff_t(0);
+    return std::ptrdiff_t(-1);
   }
 
   return static_cast<std::ptrdiff_t>(std::ftell(fp_));
 }
 
+/** \brief Resets the file position indicator to the beginning of the file stream.
+ *
+ * The function will have no effect if no file stream is open.
+ */
 inline void FileWriter::rewind() noexcept
 {
   if (fp_)
@@ -148,6 +198,17 @@ inline void FileWriter::rewind() noexcept
   }
 }
 
+/** \brief Performs an absolute seek operation to the specified offset.
+ *
+ * The function sets the position indicator for the file stream to the specified offset.
+ * Failure cases include no file being open, or the offset being outside the file stream region.
+ *
+ * \note Seeking beyond the existing end of the file may be legal, depending on platform.
+ * In this case, FileWriter::seek_abs will behave similar to `std::fseek`.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
 inline bool FileWriter::seek_abs(std::ptrdiff_t offset) noexcept
 {
   if (!fp_)
@@ -159,6 +220,17 @@ inline bool FileWriter::seek_abs(std::ptrdiff_t offset) noexcept
   return (rc == 0);
 }
 
+/** \brief Performs a relative seek operation to the specified offset.
+ *
+ * The function moves the position indicator for the file stream by the specified relative offset.
+ * Failure cases include no file being open, or the resulting position being outside the file stream region.
+ *
+ * \note Seeking beyond the existing end of the file may be legal, depending on platform.
+ * In this case, FileWriter::seek_rel will behave similar to `std::fseek`.
+ *
+ * \param offset The relative offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
 inline bool FileWriter::seek_rel(std::ptrdiff_t offset) noexcept
 {
   if (!fp_)
@@ -170,6 +242,10 @@ inline bool FileWriter::seek_rel(std::ptrdiff_t offset) noexcept
   return (rc == 0);
 }
 
+/** \brief Flushes the file output stream.
+ *
+ * Writes any unwritten data from the file stream buffer to the associated file.
+ */
 inline void FileWriter::flush() noexcept
 {
   if (fp_)
@@ -178,6 +254,14 @@ inline void FileWriter::flush() noexcept
   }
 }
 
+/** \brief Writes `nr_values` elements of type T.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data elements to be written. Needs to be trivially copyable.
+ * \param nr_values The number of data elements to write.
+ * \return The number of data elements that were successfully written.
+ */
 template <typename T, typename>
 inline bool FileWriter::write(const T& value) noexcept
 {
@@ -186,6 +270,15 @@ inline bool FileWriter::write(const T& value) noexcept
   return (nr_values_written == 1);
 }
 
+/** \brief Writes `nr_values` elements of type T.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data elements to be written. Needs to be trivially copyable.
+ * \param[out] values A pointer to the memory location where the elements to be written can be read from.
+ * \param nr_values The number of data elements to write.
+ * \return The number of data elements that were successfully written.
+ */
 template <typename T, typename>
 inline std::size_t FileWriter::write(const T* values, std::size_t nr_values) noexcept
 {
@@ -196,12 +289,26 @@ inline std::size_t FileWriter::write(const T* values, std::size_t nr_values) noe
 
 // ----------
 
+/** \brief Writes an element of type T to `sink`.
+ *
+ * \tparam T The type of the data element to be written. Needs to be trivially copyable.
+ * \param sink The sink FileWriter instance.
+ * \return True, if read operation was successful, false otherwise.
+ */
 template <typename T, typename>
 inline bool write(FileWriter& sink, const T& value) noexcept
 {
   return sink.write(value);
 };
 
+/** \brief Writes `nr_values` elements of type T to `sink`.
+ *
+ * \tparam T The type of the data elements to be written. Needs to be trivially copyable.
+ * \param sink The sink FileWriter instance.
+ * \param[out] values A pointer to the memory location where the elements to be written can be read from.
+ * \param nr_values The number of data elements to write.
+ * \return The number of data elements that were successfully written.
+ */
 template <typename T, typename>
 inline std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noexcept
 {

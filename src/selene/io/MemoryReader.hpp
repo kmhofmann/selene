@@ -16,6 +16,12 @@
 namespace selene {
 namespace io {
 
+/** \brief Class for reading binary data from memory.
+ *
+ * Class for reading binary data from memory. Provides the usual operations for random memory access. As much of the
+ * interface as possible is equal to the FileReader and VectorReader classes. This enables user code to abstract from
+ * the particular type of "reader" by means of static polymorphism (e.g. treating the "reader" type as a template).
+ */
 class MemoryReader
 {
 public:
@@ -67,6 +73,14 @@ std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) noexcep
 // ----------
 // Implementation:
 
+/** \brief Opens the specified memory region for reading and sets the read pointer to the beginning of the region.
+ *
+ * If the open operation fails (e.g. if `nullptr` was passed), the function will throw a `std::runtime_error` exception.
+ * See also MemoryReader::open.
+ *
+ * \param data A pointer to the beginning of the memory region to be read.
+ * \param len The size in bytes of the memory region to be read.
+ */
 inline MemoryReader::MemoryReader(const std::uint8_t* data, std::size_t len)
 {
   if (!open(data, len))
@@ -75,11 +89,26 @@ inline MemoryReader::MemoryReader(const std::uint8_t* data, std::size_t len)
   }
 }
 
+/** \brief Returns a native handle to the memory region.
+ *
+ * \return The native memory handle in form of a `std::uint8_t`. The returned handle will point to the current internal
+ *         read position, not to the beginning of the memory region as specified in the constructor.
+ *         Will return `nullptr` if no memory region is currently opened.
+ */
 inline const std::uint8_t* MemoryReader::handle() noexcept
 {
   return ptr_;
 }
 
+/** \brief Opens the specified memory region for reading and sets the read pointer to the beginning of the region.
+ *
+ * Any already open memory region will be closed.
+ * If `nullptr` is passed to `data`, or a length of 0 is passed to `len`, the open operation will fail.
+ *
+ * \param data A pointer to the beginning of the memory region to be read.
+ * \param len The size in bytes of the memory region to be read.
+ * \return True, if the memory region was successfully opened; false otherwise.
+ */
 inline bool MemoryReader::open(const std::uint8_t* data, std::size_t len) noexcept
 {
   if (data == nullptr || len == 0)
@@ -93,6 +122,10 @@ inline bool MemoryReader::open(const std::uint8_t* data, std::size_t len) noexce
   return true;
 }
 
+/** \brief Closes an open memory region.
+ *
+ * The function will have no effect, if no memory region is currently opened.
+ */
 inline void MemoryReader::close() noexcept
 {
   data_ = nullptr;
@@ -100,11 +133,20 @@ inline void MemoryReader::close() noexcept
   ptr_ = nullptr;
 }
 
+/** \brief Returns whether a memory region is open.
+ *
+ * \return True, if a memory region is open; false otherwise.
+ */
 inline bool MemoryReader::is_open() const noexcept
 {
   return (data_ != nullptr);
 }
 
+/** \brief Returns whether the end of the memory region has been reached.
+ *
+ * \return True, if the internal memory pointer is outside of the memory region (or if no memory region is open);
+ * false otherwise.
+ */
 inline bool MemoryReader::is_eof() const noexcept
 {
   if (data_ == nullptr)
@@ -115,34 +157,59 @@ inline bool MemoryReader::is_eof() const noexcept
   return (ptr_ >= data_ + len_ || ptr_ < data_);
 }
 
+/** \brief Returns the current value of the position inside the memory region.
+ *
+ * \return The numeric value of the position inside the memory region, or -1 on failure (also, if no memory region is
+ *         open).
+ */
 inline std::ptrdiff_t MemoryReader::position() const noexcept
 {
   if (data_ == nullptr)
   {
-    return 0;
+    return -1;
   }
 
   return ptr_ - data_;
 }
 
+/** \brief Returns the total size of the memory region.
+ *
+ * \return The total size of the memory region in bytes, irrespective of the current position inside the memory region.
+ */
 inline std::size_t MemoryReader::size() const noexcept
 {
   return static_cast<std::size_t>(len_);
 }
 
+/** \brief Returns the remaining data size that can still be read.
+ *
+ * \return The size in bytes of the remaining data that can still be read.
+ */
 inline std::ptrdiff_t MemoryReader::bytes_remaining() const noexcept
 {
   return is_eof() ? 0 : (data_ + len_) - ptr_;
 }
 
+/** \brief Resets the current memory position to the beginning of the memory region.
+ *
+ * The function will have no effect if no memory region is open.
+ */
 inline void MemoryReader::rewind() noexcept
 {
   ptr_ = data_;
 }
 
+/** \brief Performs an absolute seek operation to the specified offset.
+ *
+ * The function sets the internal memory region pointer to the specified offset.
+ * Failure cases include no memory region being open, or the offset being outside the memory region.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
 inline bool MemoryReader::seek_abs(std::ptrdiff_t offset) noexcept
 {
-  if (offset < 0 || offset > len_)
+  if (!is_open() || offset < 0 || offset > len_)
   {
     return false;
   }
@@ -151,9 +218,17 @@ inline bool MemoryReader::seek_abs(std::ptrdiff_t offset) noexcept
   return true;
 }
 
+/** \brief Performs a relative seek operation by the specified offset.
+ *
+ * The function moves the internal memory region pointer by the specified relative offset.
+ * Failure cases include no memory region being open, or the resulting position being outside the memory region.
+ *
+ * \param offset The relative offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
 inline bool MemoryReader::seek_rel(std::ptrdiff_t offset) noexcept
 {
-  if (ptr_ + offset < data_ || ptr_ + offset >= data_ + len_)
+  if (!is_open() || ptr_ + offset < data_ || ptr_ + offset >= data_ + len_)
   {
     return false;
   }
@@ -162,6 +237,14 @@ inline bool MemoryReader::seek_rel(std::ptrdiff_t offset) noexcept
   return true;
 }
 
+/** \brief Reads an element of type T and writes the element to the output parameter `value`.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param[out] value An element of type T, if the read operation was successful.
+ * \return True, if read operation was successful, false otherwise.
+ */
 template <typename T, typename>
 inline bool MemoryReader::read(T& value) noexcept
 {
@@ -177,6 +260,15 @@ inline bool MemoryReader::read(T& value) noexcept
   return true;
 };
 
+/** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data elements to be read. Needs to be trivially copyable.
+ * \param[out] values A pointer to a memory location where the read elements should be written to.
+ * \param nr_values The number of data elements to read.
+ * \return The number of data elements that were successfully read.
+ */
 template <typename T, typename>
 inline std::size_t MemoryReader::read(T* values, std::size_t nr_values) noexcept
 {
@@ -191,6 +283,15 @@ inline std::size_t MemoryReader::read(T* values, std::size_t nr_values) noexcept
 
 // ----------
 
+/** \brief Reads an element of type T from `source` and returns the element.
+ *
+ * The function does not perform an explicit check (beyond a debug-mode assertion) whether the requested element was
+ * actually read. If the read operation failed, then the returned result is undefined.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param source The source MemoryReader instance.
+ * \return An element of type T, if the read operation was successful.
+ */
 template <typename T, typename>
 T read(MemoryReader& source)
 {
@@ -200,12 +301,27 @@ T read(MemoryReader& source)
   return value;
 };
 
+/** \brief Reads an element of type T from `source` and writes the element to the output parameter `value`.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param source The source MemoryReader instance.
+ * \param[out] value An element of type T, if the read operation was successful.
+ * \return True, if read operation was successful, false otherwise.
+ */
 template <typename T, typename>
 inline bool read(MemoryReader& source, T& value) noexcept
 {
   return source.read(value);
 };
 
+/** \brief Reads `nr_values` elements of type T from `source` and writes the elements to the output parameter `values`.
+ *
+ * \tparam T The type of the data elements to be read. Needs to be trivially copyable.
+ * \param source The source MemoryReader instance.
+ * \param[out] values A pointer to a memory location where the read elements should be written to.
+ * \param nr_values The number of data elements to read.
+ * \return The number of data elements that were successfully read.
+ */
 template <typename T, typename>
 inline std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) noexcept
 {

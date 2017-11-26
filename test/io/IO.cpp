@@ -54,7 +54,7 @@ void write_test_1(Target* target)
   REQUIRE(!handle_valid(f));
   REQUIRE(!f.is_open());
   REQUIRE(f.is_eof());
-  REQUIRE(f.position() == 0);
+  REQUIRE(f.position() == -1);
 
   f.open(*target, WriterMode::Write);
   REQUIRE(handle_valid(f));
@@ -79,7 +79,7 @@ void write_test_1(Target* target)
   REQUIRE(!handle_valid(f));
   REQUIRE(!f.is_open());
   REQUIRE(f.is_eof());
-  REQUIRE(f.position() == 0);
+  REQUIRE(f.position() == -1);
 }
 
 template <typename SourceType, typename Source>
@@ -89,7 +89,7 @@ void read_test_1(Source* source)
   REQUIRE(!handle_valid(f));
   REQUIRE(!f.is_open());
   REQUIRE(f.is_eof());
-  REQUIRE(f.position() == 0);
+  REQUIRE(f.position() == -1);
 
   f.open(*source);
   REQUIRE(handle_valid(f));

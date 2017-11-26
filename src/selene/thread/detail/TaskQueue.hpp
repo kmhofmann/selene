@@ -1,6 +1,7 @@
 #ifndef SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
 #define SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
 
+#include <atomic>
 #include <condition_variable>
 #include <deque>
 #include <limits>
