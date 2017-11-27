@@ -85,10 +85,11 @@ bool PNGDecompressionObject::valid() const
   return impl_->valid;
 }
 
-bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8, bool strip_alpha_channel,
-                                                          bool swap_alpha_channel, bool set_bgr,
-                                                          bool invert_alpha_channel, bool invert_monochrome,
-                                                          bool convert_gray_to_rgb, bool convert_rgb_to_gray)
+bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8, bool set_background,
+                                                          bool strip_alpha_channel, bool swap_alpha_channel,
+                                                          bool set_bgr, bool invert_alpha_channel,
+                                                          bool invert_monochrome, bool convert_gray_to_rgb,
+                                                          bool convert_rgb_to_gray)
 {
   auto png_ptr = impl_->png_ptr;
   auto info_ptr = impl_->info_ptr;
@@ -171,22 +172,30 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
   {
     png_set_tRNS_to_alpha(png_ptr);
 
-    if (impl_->pixel_format_ == PixelFormat::RGB)
+    if (impl_->pixel_format_ == PixelFormat::Y)
+    {
+      impl_->pixel_format_ = PixelFormat::YA;
+    }
+    else if (impl_->pixel_format_ == PixelFormat::RGB)
     {
       impl_->pixel_format_ = PixelFormat::RGBA;
     }
   }
 
-  // Set the background color to draw transparent and alpha images over.
-  png_color_16 my_background, *image_background;
+  if (set_background)
+  {
+    // Set the background color to draw transparent and alpha images over.
+    png_color_16 my_background = {0, 0, 0, 0, 0};
+    png_color_16* image_background;
 
-  if (png_get_bKGD(png_ptr, info_ptr, &image_background) != 0)
-  {
-    png_set_background(png_ptr, image_background, PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
-  }
-  else
-  {
-    png_set_background(png_ptr, &my_background, PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
+    if (png_get_bKGD(png_ptr, info_ptr, &image_background) != 0)
+    {
+      png_set_background(png_ptr, image_background, PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
+    }
+    else
+    {
+      png_set_background(png_ptr, &my_background, PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
+    }
   }
 
   int intent;

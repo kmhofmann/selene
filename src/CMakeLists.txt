@@ -48,6 +48,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp

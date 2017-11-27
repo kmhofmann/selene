@@ -6,6 +6,7 @@
 #define SELENE_IMG_PIXEL_FORMAT_HPP
 
 #include <cstdlib>
+#include <ostream>
 
 namespace selene {
 namespace img {
@@ -74,6 +75,10 @@ inline std::size_t get_nr_channels(PixelFormat pixel_format)
 
   return 0;
 }
+
+std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format);
+
+std::ostream& operator <<(std::ostream& os, SampleType sample_type);
 
 } // namespace img
 } // namespace selene

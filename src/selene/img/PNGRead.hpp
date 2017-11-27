@@ -60,7 +60,8 @@ public:
 struct PNGDecompressionOptions
 {
   bool force_bit_depth_8; // enforce a bit depth 8, for 16-bit inputs
-  bool strip_alpha_channel; // remove a potential alpha channel (e.g. RGBA -> RGB, YA -> Y)
+  bool set_background; // composite against supplied background color, removing alpha channel (RGBA -> RGB, YA -> Y)
+  bool strip_alpha_channel; // remove a potential alpha channel (RGBA -> RGB, YA -> Y)
   bool swap_alpha_channel; // read ARGB instead of RGBA, for RGBA images
   bool set_bgr; // convert RGB to BGR
   bool invert_alpha_channel; // invert values in alpha channel (e.g. 0 -> 255)
@@ -68,12 +69,14 @@ struct PNGDecompressionOptions
   bool convert_gray_to_rgb; // convert grayscale images to RGB
   bool convert_rgb_to_gray; // convert RGB images to grayscale
 
-  explicit PNGDecompressionOptions(bool force_bit_depth_8_ = false, bool strip_alpha_channel_ = false,
-                                   bool swap_alpha_channel_ = false, bool set_bgr_ = false,
-                                   bool invert_alpha_channel_ = false, bool invert_monochrome_ = false,
-                                   bool convert_gray_to_rgb_ = false, bool convert_rgb_to_gray_ = false)
-      : force_bit_depth_8(force_bit_depth_8_), strip_alpha_channel(strip_alpha_channel_),
-        swap_alpha_channel(swap_alpha_channel_), set_bgr(set_bgr_), invert_alpha_channel(invert_alpha_channel_),
+  explicit PNGDecompressionOptions(bool force_bit_depth_8_ = false, bool set_background_ = false,
+                                   bool strip_alpha_channel_ = false, bool swap_alpha_channel_ = false,
+                                   bool set_bgr_ = false, bool invert_alpha_channel_ = false,
+                                   bool invert_monochrome_ = false, bool convert_gray_to_rgb_ = false,
+                                   bool convert_rgb_to_gray_ = false)
+      : force_bit_depth_8(force_bit_depth_8_), set_background(set_background_),
+        strip_alpha_channel(strip_alpha_channel_), swap_alpha_channel(swap_alpha_channel_),
+        set_bgr(set_bgr_), invert_alpha_channel(invert_alpha_channel_),
         invert_monochrome(invert_monochrome_), convert_gray_to_rgb(convert_gray_to_rgb_),
         convert_rgb_to_gray(convert_rgb_to_gray_)
   {
@@ -90,7 +93,7 @@ public:
   bool error_state() const;
   const MessageLog& message_log() const;
 
-  bool set_decompression_parameters(bool, bool, bool, bool, bool, bool, bool, bool);
+  bool set_decompression_parameters(bool, bool, bool, bool, bool, bool, bool, bool, bool);
   PixelFormat get_pixel_format() const;
 
 private:
@@ -228,10 +231,11 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompres
     return ImageData();
   }
 
-  const bool pars_set = obj.set_decompression_parameters(options.force_bit_depth_8, options.strip_alpha_channel,
-                                                         options.swap_alpha_channel, options.set_bgr,
-                                                         options.invert_alpha_channel, options.invert_monochrome,
-                                                         options.convert_gray_to_rgb, options.convert_rgb_to_gray);
+  const bool pars_set = obj.set_decompression_parameters(options.force_bit_depth_8, options.set_background,
+                                                         options.strip_alpha_channel, options.swap_alpha_channel,
+                                                         options.set_bgr, options.invert_alpha_channel,
+                                                         options.invert_monochrome, options.convert_gray_to_rgb,
+                                                         options.convert_rgb_to_gray);
 
   if (!pars_set)
   {

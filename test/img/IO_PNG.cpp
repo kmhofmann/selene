@@ -7,6 +7,7 @@
 #include <catch.hpp>
 
 #include <cstdlib>
+#include <cstring>
 
 #include <boost/filesystem.hpp>
 
@@ -50,6 +51,43 @@ fs::path test_suite_dir()
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
   return (env_var) ? fs::path(env_var) / "png_suite" : fs::path("../data/png_suite");
+}
+
+void check_write_read(ImageData& img_data, const boost::filesystem::path& tmp_path)
+{
+  // Write as PNG file...
+  FileWriter sink((tmp_path / "test_img.png").c_str());
+  REQUIRE(sink.is_open());
+  MessageLog messages_write;
+  write_png(sink, img_data, PNGCompressionOptions(), &messages_write);
+  REQUIRE(messages_write.messages().empty());
+  sink.close();
+  REQUIRE(!sink.is_open());
+
+  // ...and read again
+  FileReader source((tmp_path / "test_img.png").c_str());
+  MessageLog messages_read;
+  auto img_data_2 = read_png(source, PNGDecompressionOptions(), &messages_read);
+  REQUIRE(messages_read.messages().empty());
+  source.close();
+  REQUIRE(!source.is_open());
+
+  // Make sure that content and state is the same
+  REQUIRE(img_data_2.is_valid());
+  REQUIRE(img_data_2.width() == img_data.width());
+  REQUIRE(img_data_2.height() == img_data.height());
+  REQUIRE(img_data_2.stride_bytes() == img_data.stride_bytes());
+  REQUIRE(img_data_2.nr_channels() == img_data.nr_channels());
+  REQUIRE(img_data_2.nr_bytes_per_channel() == img_data.nr_bytes_per_channel());
+  REQUIRE(img_data_2.pixel_format() == img_data.pixel_format());
+  REQUIRE(img_data_2.sample_type() == img_data.sample_type());
+  REQUIRE(img_data_2.total_bytes() == img_data.total_bytes());
+
+  const auto nr_bytes_per_row = img_data_2.width() * img_data_2.nr_channels() * img_data_2.nr_bytes_per_channel();
+  for (Length y = 0; y < img_data_2.height(); ++y)
+  {
+    REQUIRE(std::memcmp(img_data_2.byte_ptr(y), img_data.byte_ptr(y), nr_bytes_per_row) == 0);
+  }
 }
 
 } // namespace _
@@ -233,6 +271,7 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
 
 TEST_CASE("PNG reading of the official test suite", "[img]")
 {
+  const auto tmp_path = get_tmp_path();
   const auto test_suite_path = test_suite_dir();
   for (boost::filesystem::directory_entry& e : boost::filesystem::directory_iterator(test_suite_path))
   {
@@ -260,6 +299,8 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
         REQUIRE(!img_data.is_view());
         REQUIRE(!img_data.is_empty());
         REQUIRE(img_data.is_valid());
+
+        check_write_read(img_data, tmp_path);
       }
       else
       {
