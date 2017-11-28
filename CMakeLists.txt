@@ -83,6 +83,18 @@ else()
     message(WARNING "Building without libpng support.")
 endif()
 
+find_package(OpenCV)
+if (OPENCV_CORE_FOUND)
+    message("Building with OpenCV support.")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSELENE_WITH_OPENCV")
+    if (has_parent)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSELENE_WITH_OPENCV" PARENT_SCOPE)
+    endif()
+else()
+    message(WARNING "Building without OpenCV support.")
+endif()
+
+
 #------------------------------------------------------------------------------
 
 # Add the selene library target

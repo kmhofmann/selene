@@ -43,12 +43,12 @@ target_sources(selene_img
         PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp
@@ -60,6 +60,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/OpenCV.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Pixel.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelTraits.hpp
@@ -84,6 +85,11 @@ endif()
 if (PNG_FOUND)
     target_include_directories(selene_img PRIVATE ${PNG_INCLUDE_DIR})
     target_link_libraries(selene_img ${PNG_LIBRARIES})
+endif()
+
+if (OPENCV_CORE_FOUND)
+    target_include_directories(selene_img PRIVATE ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(selene_img ${OpenCV_LIBS})
 endif()
 
 #------------------------------------------------------------------------------

@@ -19,7 +19,7 @@ template <typename Element_>
 struct PixelTraits
 {
   using Element = Element_;
-  static constexpr std::uint16_t nr_channels = 1;
+  static constexpr std::uint32_t nr_channels = 1;
   static constexpr std::uint8_t nr_bytes = sizeof(Element);
   static constexpr std::uint8_t nr_bytes_per_channel = sizeof(Element);
 
@@ -37,10 +37,10 @@ struct PixelTraits
 template <typename T, std::uint32_t N>
 struct PixelTraits<Pixel<T, N>>
 {
-  using Element = Pixel<T, N>;
-  static constexpr std::uint16_t nr_channels = N;
-  static constexpr std::uint8_t nr_bytes = sizeof(Element);
-  static constexpr std::uint8_t nr_bytes_per_channel = sizeof(Element) / N;
+  using Element = T;
+  static constexpr std::uint32_t nr_channels = N;
+  static constexpr std::uint8_t nr_bytes = sizeof(Pixel<T, N>);
+  static constexpr std::uint8_t nr_bytes_per_channel = sizeof(Element);
 
   static constexpr bool is_integral = std::is_integral<T>::value;
   static constexpr bool is_floating_point = std::is_floating_point<T>::value;

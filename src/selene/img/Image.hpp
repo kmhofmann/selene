@@ -40,7 +40,7 @@ class Image
 public:
   Image();
   Image(Length width, Length height);
-  Image(Length width, Length height, T value);
+  Image(Length width, Length height, Stride stride_bytes);
   Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes);
   Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes);
 
@@ -204,6 +204,7 @@ Image<T>::Image()
 
 /** \brief Constructs an image of the specified width and height.
  *
+ * Image content will be undefined.
  * The image data will be owned, i.e. `is_view() == false`.
  *
  * @tparam T The pixel type.
@@ -218,22 +219,22 @@ Image<T>::Image(Length width, Length height)
   allocate_bytes(stride_bytes_ * height_);
 }
 
-/** \brief Constructs an image of the specified width and height, where each pixel has value `value`.
+/** \brief Constructs an image of the specified width, height, and stride in bytes.
  *
+ * Image content will be undefined.
  * The image data will be owned, i.e. `is_view() == false`.
  *
  * @tparam T The pixel type.
  * @param width Desired image width.
  * @param height Desired image height.
- * @param value The value each pixel should take.
+ * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename T>
-Image<T>::Image(Length width, Length height, T value)
-    : data_(nullptr), stride_bytes_(PixelTraits<T>::nr_bytes * width),
+Image<T>::Image(Length width, Length height, Stride stride_bytes)
+    : data_(nullptr), stride_bytes_(std::max(stride_bytes, PixelTraits<T>::nr_bytes * width)),
       width_(width), height_(height), owns_memory_(true)
 {
   allocate_bytes(stride_bytes_ * height_);
-  fill(value);
 }
 
 /** \brief Constructs an image view (non-owned data) from supplied memory.

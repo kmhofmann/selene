@@ -5,6 +5,7 @@
 #ifndef SELENE_IMG_PIXEL_HPP
 #define SELENE_IMG_PIXEL_HPP
 
+#include <selene/base/Assert.hpp>
 #include <selene/base/Types.hpp>
 
 #include <array>
@@ -174,6 +175,7 @@ inline const T* Pixel<T, nr_channels_>::data() const noexcept
 template <typename T, std::uint32_t nr_channels_>
 inline constexpr T& Pixel<T, nr_channels_>::operator[](std::size_t n) noexcept
 {
+  SELENE_ASSERT(n < nr_channels);
   return data_[n];
 }
 
@@ -185,6 +187,7 @@ inline constexpr T& Pixel<T, nr_channels_>::operator[](std::size_t n) noexcept
 template <typename T, std::uint32_t nr_channels_>
 inline constexpr const T& Pixel<T, nr_channels_>::operator[](std::size_t n) const noexcept
 {
+  SELENE_ASSERT(n < nr_channels);
   return data_[n];
 }
 
