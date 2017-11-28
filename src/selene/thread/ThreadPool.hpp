@@ -29,17 +29,22 @@ namespace thread {
 // and
 // "C++ Concurrency in Action", first edition, listing 9.2
 
+/** \brief Simple thread pool, to enable task (function) based parallelism.
+ *
+ * Starts a user-defined number of threads and contains a task queue, to which function invocations can be pushed.
+ * These "callables" are then taken from the queue and processed in parallel on the running pool threads.
+ */
 class ThreadPool
 {
 public:
   explicit ThreadPool(std::size_t num_threads);
   ~ThreadPool();
 
-  ThreadPool(const ThreadPool&) = delete;
-  ThreadPool& operator=(const ThreadPool&) = delete;
+  ThreadPool(const ThreadPool&) = delete;  ///< Copy constructor (deleted).
+  ThreadPool& operator=(const ThreadPool&) = delete;  ///< Copy assignment operator (deleted).
 
-  ThreadPool(ThreadPool&&) = delete;
-  ThreadPool& operator=(ThreadPool&&) = delete;
+  ThreadPool(ThreadPool&&) = delete;  ///< Move constructor.
+  ThreadPool& operator=(ThreadPool&&) = delete;  ///< Move assignment operator.
 
   template <typename Func, typename... Args>
   auto push(Func&& func, Args&& ... args) -> std::future<typename std::result_of<Func(Args...)>::type>;
@@ -58,6 +63,15 @@ private:
 };
 
 
+/** \brief Enables asynchronous function execution on the specified thread pool.
+ *
+ * @tparam Func A "callable" type.
+ * @tparam Args Variadic list of argument types.
+ * @param thread_pool The thread pool on which the function invocation should be executed.
+ * @param f The identifier of a callable, i.e. a function name or `std::function<>` instance.
+ * @param args The arguments to the function invocation to be executed.
+ * @return A `std::future<ReturnType>` to hold the result of the asynchronous operation.
+ */
 template <typename Func, typename... Args>
 auto async(ThreadPool& thread_pool, Func&& f, Args&&... args)
 {
@@ -65,6 +79,10 @@ auto async(ThreadPool& thread_pool, Func&& f, Args&&... args)
 }
 
 
+/** \brief Constructor. Starts the provided number of threads that wait for task execution.
+ *
+ * @param num_threads Number of threads in the thread pool.
+ */
 inline ThreadPool::ThreadPool(std::size_t num_threads)
     : index_(0), num_threads_(0)
 {
@@ -83,6 +101,8 @@ inline ThreadPool::ThreadPool(std::size_t num_threads)
 }
 
 
+/** \brief Destructor. Finishes execution of all remaining tasks on task queue.
+ */
 inline ThreadPool::~ThreadPool()
 {
   std::lock_guard<std::mutex> lock(mutex_);
@@ -92,6 +112,14 @@ inline ThreadPool::~ThreadPool()
 }
 
 
+/** \brief Adds a function invocation to the task queue of the thread pool.
+ *
+ * @tparam Func A "callable" type.
+ * @tparam Args Variadic list of argument types.
+ * @param func The identifier of a callable, i.e. a function name or `std::function<>` instance.
+ * @param args The arguments to the function invocation to be executed.
+ * @return A `std::future<ReturnType>` to hold the result of the asynchronous operation.
+ */
 template <typename Func, typename... Args>
 auto ThreadPool::push(Func&& func, Args&& ... args) -> std::future<typename std::result_of<Func(Args...)>::type>
 {
@@ -116,6 +144,10 @@ auto ThreadPool::push(Func&& func, Args&& ... args) -> std::future<typename std:
 }
 
 
+/** \brief Returns whether the thread pool is empty.
+ *
+ * @return True, if the thread pool is empty, i.e. the number of running threads is 0; false otherwise.
+ */
 inline bool ThreadPool::empty() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
@@ -123,6 +155,10 @@ inline bool ThreadPool::empty() const
 }
 
 
+/** \brief Returns the number of running threads in the thread pool.
+ *
+ * @return The number of threads running in the thread pool.
+ */
 inline std::size_t ThreadPool::size() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
