@@ -5,6 +5,8 @@
 #ifndef SELENE_BASE_UTILS_HPP
 #define SELENE_BASE_UTILS_HPP
 
+/// @file
+
 #include <cstdint>
 
 namespace selene {

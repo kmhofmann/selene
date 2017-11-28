@@ -5,8 +5,17 @@
 #ifndef SELENE_BASE_ASSERT_HPP
 #define SELENE_BASE_ASSERT_HPP
 
+/// @file
+
 #include <cstdio>
 
+/** \brief Forced assertion macro.
+ *
+ * Executes a forced assertion, i.e. the assertion condition is always checked, irrespective of build type (e.g. debug
+ * or release mode).
+ *
+ * If the assertion condition is violated, an error message is printed to stderr and std::abort() is called.
+ */
 #define SELENE_FORCED_ASSERT(condition) \
 { \
   if (!(condition)) \
@@ -22,6 +31,13 @@
 
 #ifndef NDEBUG
 
+  /** \brief Debug-mode assertion macro.
+   *
+   * Executes an assertion in debug mode, i.e. when the preprocessor definition `NDEBUG` is not defined.
+   * Has no effect when the preprocessor definition `NDEBUG` is defined, i.e. is a no-op then.
+   *
+   * If the assertion condition is violated, an error message is printed to stderr and std::abort() is called.
+   */
   #define SELENE_ASSERT(condition) \
   { \
     if (!(condition)) \

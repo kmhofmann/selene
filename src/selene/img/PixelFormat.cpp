@@ -7,7 +7,13 @@
 namespace selene {
 namespace img {
 
-std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format)
+/** \brief Converts a pixel format value into a character stream representation, e.g. for printing.
+ *
+ * @param os An output stream.
+ * @param pixel_format The pixel format value to be converted.
+ * @return A reference to the provided output stream.
+ */
+std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format)
 {
   switch (pixel_format)
   {
@@ -38,7 +44,13 @@ std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format)
   return os;
 }
 
-std::ostream& operator <<(std::ostream& os, SampleType sample_type)
+/** \brief Converts a sample type value into a character stream representation, e.g. for printing.
+ *
+ * @param os An output stream.
+ * @param sample_type The sample type value to be converted.
+ * @return A reference to the provided output stream.
+ */
+std::ostream& operator<<(std::ostream& os, SampleType sample_type)
 {
   switch (sample_type)
   {

@@ -5,6 +5,8 @@
 #ifndef SELENE_BASE_ALLOCATORS_HPP
 #define SELENE_BASE_ALLOCATORS_HPP
 
+/// @file
+
 #include <cstdint>
 #include <cstdlib>
 

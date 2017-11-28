@@ -5,6 +5,8 @@
 #ifndef SELENE_BASE_TYPES_HPP
 #define SELENE_BASE_TYPES_HPP
 
+/// @file
+
 namespace selene {
 
 using float32_t = float;  ///< 32-bit floating point type.

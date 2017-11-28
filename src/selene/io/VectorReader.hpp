@@ -5,6 +5,8 @@
 #ifndef SELENE_IO_VECTOR_READER_HPP
 #define SELENE_IO_VECTOR_READER_HPP
 
+/// @file
+
 #include <selene/base/Assert.hpp>
 
 #include <cstdint>

@@ -5,6 +5,8 @@
 #ifndef SELENE_BASE_MESSAGE_LOG_HPP
 #define SELENE_BASE_MESSAGE_LOG_HPP
 
+/// @file
+
 #include <string>
 #include <vector>
 

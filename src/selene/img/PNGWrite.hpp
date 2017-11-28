@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_PNG_WRITE_HPP
 #define SELENE_IMG_PNG_WRITE_HPP
 
+/// @file
+
 #if defined(SELENE_WITH_LIBPNG)
 
 #include <selene/base/Allocators.hpp>

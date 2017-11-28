@@ -5,6 +5,8 @@
 #ifndef SELENE_IO_WRITER_MODE_HPP
 #define SELENE_IO_WRITER_MODE_HPP
 
+/// @file
+
 namespace selene {
 namespace io {
 

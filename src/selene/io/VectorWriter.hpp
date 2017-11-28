@@ -5,6 +5,8 @@
 #ifndef SELENE_IO_VECTOR_WRITER_HPP
 #define SELENE_IO_VECTOR_WRITER_HPP
 
+/// @file
+
 #include <selene/base/Assert.hpp>
 #include <selene/io/WriterMode.hpp>
 

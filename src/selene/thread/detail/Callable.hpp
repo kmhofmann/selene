@@ -1,3 +1,7 @@
+// This file is part of the `Selene` library.
+// Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
+// Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
+
 #ifndef SELENE_THREAD_DETAIL_CALLABLE_HPP
 #define SELENE_THREAD_DETAIL_CALLABLE_HPP
 

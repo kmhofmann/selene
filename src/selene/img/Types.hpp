@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_TYPES_HPP
 #define SELENE_IMG_TYPES_HPP
 
+/// @file
+
 #include <cstdint>
 
 namespace selene {

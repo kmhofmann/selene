@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_BOUNDING_BOX_HPP
 #define SELENE_IMG_BOUNDING_BOX_HPP
 
+/// @file
+
 namespace selene {
 namespace img {
 

@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_IMAGE_DATA_HPP
 #define SELENE_IMG_IMAGE_DATA_HPP
 
+/// @file
+
 #include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
 #include <selene/base/MemoryBlock.hpp>

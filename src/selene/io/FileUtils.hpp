@@ -5,6 +5,8 @@
 #ifndef SELENE_IO_FILE_UTILS_HPP
 #define SELENE_IO_FILE_UTILS_HPP
 
+/// @file
+
 #include <cstdint>
 #include <string>
 #include <vector>

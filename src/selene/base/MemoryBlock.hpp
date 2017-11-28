@@ -5,6 +5,8 @@
 #ifndef SELENE_BASE_MEMORY_BLOCK_HPP
 #define SELENE_BASE_MEMORY_BLOCK_HPP
 
+/// @file
+
 #include <selene/base/Allocators.hpp>
 
 #include <cstdint>

@@ -5,38 +5,50 @@
 #ifndef SELENE_IMG_PIXEL_FORMAT_HPP
 #define SELENE_IMG_PIXEL_FORMAT_HPP
 
+/// @file
+
 #include <cstdlib>
 #include <ostream>
 
 namespace selene {
 namespace img {
 
+/** \brief A pixel format enumeration.
+ *
+ * A pixel format is a semantic tag assigned to a pixel type, as part of a dynamically typed image, i.e. an `ImageData`
+ * instance.
+ */
 enum class PixelFormat : unsigned char
 {
-  Y,      // 1-channel: Grayscale
-  X,      // 1-channel: Unknown
+  Y,      ///< 1-channel format: Grayscale
+  X,      ///< 1-channel format: Unknown
 
-  YA,     // 2-channel: Grayscale & Transparency
-  XX,     // 2-channel: Unknown
+  YA,     ///< 2-channel format: Grayscale & Transparency
+  XX,     ///< 2-channel format: Unknown
 
-  RGB,    // 3-channel: RGB
-  BGR,    // 3-channel: BGR
-  YCbCr,  // 3-channel: YCbCr
-  CIELab, // 3-channel: CIELab
-  ICCLab, // 3-channel: ICCLab
-  XXX,    // 3-channel: Unknown
+  RGB,    ///< 3-channel format: RGB
+  BGR,    ///< 3-channel format: BGR
+  YCbCr,  ///< 3-channel format: YCbCr
+  CIELab, ///< 3-channel format: CIELab
+  ICCLab, ///< 3-channel format: ICCLab
+  XXX,    ///< 3-channel format: Unknown
 
-  RGBA,   // 4-channel: RGBA
-  BGRA,   // 4-channel: BGRA
-  ARGB,   // 4-channel: ARGB
-  ABGR,   // 4-channel: ABGR
-  CMYK,   // 4-channel: CMYK
-  YCCK,   // 4-channel: YCCK
-  XXXX,   // 4-channel: Unknown
+  RGBA,   ///< 4-channel format: RGBA
+  BGRA,   ///< 4-channel format: BGRA
+  ARGB,   ///< 4-channel format: ARGB
+  ABGR,   ///< 4-channel format: ABGR
+  CMYK,   ///< 4-channel format: CMYK
+  YCCK,   ///< 4-channel format: YCCK
+  XXXX,   ///< 4-channel format: Unknown
 
-  Unknown // Completely unknown
+  Unknown ///< Completely unknown pixel format.
 };
 
+/** \brief A sample type enumeration.
+ *
+ * The sample type is a semantic tag assigned to a pixel sample type (i.e. the per-channel value type of a pixel), as
+ * part of a dynamically typed image, i.e. an `ImageData` instance.
+ */
 enum class SampleType : unsigned char
 {
   UnsignedInteger,
@@ -45,6 +57,22 @@ enum class SampleType : unsigned char
   Unknown
 };
 
+std::size_t get_nr_channels(PixelFormat pixel_format);
+
+std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format);
+
+std::ostream& operator <<(std::ostream& os, SampleType sample_type);
+
+// ----------
+// Implementation:
+
+/** \brief Returns the number of channels for a given pixel format.
+ *
+ * For example, the RGB pixel format has 3 channels; etc.
+ *
+ * @param pixel_format A pixel format value.
+ * @return The number of channels of the provided pixel format.
+ */
 inline std::size_t get_nr_channels(PixelFormat pixel_format)
 {
   switch (pixel_format)
@@ -75,10 +103,6 @@ inline std::size_t get_nr_channels(PixelFormat pixel_format)
 
   return 0;
 }
-
-std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format);
-
-std::ostream& operator <<(std::ostream& os, SampleType sample_type);
 
 } // namespace img
 } // namespace selene

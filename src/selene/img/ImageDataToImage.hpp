@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_IMAGE_DATA_TO_IMAGE_HPP
 #define SELENE_IMG_IMAGE_DATA_TO_IMAGE_HPP
 
+/// @file
+
 #include <selene/img/Image.hpp>
 #include <selene/img/ImageData.hpp>
 #include <selene/img/Pixel.hpp>
