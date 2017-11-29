@@ -16,6 +16,8 @@
 namespace selene {
 namespace img {
 
+/// \cond INTERNAL
+
 struct JPEGCompressionObject::Impl
 {
   jpeg_compress_struct cinfo;
@@ -26,6 +28,8 @@ struct JPEGCompressionObject::Impl
 
   bool valid = false;
 };
+
+/// \endcond
 
 JPEGCompressionObject::JPEGCompressionObject()
     : impl_(std::make_unique<JPEGCompressionObject::Impl>())
@@ -118,6 +122,8 @@ const MessageLog& JPEGCompressionObject::message_log() const
 // ----------------------
 // Compression structures
 
+/// \cond INTERNAL
+
 namespace detail
 {
 
@@ -207,6 +213,8 @@ bool flush_data_buffer(JPEGCompressionObject& obj, io::VectorWriter& sink)
 }
 
 } // namespace detail
+
+/// \endcond
 
 } // namespace img
 } // namespace selene

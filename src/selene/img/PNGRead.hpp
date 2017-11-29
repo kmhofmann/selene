@@ -132,6 +132,8 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source,
 namespace detail
 {
 
+/// \cond INTERNAL
+
 struct PNGOutputInfo
 {
   Index width;
@@ -159,6 +161,8 @@ private:
   PNGOutputInfo output_info_;
   bool error_state_;
 };
+
+/// \endcond
 
 } // namespace detail
 

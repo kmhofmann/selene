@@ -272,7 +272,7 @@ Image<T>::Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, S
 
 /** \brief Copy constructor.
  *
- * Constructs an image instance from the supplied image instance.
+ * Constructs an image instance from the supplied image.
  *
  * The ownership semantics will stay the same; i.e. if the supplied image has owned data, then so will the constructed
  * image (the data will be copied, s.t. `is_view() == false`), but if the supplied image points to non-owned data, then
@@ -405,54 +405,117 @@ inline Image<T>::~Image()
   deallocate_bytes_if_owned();
 }
 
+/** \brief Returns the image width.
+ *
+ * @tparam T The pixel type.
+ * @return Width of the image in pixels.
+ */
 template <typename T>
 inline Length Image<T>::width() const
 {
   return width_;
 }
 
+/** \brief Returns the image height.
+ *
+ * @tparam T The pixel type.
+ * @return Height of the image in pixels.
+ */
 template <typename T>
 inline Length Image<T>::height() const
 {
   return height_;
 }
 
+/** \brief Returns the row stride of the image in bytes.
+ *
+ * The row stride is the number of bytes that a row occupies in memory.
+ * It has to be greater or equal to the width times the size of a pixel element:
+ * `(stride_bytes() >= width() * PixelTraits<T>::nr_bytes)`.
+ * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
+ *
+ * @tparam T The pixel type.
+ * @return Row stride in bytes.
+ */
 template <typename T>
 inline Stride Image<T>::stride_bytes() const
 {
   return stride_bytes_;
 }
 
+/** \brief Returns the total number of bytes occupied by the image data in memory.
+ *
+ * The value returned is equal to `(stride_bytes() * height())`.
+ *
+ * @tparam The pixel type.
+ * @return Number of bytes occupied by the image data in memory.
+ */
 template <typename T>
 inline std::size_t Image<T>::total_bytes() const
 {
   return stride_bytes_ * height_;
 }
 
+/** \brief Returns whether the image data is stored packed in memory.
+ *
+ * Returns the boolean expression `(stride_bytes() == width() * PixelTraits<T>::nr_bytes)`.
+ *
+ * @tparam T The pixel type.
+ * @return True, if the image data stored packed; false otherwise.
+ */
 template <typename T>
 inline bool Image<T>::is_packed() const
 {
   return stride_bytes_ == PixelTraits<T>::nr_bytes * width_;
 }
 
+/** \brief Returns whether the image is a view onto (non-owned) memory.
+ *
+ * @tparam T The pixel type.
+ * @return True, if the image data points to non-owned memory; false otherwise, i.e. if the instance owns its own
+ *         memory.
+ */
 template <typename T>
 inline bool Image<T>::is_view() const
 {
   return !owns_memory_;
 }
 
+/** \brief Returns whether the image is empty.
+ *
+ * An image is considered empty if its internal data pointer points to `nullptr`, `width() == 0`, `height() == 0`, or
+ * any combination of these.
+ *
+ * @tparam T The pixel type.
+ * @return True, if the image is empty; false if it is non-empty.
+ */
 template <typename T>
 inline bool Image<T>::is_empty() const
 {
   return data_ == nullptr || width_ == 0 || height_ == 0;
 }
 
+/** \brief Returns whether the instance represents a valid image.
+ *
+ * Semantically equal to `!is_empty()`.
+ *
+ * @tparam T The pixel type.
+ * @return True, if the image is valid; false otherwise.
+ */
 template <typename T>
 inline bool Image<T>::is_valid() const
 {
   return !is_empty();
 }
 
+/** \brief Resets the image instance by clearing the image data and resetting the internal state to the state after
+ * default construction.
+ *
+ * Postconditions: `data() == nullptr && width() == 0 && height() == 0 && stride_bytes() == 0 && is_empty() &&
+ * !is_valid() && !is_view()`.
+ *
+ * @tparam T The pixel type.
+ */
 template <typename T>
 void Image<T>::clear()
 {
@@ -460,6 +523,11 @@ void Image<T>::clear()
   reset();
 }
 
+/** \brief Fills the image data, i.e. each pixel, with the specified value.
+ *
+ * @tparam T The pixel type.
+ * @param value The value that each image pixel should assume.
+ */
 template <typename T>
 void Image<T>::fill(T value)
 {
@@ -469,6 +537,20 @@ void Image<T>::fill(T value)
   }
 }
 
+/** \brief Resizes the allocated image data to exactly fit an image of size (width x height).
+ *
+ * Precondition: `!is_view()`.
+ *
+ * Postconditions: `!is_view() && is_packed()`.
+ *
+ * Equivalent to `resize(width, height, width * PixelTraits<T>::nr_bytes`.
+ * Images that are views onto non-owned memory cannot be resized. In this case, a `std::runtime_error` exception will
+ * be thrown.
+ *
+ * @tparam T The pixel type.
+ * @param width The new image width.
+ * @param height The new image height.
+ */
 template <typename T>
 void Image<T>::resize(Length width, Length height)
 {
@@ -476,6 +558,24 @@ void Image<T>::resize(Length width, Length height)
   resize(width, height, stride_bytes);
 }
 
+/** \brief Resizes the allocated image data to exactly fit an image of size (width x height), with user-defined row
+ * stride.
+ *
+ * Precondition: `!is_view()`.
+ *
+ * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits<T>::nr_bytes)`.
+ *
+ * Images that are views onto non-owned memory cannot be resized. In this case, a `std::runtime_error` exception will
+ * be thrown.
+ *
+ * No memory reallocation will happen, if the specified `width`, `height`, and `stride_bytes` parameters already match
+ * the internal state.
+ *
+ * @tparam T The pixel type.
+ * @param width The new image width.
+ * @param height The new image height.
+ * @param stride_bytes The desired row stride in bytes.
+ */
 template <typename T>
 void Image<T>::resize(Length width, Length height, Stride stride_bytes)
 {
@@ -490,6 +590,8 @@ void Image<T>::resize(Length width, Length height, Stride stride_bytes)
     throw std::runtime_error("Cannot resize external data");
   }
 
+  stride_bytes = std::max(stride_bytes, PixelTraits<T>::nr_bytes * width);
+
   deallocate_bytes();
   allocate_bytes(stride_bytes * height);
 
@@ -499,6 +601,16 @@ void Image<T>::resize(Length width, Length height, Stride stride_bytes)
   owns_memory_ = true;
 }
 
+/** \brief Sets the image data to be a view onto non-owned external memory.
+ *
+ * Postcondition: `is_view()`.
+ *
+ * @tparam T The pixel type.
+ * @param data Pointer to the external data.
+ * @param width The image width.
+ * @param height The image height.
+ * @param stride_bytes The row stride in bytes.
+ */
 template <typename T>
 inline void Image<T>::set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes)
 {
@@ -513,9 +625,23 @@ inline void Image<T>::set_view(std::uint8_t* data, Length width, Length height, 
   owns_memory_ = false;
 }
 
+/** \brief Sets the image data to the provided memory block, which will be owned by the `Image<>` instance.
+ *
+ * Precondition: `data.size() == stride_bytes * height`.
+ *
+ * Postcondition: `!is_view()`.
+ *
+ * @tparam T The pixel type.
+ * @param data Memory block of image data, to be owned by the image instance.
+ * @param width The image width.
+ * @param height The image height.
+ * @param stride_bytes The row stride in bytes.
+ */
 template <typename T>
 inline void Image<T>::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes)
 {
+  SELENE_ASSERT(data.size() == stride_bytes * height);
+
   // Clean up own data
   deallocate_bytes_if_owned();
 
@@ -527,96 +653,196 @@ inline void Image<T>::set_data(MemoryBlock<NewAllocator>&& data, Length width, L
   owns_memory_ = true;
 }
 
+/** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam T The pixel type.
+ * @return Pointer to the first pixel element.
+ */
 template <typename T>
 inline T* Image<T>::data()
 {
   return reinterpret_cast<T*>(byte_ptr());
 }
 
+/** \brief Returns a constant pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam T The pixel type.
+ * @return Constant pointer to the first pixel element.
+ */
 template <typename T>
 inline const T* Image<T>::data() const
 {
   return reinterpret_cast<const T*>(byte_ptr());
 }
 
+/** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam T The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first pixel element of the y-th row.
+ */
 template <typename T>
 inline T* Image<T>::data(Index y)
 {
   return reinterpret_cast<T*>(byte_ptr(y));
 }
 
+/** \brief Returns a constant pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam T The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first pixel element of the y-th row.
+ */
 template <typename T>
 inline const T* Image<T>::data(Index y) const
 {
   return reinterpret_cast<const T*>(byte_ptr(y));
 }
 
+/** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam T The pixel type.
+ * @param y Row index.
+ * @return Pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename T>
 inline T* Image<T>::data_row_end(Index y)
 {
   return reinterpret_cast<T*>(byte_ptr(y) + PixelTraits<T>::nr_bytes * width_);
 }
 
+/** \brief Returns a constant pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y,
+ * column `width()`).
+ *
+ * @tparam T The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename T>
 inline const T* Image<T>::data_row_end(Index y) const
 {
   return reinterpret_cast<const T*>(byte_ptr(y) + PixelTraits<T>::nr_bytes * width_);
 }
 
+/** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam T The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <typename T>
 inline T* Image<T>::data(Index x, Index y)
 {
   return reinterpret_cast<T*>(byte_ptr(x, y));
 }
 
+/** \brief Returns a constant pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam T The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the x-th pixel element of the y-th row.
+ */
 template <typename T>
 inline const T* Image<T>::data(Index x, Index y) const
 {
   return reinterpret_cast<const T*>(byte_ptr(x, y));
 }
 
+/** \brief Returns a pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam T The pixel type.
+ * @return Pointer to the first image data byte.
+ */
 template <typename T>
 inline std::uint8_t* Image<T>::byte_ptr()
 {
   return data_;
 }
 
+/** \brief Returns a constant pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam T The pixel type.
+ * @return Constant pointer to the first image data byte.
+ */
 template <typename T>
 inline const std::uint8_t* Image<T>::byte_ptr() const
 {
   return data_;
 }
 
+/** \brief Returns a pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam T The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first image data byte of row `y`.
+ */
 template <typename T>
 inline std::uint8_t* Image<T>::byte_ptr(Index y)
 {
   return data_ + compute_data_offset(y);
 }
 
+/** \brief Returns a constant pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam T The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first image data byte of row `y`.
+ */
 template <typename T>
 inline const std::uint8_t* Image<T>::byte_ptr(Index y) const
 {
   return data_ + compute_data_offset(y);
 }
 
+/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam T The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 template <typename T>
 inline std::uint8_t* Image<T>::byte_ptr(Index x, Index y)
 {
   return data_ + compute_data_offset(x, y);
 }
 
+/** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column
+ * `x`.
+ *
+ * @tparam T The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 template <typename T>
 inline const std::uint8_t* Image<T>::byte_ptr(Index x, Index y) const
 {
   return data_ + compute_data_offset(x, y);
 }
 
+/** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam T The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Reference to the pixel element at location `(x, y)`.
+ */
 template <typename T>
 inline T& Image<T>::operator()(Index x, Index y)
 {
   return *data(x, y);
 }
 
+/** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam T The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant reference to the pixel element at location `(x, y)`.
+ */
 template <typename T>
 inline const T& Image<T>::operator()(Index x, Index y) const
 {
@@ -703,6 +929,14 @@ inline MemoryBlock<NewAllocator> Image<T>::relinquish_data_ownership()
 
 // ----------
 
+/** \brief Copies the image represented by `src` into the image `dst`.
+ *
+ * After copying, `dst` will be owning its image data memory.
+ *
+ * @tparam T The pixel type.
+ * @param src Source image.
+ * @param dst Destination image.
+ */
 template <typename T>
 void clone(const Image<T>& src, Image<T>& dst)
 {
@@ -715,6 +949,19 @@ void clone(const Image<T>& src, Image<T>& dst)
   dst.copy_rows_from(src);
 }
 
+/** \brief Copies the specified part of the source image `src` into the image `dst`.
+ *
+ * There is no explicit check whether the region to be copied is within the source image bounds. Specifying an invalid
+ * region results in undefined behavior.
+ *
+ * @tparam T The pixel type.
+ * @param src Source image.
+ * @param x0 The top-left x-coordinate of the region to be copied.
+ * @param y0 The top-left y-coordinate of the region to be copied.
+ * @param width The width of the region to be copied.
+ * @param height The height of the region to be copied.
+ * @param dst Destination image.
+ */
 template <typename T>
 void clone(const Image<T>& src, Index x0, Index y0, Length width, Length height, Image<T>& dst)
 {
@@ -722,6 +969,14 @@ void clone(const Image<T>& src, Index x0, Index y0, Length width, Length height,
   clone(src_sub_view, dst);
 }
 
+/** \brief Returns a copy of the provided source image.
+ *
+ * After copying, the returned image will be owning its image data memory.
+ *
+ * @tparam T The pixel type.
+ * @param src Source image.
+ * @return Copied image.
+ */
 template <typename T>
 Image<T> clone(const Image<T>& src)
 {
@@ -730,6 +985,19 @@ Image<T> clone(const Image<T>& src)
   return dst;
 }
 
+/** \brief Returns a copy of the specified sub-region of the source image `src`.
+ *
+ * There is no explicit check whether the region to be copied is within the source image bounds. Specifying an invalid
+ * region results in undefined behavior.
+ *
+ * @tparam T The pixel type.
+ * @param src Source image.
+ * @param x0 The top-left x-coordinate of the sub-region to be copied.
+ * @param y0 The top-left y-coordinate of the sub-region to be copied.
+ * @param width The width of the sub-region to be copied.
+ * @param height The height of the sub-region to be copied.
+ * @return Copied image, containing the sub-region.
+ */
 template <typename T>
 Image<T> clone(const Image<T>& src, Index x0, Index y0, Length width, Length height)
 {
@@ -738,18 +1006,46 @@ Image<T> clone(const Image<T>& src, Index x0, Index y0, Length width, Length hei
   return dst;
 }
 
+/** \brief Returns an image representing a view onto the provided source image.
+ *
+ * @tparam T The pixel type.
+ * @param src Source image.
+ * @return An image (pointing to non-owned memory), which represents a view onto the source image.
+ */
 template <typename T>
 Image<T> view(const Image<T>& src)
 {
   return Image<T>(src.byte_ptr(), src.width(), src.height(), src.stride_bytes());
 }
 
+/** \brief Returns an image representing a view onto the specified sub-region of the provided source image.
+ *
+ * @tparam T The pixel type.
+ * @param src Source image.
+ * @param x0 The top-left x-coordinate of the sub-region.
+ * @param y0 The top-left y-coordinate of the sub-region.
+ * @param width The width of the sub-region.
+ * @param height The height of the sub-region.
+ * @return An image (pointing to non-owned memory), which represents a view onto the source image sub-region.
+ */
 template <typename T>
 Image<T> view(const Image<T>& src, Index x0, Index y0, Length width, Length height)
 {
   return Image<T>(src.byte_ptr(x0, y0), width, height, src.stride_bytes());
 }
 
+/** \brief Crops the image `img` to the specified sub-region.
+ *
+ * There is no explicit check whether the crop region is within the image bounds. Specifying an invalid region results
+ * in undefined behavior.
+ *
+ * @tparam T The pixel type.
+ * @param img The image to be cropped.
+ * @param x0 The top-left x-coordinate of the sub-region.
+ * @param y0 The top-left y-coordinate of the sub-region.
+ * @param width The width of the sub-region.
+ * @param height The height of the sub-region.
+ */
 template <typename T>
 void crop(Image<T>& img, Index x0, Index y0, Length width, Length height)
 {

@@ -42,7 +42,6 @@ void set_destination(PNGCompressionObject&, io::FileWriter&);
 void set_destination(PNGCompressionObject&, io::VectorWriter&);
 } // namespace detail
 
-
 struct PNGCompressionOptions
 {
   int compression_level;
@@ -94,6 +93,8 @@ bool write_png(PNGCompressionObject& obj, SinkType& sink, const ImageData& img_d
 //-----------------------------------------------------------------------------
 // Implementation:
 
+/// \cond INTERNAL
+
 namespace detail
 {
 
@@ -112,6 +113,8 @@ private:
 };
 
 } // namespace detail
+
+/// \endcond
 
 // ----------------
 // Public functions

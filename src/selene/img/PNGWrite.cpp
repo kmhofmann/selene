@@ -35,6 +35,8 @@ int determine_color_type(PixelFormat pixel_format)
 
 } // namespace _
 
+/// \cond INTERNAL
+
 struct PNGCompressionObject::Impl
 {
   png_structp png_ptr = nullptr;
@@ -42,6 +44,8 @@ struct PNGCompressionObject::Impl
   detail::PNGErrorManager error_manager;
   bool valid = false;
 };
+
+/// \endcond
 
 PNGCompressionObject::PNGCompressionObject()
     : impl_(std::make_unique<PNGCompressionObject::Impl>())
@@ -163,6 +167,8 @@ const MessageLog& PNGCompressionObject::message_log() const
 
 // ----------
 
+/// \cond INTERNAL
+
 namespace detail
 {
 
@@ -265,6 +271,8 @@ failure_state:;
 
 
 } // namespace detail
+
+/// \endcond
 
 } // namespace img
 } // namespace selene

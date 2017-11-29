@@ -117,6 +117,8 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source,
 namespace detail
 {
 
+/// \cond INTERNAL
+
 struct JPEGOutputInfo
 {
   const Index width;
@@ -140,6 +142,8 @@ private:
   JPEGDecompressionObject& obj_;
   BoundingBox<Index> region_;
 };
+
+/// \endcond
 
 } // namespace detail
 

@@ -99,6 +99,8 @@ bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img
 namespace detail
 {
 
+/// \cond INTERNAL
+
 class JPEGCompressionCycle
 {
 public:
@@ -110,6 +112,8 @@ public:
 private:
   JPEGCompressionObject& obj_;
 };
+
+/// \endcond
 
 } // namespace detail
 

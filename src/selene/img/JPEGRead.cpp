@@ -27,12 +27,16 @@ bool JPEGHeaderInfo::is_valid() const
 
 // ----------
 
+/// \cond INTERNAL
+
 struct JPEGDecompressionObject::Impl
 {
   jpeg_decompress_struct cinfo;
   detail::JPEGErrorManager error_manager;
   bool valid = false;
 };
+
+/// \endcond
 
 JPEGDecompressionObject::JPEGDecompressionObject()
     : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
@@ -80,6 +84,8 @@ const MessageLog& JPEGDecompressionObject::message_log() const
 }
 
 // ----------
+
+/// \cond INTERNAL
 
 namespace detail
 {
@@ -204,6 +210,8 @@ failure_state:
 }
 
 } // namespace detail
+
+/// \endcond
 
 } // namespace img
 } // namespace selene

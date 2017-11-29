@@ -27,7 +27,9 @@ bool PNGHeaderInfo::is_valid() const
   return width > 0 && height > 0 && nr_channels > 0 && bit_depth > 0;
 }
 
-//// ----------
+// ----------
+
+/// \cond INTERNAL
 
 struct PNGDecompressionObject::Impl
 {
@@ -38,6 +40,8 @@ struct PNGDecompressionObject::Impl
   PixelFormat pixel_format_ = PixelFormat::Unknown;
   bool valid = false;
 };
+
+/// \endcond
 
 PNGDecompressionObject::PNGDecompressionObject()
     : impl_(std::make_unique<PNGDecompressionObject::Impl>())
@@ -310,6 +314,8 @@ const MessageLog& PNGDecompressionObject::message_log() const
 
 // ----------
 
+/// \cond INTERNAL
+
 namespace detail
 {
 
@@ -497,6 +503,8 @@ PNGHeaderInfo read_header(io::MemoryReader& source, PNGDecompressionObject& obj)
 }
 
 } // namespace detail
+
+/// \endcond
 
 } // namespace img
 } // namespace selene
