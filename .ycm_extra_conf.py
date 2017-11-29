@@ -22,8 +22,9 @@ default_flags = [
     '-I', os.path.expanduser('~') + '/homebrew/opt/jpeg-turbo/include',
     '-I', './src',
     '-I', './external/Catch2/single_include',
-    '-D', 'SELENE_WITH_LIBJPEG_TURBO',
+    '-D', 'SELENE_WITH_LIBJPEG',
     '-D', 'SELENE_WITH_LIBPNG',
+    '-D', 'SELENE_WITH_OPENCV',
 ]
 
 

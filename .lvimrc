@@ -31,8 +31,8 @@ let s:cpp_opts = [
   \ '-I' . s:path . '/src',
   \ '-I' . s:path . '/external/Catch2/single_include',
   \ '-DSELENE_WITH_LIBJPEG',
-  \ '-DSELENE_WITH_LIBJPEG_TURBO',
   \ '-DSELENE_WITH_LIBPNG',
+  \ '-DSELENE_WITH_OPENCV',
   \ ]
 let s:cpp_clang_opts = []
 let s:cpp_gcc_opts = ['-Wno-attributes']
