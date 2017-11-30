@@ -17,11 +17,22 @@
 namespace selene {
 namespace img {
 
+/** \brief Constructor. Instantiates a PNGHeaderInfo object with the specified parameters.
+ *
+ * @param width_ The image width.
+ * @param height_ The image height.
+ * @param nr_channels_ The number of image channels.
+ * @param bit_depth_ The image bit depth (8 or 16).
+ */
 PNGHeaderInfo::PNGHeaderInfo(Length width_, Length height_, int nr_channels_, int bit_depth_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_)
 {
 }
 
+/** \brief Returns whether the contained PNG header information is valid.
+ *
+ * @return True, if the header information is valid; false otherwise.
+ */
 bool PNGHeaderInfo::is_valid() const
 {
   return width > 0 && height > 0 && nr_channels > 0 && bit_depth > 0;
@@ -40,8 +51,6 @@ struct PNGDecompressionObject::Impl
   PixelFormat pixel_format_ = PixelFormat::Unknown;
   bool valid = false;
 };
-
-/// \endcond
 
 PNGDecompressionObject::PNGDecompressionObject()
     : impl_(std::make_unique<PNGDecompressionObject::Impl>())
@@ -311,6 +320,8 @@ const MessageLog& PNGDecompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
 }
+
+/// \endcond
 
 // ----------
 

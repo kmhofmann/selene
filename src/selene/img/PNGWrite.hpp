@@ -42,14 +42,28 @@ void set_destination(PNGCompressionObject&, io::FileWriter&);
 void set_destination(PNGCompressionObject&, io::VectorWriter&);
 } // namespace detail
 
+/** \brief PNG compression options.
+ *
+ * For more detailed information, consult the libpng manual (libpng-manual.txt) provided with every libpng source
+ * distribution, or available here: http://www.libpng.org/pub/png/libpng-manual.txt
+ */
 struct PNGCompressionOptions
 {
-  int compression_level;
-  bool interlaced;
-  bool set_bgr; // convert BGR (supplied) to RGB (written)
-  bool invert_alpha_channel;  // invert values in alpha channel (e.g. 0 -> 255)
-  bool invert_monochrome; // invert grayscale or grayscale_alpha image values
+  int compression_level;  ///< Compression level; may take values from 0 (no compression) to 9 ("maximal" compression).
+  bool interlaced;  ///< If true, write PNG image as interlaced.
+  bool set_bgr;  ///< If true, convert BGR (supplied) to RGB (written).
+  bool invert_alpha_channel;  ///< If true, invert values in alpha channel (e.g. 0 -> 255).
+  bool invert_monochrome;  ///< If true, invert grayscale or grayscale_alpha image values.
 
+  /** \brief Constructor, setting the respective JPEG compression options.
+   *
+   * @param compression_level_ Compression level; may take values from 0 (no compression) to 9 ("maximal" compression).
+   * Defaults to the default zlib compression level.
+   * @param interlaced_ If true, write PNG image as interlaced.
+   * @param set_bgr_ If true, convert BGR (supplied) to RGB (written).
+   * @param invert_alpha_channel_ If true, invert values in alpha channel (e.g. 0 -> 255).
+   * @param invert_monochrome_ If true, invert grayscale or grayscale_alpha image values.
+   */
   explicit PNGCompressionOptions(int compression_level_ = -1, bool interlaced_ = false, bool set_bgr_ = false,
                                  bool invert_alpha_channel_ = false, bool invert_monochrome_ = false)
       : compression_level(compression_level_), interlaced(interlaced_), set_bgr(set_bgr_),
@@ -58,9 +72,13 @@ struct PNGCompressionOptions
   }
 };
 
+/** Opaque PNG compression object, holding internal state.
+ *
+ */
 class PNGCompressionObject
 {
 public:
+  /// \cond INTERNAL
   PNGCompressionObject();
   ~PNGCompressionObject();
 
@@ -70,6 +88,7 @@ public:
 
   bool set_image_info(int width, int height, int nr_channels, int bit_depth, bool interlaced, PixelFormat pixel_format);
   bool set_compression_parameters(int, bool);
+  /// \endcond
 
 private:
   struct Impl;
@@ -81,10 +100,31 @@ private:
 };
 
 
+/** \brief Writes a PNG image data stream, given the supplied uncompressed image data.
+ *
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::MemoryWriter.
+ * @param sink Output sink instance.
+ * @param img_data The image data to be written.
+ * @param options The compression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename SinkType>
 bool write_png(SinkType& sink, const ImageData& img_data, PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
 
+/** \brief Writes a PNG image data stream, given the supplied uncompressed image data.
+ *
+ * This function overload enables re-use of a PNGCompressionObject instance.
+ *
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::MemoryWriter.
+ * @param obj A PNGCompressionObject instance.
+ * @param sink Output sink instance.
+ * @param img_data The image data to be written.
+ * @param options The compression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename SinkType>
 bool write_png(PNGCompressionObject& obj, SinkType& sink, const ImageData& img_data,
                PNGCompressionOptions options = PNGCompressionOptions(), MessageLog* messages = nullptr);

@@ -15,6 +15,7 @@
 
 #include <selene/img/BoundingBox.hpp>
 #include <selene/img/ImageData.hpp>
+#include <selene/img/JPEGCommon.hpp>
 #include <selene/img/RowPointers.hpp>
 #include <selene/img/detail/JPEGCommon.hpp>
 #include <selene/img/detail/Util.hpp>
@@ -40,14 +41,23 @@ bool flush_data_buffer(JPEGCompressionObject&, io::FileWriter&);
 bool flush_data_buffer(JPEGCompressionObject&, io::VectorWriter&);
 } // namespace detail
 
-
+/** \brief JPEG compression options.
+ *
+ */
 struct JPEGCompressionOptions
 {
-  const int quality;
-  const JPEGColorSpace in_color_space;
-  const JPEGColorSpace jpeg_color_space;
-  bool optimize_coding;
+  const int quality;  ///< Compression quality. May take values from 1 (worst) to 100 (best).
+  const JPEGColorSpace in_color_space;  ///< Color space of the incoming, to-be-compressed data.
+  const JPEGColorSpace jpeg_color_space;  ///< Color space of the compressed data inside the JPEG stream.
+  bool optimize_coding;  ///< If true, compute optimal Huffman coding tables for the image (more expensive computation).
 
+  /** \brief Constructor, setting the respective JPEG compression options.
+   *
+   * @param quality_ Compression quality. May take values from 1 (worst) to 100 (best).
+   * @param in_color_space_ Color space of the incoming, to-be-compressed data.
+   * @param jpeg_color_space_ Color space of the compressed data inside the JPEG stream.
+   * @param optimize_coding_ If true, compute optimal Huffman coding tables for the image (more expensive computation).
+   */
   explicit JPEGCompressionOptions(int quality_ = 95,
                                   JPEGColorSpace in_color_space_ = JPEGColorSpace::Auto,
                                   JPEGColorSpace jpeg_color_space_ = JPEGColorSpace::Auto,
@@ -58,9 +68,13 @@ struct JPEGCompressionOptions
   }
 };
 
+/** Opaque JPEG compression object, holding internal state.
+ *
+ */
 class JPEGCompressionObject
 {
 public:
+  /// \cond INTERNAL
   JPEGCompressionObject();
   ~JPEGCompressionObject();
 
@@ -72,6 +86,7 @@ public:
   bool set_compression_parameters(
       int quality, JPEGColorSpace color_space = JPEGColorSpace::Auto,
       bool optimize_coding = false);
+  /// \endcond
 
 private:
   struct Impl;
@@ -84,10 +99,32 @@ private:
   friend bool detail::flush_data_buffer(JPEGCompressionObject&, io::VectorWriter&);
 };
 
+
+/** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
+ *
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::MemoryWriter.
+ * @param sink Output sink instance.
+ * @param img_data The image data to be written.
+ * @param options The compression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename SinkType>
 bool write_jpeg(SinkType& sink, const ImageData& img_data, JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
 
+/** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
+ *
+ * This function overload enables re-use of a JPEGCompressionObject instance.
+ *
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::MemoryWriter.
+ * @param obj A JPEGCompressionObject instance.
+ * @param sink Output sink instance.
+ * @param img_data The image data to be written.
+ * @param options The compression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename SinkType>
 bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img_data,
                 JPEGCompressionOptions options = JPEGCompressionOptions(), MessageLog* messages = nullptr);
@@ -143,7 +180,7 @@ bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img
 
   const auto nr_channels = img_data.nr_channels();
   const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto) ?
-                              pixel_format_to_color_space(img_data.pixel_format()) : options.in_color_space;
+                              detail::pixel_format_to_color_space(img_data.pixel_format()) : options.in_color_space;
 
   const auto img_info_set = obj.set_image_info(img_data.width(), img_data.height(), nr_channels, in_color_space);
 

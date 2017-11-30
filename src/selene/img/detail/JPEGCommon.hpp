@@ -9,30 +9,12 @@
 
 #include <selene/base/MessageLog.hpp>
 
+#include <selene/img/JPEGCommon.hpp>
 #include <selene/img/PixelFormat.hpp>
 
 namespace selene {
 namespace img {
-
-/// \cond INTERNAL
-
-enum class JPEGColorSpace : std::uint8_t
-{
-  Unknown,
-  Grayscale,
-  RGB,
-  YCbCr,
-  CMYK,
-  YCCK,
-#if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-  BGR,
-  RGBA,
-  BGRA,
-  ABGR,
-  ARGB,
-#endif
-  Auto
-};
+namespace detail {
 
 inline JPEGColorSpace pixel_format_to_color_space(PixelFormat pixel_format)
 {
@@ -74,8 +56,7 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
   }
 }
 
-/// \endcond
-
+} // namespace detail
 } // namespace img
 } // namespace selene
 

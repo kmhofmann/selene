@@ -15,6 +15,7 @@
 
 #include <selene/img/BoundingBox.hpp>
 #include <selene/img/ImageData.hpp>
+#include <selene/img/JPEGCommon.hpp>
 #include <selene/img/RowPointers.hpp>
 #include <selene/img/detail/JPEGCommon.hpp>
 #include <selene/img/detail/Util.hpp>
@@ -40,12 +41,15 @@ void set_source(JPEGDecompressionObject&, io::MemoryReader&);
 JPEGHeaderInfo read_header(JPEGDecompressionObject&);
 } // namespace detail
 
+/** \brief JPEG header information, containing the image size, the number of channels, and the color space.
+ *
+ */
 struct JPEGHeaderInfo
 {
-  const Index width;
-  const Index height;
-  const int nr_channels;
-  const JPEGColorSpace color_space;
+  const Index width;  ///< Image width.
+  const Index height;  ///< Image height.
+  const int nr_channels;  ///< Number of image channels.
+  const JPEGColorSpace color_space;  ///< Image data color space.
 
   explicit JPEGHeaderInfo(Index width_ = 0, Index height_ = 0, int nr_channels_ = 0,
                           JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
@@ -53,11 +57,19 @@ struct JPEGHeaderInfo
   bool is_valid() const;
 };
 
+/** \brief JPEG decompression options.
+ *
+ */
 struct JPEGDecompressionOptions
 {
-  JPEGColorSpace out_color_space;
-  BoundingBox<Index> region;
+  JPEGColorSpace out_color_space;  ///< The color space for the uncompressed data.
+  BoundingBox<Index> region;  ///< If set (and supported), decompress only the specified image region (libjpeg-turbo).
 
+  /** \brief Constructor, setting the respective JPEG decompression options.
+   *
+   * @param out_color_space_ The color space for the uncompressed data.
+   * @param region_ If set (and supported), decompress only the specified image region (libjpeg-turbo).
+   */
   explicit JPEGDecompressionOptions(JPEGColorSpace out_color_space_ = JPEGColorSpace::Auto
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
                                     , const BoundingBox<Index>& region_ = BoundingBox<Index>()
@@ -71,9 +83,13 @@ struct JPEGDecompressionOptions
   }
 };
 
+/** Opaque JPEG decompression object, holding internal state.
+ *
+ */
 class JPEGDecompressionObject
 {
 public:
+  /// \cond INTERNAL
   JPEGDecompressionObject();
   ~JPEGDecompressionObject();
 
@@ -83,6 +99,7 @@ public:
 
   JPEGHeaderInfo get_header_info() const;
   void set_decompression_parameters(JPEGColorSpace out_color_space = JPEGColorSpace::Auto);
+  /// \endcond
 
 private:
   struct Impl;
@@ -94,17 +111,65 @@ private:
   friend JPEGHeaderInfo detail::read_header(JPEGDecompressionObject&);
 };
 
+/** \brief Reads header of JPEG image data stream.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param source Input source instance.
+ * @param rewind If true, the source position will be re-set to the position before reading the header.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return A JPEG header info object.
+ */
 template <typename SourceType>
 JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind = false, MessageLog* messages = nullptr);
 
+/** \brief Reads header of JPEG image data stream.
+ *
+ * This function overload enables re-use of a JPEGDecompressionObject instance.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param obj A JPEGDecompressionObject instance.
+ * @param source Input source instance.
+ * @param rewind If true, the source position will be re-set to the position before reading the header.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return A JPEG header info object.
+ */
 template <typename SourceType>
 JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source, bool rewind = false,
                                 MessageLog* messages = nullptr);
 
+/** \brief Reads contents of a JPEG image data stream.
+ *
+ * The source position must be set to the beginning of the JPEG stream, including header. In case img::read_jpeg_header
+ * is called before, then it must be with `rewind == true`.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param source Input source instance.
+ * @param options The decompression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return An `ImageData` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
+ * otherwise.
+ */
 template <typename SourceType>
 ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGDecompressionOptions(),
                MessageLog* messages = nullptr);
 
+/** \brief Reads contents of a JPEG image data stream.
+ *
+ * In case header information is not explicitly provided via the parameter `provided_header_info`, the source position
+ * must be set to the beginning of the JPEG stream, including header. Otherwise img::read_jpeg_header must be called
+ * before, with `rewind == false`, and the header information passed by pointer.
+ *
+ * This function overload enables re-use of a JPEGDecompressionObject instance.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param obj A JPEGDecompressionObject instance.
+ * @param source Input source instance.
+ * @param options The decompression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @param provided_header_info Optional JPEG header information, obtained through a call to img::read_jpeg_header.
+ * @return An `ImageData` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
+ * otherwise.
+ */
 template <typename SourceType>
 ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source,
                JPEGDecompressionOptions options = JPEGDecompressionOptions(), MessageLog* messages = nullptr,
@@ -191,7 +256,7 @@ ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options, Messag
 {
   JPEGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return read_jpeg(obj, source, options, messages);
+  return read_jpeg(obj, source, options, messages, nullptr);
 }
 
 template <typename SourceType>
@@ -226,7 +291,7 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source, JPEGDecomp
   const auto output_height = options.region.empty() ? output_info.height : options.region.height();
   const auto output_nr_channels = static_cast<std::uint16_t>(output_info.nr_channels);
   const auto output_nr_bytes_per_channel = 1;
-  const auto output_pixel_format = color_space_to_pixel_format(options.out_color_space);
+  const auto output_pixel_format = detail::color_space_to_pixel_format(options.out_color_space);
   const auto output_sample_type = SampleType::UnsignedInteger;
 
   ImageData img;

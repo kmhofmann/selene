@@ -4,6 +4,7 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
+#include <selene/base/Utils.hpp>
 #include <selene/img/PNGWrite.hpp>
 #include <selene/img/detail/PNGDetail.hpp>
 
@@ -44,8 +45,6 @@ struct PNGCompressionObject::Impl
   detail::PNGErrorManager error_manager;
   bool valid = false;
 };
-
-/// \endcond
 
 PNGCompressionObject::PNGCompressionObject()
     : impl_(std::make_unique<PNGCompressionObject::Impl>())
@@ -136,6 +135,7 @@ bool PNGCompressionObject::set_compression_parameters(int compression_level, boo
     goto failure_state;
   }
 
+  compression_level = clamp(compression_level, 0, 9);
   png_set_compression_level(png_ptr, compression_level);
 
 //  constexpr srgb_intent = PNG_sRGB_INTENT_SATURATION;
@@ -164,6 +164,8 @@ const MessageLog& PNGCompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
 }
+
+/// \endcond
 
 // ----------
 

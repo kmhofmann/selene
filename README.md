@@ -12,6 +12,7 @@ It currently contains, among other things
   	* [`Pixel<T, n>`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/Pixel.hpp): Statically typed multi-channel pixel value. For example, `Pixel<std:uint8_t, 3>` (shortcut: `Pixel_8u3`) can represent an 8-bit RGB value.
   	* [`Image<T>`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/Image.hpp): Statically typed class representing a 2-D image. For example `Image<Pixel_8u1>` can represent an 8-bit grayscale image.
   	* [`ImageData`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/ImageData.hpp): Dynamically typed class representing a 2-D image.
+  	* Interoperability with [OpenCV](https://opencv.org/) `cv::Mat` matrices: both wrapping (as view) or copying is supported, in both directions. 
   * Functions for reading and writing image data in JPEG and PNG formats (from/to files or memory).
   	* [`read_jpeg()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/JPEGRead.hpp), [`read_jpeg_header()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/JPEGRead.hpp)
   	* [`read_png()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/PNGRead.hpp), [`read_png_header()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/PNGRead.hpp)
@@ -25,8 +26,6 @@ It currently contains, among other things
     * [`ThreadPool`](https://github.com/kmhofmann/selene/blob/master/src/selene/thread/ThreadPool.hpp): Concurrent processing of tasks (function calls).
 
 ## Installation
-
-**TODO: More detailed installation instructions.**
 
 **selene** uses [CMake](https://cmake.org/) for building.
 
@@ -67,11 +66,10 @@ In case some tests are failing because auxiliary data files can not be found aut
 
 ## Documentation
 
-Unfortunately, no complete documentation exists yet.
-Some functions are documented using the [_Doxygen_](http://www.stack.nl/~dimitri/doxygen/) format, but this is still heavy work in progress.
-_Doxygen_ documentation can be built using the provided `Doxyfile`, but there will be some gaps.
+**selene** is fully documented using the [_Doxygen_](http://www.stack.nl/~dimitri/doxygen/) format.
+_Doxygen_ documentation can be built using the provided `Doxyfile`.
 
-For the time being, the public interfaces in the header files shall serve as (mostly self-documenting) documentation.
+Currently, this documentation is not hosted online, although this may change in the future.
 
 ## Status
 

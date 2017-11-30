@@ -53,9 +53,9 @@ struct PixelTraits
 template <typename T, std::uint32_t N>
 struct PixelTraits<Pixel<T, N>>
 {
-  using Element = T;
-  static constexpr std::uint32_t nr_channels = N;  ///< The pixel element type.
-  static constexpr std::uint8_t nr_bytes = sizeof(Pixel<T, N>);  ///< The number of channels per pixel.
+  using Element = T;  ///< The pixel element type.
+  static constexpr std::uint32_t nr_channels = N;  ///< The number of channels per pixel.
+  static constexpr std::uint8_t nr_bytes = sizeof(Pixel<T, N>);  ///< The number of bytes per pixel.
   static constexpr std::uint8_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise

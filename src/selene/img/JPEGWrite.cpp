@@ -29,8 +29,6 @@ struct JPEGCompressionObject::Impl
   bool valid = false;
 };
 
-/// \endcond
-
 JPEGCompressionObject::JPEGCompressionObject()
     : impl_(std::make_unique<JPEGCompressionObject::Impl>())
 {
@@ -118,6 +116,8 @@ const MessageLog& JPEGCompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
 }
+
+/// \endcond
 
 // ----------------------
 // Compression structures

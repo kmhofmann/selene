@@ -58,6 +58,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/OpenCV.hpp

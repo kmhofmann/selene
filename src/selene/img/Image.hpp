@@ -431,7 +431,7 @@ inline Length Image<T>::height() const
  *
  * The row stride is the number of bytes that a row occupies in memory.
  * It has to be greater or equal to the width times the size of a pixel element:
- * `(stride_bytes() >= width() * PixelTraits<T>::nr_bytes)`.
+ * `(stride_bytes() >= width() * PixelTraits::nr_bytes)`.
  * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
  *
  * @tparam T The pixel type.
@@ -458,7 +458,7 @@ inline std::size_t Image<T>::total_bytes() const
 
 /** \brief Returns whether the image data is stored packed in memory.
  *
- * Returns the boolean expression `(stride_bytes() == width() * PixelTraits<T>::nr_bytes)`.
+ * Returns the boolean expression `(stride_bytes() == width() * PixelTraits::nr_bytes)`.
  *
  * @tparam T The pixel type.
  * @return True, if the image data stored packed; false otherwise.
@@ -543,7 +543,7 @@ void Image<T>::fill(T value)
  *
  * Postconditions: `!is_view() && is_packed()`.
  *
- * Equivalent to `resize(width, height, width * PixelTraits<T>::nr_bytes`.
+ * Equivalent to `resize(width, height, width * PixelTraits::nr_bytes`.
  * Images that are views onto non-owned memory cannot be resized. In this case, a `std::runtime_error` exception will
  * be thrown.
  *
@@ -563,7 +563,7 @@ void Image<T>::resize(Length width, Length height)
  *
  * Precondition: `!is_view()`.
  *
- * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits<T>::nr_bytes)`.
+ * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits::nr_bytes)`.
  *
  * Images that are views onto non-owned memory cannot be resized. In this case, a `std::runtime_error` exception will
  * be thrown.

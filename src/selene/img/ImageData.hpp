@@ -523,7 +523,7 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
  * Allocates `stride_bytes * height` bytes of memory to represent an image with the respective width, height, and number
  * of channels per pixel element.
  *
- * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits<T>::nr_bytes)`.
+ * Postconditions: `!is_view() && (stride_bytes() >= nr_bytes_per_channel * nr_channels * width)`.
  *
  * @param width Desired image width.
  * @param height Desired image height.

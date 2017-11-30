@@ -15,11 +15,22 @@
 namespace selene {
 namespace img {
 
+/** \brief Constructor. Instantiates a JPEGHeaderInfo object with the specified parameters.
+ *
+ * @param width_ The image width.
+ * @param height_ The image height.
+ * @param nr_channels_ The number of image channels.
+ * @param color_space_ The image data color space.
+ */
 JPEGHeaderInfo::JPEGHeaderInfo(Index width_, Index height_, int nr_channels_, JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }
 
+/** \brief Returns whether the contained JPEG header information is valid.
+ *
+ * @return True, if the header information is valid; false otherwise.
+ */
 bool JPEGHeaderInfo::is_valid() const
 {
   return width > 0 && height > 0 && nr_channels > 0;
@@ -35,8 +46,6 @@ struct JPEGDecompressionObject::Impl
   detail::JPEGErrorManager error_manager;
   bool valid = false;
 };
-
-/// \endcond
 
 JPEGDecompressionObject::JPEGDecompressionObject()
     : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
@@ -82,6 +91,8 @@ const MessageLog& JPEGDecompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
 }
+
+/// \endcond
 
 // ----------
 
