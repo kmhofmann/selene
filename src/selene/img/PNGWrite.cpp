@@ -128,21 +128,15 @@ failure_state:
 bool PNGCompressionObject::set_compression_parameters(int compression_level, bool invert_alpha)
 {
   auto png_ptr = impl_->png_ptr;
-//  auto info_ptr = impl_->info_ptr;
+
+  compression_level = clamp(compression_level, 0, 9);
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     goto failure_state;
   }
 
-  compression_level = clamp(compression_level, 0, 9);
   png_set_compression_level(png_ptr, compression_level);
-
-//  constexpr srgb_intent = PNG_sRGB_INTENT_SATURATION;
-//  constexpr srgb_intent = PNG_sRGB_INTENT_PERCEPTUAL;
-//  constexpr srgb_intent = PNG_sRGB_INTENT_ABSOLUTE;
-//  constexpr srgb_intent = PNG_sRGB_INTENT_RELATIVE;
-//  png_set_sRGB_gAMA_and_cHRM(png_ptr, info_ptr, srgb_intent);
 
   if (invert_alpha)
   {
