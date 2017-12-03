@@ -59,7 +59,8 @@ void check_write_read(ImageData& img_data, const boost::filesystem::path& tmp_pa
   FileWriter sink((tmp_path / "test_img.png").c_str());
   REQUIRE(sink.is_open());
   MessageLog messages_write;
-  write_png(img_data, sink, PNGCompressionOptions(), &messages_write);
+  bool status_write = write_png(img_data, sink, PNGCompressionOptions(), &messages_write);
+  REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
   sink.close();
   REQUIRE(!sink.is_open());

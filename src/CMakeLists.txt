@@ -55,6 +55,7 @@ install(TARGETS selene_io
 add_library(selene_img "")
 target_sources(selene_img
         PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
@@ -72,6 +73,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.hpp

@@ -226,6 +226,15 @@ bool flush_data_buffer(JPEGCompressionObject& obj, io::VectorWriter& sink)
 // ----------------
 // Public functions
 
+/** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
+ *
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @param img_data The image data to be written.
+ * @param sink Output sink instance.
+ * @param options The compression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename SinkType>
 bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOptions options, MessageLog* messages)
 {
@@ -234,6 +243,18 @@ bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOption
   return write_jpeg(img_data, obj, sink, options, messages);
 };
 
+/** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
+ *
+ * This function overload enables re-use of a JPEGCompressionObject instance.
+ *
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @param img_data The image data to be written.
+ * @param obj A JPEGCompressionObject instance.
+ * @param sink Output sink instance.
+ * @param options The compression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename SinkType>
 bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink, JPEGCompressionOptions options,
                 MessageLog* messages)
@@ -290,6 +311,8 @@ bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType&
 // ----------
 // Explicit instantiations:
 
+/// \cond INTERNAL
+
 template bool write_jpeg<io::FileWriter>(const ImageData&, io::FileWriter&, JPEGCompressionOptions, MessageLog*);
 template bool write_jpeg<io::VectorWriter>(const ImageData&, io::VectorWriter&, JPEGCompressionOptions, MessageLog*);
 
@@ -297,6 +320,8 @@ template bool write_jpeg<io::FileWriter>(const ImageData&, JPEGCompressionObject
                                          JPEGCompressionOptions, MessageLog*);
 template bool write_jpeg<io::VectorWriter>(const ImageData&, JPEGCompressionObject&, io::VectorWriter&,
                                           JPEGCompressionOptions, MessageLog*);
+
+/// \endcond
 
 } // namespace img
 } // namespace selene

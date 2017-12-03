@@ -100,31 +100,10 @@ private:
 };
 
 
-/** \brief Writes a PNG image data stream, given the supplied uncompressed image data.
- *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
- * @param img_data The image data to be written.
- * @param sink Output sink instance.
- * @param options The compression options.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return True, if the write operation was successful; false otherwise.
- */
 template <typename SinkType>
 bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
 
-/** \brief Writes a PNG image data stream, given the supplied uncompressed image data.
- *
- * This function overload enables re-use of a PNGCompressionObject instance.
- *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
- * @param img_data The image data to be written.
- * @param obj A PNGCompressionObject instance.
- * @param sink Output sink instance.
- * @param options The compression options.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return True, if the write operation was successful; false otherwise.
- */
 template <typename SinkType>
 bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink,
                PNGCompressionOptions options = PNGCompressionOptions(), MessageLog* messages = nullptr);
