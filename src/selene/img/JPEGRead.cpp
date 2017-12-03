@@ -77,14 +77,13 @@ struct JPEGOutputInfo
   const Index width;
   const Index height;
   const int nr_channels;
+  const JPEGColorSpace color_space;
 
-  JPEGOutputInfo(Index width_, Index height_, int nr_channels_);
+  JPEGOutputInfo(Index width_, Index height_, int nr_channels_, JPEGColorSpace color_space_)
+      : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
+  {
+  }
 };
-
-JPEGOutputInfo::JPEGOutputInfo(Index width_, Index height_, int nr_channels_)
-    : width(width_), height(height_), nr_channels(nr_channels_)
-{
-}
 
 
 class JPEGDecompressionCycle
@@ -132,7 +131,8 @@ JPEGOutputInfo JPEGDecompressionCycle::get_output_info() const
 {
   auto& cinfo = obj_.impl_->cinfo;
   SELENE_FORCED_ASSERT(cinfo.out_color_components == cinfo.output_components);
-  return JPEGOutputInfo(cinfo.output_width, cinfo.output_height, cinfo.out_color_components);
+  const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
+  return JPEGOutputInfo(cinfo.output_width, cinfo.output_height, cinfo.out_color_components, out_color_space);
 }
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
@@ -320,7 +320,7 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source, JPEGDecomp
   const auto output_height = options.region.empty() ? output_info.height : options.region.height();
   const auto output_nr_channels = static_cast<std::uint16_t>(output_info.nr_channels);
   const auto output_nr_bytes_per_channel = 1;
-  const auto output_pixel_format = detail::color_space_to_pixel_format(options.out_color_space);
+  const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_type = SampleType::UnsignedInteger;
 
   ImageData img;
