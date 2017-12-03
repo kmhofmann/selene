@@ -112,17 +112,65 @@ private:
 };
 
 
+/** \brief Reads header of JPEG image data stream.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param source Input source instance.
+ * @param rewind If true, the source position will be re-set to the position before reading the header.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return A JPEG header info object.
+ */
 template <typename SourceType>
 JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind = false, MessageLog* messages = nullptr);
 
+/** \brief Reads header of JPEG image data stream.
+ *
+ * This function overload enables re-use of a JPEGDecompressionObject instance.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param obj A JPEGDecompressionObject instance.
+ * @param source Input source instance.
+ * @param rewind If true, the source position will be re-set to the position before reading the header.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return A JPEG header info object.
+ */
 template <typename SourceType>
 JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source, bool rewind = false,
                                 MessageLog* messages = nullptr);
 
+/** \brief Reads contents of a JPEG image data stream.
+ *
+ * The source position must be set to the beginning of the JPEG stream, including header. In case img::read_jpeg_header
+ * is called before, then it must be with `rewind == true`.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param source Input source instance.
+ * @param options The decompression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @return An `ImageData` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
+ * otherwise.
+ */
 template <typename SourceType>
 ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGDecompressionOptions(),
                MessageLog* messages = nullptr);
 
+/** \brief Reads contents of a JPEG image data stream.
+ *
+ * In case header information is not explicitly provided via the parameter `provided_header_info`, the source position
+ * must be set to the beginning of the JPEG stream, including header. Otherwise img::read_jpeg_header must be called
+ * before, with `rewind == false`, and the header information passed by pointer.
+ *
+ * This function overload enables re-use of a JPEGDecompressionObject instance.
+ *
+ * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @param obj A JPEGDecompressionObject instance.
+ * @param source Input source instance.
+ * @param options The decompression options.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @param provided_header_info Optional JPEG header information, obtained through a call to img::read_jpeg_header.
+ * @return An `ImageData` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
+ * otherwise.
+ */
 template <typename SourceType>
 ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source,
                JPEGDecompressionOptions options = JPEGDecompressionOptions(), MessageLog* messages = nullptr,

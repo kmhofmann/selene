@@ -534,22 +534,12 @@ PNGHeaderInfo read_header(io::MemoryReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
-/// \endcond
-
 } // namespace detail
 
 
 // ----------------
 // Public functions
 
-/** \brief Reads header of PNG image data stream.
- *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
- * @param source Input source instance.
- * @param rewind If true, the source position will be re-set to the position before reading the header.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return A PNG header info object.
- */
 template <typename SourceType>
 PNGHeaderInfo read_png_header(SourceType& source, bool rewind, MessageLog* messages)
 {
@@ -558,17 +548,6 @@ PNGHeaderInfo read_png_header(SourceType& source, bool rewind, MessageLog* messa
   return read_png_header(obj, source, rewind, messages);
 }
 
-/** \brief Reads header of PNG image data stream.
- *
- * This function overload enables re-use of a PNGDecompressionObject instance.
- *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
- * @param obj A PNGDecompressionObject instance.
- * @param source Input source instance.
- * @param rewind If true, the source position will be re-set to the position before reading the header.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return A PNG header info object.
- */
 template <typename SourceType>
 PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, bool rewind, MessageLog* messages)
 {
@@ -598,18 +577,6 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, b
 
 }
 
-/** \brief Reads contents of a PNG image data stream.
- *
- * The source position must be set to the beginning of the PNG stream, including header. In case img::read_png_header
- * is called before, then it must be with `rewind == true`.
- *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
- * @param source Input source instance.
- * @param options The decompression options.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return An `ImageData` instance. Reading the PNG stream was successful, if `is_valid() == true`, and unsuccessful
- * otherwise.
- */
 template <typename SourceType>
 ImageData read_png(SourceType& source, PNGDecompressionOptions options, MessageLog* messages)
 {
@@ -618,23 +585,6 @@ ImageData read_png(SourceType& source, PNGDecompressionOptions options, MessageL
   return read_png(obj, source, options, messages);
 }
 
-/** \brief Reads contents of a PNG image data stream.
- *
- * In case header information is not explicitly provided via the parameter `provided_header_info`, the source position
- * must be set to the beginning of the PNG stream, including header. Otherwise img::read_png_header must be called
- * before, with `rewind == false`, and the header information passed by pointer.
- *
- * This function overload enables re-use of a PNGDecompressionObject instance.
- *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
- * @param obj A PNGDecompressionObject instance.
- * @param source Input source instance.
- * @param options The decompression options.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @param provided_header_info Optional PNG header information, obtained through a call to img::read_png_header.
- * @return An `ImageData` instance. Reading the PNG stream was successful, if `is_valid() == true`, and unsuccessful
- * otherwise.
- */
 template <typename SourceType>
 ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompressionOptions options,
                    MessageLog* messages, const PNGHeaderInfo* provided_header_info)
@@ -707,8 +657,6 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompres
 
 // ----------
 // Explicit instantiations:
-
-/// \cond INTERNAL
 
 template PNGHeaderInfo read_png_header<io::FileReader>(io::FileReader&, bool, MessageLog*);
 template PNGHeaderInfo read_png_header<io::MemoryReader>(io::MemoryReader&, bool, MessageLog*);
