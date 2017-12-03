@@ -23,11 +23,16 @@ enum class JPEGColorSpace : std::uint8_t
   CMYK,       ///< 4-channel CMYK
   YCCK,       ///< 4-channel YCCK
 #if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-  BGR,        ///< 3-channel BGR (libjpeg-turbo)
-  RGBA,       ///< 4-channel RGBA (libjpeg-turbo)
-  BGRA,       ///< 4-channel BGRA (libjpeg-turbo)
-  ABGR,       ///< 4-channel ABGR (libjpeg-turbo)
-  ARGB,       ///< 4-channel ARGB (libjpeg-turbo)
+  EXT_RGB,        ///< 3-channel RGB (libjpeg-turbo)
+  EXT_BGR,        ///< 3-channel BGR (libjpeg-turbo)
+  EXT_RGBX,       ///< 4-channel RGBX (libjpeg-turbo)
+  EXT_BGRX,       ///< 4-channel BGRX (libjpeg-turbo)
+  EXT_XBGR,       ///< 4-channel XBGR (libjpeg-turbo)
+  EXT_XRGB,       ///< 4-channel XRGB (libjpeg-turbo)
+  EXT_RGBA,       ///< 4-channel RGBA (libjpeg-turbo)
+  EXT_BGRA,       ///< 4-channel BGRA (libjpeg-turbo)
+  EXT_ABGR,       ///< 4-channel ABGR (libjpeg-turbo)
+  EXT_ARGB,       ///< 4-channel ARGB (libjpeg-turbo)
 #endif
   Auto        ///< Automatic determination
 };

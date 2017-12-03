@@ -23,11 +23,16 @@ J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space)
     case JPEGColorSpace::CMYK: return JCS_CMYK;
     case JPEGColorSpace::YCCK: return JCS_YCCK;
 #if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-    case JPEGColorSpace::BGR: return JCS_EXT_BGR;
-    case JPEGColorSpace::RGBA: return JCS_EXT_RGBA;
-    case JPEGColorSpace::BGRA: return JCS_EXT_BGRA;
-    case JPEGColorSpace::ABGR: return JCS_EXT_ABGR;
-    case JPEGColorSpace::ARGB: return JCS_EXT_ARGB;
+    case JPEGColorSpace::EXT_RGB: return JCS_EXT_RGB;
+    case JPEGColorSpace::EXT_BGR: return JCS_EXT_BGR;
+    case JPEGColorSpace::EXT_RGBA: return JCS_EXT_RGBA;
+    case JPEGColorSpace::EXT_BGRA: return JCS_EXT_BGRA;
+    case JPEGColorSpace::EXT_ABGR: return JCS_EXT_ABGR;
+    case JPEGColorSpace::EXT_ARGB: return JCS_EXT_ARGB;
+    case JPEGColorSpace::EXT_RGBX: return JCS_EXT_RGBX;
+    case JPEGColorSpace::EXT_BGRX: return JCS_EXT_BGRX;
+    case JPEGColorSpace::EXT_XBGR: return JCS_EXT_XBGR;
+    case JPEGColorSpace::EXT_XRGB: return JCS_EXT_XRGB;
 #endif
     default: throw std::runtime_error("Unknown color space");
   }
@@ -44,11 +49,16 @@ JPEGColorSpace color_space_lib_to_pub(J_COLOR_SPACE color_space)
     case JCS_CMYK: return JPEGColorSpace::CMYK;
     case JCS_YCCK: return JPEGColorSpace::YCCK;
 #if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-    case JCS_EXT_BGR: return JPEGColorSpace::BGR;
-    case JCS_EXT_RGBA: return JPEGColorSpace::RGBA;
-    case JCS_EXT_BGRA: return JPEGColorSpace::BGRA;
-    case JCS_EXT_ABGR: return JPEGColorSpace::ABGR;
-    case JCS_EXT_ARGB: return JPEGColorSpace::ARGB;
+    case JCS_EXT_RGB: return JPEGColorSpace::EXT_RGB;
+    case JCS_EXT_BGR: return JPEGColorSpace::EXT_BGR;
+    case JCS_EXT_RGBA: return JPEGColorSpace::EXT_RGBA;
+    case JCS_EXT_BGRA: return JPEGColorSpace::EXT_BGRA;
+    case JCS_EXT_ABGR: return JPEGColorSpace::EXT_ABGR;
+    case JCS_EXT_ARGB: return JPEGColorSpace::EXT_ARGB;
+    case JCS_EXT_RGBX: return JPEGColorSpace::EXT_RGBX;
+    case JCS_EXT_BGRX: return JPEGColorSpace::EXT_BGRX;
+    case JCS_EXT_XBGR: return JPEGColorSpace::EXT_XBGR;
+    case JCS_EXT_XRGB: return JPEGColorSpace::EXT_XRGB;
 #endif
     default: throw std::runtime_error("Unknown color space");
   }

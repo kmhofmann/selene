@@ -27,10 +27,17 @@ int determine_color_type(PixelFormat pixel_format)
   switch (pixel_format)
   {
     case PixelFormat::Y: return PNG_COLOR_TYPE_GRAY;
+    case PixelFormat::X: return PNG_COLOR_TYPE_GRAY;
     case PixelFormat::YA: return PNG_COLOR_TYPE_GRAY_ALPHA;
+    case PixelFormat::XX: return PNG_COLOR_TYPE_GRAY_ALPHA;
     case PixelFormat::RGB: return PNG_COLOR_TYPE_RGB;
+    case PixelFormat::BGR: return PNG_COLOR_TYPE_RGB;
+    case PixelFormat::XXX: return PNG_COLOR_TYPE_RGB;
     case PixelFormat::RGBA: return PNG_COLOR_TYPE_RGBA;
-    default: return PNG_COLOR_TYPE_INVALID;
+    case PixelFormat::BGRA: return PNG_COLOR_TYPE_RGBA;
+    case PixelFormat::XXXX: return PNG_COLOR_TYPE_RGBA;
+    default:
+      return PNG_COLOR_TYPE_INVALID;
   }
 }
 

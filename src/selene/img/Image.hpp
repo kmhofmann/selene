@@ -447,7 +447,7 @@ inline Stride Image<T>::stride_bytes() const
  *
  * The value returned is equal to `(stride_bytes() * height())`.
  *
- * @tparam The pixel type.
+ * @tparam T The pixel type.
  * @return Number of bytes occupied by the image data in memory.
  */
 template <typename T>

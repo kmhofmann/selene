@@ -26,13 +26,14 @@ inline JPEGColorSpace pixel_format_to_color_space(PixelFormat pixel_format)
     case PixelFormat::CMYK: return JPEGColorSpace::CMYK;
     case PixelFormat::YCCK: return JPEGColorSpace::YCCK;
 #if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-    case PixelFormat::BGR: return JPEGColorSpace::BGR;
-    case PixelFormat::RGBA: return JPEGColorSpace::RGBA;
-    case PixelFormat::BGRA: return JPEGColorSpace::BGRA;
-    case PixelFormat::ARGB: return JPEGColorSpace::ARGB;
-    case PixelFormat::ABGR: return JPEGColorSpace::ABGR;
+    case PixelFormat::BGR: return JPEGColorSpace::EXT_BGR;
+    case PixelFormat::RGBA: return JPEGColorSpace::EXT_RGBA;
+    case PixelFormat::BGRA: return JPEGColorSpace::EXT_BGRA;
+    case PixelFormat::ARGB: return JPEGColorSpace::EXT_ARGB;
+    case PixelFormat::ABGR: return JPEGColorSpace::EXT_ABGR;
 #endif
-    default: return JPEGColorSpace::Unknown;
+    default:
+      return JPEGColorSpace::Unknown;
   }
 }
 
@@ -46,13 +47,19 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
     case JPEGColorSpace::CMYK: return PixelFormat::CMYK;
     case JPEGColorSpace::YCCK: return PixelFormat::YCCK;
 #if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-    case JPEGColorSpace::BGR: return PixelFormat::BGR;
-    case JPEGColorSpace::RGBA: return PixelFormat::RGBA;
-    case JPEGColorSpace::BGRA: return PixelFormat::BGRA;
-    case JPEGColorSpace::ARGB: return PixelFormat::ARGB;
-    case JPEGColorSpace::ABGR: return PixelFormat::ABGR;
+    case JPEGColorSpace::EXT_RGB: return PixelFormat::RGB;
+    case JPEGColorSpace::EXT_BGR: return PixelFormat::BGR;
+    case JPEGColorSpace::EXT_RGBA: return PixelFormat::RGBA;
+    case JPEGColorSpace::EXT_BGRA: return PixelFormat::BGRA;
+    case JPEGColorSpace::EXT_ARGB: return PixelFormat::ARGB;
+    case JPEGColorSpace::EXT_ABGR: return PixelFormat::ABGR;
+    case JPEGColorSpace::EXT_RGBX: return PixelFormat::RGBA; // interpreting X as A here...
+    case JPEGColorSpace::EXT_BGRX: return PixelFormat::BGRA; // interpreting X as A here...
+    case JPEGColorSpace::EXT_XRGB: return PixelFormat::ARGB; // interpreting X as A here...
+    case JPEGColorSpace::EXT_XBGR: return PixelFormat::ABGR; // interpreting X as A here...
 #endif
-    default: return PixelFormat::Unknown;
+    default:
+      return PixelFormat::Unknown;
   }
 }
 

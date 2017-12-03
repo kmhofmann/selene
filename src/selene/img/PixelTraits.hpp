@@ -48,7 +48,8 @@ struct PixelTraits
 
 /** \brief Class representing traits of a pixel. Specialization for `Pixel<T, N>`.
  *
- * @tparam Element_ The pixel element type.
+ * @tparam T The channel element type of the pixel type.
+ * @tparam N The number of channels of the pixel type.
  */
 template <typename T, std::uint32_t N>
 struct PixelTraits<Pixel<T, N>>
