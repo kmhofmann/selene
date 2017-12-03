@@ -69,7 +69,7 @@ PNGDecompressionObject::PNGDecompressionObject()
 
   if (!impl_->info_ptr)
   {
-    png_destroy_read_struct(&impl_->png_ptr, (png_infopp)nullptr, (png_infopp)nullptr);
+    png_destroy_read_struct(&impl_->png_ptr, nullptr, nullptr);
     return;
   }
 
@@ -77,7 +77,7 @@ PNGDecompressionObject::PNGDecompressionObject()
 
   if (!impl_->end_info)
   {
-    png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, (png_infopp)nullptr);
+    png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, nullptr);
     return;
   }
 

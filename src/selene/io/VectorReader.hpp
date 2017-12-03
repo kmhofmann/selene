@@ -239,7 +239,7 @@ inline bool VectorReader::read(T& value) noexcept
   SELENE_ASSERT(pos_ <= static_cast<std::ptrdiff_t>(data_->size()));
 
   const std::size_t len = sizeof(T);
-  const auto bytes_to_end = data_->size() - pos_;
+  const auto bytes_to_end = data_->size() - static_cast<std::size_t>(pos_);
 
   if (bytes_to_end < len)
   {
@@ -267,7 +267,7 @@ inline std::size_t VectorReader::read(T* values, std::size_t nr_values) noexcept
   SELENE_ASSERT(pos_ <= static_cast<std::ptrdiff_t>(data_->size()));
 
   const std::size_t len = sizeof(T);
-  const auto bytes_to_end = data_->size() - pos_;
+  const auto bytes_to_end = data_->size() - static_cast<std::size_t>(pos_);
   const auto available_values = std::min(bytes_to_end / len, nr_values);
 
   std::memcpy(values, data_->data() + pos_, available_values * len);

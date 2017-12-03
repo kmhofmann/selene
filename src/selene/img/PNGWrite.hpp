@@ -187,7 +187,8 @@ bool write_png(PNGCompressionObject& obj, SinkType& sink, const ImageData& img_d
   const auto nr_channels = img_data.nr_channels();
   const auto bit_depth = img_data.nr_bytes_per_channel() == 1 ? 8 : 16;
 
-  const bool img_info_set = obj.set_image_info(img_data.width(), img_data.height(), nr_channels, bit_depth,
+  const bool img_info_set = obj.set_image_info(static_cast<int>(img_data.width()), static_cast<int>(img_data.height()),
+                                               static_cast<int>(nr_channels), static_cast<int>(bit_depth),
                                                options.interlaced, img_data.pixel_format());
 
   if (!img_info_set)

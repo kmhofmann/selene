@@ -182,7 +182,9 @@ bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img
   const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto) ?
                               detail::pixel_format_to_color_space(img_data.pixel_format()) : options.in_color_space;
 
-  const auto img_info_set = obj.set_image_info(img_data.width(), img_data.height(), nr_channels, in_color_space);
+  const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()),
+                                               static_cast<int>(img_data.height()),
+                                               static_cast<int>(nr_channels), in_color_space);
 
   if (!img_info_set)
   {

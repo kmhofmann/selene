@@ -119,7 +119,7 @@ inline bool MemoryReader::open(const std::uint8_t* data, std::size_t len) noexce
   }
 
   data_ = data;
-  len_ = len;
+  len_ = static_cast<std::ptrdiff_t>(len);
   ptr_ = data_;
   return true;
 }
@@ -275,7 +275,7 @@ template <typename T, typename>
 inline std::size_t MemoryReader::read(T* values, std::size_t nr_values) noexcept
 {
   SELENE_ASSERT(ptr_ != nullptr);
-  const std::ptrdiff_t nr_values_available = (data_ + len_ - ptr_) / sizeof(T);
+  const auto nr_values_available = static_cast<std::ptrdiff_t>((data_ + len_ - ptr_) / sizeof(T));
   auto nr_values_read = std::min(std::max(std::ptrdiff_t(0), nr_values_available),
                                  static_cast<std::ptrdiff_t>(nr_values));
   std::memcpy(values, ptr_, static_cast<std::size_t>(nr_values_read * sizeof(T)));

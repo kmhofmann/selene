@@ -125,7 +125,7 @@ inline bool MemoryWriter::open(std::uint8_t* data, std::size_t len, WriterMode m
   }
 
   data_ = data;
-  len_ = len;
+  len_ = static_cast<std::ptrdiff_t>(len);
   ptr_ = data_;
   return true;
 }

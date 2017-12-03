@@ -276,7 +276,7 @@ inline bool VectorWriter::write_bytes(const std::uint8_t* ptr, std::size_t len)
 
   if (bytes_to_copy > 0)
   {
-    std::copy(cur_ptr, cur_ptr + bytes_to_copy, &(*data_)[pos_]);
+    std::copy(cur_ptr, cur_ptr + bytes_to_copy, &(*data_)[static_cast<std::size_t>(pos_)]);
     cur_ptr += bytes_to_copy; // for the assert below
     len_remaining -= bytes_to_copy;
   }
