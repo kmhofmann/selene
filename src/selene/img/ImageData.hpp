@@ -69,6 +69,7 @@ public:
   std::uint16_t nr_channels() const;
   std::uint8_t nr_bytes_per_channel() const;
   Stride stride_bytes() const;
+  std::size_t row_bytes() const;
   std::size_t total_bytes() const;
   PixelFormat pixel_format() const;
   SampleFormat sample_format() const;
@@ -408,6 +409,18 @@ inline std::uint8_t ImageData::nr_bytes_per_channel() const
 inline Stride ImageData::stride_bytes() const
 {
   return stride_bytes_;
+}
+
+/** \brief Returns the number of data bytes occupied by each image row.
+ *
+ * The value returned is equal to `(width() * nr_channels() * nr_bytes_per_channel())`.
+ * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
+ *
+ * @return Number of data bytes occupied by each image row.
+ */
+inline std::size_t ImageData::row_bytes() const
+{
+  return width_ * nr_channels_ * nr_bytes_per_channel_;
 }
 
 /** \brief Returns the total number of bytes occupied by the image data in memory.

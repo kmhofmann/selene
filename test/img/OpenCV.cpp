@@ -102,7 +102,7 @@ template <typename PixelType> void compare_images(const Image<PixelType>& img, c
 
       for (std::uint32_t channel = 0; channel < nr_channels; ++channel)
       {
-        const auto element_cv = img_cv.at<Element>(row, col);
+        const auto element_cv = img_cv.at<cv::Vec<Element, nr_channels>>(row, col)[channel];
         REQUIRE(element_cv == pixel[channel]);
       }
     }
@@ -136,6 +136,9 @@ TEST_CASE("OpenCV interoperability", "[img]")
     for (Length h = 1; h < 32; h += 1)
     {
       test_functions<Pixel_8u1>(w, h);
+      test_functions<Pixel_8u2>(w, h);
+      test_functions<Pixel_8u3>(w, h);
+      test_functions<Pixel_8u4>(w, h);
     }
   }
 }
