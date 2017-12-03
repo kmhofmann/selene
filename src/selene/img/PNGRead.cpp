@@ -321,14 +321,21 @@ const MessageLog& PNGDecompressionObject::message_log() const
   return impl_->error_manager.message_log;
 }
 
-/// \endcond
-
-// ----------
-
-/// \cond INTERNAL
 
 namespace detail
 {
+
+struct PNGOutputInfo
+{
+  Index width;
+  Index height;
+  int nr_channels;
+  int bit_depth;
+  std::size_t row_bytes;
+
+  PNGOutputInfo();
+  PNGOutputInfo(Index width_, Index height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_);
+};
 
 PNGOutputInfo::PNGOutputInfo()
     : width(0), height(0), nr_channels(0), bit_depth(0), row_bytes(0)
@@ -340,8 +347,22 @@ PNGOutputInfo::PNGOutputInfo(Length width_, Length height_, int nr_channels_, in
 {
 }
 
-// ------------------------
-// Decompression structures
+
+class PNGDecompressionCycle
+{
+public:
+  explicit PNGDecompressionCycle(PNGDecompressionObject& obj);
+  ~PNGDecompressionCycle() = default;
+
+  bool error_state() const;
+  PNGOutputInfo get_output_info() const;
+  bool decompress(RowPointers& row_pointers);
+
+private:
+  PNGDecompressionObject& obj_;
+  PNGOutputInfo output_info_;
+  bool error_state_;
+};
 
 PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj)
     : obj_(obj), error_state_(false)
@@ -513,9 +534,145 @@ PNGHeaderInfo read_header(io::MemoryReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
+/// \endcond
+
 } // namespace detail
 
-/// \endcond
+
+// ----------------
+// Public functions
+
+template <typename SourceType>
+PNGHeaderInfo read_png_header(SourceType& source, bool rewind, MessageLog* messages)
+{
+  PNGDecompressionObject obj;
+  SELENE_ASSERT(obj.valid());
+  return read_png_header(obj, source, rewind, messages);
+}
+
+template <typename SourceType>
+PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, bool rewind, MessageLog* messages)
+{
+  const auto src_pos = source.position();
+
+  auto scope_exit = [&source, rewind, messages, &obj, src_pos]()
+  {
+    if (rewind)
+    {
+      source.seek_abs(src_pos);
+    }
+
+    detail::assign_message_log(obj, messages);
+  };
+
+  detail::set_source(obj, source);
+
+  if (obj.error_state())
+  {
+    scope_exit();
+    return PNGHeaderInfo();
+  }
+
+  const auto header_info = detail::read_header(source, obj);
+  scope_exit();
+  return header_info;
+
+}
+
+template <typename SourceType>
+ImageData read_png(SourceType& source, PNGDecompressionOptions options, MessageLog* messages)
+{
+  PNGDecompressionObject obj;
+  SELENE_ASSERT(obj.valid());
+  return read_png(obj, source, options, messages);
+}
+
+template <typename SourceType>
+ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompressionOptions options,
+                   MessageLog* messages, const PNGHeaderInfo* provided_header_info)
+{
+  if (!provided_header_info)
+  {
+    detail::set_source(obj, source);
+
+    if (obj.error_state())
+    {
+      detail::assign_message_log(obj, messages);
+      return ImageData();
+    }
+  }
+
+  const auto header_info = provided_header_info ? *provided_header_info : detail::read_header(source, obj);
+
+  if (!header_info.is_valid())
+  {
+    detail::assign_message_log(obj, messages);
+    return ImageData();
+  }
+
+  const bool pars_set = obj.set_decompression_parameters(options.force_bit_depth_8, options.set_background,
+                                                         options.strip_alpha_channel, options.swap_alpha_channel,
+                                                         options.set_bgr, options.invert_alpha_channel,
+                                                         options.invert_monochrome, options.convert_gray_to_rgb,
+                                                         options.convert_rgb_to_gray);
+
+  if (!pars_set)
+  {
+    detail::assign_message_log(obj, messages);
+    return ImageData();
+  }
+
+  detail::PNGDecompressionCycle cycle(obj);
+
+  if (cycle.error_state())
+  {
+    detail::assign_message_log(obj, messages);
+    return ImageData();
+  }
+
+  const auto output_info = cycle.get_output_info();
+  const auto output_width = output_info.width;
+  const auto output_height = output_info.height;
+  const auto output_nr_channels = output_info.nr_channels;
+  const auto output_bit_depth = output_info.bit_depth;
+  const auto output_nr_bytes_per_channel = output_bit_depth >> 3;
+  const auto output_row_bytes = output_info.row_bytes;
+  SELENE_FORCED_ASSERT(output_row_bytes == output_width * output_nr_channels * output_nr_bytes_per_channel);
+  const auto output_pixel_format = obj.get_pixel_format();
+  const auto output_sample_type = SampleType::UnsignedInteger;
+
+  ImageData img;
+  img.allocate(output_width, output_height, static_cast<std::uint16_t>(output_nr_channels),
+               static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_pixel_format, output_sample_type);
+  auto row_pointers = get_row_pointers(img);
+  const auto dec_success = cycle.decompress(row_pointers);
+
+  if (!dec_success)
+  {
+    img.clear();  // invalidates image data
+  }
+
+  detail::assign_message_log(obj, messages);
+  return img;
+}
+
+
+// ----------
+// Explicit instantiations:
+
+template PNGHeaderInfo read_png_header<io::FileReader>(io::FileReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<io::MemoryReader>(io::MemoryReader&, bool, MessageLog*);
+
+template PNGHeaderInfo read_png_header<io::FileReader>(PNGDecompressionObject&, io::FileReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<io::MemoryReader>(PNGDecompressionObject&, io::MemoryReader&, bool, MessageLog*);
+
+template ImageData read_png<io::FileReader>(io::FileReader&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<io::MemoryReader>(io::MemoryReader&, PNGDecompressionOptions, MessageLog*);
+
+template ImageData read_png<io::FileReader>(PNGDecompressionObject&, io::FileReader&, PNGDecompressionOptions,
+                                             MessageLog*, const PNGHeaderInfo*);
+template ImageData read_png<io::MemoryReader>(PNGDecompressionObject&, io::MemoryReader&, PNGDecompressionOptions,
+                                               MessageLog*, const PNGHeaderInfo*);
 
 } // namespace img
 } // namespace selene

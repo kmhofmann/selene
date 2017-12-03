@@ -166,17 +166,26 @@ const MessageLog& PNGCompressionObject::message_log() const
   return impl_->error_manager.message_log;
 }
 
-/// \endcond
-
-// ----------
-
-/// \cond INTERNAL
 
 namespace detail
 {
 
 // ----------------------
 // Compression structures
+
+class PNGCompressionCycle
+{
+public:
+  explicit PNGCompressionCycle(PNGCompressionObject& obj, bool, bool);
+  ~PNGCompressionCycle() = default;
+
+  bool error_state() const;
+  void compress(const ConstRowPointers& row_pointers);
+
+private:
+  PNGCompressionObject& obj_;
+  bool error_state_;
+};
 
 PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr,
                                          bool invert_monochrome)
@@ -225,8 +234,6 @@ void PNGCompressionCycle::compress(const ConstRowPointers& row_pointers)
   png_write_end(png_ptr, info_ptr);
 }
 
-// -----------------------------
-// Compression related functions
 
 void user_write_data(png_structp png_ptr, png_bytep data, png_size_t length)
 {
@@ -272,10 +279,79 @@ void set_destination(PNGCompressionObject& obj, io::VectorWriter& sink)
 failure_state:;
 }
 
-
 } // namespace detail
 
 /// \endcond
+
+
+// ----------------
+// Public functions
+
+template <typename SinkType>
+bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions options, MessageLog* messages)
+{
+  PNGCompressionObject obj;
+  SELENE_ASSERT(obj.valid());
+  return write_png(img_data, obj, sink, options, messages);
+};
+
+template <typename SinkType>
+bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink, PNGCompressionOptions options,
+               MessageLog* messages)
+{
+  if (img_data.nr_bytes_per_channel() != 1 && img_data.nr_bytes_per_channel() != 2)
+  {
+    throw std::runtime_error("Unsupported bit depth of image data for PNG output");
+  }
+
+  detail::set_destination(obj, sink);
+
+  if (obj.error_state())
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  const auto nr_channels = img_data.nr_channels();
+  const auto bit_depth = img_data.nr_bytes_per_channel() == 1 ? 8 : 16;
+
+  const bool img_info_set = obj.set_image_info(static_cast<int>(img_data.width()), static_cast<int>(img_data.height()),
+                                               static_cast<int>(nr_channels), static_cast<int>(bit_depth),
+                                               options.interlaced, img_data.pixel_format());
+
+  if (!img_info_set)
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  const bool pars_set = obj.set_compression_parameters(options.compression_level, options.invert_alpha_channel);
+
+  if (!pars_set)
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  detail::PNGCompressionCycle cycle(obj, options.set_bgr, options.invert_monochrome);
+  const auto row_pointers = get_row_pointers(img_data);
+  cycle.compress(row_pointers);
+
+  detail::assign_message_log(obj, messages);
+  return !obj.error_state();
+}
+
+
+// ----------
+// Explicit instantiations:
+
+template bool write_png<io::FileWriter>(const ImageData&, io::FileWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<io::VectorWriter>(const ImageData&, io::VectorWriter&, PNGCompressionOptions, MessageLog*);
+
+template bool write_png<io::FileWriter>(const ImageData&, PNGCompressionObject&, io::FileWriter&,
+                                         PNGCompressionOptions, MessageLog*);
+template bool write_png<io::VectorWriter>(const ImageData&, PNGCompressionObject&, io::VectorWriter&,
+                                           PNGCompressionOptions, MessageLog*);
 
 } // namespace img
 } // namespace selene

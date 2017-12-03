@@ -102,122 +102,33 @@ private:
 
 /** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::MemoryWriter.
- * @param sink Output sink instance.
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
  * @param img_data The image data to be written.
+ * @param sink Output sink instance.
  * @param options The compression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_jpeg(SinkType& sink, const ImageData& img_data, JPEGCompressionOptions options = JPEGCompressionOptions(),
+bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
 
 /** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
  *
  * This function overload enables re-use of a JPEGCompressionObject instance.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::MemoryWriter.
+ * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @param img_data The image data to be written.
  * @param obj A JPEGCompressionObject instance.
  * @param sink Output sink instance.
- * @param img_data The image data to be written.
  * @param options The compression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img_data,
+bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(), MessageLog* messages = nullptr);
 
-
-//-----------------------------------------------------------------------------
-// Implementation:
-
-namespace detail
-{
-
-/// \cond INTERNAL
-
-class JPEGCompressionCycle
-{
-public:
-  explicit JPEGCompressionCycle(JPEGCompressionObject& obj);
-  ~JPEGCompressionCycle();
-
-  void compress(const ConstRowPointers& row_pointers);
-
-private:
-  JPEGCompressionObject& obj_;
-};
-
-/// \endcond
-
-} // namespace detail
-
-
-// ----------------
-// Public functions
-
-template <typename SinkType>
-bool write_jpeg(SinkType& sink, const ImageData& img_data, JPEGCompressionOptions options, MessageLog* messages)
-{
-  JPEGCompressionObject obj;
-  SELENE_ASSERT(obj.valid());
-  return write_jpeg(obj, sink, img_data, options, messages);
-};
-
-template <typename SinkType>
-bool write_jpeg(JPEGCompressionObject& obj, SinkType& sink, const ImageData& img_data, JPEGCompressionOptions options,
-                MessageLog* messages)
-{
-  detail::set_destination(obj, sink);
-
-  if (obj.error_state())
-  {
-    detail::assign_message_log(obj, messages);
-    return false;
-  }
-
-  const auto nr_channels = img_data.nr_channels();
-  const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto) ?
-                              detail::pixel_format_to_color_space(img_data.pixel_format()) : options.in_color_space;
-
-  const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()),
-                                               static_cast<int>(img_data.height()),
-                                               static_cast<int>(nr_channels), in_color_space);
-
-  if (!img_info_set)
-  {
-    detail::assign_message_log(obj, messages);
-    return false;
-  }
-
-  const bool pars_set = obj.set_compression_parameters(options.quality, options.jpeg_color_space,
-                                                       options.optimize_coding);
-
-  if (!pars_set)
-  {
-    detail::assign_message_log(obj, messages);
-    return false;
-  }
-
-  {
-    detail::JPEGCompressionCycle cycle(obj);
-    const auto row_pointers = get_row_pointers(img_data);
-    cycle.compress(row_pointers);
-    // Destructor of JPEGCompressionCycle calls jpeg_finish_compress(), which updates internal state
-  }
-
-  bool flushed = detail::flush_data_buffer(obj, sink);
-  if (!flushed)
-  {
-    detail::assign_message_log(obj, messages);
-    return false;
-  }
-
-  detail::assign_message_log(obj, messages);
-  return !obj.error_state();
-}
 
 } // namespace img
 } // namespace selene

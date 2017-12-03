@@ -117,15 +117,21 @@ const MessageLog& JPEGCompressionObject::message_log() const
   return impl_->error_manager.message_log;
 }
 
-/// \endcond
-
-// ----------------------
-// Compression structures
-
-/// \cond INTERNAL
 
 namespace detail
 {
+
+class JPEGCompressionCycle
+{
+public:
+  explicit JPEGCompressionCycle(JPEGCompressionObject& obj);
+  ~JPEGCompressionCycle();
+
+  void compress(const ConstRowPointers& row_pointers);
+
+private:
+  JPEGCompressionObject& obj_;
+};
 
 JPEGCompressionCycle::JPEGCompressionCycle(JPEGCompressionObject& obj)
     : obj_(obj)
@@ -212,9 +218,85 @@ bool flush_data_buffer(JPEGCompressionObject& obj, io::VectorWriter& sink)
   return true;
 }
 
+/// \endcond
+
 } // namespace detail
 
-/// \endcond
+
+// ----------------
+// Public functions
+
+template <typename SinkType>
+bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOptions options, MessageLog* messages)
+{
+  JPEGCompressionObject obj;
+  SELENE_ASSERT(obj.valid());
+  return write_jpeg(img_data, obj, sink, options, messages);
+};
+
+template <typename SinkType>
+bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink, JPEGCompressionOptions options,
+                MessageLog* messages)
+{
+  detail::set_destination(obj, sink);
+
+  if (obj.error_state())
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  const auto nr_channels = img_data.nr_channels();
+  const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto) ?
+                              detail::pixel_format_to_color_space(img_data.pixel_format()) : options.in_color_space;
+
+  const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()),
+                                               static_cast<int>(img_data.height()),
+                                               static_cast<int>(nr_channels), in_color_space);
+
+  if (!img_info_set)
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  const bool pars_set = obj.set_compression_parameters(options.quality, options.jpeg_color_space,
+                                                       options.optimize_coding);
+
+  if (!pars_set)
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  {
+    detail::JPEGCompressionCycle cycle(obj);
+    const auto row_pointers = get_row_pointers(img_data);
+    cycle.compress(row_pointers);
+    // Destructor of JPEGCompressionCycle calls jpeg_finish_compress(), which updates internal state
+  }
+
+  bool flushed = detail::flush_data_buffer(obj, sink);
+  if (!flushed)
+  {
+    detail::assign_message_log(obj, messages);
+    return false;
+  }
+
+  detail::assign_message_log(obj, messages);
+  return !obj.error_state();
+}
+
+// ----------
+// Explicit instantiations:
+
+template bool write_jpeg<io::FileWriter>(const ImageData&, io::FileWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<io::VectorWriter>(const ImageData&, io::VectorWriter&, JPEGCompressionOptions, MessageLog*);
+
+template bool write_jpeg<io::FileWriter>(const ImageData&, JPEGCompressionObject&, io::FileWriter&,
+                                         JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<io::VectorWriter>(const ImageData&, JPEGCompressionObject&, io::VectorWriter&,
+                                          JPEGCompressionOptions, MessageLog*);
 
 } // namespace img
 } // namespace selene

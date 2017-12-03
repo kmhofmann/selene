@@ -87,7 +87,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   FileWriter sink((tmp_path / "test_duck.jpg").c_str());
   REQUIRE(sink.is_open());
   MessageLog messages_write;
-  bool status_write = write_jpeg(sink, to_image_data_view(img, PixelFormat::RGB),
+  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::RGB), sink,
                                  JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -134,7 +134,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   FileWriter sink((tmp_path / "test_duck_gray.jpg").c_str());
   REQUIRE(sink.is_open());
   MessageLog messages_write;
-  bool status_write = write_jpeg(sink, to_image_data_view(img, PixelFormat::Y),
+  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::Y), sink,
                                  JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -246,7 +246,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   FileWriter sink((tmp_path / "test_duck_crop.jpg").c_str());
   REQUIRE(sink.is_open());
   MessageLog messages_write;
-  bool status_write = write_jpeg(sink, to_image_data_view(img, PixelFormat::RGB),
+  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::RGB), sink,
                                  JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -319,7 +319,7 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
 
   // Test writing of RGB image
   MessageLog messages_write;
-  bool status_write = write_jpeg(sink, to_image_data_view(img, PixelFormat::RGB), JPEGCompressionOptions(95),
+  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::RGB), sink, JPEGCompressionOptions(95),
                                  &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());

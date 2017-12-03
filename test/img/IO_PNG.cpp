@@ -59,7 +59,7 @@ void check_write_read(ImageData& img_data, const boost::filesystem::path& tmp_pa
   FileWriter sink((tmp_path / "test_img.png").c_str());
   REQUIRE(sink.is_open());
   MessageLog messages_write;
-  write_png(sink, img_data, PNGCompressionOptions(), &messages_write);
+  write_png(img_data, sink, PNGCompressionOptions(), &messages_write);
   REQUIRE(messages_write.messages().empty());
   sink.close();
   REQUIRE(!sink.is_open());
@@ -129,7 +129,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 
   // Test writing of RGB image
   MessageLog messages_write;
-  bool status_write = write_png(sink, to_image_data_view(img, PixelFormat::RGB), PNGCompressionOptions(),
+  bool status_write = write_png(to_image_data_view(img, PixelFormat::RGB), sink, PNGCompressionOptions(),
                                 &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
@@ -174,7 +174,7 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 
   // Test writing of grayscale image
   MessageLog messages_write;
-  bool status_write = write_png(sink, to_image_data_view(img, PixelFormat::Y), PNGCompressionOptions(), &messages_write);
+  bool status_write = write_png(to_image_data_view(img, PixelFormat::Y), sink, PNGCompressionOptions(), &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
 }
@@ -263,7 +263,7 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
 
   // Test writing of RGB image
   MessageLog messages_write;
-  bool status_write = write_png(sink, to_image_data_view(img, PixelFormat::RGB), PNGCompressionOptions(),
+  bool status_write = write_png(to_image_data_view(img, PixelFormat::RGB), sink, PNGCompressionOptions(),
                                 &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
