@@ -29,9 +29,6 @@ It currently contains, among other things
 
 **selene** uses [CMake](https://cmake.org/) for building.
 
-Installation targets are not yet supported, but might be added later.
-Preferably use "at head" as submodule instead of installing.
-
 Follow the usual instructions for CMake projects on UNIX-like systems.
 First, clone the project and create a `build` directory (or use another name).
 
@@ -41,17 +38,38 @@ First, clone the project and create a `build` directory (or use another name).
 
 Then call `cmake` and build the project. Using [GNU Make](https://www.gnu.org/software/make/):
 
-    cmake -DCMAKE_BUILD_TYPE=Release .. && make
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make
 
 Or, alternatively, using [ninja](https://ninja-build.org/):
 
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .. && ninja
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+    ninja
+
+Preferably use the library "at head", e.g. as submodule, instead of invoking the `install` target.
 
 The default settings will build a set of static libraries.
 If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command. 
 
-For JPEG and PNG input/output, [libjpeg](http://www.ijg.org/) and [libpng](http://www.libpng.org/pub/png/libpng.html) are required, respectively, and their presence (or lack thereof) should be detected automatically.
-If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system, some of its additional capabilities will be taken into account (e.g. partial JPEG image decoding and extended color spaces).
+### Dependencies
+
+**selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
+
+  - [libjpeg](http://www.ijg.org/) or [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo):
+    - Optional, but recommended
+    - Required for the JPEG reading and writing API
+  - [libpng](http://www.libpng.org/pub/png/libpng.html):
+    - Optional, but recommended
+    - Required for the PNG reading and writing API
+  - [OpenCV](https://opencv.org/):
+    - Optional, if needed
+    - For OpenCV interoperability (e.g. copying or wrapping image data)
+
+The presence (or lack of) these dependencies should be detected automatically by CMake.
+
+If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system, some of its additional capabilities will be taken into account and are enabled by the API (e.g. partial JPEG image decoding and extended color spaces).
+
+[OpenCV](https://opencv.org/) is only needed for converting between `selene::img::Image<T>` and OpenCV's `cv::Mat` structure, if so desired.
 
 ### Building and running the tests
 
@@ -78,4 +96,3 @@ Currently, no API or ABI stability guarantees are given.
 
 However, the code is well-tested and assumed to be not too far from production-level quality.
 Porting to accommodate potential API changes should not be very difficult.
-
