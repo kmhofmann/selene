@@ -44,12 +44,12 @@ enum class PixelFormat : unsigned char
   Unknown ///< Completely unknown pixel format.
 };
 
-/** \brief A sample type enumeration.
+/** \brief A sample format enumeration.
  *
- * The sample type is a semantic tag assigned to a pixel sample type (i.e. the per-channel value type of a pixel), as
+ * The sample format is a semantic tag assigned to a pixel sample type (i.e. the per-channel value type of a pixel), as
  * part of a dynamically typed image, i.e. an `ImageData` instance.
  */
-enum class SampleType : unsigned char
+enum class SampleFormat : unsigned char
 {
   UnsignedInteger,
   SignedInteger,
@@ -61,7 +61,7 @@ std::size_t get_nr_channels(PixelFormat pixel_format);
 
 std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format);
 
-std::ostream& operator <<(std::ostream& os, SampleType sample_type);
+std::ostream& operator <<(std::ostream& os, SampleFormat sample_format);
 
 // ----------
 // Implementation:

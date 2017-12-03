@@ -81,7 +81,7 @@ void check_write_read(ImageData& img_data, const boost::filesystem::path& tmp_pa
   REQUIRE(img_data_2.nr_channels() == img_data.nr_channels());
   REQUIRE(img_data_2.nr_bytes_per_channel() == img_data.nr_bytes_per_channel());
   REQUIRE(img_data_2.pixel_format() == img_data.pixel_format());
-  REQUIRE(img_data_2.sample_type() == img_data.sample_type());
+  REQUIRE(img_data_2.sample_format() == img_data.sample_format());
   REQUIRE(img_data_2.total_bytes() == img_data.total_bytes());
 
   const auto nr_bytes_per_row = img_data_2.width() * img_data_2.nr_channels() * img_data_2.nr_bytes_per_channel();

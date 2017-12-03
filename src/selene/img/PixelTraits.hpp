@@ -38,12 +38,12 @@ struct PixelTraits
   /// True, if the pixel elements are unsigned; false otherwise
   static constexpr bool is_unsigned = std::is_unsigned<Element>::value;
 
-  /// The sample type (unsigned/signed integer or floating point number)
-  static constexpr SampleType sample_type = \
-      std::is_integral<Element>::value ? (std::is_unsigned<Element>::value ? SampleType::UnsignedInteger
-                                                                           : SampleType::SignedInteger)
-                                       : (std::is_floating_point<Element>::value ? SampleType::FloatingPoint
-                                                                                 : SampleType::Unknown);
+  /// The sample format (unsigned/signed integer or floating point number)
+  static constexpr SampleFormat sample_format = \
+      std::is_integral<Element>::value ? (std::is_unsigned<Element>::value ? SampleFormat::UnsignedInteger
+                                                                           : SampleFormat::SignedInteger)
+                                       : (std::is_floating_point<Element>::value ? SampleFormat::FloatingPoint
+                                                                                 : SampleFormat::Unknown);
 };
 
 /** \brief Class representing traits of a pixel. Specialization for `Pixel<T, N>`.
@@ -68,12 +68,12 @@ struct PixelTraits<Pixel<T, N>>
   /// True, if the pixel elements are unsigned; false otherwise
   static constexpr bool is_unsigned = std::is_unsigned<T>::value;
 
-  /// The sample type (unsigned/signed integer or floating point number)
-  static constexpr SampleType sample_type = \
-      std::is_integral<T>::value ? (std::is_unsigned<T>::value ? SampleType::UnsignedInteger
-                                                               : SampleType::SignedInteger)
-                                 : (std::is_floating_point<T>::value ? SampleType::FloatingPoint
-                                                                     : SampleType::Unknown);
+  /// The sample format (unsigned/signed integer or floating point number)
+  static constexpr SampleFormat sample_format = \
+      std::is_integral<T>::value ? (std::is_unsigned<T>::value ? SampleFormat::UnsignedInteger
+                                                               : SampleFormat::SignedInteger)
+                                 : (std::is_floating_point<T>::value ? SampleFormat::FloatingPoint
+                                                                     : SampleFormat::Unknown);
 };
 
 } // namespace img

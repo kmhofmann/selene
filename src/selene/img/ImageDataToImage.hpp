@@ -32,7 +32,7 @@ Image<PixelType> to_image_view(ImageData& img_data);
  * Precondition: The supplied image `img_data` must be valid, i.e. `img_data.is_valid()` must return true. Otherwise
  * this function will throw a `std::runtime_error` exception.
  *
- * The number of channels, the number of bytes per channel, and the sample type of the `ImageData` instance need to be
+ * The number of channels, the number of bytes per channel, and the sample format of the `ImageData` instance need to be
  * compatible with the `PixelTraits` of `PixelType`. If this is not the case, this function will throw a
  * `std::runtime_error` exception.
  *
@@ -48,7 +48,7 @@ Image<PixelType> to_image(ImageData&& img_data)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
-  constexpr auto sample_type = PixelTraits<PixelType>::sample_type;
+  constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
   if (!img_data.is_valid())
   {
@@ -60,9 +60,9 @@ Image<PixelType> to_image(ImageData&& img_data)
     throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible nr of channels.");
   }
 
-  if (img_data.sample_type() != SampleType::Unknown && img_data.sample_type() != sample_type)
+  if (img_data.sample_format() != SampleFormat::Unknown && img_data.sample_format() != sample_format)
   {
-    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible sample types.");
+    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible sample formats.");
   }
 
   const auto width = img_data.width();
@@ -88,7 +88,7 @@ Image<PixelType> to_image(ImageData&& img_data)
  * Precondition: The supplied image `img_data` must be valid, i.e. `img_data.is_valid()` must return true. Otherwise
  * this function will throw a `std::runtime_error` exception.
  *
- * The number of channels, the number of bytes per channel, and the sample type of the `ImageData` instance need to be
+ * The number of channels, the number of bytes per channel, and the sample format of the `ImageData` instance need to be
  * compatible with the `PixelTraits` of `PixelType`. If this is not the case, this function will throw a
  * `std::runtime_error` exception.
  *
@@ -101,7 +101,7 @@ Image<PixelType> to_image_view(ImageData& img_data)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
-  constexpr auto sample_type = PixelTraits<PixelType>::sample_type;
+  constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
   if (!img_data.is_valid())
   {
@@ -113,9 +113,9 @@ Image<PixelType> to_image_view(ImageData& img_data)
     throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible nr of channels.");
   }
 
-  if (img_data.sample_type() != SampleType::Unknown && img_data.sample_type() != sample_type)
+  if (img_data.sample_format() != SampleFormat::Unknown && img_data.sample_format() != sample_format)
   {
-    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible sample types.");
+    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible sample formats.");
   }
 
   const auto width = img_data.width();

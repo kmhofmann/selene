@@ -44,20 +44,20 @@ std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format)
   return os;
 }
 
-/** \brief Converts a sample type value into a character stream representation, e.g. for printing.
+/** \brief Converts a sample format value into a character stream representation, e.g. for printing.
  *
  * @param os An output stream.
- * @param sample_type The sample type value to be converted.
+ * @param sample_format The sample type value to be converted.
  * @return A reference to the provided output stream.
  */
-std::ostream& operator<<(std::ostream& os, SampleType sample_type)
+std::ostream& operator<<(std::ostream& os, SampleFormat sample_format)
 {
-  switch (sample_type)
+  switch (sample_format)
   {
-    case SampleType::UnsignedInteger: os << "SampleType::UnsignedInteger"; break;
-    case SampleType::SignedInteger: os << "SampleType::SignedInteger"; break;
-    case SampleType::FloatingPoint: os << "SampleType::FloatingPoint"; break;
-    case SampleType::Unknown: os << "SampleType::Unknown"; break;
+    case SampleFormat::UnsignedInteger: os << "SampleFormat::UnsignedInteger"; break;
+    case SampleFormat::SignedInteger: os << "SampleFormat::SignedInteger"; break;
+    case SampleFormat::FloatingPoint: os << "SampleFormat::FloatingPoint"; break;
+    case SampleFormat::Unknown: os << "SampleFormat::Unknown"; break;
   }
 
   return os;

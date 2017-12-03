@@ -33,7 +33,7 @@ ImageData to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format);
  * Precondition: The supplied image `img` must be valid, i.e. `img.is_valid()` must return true. Otherwise this function
  * will throw a `std::runtime_error` exception.
  *
- * The number of channels, the number of bytes per channel, and the sample type of the resulting `ImageData` instance
+ * The number of channels, the number of bytes per channel, and the sample format of the resulting `ImageData` instance
  * are determined based on the `PixelTraits` of the `PixelType`.
  *
  * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
@@ -58,7 +58,7 @@ ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
 
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
-  constexpr auto sample_type = PixelTraits<PixelType>::sample_type;
+  constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
   if (pixel_format != PixelFormat::Unknown && get_nr_channels(pixel_format) != nr_channels)
   {
@@ -74,13 +74,13 @@ ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
   if (is_view)
   {
     const auto data = img.byte_ptr();
-    return ImageData(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+    return ImageData(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
   }
   else
   {
     auto data = img.relinquish_data_ownership();
     return ImageData(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
-                     sample_type);
+                     sample_format);
   }
 
 
@@ -91,7 +91,7 @@ ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
  * Precondition: The supplied image `img` must be valid, i.e. `img.is_valid()` must return true. Otherwise this function
  * will throw a `std::runtime_error` exception.
  *
- * The number of channels, the number of bytes per channel, and the sample type of the resulting `ImageData` instance
+ * The number of channels, the number of bytes per channel, and the sample format of the resulting `ImageData` instance
  * are determined based on the `PixelTraits` of the `PixelType`.
  *
  * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
@@ -113,7 +113,7 @@ ImageData to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
 
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
-  constexpr auto sample_type = PixelTraits<PixelType>::sample_type;
+  constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
   if (pixel_format != PixelFormat::Unknown && get_nr_channels(pixel_format) != nr_channels)
   {
@@ -124,7 +124,7 @@ ImageData to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
   const auto height = img.height();
   const auto stride_bytes = img.stride_bytes();
   const auto data = img.byte_ptr();
-  return ImageData(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+  return ImageData(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
 } // namespace img

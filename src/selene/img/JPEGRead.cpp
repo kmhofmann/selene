@@ -370,11 +370,11 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source, JPEGDecomp
   const auto output_nr_channels = static_cast<std::uint16_t>(output_info.nr_channels);
   const auto output_nr_bytes_per_channel = 1;
   const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
-  const auto output_sample_type = SampleType::UnsignedInteger;
+  const auto output_sample_format = SampleFormat::UnsignedInteger;
 
   ImageData img;
   img.allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_pixel_format,
-               output_sample_type);
+               output_sample_format);
   auto row_pointers = get_row_pointers(img);
   const auto dec_success = cycle.decompress(row_pointers);
 

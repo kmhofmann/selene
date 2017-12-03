@@ -41,22 +41,22 @@ class ImageData
 public:
   ImageData() = default;  ///< Default constructor. See clear() for the postconditions.
   ImageData(Length width, Length height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
-            PixelFormat pixel_format = PixelFormat::Unknown, SampleType sample_type = SampleType::Unknown);
+            PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
   ImageData(Length width, Length height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
             Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown);
   ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
             std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown);
   ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
             std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown);
   ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
             std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown);
   ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
             std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleType sample_type = SampleType::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown);
   ~ImageData();
 
   ImageData(const ImageData&);
@@ -71,7 +71,7 @@ public:
   Stride stride_bytes() const;
   std::size_t total_bytes() const;
   PixelFormat pixel_format() const;
-  SampleType sample_type() const;
+  SampleFormat sample_format() const;
   bool is_packed() const;
   bool is_view() const;
   bool is_empty() const;
@@ -80,24 +80,24 @@ public:
   void clear();
 
   void allocate(Length width, Length height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
-                PixelFormat pixel_format = PixelFormat::Unknown, SampleType sample_type = SampleType::Unknown);
+                PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
   void allocate(Length width, Length height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
                 Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown);
+                SampleFormat sample_format = SampleFormat::Unknown);
 
   void set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown);
+                SampleFormat sample_format = SampleFormat::Unknown);
   void set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown);
+                SampleFormat sample_format = SampleFormat::Unknown);
 
   void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown);
+                SampleFormat sample_format = SampleFormat::Unknown);
   void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleType sample_type = SampleType::Unknown);
+                SampleFormat sample_format = SampleFormat::Unknown);
 
   std::uint8_t* byte_ptr();
   const std::uint8_t* byte_ptr() const;
@@ -116,7 +116,7 @@ private:
   std::uint16_t nr_channels_ = 0;
   std::uint8_t nr_bytes_per_channel_ = 0;
   PixelFormat pixel_format_ = PixelFormat::Unknown;
-  SampleType sample_type_ = SampleType::Unknown;
+  SampleFormat sample_format_ = SampleFormat::Unknown;
   bool owns_memory_ = false;
 
   void allocate_bytes(std::size_t nr_bytes);
@@ -133,25 +133,25 @@ private:
 
 /** \brief Constructs image data (owned memory) with the specified parameters.
  *
- * Effectively calls `allocate(width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type)`.
+ * Effectively calls `allocate(width, height, nr_channels, nr_bytes_per_channel, pixel_format, output_sample_format)`.
  *
  * @param width Desired image width.
  * @param height Desired image height.
  * @param nr_channels The number of channels per pixel element.
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(Length width, Length height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
-                            PixelFormat pixel_format, SampleType sample_type)
+                            PixelFormat pixel_format, SampleFormat sample_format)
 {
-  allocate(width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type);
+  allocate(width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_format);
 }
 
 /** \brief Constructs image data (owned memory) with the specified parameters.
  *
  * Effectively calls `allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
- * sample_type)`.
+ * output_sample_format)`.
  *
  * @param width Desired image width.
  * @param height Desired image height.
@@ -159,17 +159,17 @@ inline ImageData::ImageData(Length width, Length height, std::uint16_t nr_channe
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param stride_bytes The desired row stride in bytes.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(Length width, Length height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
-                            Stride stride_bytes, PixelFormat pixel_format, SampleType sample_type)
+                            Stride stride_bytes, PixelFormat pixel_format, SampleFormat sample_format)
 {
-  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
 /** \brief Constructs image data (a view onto non-owned memory) with the specified parameters.
  *
- * Effectively calls `set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type);`.
+ * Effectively calls `set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, output_sample_format);`.
  *
  * @param data Pointer to the existing image data.
  * @param width Desired image width.
@@ -177,18 +177,18 @@ inline ImageData::ImageData(Length width, Length height, std::uint16_t nr_channe
  * @param nr_channels The number of channels per pixel element.
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
+                            std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
-  set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type);
+  set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_format);
 }
 
 /** \brief Constructs image data (a view onto non-owned memory) with the specified parameters.
  *
  * Effectively calls `set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
- * sample_type);`.
+ * output_sample_format);`.
  *
  * @param data Pointer to the existing image data.
  * @param width Desired image width.
@@ -197,19 +197,19 @@ inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param stride_bytes The desired row stride in bytes.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                             std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                            SampleType sample_type)
+                            SampleFormat sample_format)
 {
-  set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+  set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
 /** \brief Constructs image data from existing memory (which will be owned) with the specified parameters.
  *
  * Effectively calls `set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, pixel_format,
- * sample_type);`.
+ * output_sample_format);`.
  *
  * @param data A `MemoryBlock<NewAllocator>` with the existing data.
  * @param width Desired image width.
@@ -217,18 +217,18 @@ inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std
  * @param nr_channels The number of channels per pixel element.
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
-    std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
+    std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
-  set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_type);
+  set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_format);
 }
 
 /** \brief Constructs image data from existing memory (which will be owned) with the specified parameters.
  *
  * Effectively calls `set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes,
- * pixel_format, sample_type);`.
+ * pixel_format, output_sample_format);`.
  *
  * @param data A `MemoryBlock<NewAllocator>` with the existing data.
  * @param width Desired image width.
@@ -237,12 +237,13 @@ inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Leng
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param stride_bytes The desired row stride in bytes.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
-    std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format, SampleType sample_type)
+    std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format, SampleFormat sample_format)
 {
-  set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+  set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
+           sample_format);
 }
 
 /** \brief Destructor.
@@ -273,7 +274,7 @@ inline ImageData::ImageData(const ImageData& other)
   nr_channels_ = other.nr_channels_;
   nr_bytes_per_channel_ = other.nr_bytes_per_channel_;
   pixel_format_ = other.pixel_format_;
-  sample_type_ = other.sample_type_;
+  sample_format_ = other.sample_format_;
   owns_memory_ = other.owns_memory_;
 
   if (other.owns_memory_)
@@ -305,7 +306,7 @@ inline ImageData& ImageData::operator=(const ImageData& other)
   nr_channels_ = other.nr_channels_;
   nr_bytes_per_channel_ = other.nr_bytes_per_channel_;
   pixel_format_ = other.pixel_format_;
-  sample_type_ = other.sample_type_;
+  sample_format_ = other.sample_format_;
   owns_memory_ = other.owns_memory_;
 
   if (other.owns_memory_)
@@ -330,7 +331,7 @@ inline ImageData::ImageData(ImageData&& other) noexcept
   nr_channels_ = other.nr_channels_;
   nr_bytes_per_channel_ = other.nr_bytes_per_channel_;
   pixel_format_ = other.pixel_format_;
-  sample_type_ = other.sample_type_;
+  sample_format_ = other.sample_format_;
   owns_memory_ = other.owns_memory_;
 
   other.reset();
@@ -352,7 +353,7 @@ inline ImageData& ImageData::operator=(ImageData&& other) noexcept
   nr_channels_ = other.nr_channels_;
   nr_bytes_per_channel_ = other.nr_bytes_per_channel_;
   pixel_format_ = other.pixel_format_;
-  sample_type_ = other.sample_type_;
+  sample_format_ = other.sample_format_;
   owns_memory_ = other.owns_memory_;
 
   other.reset();
@@ -429,13 +430,13 @@ inline PixelFormat ImageData::pixel_format() const
   return pixel_format_;
 }
 
-/** \brief Returns the sample type (semantic tag).
+/** \brief Returns the sample format (semantic tag).
  *
- * @return The sample type.
+ * @return The sample format.
  */
-inline SampleType ImageData::sample_type() const
+inline SampleFormat ImageData::sample_format() const
 {
-  return sample_type_;
+  return sample_format_;
 }
 
 /** \brief Returns whether the image data is stored packed in memory.
@@ -486,8 +487,8 @@ inline bool ImageData::is_valid() const
  * default construction.
  *
  * Postconditions: `data() == nullptr && width() == 0 && height() == 0 && stride_bytes() == 0 && nr_channels() == 0 &&
- * nr_bytes_per_channel() == 0 && pixel_format() == PixelFormat::Unknown && sample_type() == SampleType::Unknown &&
- * is_empty() && !is_valid() && !is_view()`.
+ * nr_bytes_per_channel() == 0 && pixel_format() == PixelFormat::Unknown && output_sample_format() ==
+ * SampleType::Unknown && is_empty() && !is_valid() && !is_view()`.
  */
 inline void ImageData::clear()
 {
@@ -509,13 +510,13 @@ inline void ImageData::clear()
  * @param nr_channels The number of channels per pixel element.
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
+                                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
   Stride stride_bytes = nr_bytes_per_channel * nr_channels * width;
-  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_type);
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
 /** \brief Allocates memory for an image with the specified parameters.
@@ -531,16 +532,16 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
  * @param nr_bytes_per_channel The number of bytes stored per channel.
  * @param stride_bytes The row stride in bytes.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 
 inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_channels,
                                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                                SampleType sample_type)
+                                SampleFormat sample_format)
 {
   if (width_ == width && height_ == height && stride_bytes_ == stride_bytes &&
       nr_channels_ == nr_channels && nr_bytes_per_channel_ == nr_bytes_per_channel &&
-      pixel_format_ == pixel_format && sample_type_ == sample_type)
+      pixel_format_ == pixel_format && sample_format_ == sample_format)
   {
     return;
   }
@@ -554,7 +555,7 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
-  sample_type_ = sample_type;
+  sample_format_ = sample_format;
   owns_memory_ = true;
 
   const auto nr_bytes = stride_bytes_ * height_;
@@ -573,10 +574,10 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
  * @param nr_channels The number of channels for each pixel element.
  * @param nr_bytes_per_channel The number of bytes per channel in each pixel element.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline void ImageData::set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleType sample_type)
+                                std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
   deallocate_bytes_if_owned();
   data_ = data;
@@ -586,7 +587,7 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
-  sample_type_ = sample_type;
+  sample_format_ = sample_format;
   owns_memory_ = false;
 }
 
@@ -601,11 +602,11 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
  * @param nr_bytes_per_channel The number of bytes per channel in each pixel element.
  * @param stride_bytes The row stride in bytes.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline void ImageData::set_view(std::uint8_t* data, Length width, Length height, std::uint16_t nr_channels,
                                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                                SampleType sample_type)
+                                SampleFormat sample_format)
 {
   deallocate_bytes_if_owned();
   data_ = data;
@@ -615,7 +616,7 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
-  sample_type_ = sample_type;
+  sample_format_ = sample_format;
   owns_memory_ = false;
 }
 
@@ -633,11 +634,11 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
  * @param nr_channels The number of channels for each pixel element.
  * @param nr_bytes_per_channel The number of bytes per channel in each pixel element.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height,
                                 std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format,
-                                SampleType sample_type)
+                                SampleFormat sample_format)
 {
   SELENE_ASSERT(data.size() == nr_bytes_per_channel * nr_channels * width * height);
 
@@ -649,7 +650,7 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, 
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
-  sample_type_ = sample_type;
+  sample_format_ = sample_format;
   owns_memory_ = true;
 }
 
@@ -666,11 +667,11 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, 
  * @param nr_bytes_per_channel The number of bytes per channel in each pixel element.
  * @param stride_bytes The row stride in bytes.
  * @param pixel_format The pixel format (semantic tag).
- * @param sample_type The sample type (semantic tag).
+ * @param sample_format The sample format (semantic tag).
  */
 inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height,
                                 std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel, Stride stride_bytes,
-                                PixelFormat pixel_format, SampleType sample_type)
+                                PixelFormat pixel_format, SampleFormat sample_format)
 {
   SELENE_ASSERT(data.size() == stride_bytes * height);
 
@@ -682,7 +683,7 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, 
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
-  sample_type_ = sample_type;
+  sample_format_ = sample_format;
   owns_memory_ = true;
 }
 
@@ -779,7 +780,7 @@ inline void ImageData::reset()
   nr_channels_ = std::uint16_t{0};
   nr_bytes_per_channel_ = std::uint8_t{0};
   pixel_format_ = PixelFormat::Unknown;
-  sample_type_ = SampleType::Unknown;
+  sample_format_ = SampleFormat::Unknown;
   owns_memory_ = false;
 }
 

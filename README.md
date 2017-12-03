@@ -18,6 +18,7 @@ It currently contains, among other things
   	* [`read_png()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/PNGRead.hpp), [`read_png_header()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/PNGRead.hpp)
   	* [`write_jpeg()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/JPEGWrite.hpp)
   	* [`write_png()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/PNGWrite.hpp)
+  	* Convenience functions [`read_image()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/IO.hpp) and [`write_image()`](https://github.com/kmhofmann/selene/blob/master/src/selene/img/IO.hpp), being able to handle both formats.
   * Functions for binary IO from and to files or memory. The type of source/sink can be transparent to users of this functionality, via static polymorphism.
     * [`FileReader`](https://github.com/kmhofmann/selene/blob/master/src/selene/io/FileReader.hpp)/[`FileWriter`](https://github.com/kmhofmann/selene/blob/master/src/selene/io/FileWriter.hpp): Reading/writing from and to files
     * [`MemoryReader`](https://github.com/kmhofmann/selene/blob/master/src/selene/io/MemoryReader.hpp)/[`MemoryWriter`](https://github.com/kmhofmann/selene/blob/master/src/selene/io/MemoryWriter.hpp): Reading/writing from and to memory (raw pointer locations)
