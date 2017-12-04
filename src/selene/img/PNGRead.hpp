@@ -35,15 +35,14 @@ class PNGHeaderInfo;
 struct PNGDecompressionOptions;
 class PNGDecompressionObject;
 
-namespace detail
-{
+namespace detail {
 class PNGDecompressionCycle;
 void set_source(PNGDecompressionObject&, io::FileReader&);
 void set_source(PNGDecompressionObject&, io::MemoryReader&);
 PNGHeaderInfo read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
 PNGHeaderInfo read_header(io::FileReader&, PNGDecompressionObject&);
 PNGHeaderInfo read_header(io::MemoryReader&, PNGDecompressionObject&);
-} // namespace detail
+}  // namespace detail
 
 /** \brief JPEG header information, containing the image size, the number of channels, and the bit depth.
  *
@@ -95,11 +94,15 @@ struct PNGDecompressionOptions
                                    bool set_bgr_ = false, bool invert_alpha_channel_ = false,
                                    bool invert_monochrome_ = false, bool convert_gray_to_rgb_ = false,
                                    bool convert_rgb_to_gray_ = false)
-      : force_bit_depth_8(force_bit_depth_8_), set_background(set_background_),
-        strip_alpha_channel(strip_alpha_channel_), swap_alpha_channel(swap_alpha_channel_),
-        set_bgr(set_bgr_), invert_alpha_channel(invert_alpha_channel_),
-        invert_monochrome(invert_monochrome_), convert_gray_to_rgb(convert_gray_to_rgb_),
-        convert_rgb_to_gray(convert_rgb_to_gray_)
+      : force_bit_depth_8(force_bit_depth_8_)
+      , set_background(set_background_)
+      , strip_alpha_channel(strip_alpha_channel_)
+      , swap_alpha_channel(swap_alpha_channel_)
+      , set_bgr(set_bgr_)
+      , invert_alpha_channel(invert_alpha_channel_)
+      , invert_monochrome(invert_monochrome_)
+      , convert_gray_to_rgb(convert_gray_to_rgb_)
+      , convert_rgb_to_gray(convert_rgb_to_gray_)
   {
   }
 };
@@ -196,9 +199,9 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source,
                    PNGDecompressionOptions options = PNGDecompressionOptions(), MessageLog* messages = nullptr,
                    const PNGHeaderInfo* provided_header_info = nullptr);
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)
 
-#endif // SELENE_IMG_PNG_READ_HPP
+#endif  // SELENE_IMG_PNG_READ_HPP

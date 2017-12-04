@@ -24,8 +24,7 @@ struct JPEGDecompressionObject::Impl
   bool valid = false;
 };
 
-JPEGDecompressionObject::JPEGDecompressionObject()
-    : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
+JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
 {
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
   impl_->cinfo.err->error_exit = detail::error_exit;
@@ -69,8 +68,7 @@ const MessageLog& JPEGDecompressionObject::message_log() const
 }
 
 
-namespace detail
-{
+namespace detail {
 
 struct JPEGOutputInfo
 {
@@ -116,8 +114,8 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
     JDIMENSION xoffset = region_.x0();
     JDIMENSION width = region_.width();
     jpeg_crop_scanline(&cinfo, &xoffset, &width);
-    region_ = BoundingBox<Index>(static_cast<Index>(xoffset), region_.y0(),
-                                 static_cast<Index>(width), region_.height());
+    region_ = BoundingBox<Index>(static_cast<Index>(xoffset), region_.y0(), static_cast<Index>(width),
+                                 region_.height());
   }
 #endif
 }
@@ -212,10 +210,10 @@ JPEGHeaderInfo read_header(JPEGDecompressionObject& obj)
   return obj.get_header_info();
 
 failure_state:
-  return JPEGHeaderInfo(); // invalid header info
+  return JPEGHeaderInfo();  // invalid header info
 }
 
-} // namespace detail
+}  // namespace detail
 
 /// \endcond
 
@@ -259,8 +257,7 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source
 {
   const auto src_pos = source.position();
 
-  auto scope_exit = [&source, rewind, messages, &obj, src_pos]()
-  {
+  auto scope_exit = [&source, rewind, messages, &obj, src_pos]() {
     if (rewind)
     {
       source.seek_abs(src_pos);
@@ -361,7 +358,7 @@ template ImageData read_jpeg<io::MemoryReader>(JPEGDecompressionObject&, io::Mem
 
 /// \endcond
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)

@@ -12,7 +12,8 @@
 
 namespace selene {
 
-template <typename Allocator> class MemoryBlock;
+template <typename Allocator>
+class MemoryBlock;
 
 /** \brief Provides means for memory allocation and deallocation throughout the library.
  *
@@ -38,6 +39,6 @@ struct NewAllocator
   static void deallocate(std::uint8_t*& data);
 };
 
-} // namespace selene
+}  // namespace selene
 
-#endif // SELENE_BASE_ALLOCATORS_HPP
+#endif  // SELENE_BASE_ALLOCATORS_HPP

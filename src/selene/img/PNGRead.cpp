@@ -52,8 +52,7 @@ struct PNGDecompressionObject::Impl
   bool valid = false;
 };
 
-PNGDecompressionObject::PNGDecompressionObject()
-    : impl_(std::make_unique<PNGDecompressionObject::Impl>())
+PNGDecompressionObject::PNGDecompressionObject() : impl_(std::make_unique<PNGDecompressionObject::Impl>())
 {
   auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
   png_error_ptr user_error_fn = detail::error_handler;
@@ -115,11 +114,11 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
   int compression_method = 0;
   int filter_method = 0;
 
-  //png_byte nr_channels = 0;
-  //png_size_t rowbytes = 0;
-  //png_const_bytep signature = 0;
+  // png_byte nr_channels = 0;
+  // png_size_t rowbytes = 0;
+  // png_const_bytep signature = 0;
 
-  double screen_gamma = PNG_DEFAULT_sRGB; // TODO: Or supply user-defined value.
+  double screen_gamma = PNG_DEFAULT_sRGB;  // TODO: Or supply user-defined value.
 
   // Unfortunately, no more variable initializations after this line:
   if (setjmp(png_jmpbuf(png_ptr)))
@@ -127,10 +126,10 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
     goto failure_state;
   }
 
-  png_set_compression_buffer_size(png_ptr, 4 * 8192); // Default is 8192
-  //png_set_crc_action(png_ptr, crit_action, ancil_action);
+  png_set_compression_buffer_size(png_ptr, 4 * 8192);  // Default is 8192
+  // png_set_crc_action(png_ptr, crit_action, ancil_action);
   // TODO: Set up callback for unknown chunks? See line 492 in manual
-  //png_set_read_status_fn(png_ptr, read_row_callback);
+  // png_set_read_status_fn(png_ptr, read_row_callback);
 
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_method, &compression_method,
                &filter_method);
@@ -280,7 +279,7 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
 
   if (convert_rgb_to_gray && (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA))
   {
-    constexpr int error_action = PNG_ERROR_ACTION_NONE; // silently do the conversion
+    constexpr int error_action = PNG_ERROR_ACTION_NONE;  // silently do the conversion
     png_set_rgb_to_gray(png_ptr, error_action, PNG_RGB_TO_GRAY_DEFAULT, PNG_RGB_TO_GRAY_DEFAULT);
 
     if (impl_->pixel_format_ == PixelFormat::RGB)
@@ -322,8 +321,7 @@ const MessageLog& PNGDecompressionObject::message_log() const
 }
 
 
-namespace detail
-{
+namespace detail {
 
 struct PNGOutputInfo
 {
@@ -337,8 +335,7 @@ struct PNGOutputInfo
   PNGOutputInfo(Index width_, Index height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_);
 };
 
-PNGOutputInfo::PNGOutputInfo()
-    : width(0), height(0), nr_channels(0), bit_depth(0), row_bytes(0)
+PNGOutputInfo::PNGOutputInfo() : width(0), height(0), nr_channels(0), bit_depth(0), row_bytes(0)
 {
 }
 
@@ -364,8 +361,7 @@ private:
   bool error_state_;
 };
 
-PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj)
-    : obj_(obj), error_state_(false)
+PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_(obj), error_state_(false)
 {
   auto png_ptr = obj_.impl_->png_ptr;
   auto info_ptr = obj_.impl_->info_ptr;
@@ -377,16 +373,16 @@ PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj)
 
   png_read_update_info(png_ptr, info_ptr);
 
-  output_info_ = PNGOutputInfo(
-      static_cast<Length>(png_get_image_width(png_ptr, info_ptr)),
-      static_cast<Length>(png_get_image_height(png_ptr, info_ptr)),
-      static_cast<int>(png_get_channels(png_ptr, info_ptr)),
-      static_cast<int>(png_get_bit_depth(png_ptr, info_ptr)),
-      static_cast<std::size_t>(png_get_rowbytes(png_ptr, info_ptr)));
+  output_info_ = PNGOutputInfo(static_cast<Length>(png_get_image_width(png_ptr, info_ptr)),
+                               static_cast<Length>(png_get_image_height(png_ptr, info_ptr)),
+                               static_cast<int>(png_get_channels(png_ptr, info_ptr)),
+                               static_cast<int>(png_get_bit_depth(png_ptr, info_ptr)),
+                               static_cast<std::size_t>(png_get_rowbytes(png_ptr, info_ptr)));
 
-  //color_type = png_get_color_type(png_ptr, info_ptr);
+  // color_type = png_get_color_type(png_ptr, info_ptr);
 
-  if (output_info_.bit_depth != 8 && output_info_.bit_depth != 16) // bit depths 1, 2, 4 should be converted using above transformation
+  if (output_info_.bit_depth != 8
+      && output_info_.bit_depth != 16)  // bit depths 1, 2, 4 should be converted using above transformation
   {
     error_state_ = true;
   }
@@ -462,7 +458,7 @@ void set_source(PNGDecompressionObject& obj, io::FileReader& source)
 
   png_init_io(obj.impl_->png_ptr, source.handle());
 
-  failure_state:;
+failure_state:;
 }
 
 void set_source(PNGDecompressionObject& obj, io::MemoryReader& source)
@@ -534,7 +530,7 @@ PNGHeaderInfo read_header(io::MemoryReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
-} // namespace detail
+}  // namespace detail
 
 
 // ----------------
@@ -553,8 +549,7 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, b
 {
   const auto src_pos = source.position();
 
-  auto scope_exit = [&source, rewind, messages, &obj, src_pos]()
-  {
+  auto scope_exit = [&source, rewind, messages, &obj, src_pos]() {
     if (rewind)
     {
       source.seek_abs(src_pos);
@@ -574,7 +569,6 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, b
   const auto header_info = detail::read_header(source, obj);
   scope_exit();
   return header_info;
-
 }
 
 template <typename SourceType>
@@ -608,11 +602,10 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompres
     return ImageData();
   }
 
-  const bool pars_set = obj.set_decompression_parameters(options.force_bit_depth_8, options.set_background,
-                                                         options.strip_alpha_channel, options.swap_alpha_channel,
-                                                         options.set_bgr, options.invert_alpha_channel,
-                                                         options.invert_monochrome, options.convert_gray_to_rgb,
-                                                         options.convert_rgb_to_gray);
+  const bool pars_set = obj.set_decompression_parameters(
+      options.force_bit_depth_8, options.set_background, options.strip_alpha_channel, options.swap_alpha_channel,
+      options.set_bgr, options.invert_alpha_channel, options.invert_monochrome, options.convert_gray_to_rgb,
+      options.convert_rgb_to_gray);
 
   if (!pars_set)
   {
@@ -668,13 +661,13 @@ template ImageData read_png<io::FileReader>(io::FileReader&, PNGDecompressionOpt
 template ImageData read_png<io::MemoryReader>(io::MemoryReader&, PNGDecompressionOptions, MessageLog*);
 
 template ImageData read_png<io::FileReader>(PNGDecompressionObject&, io::FileReader&, PNGDecompressionOptions,
-                                             MessageLog*, const PNGHeaderInfo*);
+                                            MessageLog*, const PNGHeaderInfo*);
 template ImageData read_png<io::MemoryReader>(PNGDecompressionObject&, io::MemoryReader&, PNGDecompressionOptions,
-                                               MessageLog*, const PNGHeaderInfo*);
+                                              MessageLog*, const PNGHeaderInfo*);
 
 /// \endcond
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)

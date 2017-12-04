@@ -54,7 +54,7 @@ MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes)
     return construct_memory_block_from_existing_memory<NewAllocator>(nullptr, 0);
   }
 
-  auto ptr = new(std::nothrow) std::uint8_t[nr_bytes];
+  auto ptr = new (std::nothrow) std::uint8_t[nr_bytes];
   return construct_memory_block_from_existing_memory<NewAllocator>(ptr, (ptr == nullptr) ? 0 : nr_bytes);
 }
 
@@ -68,4 +68,4 @@ void NewAllocator::deallocate(std::uint8_t*& data)
   data = nullptr;
 }
 
-} // namespace selene
+}  // namespace selene

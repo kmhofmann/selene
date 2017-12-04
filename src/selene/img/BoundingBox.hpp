@@ -46,8 +46,7 @@ private:
 /** Default constructor. Constructs a bounding box of size (0, 0) top-left corner (0, 0).
  */
 template <typename Index_, typename Length_>
-inline BoundingBox<Index_, Length_>::BoundingBox()
-    : x0_(Index{0}), y0_(Index{0}), width_(Length{0}), height_(Length{0})
+inline BoundingBox<Index_, Length_>::BoundingBox() : x0_(Index{0}), y0_(Index{0}), width_(Length{0}), height_(Length{0})
 {
 }
 
@@ -154,7 +153,7 @@ inline Index_ BoundingBox<Index_, Length_>::y_end() const
   return y0_ + height_;
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_BOUNDING_BOX_HPP
+#endif  // SELENE_IMG_BOUNDING_BOX_HPP

@@ -14,7 +14,8 @@
 
 namespace selene {
 
-template <typename Allocator> class MemoryBlock;
+template <typename Allocator>
+class MemoryBlock;
 
 template <typename Allocator>
 MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size);
@@ -30,7 +31,8 @@ MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t*
  *
  * \tparam Allocator An allocator to use for deallocation of the memory inside a MemoryBlock instance.
  */
-template <typename Allocator> class MemoryBlock
+template <typename Allocator>
+class MemoryBlock
 {
 public:
   ~MemoryBlock();
@@ -59,9 +61,9 @@ private:
 // Implementation
 
 template <typename Allocator>
-inline MemoryBlock<Allocator>::MemoryBlock(std::uint8_t* data, std::size_t size)
-    : data_(data), size_(size)
-{ }
+inline MemoryBlock<Allocator>::MemoryBlock(std::uint8_t* data, std::size_t size) : data_(data), size_(size)
+{
+}
 
 template <typename Allocator>
 inline MemoryBlock<Allocator>::~MemoryBlock()
@@ -141,6 +143,6 @@ inline MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::u
   return MemoryBlock<Allocator>(data, size);
 }
 
-} // namespace selene
+}  // namespace selene
 
-#endif // SELENE_BASE_MEMORY_BLOCK_HPP
+#endif  // SELENE_BASE_MEMORY_BLOCK_HPP

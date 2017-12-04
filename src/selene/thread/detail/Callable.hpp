@@ -18,15 +18,15 @@ namespace detail {
 class Callable
 {
 private:
-  template <typename T> struct CallableType;
+  template <typename T>
+  struct CallableType;
 
 public:
   Callable() = default;
   ~Callable() = default;
 
   template <typename T>
-  explicit Callable(T&& func)
-      : callable_(new CallableType<T>(std::forward<T>(func)))
+  explicit Callable(T&& func) : callable_(new CallableType<T>(std::forward<T>(func)))
   {
   }
 
@@ -61,7 +61,8 @@ private:
     virtual void call() = 0;
   };
 
-  template <typename T> struct CallableType : public CallableBase
+  template <typename T>
+  struct CallableType : public CallableBase
   {
     T func;
 
@@ -80,9 +81,9 @@ private:
 
 /// \endcond
 
-} // namespace detail
+}  // namespace detail
 
-} // namespace thread
-} // namespace selene
+}  // namespace thread
+}  // namespace selene
 
-#endif // SELENE_THREAD_DETAIL_CALLABLE_HPP
+#endif  // SELENE_THREAD_DETAIL_CALLABLE_HPP

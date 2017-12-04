@@ -34,8 +34,10 @@ public:
   TaskQueue(TaskQueue&& other) noexcept;
   TaskQueue& operator=(TaskQueue&& other) noexcept;
 
-  template <typename Func> bool try_push(Func&& task);
-  template <typename Func> void push(Func&& task);
+  template <typename Func>
+  bool try_push(Func&& task);
+  template <typename Func>
+  void push(Func&& task);
 
   bool try_pop(Callable& task);
   bool pop(Callable& task);
@@ -49,8 +51,7 @@ private:
   std::atomic<bool> finished_;
 };
 
-inline TaskQueue::TaskQueue()
-  : finished_(false)
+inline TaskQueue::TaskQueue() : finished_(false)
 {
 }
 
@@ -82,7 +83,8 @@ inline TaskQueue& TaskQueue::operator=(TaskQueue&& other) noexcept
 }
 
 
-template <typename Func> bool TaskQueue::try_push(Func&& task)
+template <typename Func>
+bool TaskQueue::try_push(Func&& task)
 {
   {
     std::unique_lock<std::mutex> lock(mutex_, std::try_to_lock);
@@ -100,7 +102,8 @@ template <typename Func> bool TaskQueue::try_push(Func&& task)
 }
 
 
-template <typename Func> void TaskQueue::push(Func&& task)
+template <typename Func>
+void TaskQueue::push(Func&& task)
 {
   {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -154,9 +157,9 @@ inline void TaskQueue::set_finished()
 
 /// \endcond
 
-} // namespace detail
+}  // namespace detail
 
-} // namespace thread
-} // namespace selene
+}  // namespace thread
+}  // namespace selene
 
-#endif // SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
+#endif  // SELENE_THREAD_DETAIL_TASK_QUEUE_HPP

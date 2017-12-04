@@ -20,7 +20,8 @@
 namespace selene {
 namespace img {
 
-template <typename T> class Image;
+template <typename T>
+class Image;
 
 /** \brief Dynamically typed image class.
  *
@@ -129,7 +130,8 @@ private:
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
-  template <typename PixelType> friend Image<PixelType> to_image(ImageData&&);
+  template <typename PixelType>
+  friend Image<PixelType> to_image(ImageData&&);
 };
 
 /** \brief Constructs image data (owned memory) with the specified parameters.
@@ -170,7 +172,8 @@ inline ImageData::ImageData(Length width, Length height, std::uint16_t nr_channe
 
 /** \brief Constructs image data (a view onto non-owned memory) with the specified parameters.
  *
- * Effectively calls `set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format, output_sample_format);`.
+ * Effectively calls `set_view(data, width, height, nr_channels, nr_bytes_per_channel, pixel_format,
+ * output_sample_format);`.
  *
  * @param data Pointer to the existing image data.
  * @param width Desired image width.
@@ -221,7 +224,7 @@ inline ImageData::ImageData(std::uint8_t* data, Length width, Length height, std
  * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
-    std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
+                            std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
   set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, pixel_format, sample_format);
 }
@@ -241,7 +244,8 @@ inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Leng
  * @param sample_format The sample format (semantic tag).
  */
 inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, Length width, Length height, std::uint16_t nr_channels,
-    std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format, SampleFormat sample_format)
+                            std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
+                            SampleFormat sample_format)
 {
   set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
            sample_format);
@@ -552,9 +556,9 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
                                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
                                 SampleFormat sample_format)
 {
-  if (width_ == width && height_ == height && stride_bytes_ == stride_bytes &&
-      nr_channels_ == nr_channels && nr_bytes_per_channel_ == nr_bytes_per_channel &&
-      pixel_format_ == pixel_format && sample_format_ == sample_format)
+  if (width_ == width && height_ == height && stride_bytes_ == stride_bytes && nr_channels_ == nr_channels
+      && nr_bytes_per_channel_ == nr_bytes_per_channel && pixel_format_ == pixel_format
+      && sample_format_ == sample_format)
   {
     return;
   }
@@ -818,7 +822,7 @@ inline MemoryBlock<NewAllocator> ImageData::relinquish_data_ownership()
   return construct_memory_block_from_existing_memory<NewAllocator>(ptr, len);
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_IMAGE_DATA_HPP
+#endif  // SELENE_IMG_IMAGE_DATA_HPP

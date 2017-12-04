@@ -13,29 +13,47 @@ using namespace selene::img;
 
 namespace {
 
-template <typename PixelType> struct PixelProducer;
+template <typename PixelType>
+struct PixelProducer;
 
-template <typename T> struct PixelProducer<Pixel<T, 1>>
+template <typename T>
+struct PixelProducer<Pixel<T, 1>>
 {
-  static Pixel<T, 1> get(Index x, Index y) { return Pixel<T, 1>(x + y); }
+  static Pixel<T, 1> get(Index x, Index y)
+  {
+    return Pixel<T, 1>(x + y);
+  }
 };
 
-template <typename T> struct PixelProducer<Pixel<T, 2>>
+template <typename T>
+struct PixelProducer<Pixel<T, 2>>
 {
-  static Pixel<T, 2> get(Index x, Index y) { return Pixel<T, 2>(x + y, 2 * x + y); }
+  static Pixel<T, 2> get(Index x, Index y)
+  {
+    return Pixel<T, 2>(x + y, 2 * x + y);
+  }
 };
 
-template <typename T> struct PixelProducer<Pixel<T, 3>>
+template <typename T>
+struct PixelProducer<Pixel<T, 3>>
 {
-  static Pixel<T, 3> get(Index x, Index y) { return Pixel<T, 3>(x + y, 2 * x + y, x + 2 * y); }
+  static Pixel<T, 3> get(Index x, Index y)
+  {
+    return Pixel<T, 3>(x + y, 2 * x + y, x + 2 * y);
+  }
 };
 
-template <typename T> struct PixelProducer<Pixel<T, 4>>
+template <typename T>
+struct PixelProducer<Pixel<T, 4>>
 {
-  static Pixel<T, 4> get(Index x, Index y) { return Pixel<T, 4>(x + y, 2 * x + y, x + 2 * y, 2 * x + 2 * y); }
+  static Pixel<T, 4> get(Index x, Index y)
+  {
+    return Pixel<T, 4>(x + y, 2 * x + y, x + 2 * y, 2 * x + 2 * y);
+  }
 };
 
-template <typename PixelType> Image<PixelType> create_test_image(Length width, Length height)
+template <typename PixelType>
+Image<PixelType> create_test_image(Length width, Length height)
 {
   Image<PixelType> img(width, height);
 
@@ -50,7 +68,8 @@ template <typename PixelType> Image<PixelType> create_test_image(Length width, L
   return img;
 }
 
-template <typename PixelType> void test_image(Length width, Length height)
+template <typename PixelType>
+void test_image(Length width, Length height)
 {
   auto img = create_test_image<PixelType>(width, height);
   auto img_data_view = to_image_data_view(img, PixelFormat::Unknown);
@@ -72,7 +91,7 @@ template <typename PixelType> void test_image(Length width, Length height)
   // ...
 }
 
-} // namespace _
+}  // namespace
 
 TEST_CASE("Converting Image<> to ImageData", "[img]")
 {

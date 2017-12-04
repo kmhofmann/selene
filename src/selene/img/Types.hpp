@@ -17,7 +17,7 @@ using Index = std::uint32_t;  ///< Type representing a scalar as part of an imag
 using Length = std::uint32_t;  ///< Type representing a length in x or y-direction.
 using Stride = std::uint32_t;  ///< Type representing an image stride (nr of bytes per row).
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_TYPES_HPP
+#endif  // SELENE_IMG_TYPES_HPP

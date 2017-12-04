@@ -125,7 +125,7 @@ Image<PixelType> to_image_view(ImageData& img_data)
   return Image<PixelType>(data, width, height, stride_bytes);
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_IMAGE_DATA_TO_IMAGE_HPP
+#endif  // SELENE_IMG_IMAGE_DATA_TO_IMAGE_HPP

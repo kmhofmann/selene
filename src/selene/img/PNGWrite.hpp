@@ -35,12 +35,11 @@ namespace img {
 struct PNGCompressionOptions;
 class PNGCompressionObject;
 
-namespace detail
-{
+namespace detail {
 class PNGCompressionCycle;
 void set_destination(PNGCompressionObject&, io::FileWriter&);
 void set_destination(PNGCompressionObject&, io::VectorWriter&);
-} // namespace detail
+}  // namespace detail
 
 /** \brief PNG compression options.
  *
@@ -66,8 +65,11 @@ struct PNGCompressionOptions
    */
   explicit PNGCompressionOptions(int compression_level_ = -1, bool interlaced_ = false, bool set_bgr_ = false,
                                  bool invert_alpha_channel_ = false, bool invert_monochrome_ = false)
-      : compression_level(compression_level_), interlaced(interlaced_), set_bgr(set_bgr_),
-        invert_alpha_channel(invert_alpha_channel_), invert_monochrome(invert_monochrome_)
+      : compression_level(compression_level_)
+      , interlaced(interlaced_)
+      , set_bgr(set_bgr_)
+      , invert_alpha_channel(invert_alpha_channel_)
+      , invert_monochrome(invert_monochrome_)
   {
   }
 };
@@ -92,7 +94,7 @@ public:
 
 private:
   struct Impl;
-  std::unique_ptr <Impl> impl_;
+  std::unique_ptr<Impl> impl_;
 
   friend class detail::PNGCompressionCycle;
   friend void detail::set_destination(PNGCompressionObject&, io::FileWriter&);
@@ -129,9 +131,9 @@ template <typename SinkType>
 bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink,
                PNGCompressionOptions options = PNGCompressionOptions(), MessageLog* messages = nullptr);
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)
 
-#endif // SELENE_IMG_PNG_WRITE_HPP
+#endif  // SELENE_IMG_PNG_WRITE_HPP

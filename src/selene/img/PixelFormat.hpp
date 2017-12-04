@@ -20,28 +20,28 @@ namespace img {
  */
 enum class PixelFormat : unsigned char
 {
-  Y,      ///< 1-channel format: Grayscale
-  X,      ///< 1-channel format: Unknown
+  Y,  ///< 1-channel format: Grayscale
+  X,  ///< 1-channel format: Unknown
 
-  YA,     ///< 2-channel format: Grayscale & Transparency
-  XX,     ///< 2-channel format: Unknown
+  YA,  ///< 2-channel format: Grayscale & Transparency
+  XX,  ///< 2-channel format: Unknown
 
-  RGB,    ///< 3-channel format: RGB
-  BGR,    ///< 3-channel format: BGR
+  RGB,  ///< 3-channel format: RGB
+  BGR,  ///< 3-channel format: BGR
   YCbCr,  ///< 3-channel format: YCbCr
-  CIELab, ///< 3-channel format: CIELab
-  ICCLab, ///< 3-channel format: ICCLab
-  XXX,    ///< 3-channel format: Unknown
+  CIELab,  ///< 3-channel format: CIELab
+  ICCLab,  ///< 3-channel format: ICCLab
+  XXX,  ///< 3-channel format: Unknown
 
-  RGBA,   ///< 4-channel format: RGBA
-  BGRA,   ///< 4-channel format: BGRA
-  ARGB,   ///< 4-channel format: ARGB
-  ABGR,   ///< 4-channel format: ABGR
-  CMYK,   ///< 4-channel format: CMYK
-  YCCK,   ///< 4-channel format: YCCK
-  XXXX,   ///< 4-channel format: Unknown
+  RGBA,  ///< 4-channel format: RGBA
+  BGRA,  ///< 4-channel format: BGRA
+  ARGB,  ///< 4-channel format: ARGB
+  ABGR,  ///< 4-channel format: ABGR
+  CMYK,  ///< 4-channel format: CMYK
+  YCCK,  ///< 4-channel format: YCCK
+  XXXX,  ///< 4-channel format: Unknown
 
-  Unknown ///< Completely unknown pixel format.
+  Unknown  ///< Completely unknown pixel format.
 };
 
 /** \brief A sample format enumeration.
@@ -59,9 +59,9 @@ enum class SampleFormat : unsigned char
 
 std::size_t get_nr_channels(PixelFormat pixel_format);
 
-std::ostream& operator <<(std::ostream& os, PixelFormat pixel_format);
+std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format);
 
-std::ostream& operator <<(std::ostream& os, SampleFormat sample_format);
+std::ostream& operator<<(std::ostream& os, SampleFormat sample_format);
 
 // ----------
 // Implementation:
@@ -104,7 +104,7 @@ inline std::size_t get_nr_channels(PixelFormat pixel_format)
   return 0;
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_PIXEL_FORMAT_HPP
+#endif  // SELENE_IMG_PIXEL_FORMAT_HPP

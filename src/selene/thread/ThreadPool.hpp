@@ -9,8 +9,8 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cstdint>
 #include <condition_variable>
+#include <cstdint>
 #include <functional>
 #include <future>
 #include <memory>
@@ -47,7 +47,7 @@ public:
   ThreadPool& operator=(ThreadPool&&) = delete;  ///< Move assignment operator.
 
   template <typename Func, typename... Args>
-  auto push(Func&& func, Args&& ... args) -> std::future<typename std::result_of<Func(Args...)>::type>;
+  auto push(Func&& func, Args&&... args) -> std::future<typename std::result_of<Func(Args...)>::type>;
 
   bool empty() const;
   std::size_t size() const;
@@ -83,8 +83,7 @@ auto async(ThreadPool& thread_pool, Func&& f, Args&&... args)
  *
  * @param num_threads Number of threads in the thread pool.
  */
-inline ThreadPool::ThreadPool(std::size_t num_threads)
-    : index_(0), num_threads_(0)
+inline ThreadPool::ThreadPool(std::size_t num_threads) : index_(0), num_threads_(0)
 {
   std::lock_guard<std::mutex> lock(mutex_);
 
@@ -121,11 +120,11 @@ inline ThreadPool::~ThreadPool()
  * @return A `std::future<ReturnType>` to hold the result of the asynchronous operation.
  */
 template <typename Func, typename... Args>
-auto ThreadPool::push(Func&& func, Args&& ... args) -> std::future<typename std::result_of<Func(Args...)>::type>
+auto ThreadPool::push(Func&& func, Args&&... args) -> std::future<typename std::result_of<Func(Args...)>::type>
 {
   using ReturnType = typename std::result_of<Func(Args...)>::type;
 
-  auto f = [func=std::decay_t<Func>(func), args...]() mutable { return func(args...); };
+  auto f = [func = std::decay_t<Func>(func), args...]() mutable { return func(args...); };
   std::packaged_task<ReturnType()> task(std::move(f));
   std::future<ReturnType> future(task.get_future());
 
@@ -191,7 +190,7 @@ inline void ThreadPool::run_loop(std::size_t thread_index)
   }
 }
 
-} // namespace thread
-} // namespace selene
+}  // namespace thread
+}  // namespace selene
 
-#endif // SELENE_THREAD_THREAD_POOL_HPP
+#endif  // SELENE_THREAD_THREAD_POOL_HPP

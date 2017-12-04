@@ -40,10 +40,10 @@ void output_message(j_common_ptr cinfo);
 
 /// \endcond
 
-} // namespace detail
-} // namespace img
-} // namespace selene
+}  // namespace detail
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)SELENE_WITH_LIBJPEG_TURBO
+#endif  // defined(SELENE_WITH_LIBJPEG)SELENE_WITH_LIBJPEG_TURBO
 
-#endif // SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
+#endif  // SELENE_IMG_DETAIL_JPEG_DETAIL_HPP

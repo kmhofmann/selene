@@ -32,14 +32,13 @@ namespace img {
 
 class JPEGCompressionObject;
 
-namespace detail
-{
+namespace detail {
 class JPEGCompressionCycle;
 void set_destination(JPEGCompressionObject&, io::FileWriter&);
 void set_destination(JPEGCompressionObject&, io::VectorWriter&);
 bool flush_data_buffer(JPEGCompressionObject&, io::FileWriter&);
 bool flush_data_buffer(JPEGCompressionObject&, io::VectorWriter&);
-} // namespace detail
+}  // namespace detail
 
 /** \brief JPEG compression options.
  *
@@ -58,12 +57,13 @@ struct JPEGCompressionOptions
    * @param jpeg_color_space_ Color space of the compressed data inside the JPEG stream.
    * @param optimize_coding_ If true, compute optimal Huffman coding tables for the image (more expensive computation).
    */
-  explicit JPEGCompressionOptions(int quality_ = 95,
-                                  JPEGColorSpace in_color_space_ = JPEGColorSpace::Auto,
+  explicit JPEGCompressionOptions(int quality_ = 95, JPEGColorSpace in_color_space_ = JPEGColorSpace::Auto,
                                   JPEGColorSpace jpeg_color_space_ = JPEGColorSpace::Auto,
                                   bool optimize_coding_ = false)
-      : quality(quality_), in_color_space(in_color_space_), jpeg_color_space(jpeg_color_space_),
-        optimize_coding(optimize_coding_)
+      : quality(quality_)
+      , in_color_space(in_color_space_)
+      , jpeg_color_space(jpeg_color_space_)
+      , optimize_coding(optimize_coding_)
   {
   }
 };
@@ -83,14 +83,13 @@ public:
   const MessageLog& message_log() const;
 
   bool set_image_info(int width, int height, int nr_channels, JPEGColorSpace in_color_space);
-  bool set_compression_parameters(
-      int quality, JPEGColorSpace color_space = JPEGColorSpace::Auto,
-      bool optimize_coding = false);
+  bool set_compression_parameters(int quality, JPEGColorSpace color_space = JPEGColorSpace::Auto,
+                                  bool optimize_coding = false);
   /// \endcond
 
 private:
   struct Impl;
-  std::unique_ptr <Impl> impl_;
+  std::unique_ptr<Impl> impl_;
 
   friend class detail::JPEGCompressionCycle;
   friend void detail::set_destination(JPEGCompressionObject&, io::FileWriter&);
@@ -129,9 +128,9 @@ template <typename SinkType>
 bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(), MessageLog* messages = nullptr);
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)
 
-#endif // SELENE_IMG_JPEG_WRITE_HPP
+#endif  // SELENE_IMG_JPEG_WRITE_HPP

@@ -29,8 +29,8 @@ void warning_handler(png_structp png_ptr, const char* msg);
 
 /// \endcond
 
-} // namespace detail
-} // namespace img
-} // namespace selene
+}  // namespace detail
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_DETAIL_PNG_DETAIL_HPP
+#endif  // SELENE_IMG_DETAIL_PNG_DETAIL_HPP

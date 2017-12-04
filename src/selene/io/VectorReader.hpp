@@ -34,8 +34,8 @@ public:
 
   VectorReader(const VectorReader&) = delete;
   VectorReader& operator=(const VectorReader&) = delete;
-  VectorReader(VectorReader&&) noexcept = default;   ///< Move constructor.
-  VectorReader& operator=(VectorReader&&) noexcept = default;   ///< Move assignment operator.
+  VectorReader(VectorReader&&) noexcept = default;  ///< Move constructor.
+  VectorReader& operator=(VectorReader&&) noexcept = default;  ///< Move assignment operator.
 
   const std::vector<std::uint8_t>* handle() noexcept;
 
@@ -53,10 +53,10 @@ public:
   bool seek_rel(std::ptrdiff_t offset) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    bool read(T& value) noexcept;
+  bool read(T& value) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    std::size_t read(T* values, std::size_t nr_values) noexcept;
+  std::size_t read(T* values, std::size_t nr_values) noexcept;
 
 private:
   const std::vector<std::uint8_t>* data_ = nullptr;
@@ -221,7 +221,6 @@ inline bool VectorReader::seek_rel(std::ptrdiff_t offset) noexcept
 
   pos_ = new_pos;
   return true;
-
 }
 
 /** \brief Reads an element of type T and writes the element to the output parameter `value`.
@@ -322,7 +321,7 @@ inline std::size_t read(VectorReader& source, T* values, std::size_t nr_values) 
   return source.read(values, nr_values);
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_VECTOR_READER_HPP
+#endif  // SELENE_IO_VECTOR_READER_HPP

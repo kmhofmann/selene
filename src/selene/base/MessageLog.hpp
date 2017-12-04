@@ -19,7 +19,7 @@ namespace selene {
 class MessageLog
 {
 public:
-  using Messages = std::vector<std::string>; ///< A message collection.
+  using Messages = std::vector<std::string>;  ///< A message collection.
   MessageLog() = default;
 
   const Messages& messages() const;
@@ -62,6 +62,6 @@ inline void MessageLog::add_message(const std::string& message)
   messages_.push_back(message);
 }
 
-} // namespace selene
+}  // namespace selene
 
-#endif // SELENE_BASE_MESSAGE_LOG_HPP
+#endif  // SELENE_BASE_MESSAGE_LOG_HPP

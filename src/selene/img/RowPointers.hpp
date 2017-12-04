@@ -20,10 +20,14 @@ namespace img {
 using RowPointers = std::vector<std::uint8_t*>;  ///< Type representing a list of image row pointers
 using ConstRowPointers = std::vector<const std::uint8_t*>;  ///< Type representing a list of constant image row pointers
 
-template <typename T> RowPointers get_row_pointers(Image<T>& img);
-template <typename T> ConstRowPointers get_row_pointers(const Image<T>& img);
+template <typename T>
+RowPointers get_row_pointers(Image<T>& img);
+
+template <typename T>
+ConstRowPointers get_row_pointers(const Image<T>& img);
 
 RowPointers get_row_pointers(ImageData& img);
+
 ConstRowPointers get_row_pointers(const ImageData& img);
 
 // --------------
@@ -35,7 +39,8 @@ ConstRowPointers get_row_pointers(const ImageData& img);
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
-template <typename T> RowPointers get_row_pointers(Image<T>& img)
+template <typename T>
+RowPointers get_row_pointers(Image<T>& img)
 {
   RowPointers row_pointers(img.height());
 
@@ -53,7 +58,8 @@ template <typename T> RowPointers get_row_pointers(Image<T>& img)
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
-template <typename T> ConstRowPointers get_row_pointers(const Image<T>& img)
+template <typename T>
+ConstRowPointers get_row_pointers(const Image<T>& img)
 {
   ConstRowPointers row_pointers(img.height());
 
@@ -100,7 +106,7 @@ inline ConstRowPointers get_row_pointers(const ImageData& img)
 }
 
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_ROW_POINTERS_HPP
+#endif  // SELENE_IMG_ROW_POINTERS_HPP

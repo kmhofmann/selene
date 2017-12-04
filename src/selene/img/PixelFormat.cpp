@@ -63,5 +63,5 @@ std::ostream& operator<<(std::ostream& os, SampleFormat sample_format)
   return os;
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene

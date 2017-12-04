@@ -82,8 +82,6 @@ ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
     return ImageData(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
                      sample_format);
   }
-
-
 }
 
 /** \brief Creates a dynamically typed `ImageData` view from a statically typed `Image<PixelType>` instance.
@@ -127,7 +125,7 @@ ImageData to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
   return ImageData(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_IMAGE_TO_IMAGE_DATA_HPP
+#endif  // SELENE_IMG_IMAGE_TO_IMAGE_DATA_HPP

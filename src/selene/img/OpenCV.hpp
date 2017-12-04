@@ -23,19 +23,24 @@
 namespace selene {
 namespace img {
 
-template <typename T> Image<T> wrap_opencv_mat(cv::Mat& img_cv);
+template <typename T>
+Image<T> wrap_opencv_mat(cv::Mat& img_cv);
 
-template <typename T> Image<T> copy_opencv_mat(const cv::Mat& img_cv);
+template <typename T>
+Image<T> copy_opencv_mat(const cv::Mat& img_cv);
 
-template <typename T> cv::Mat wrap_in_opencv_mat(Image<T>& img);
+template <typename T>
+cv::Mat wrap_in_opencv_mat(Image<T>& img);
 
-template <typename T> cv::Mat copy_to_opencv_mat(const Image<T>& img);
+template <typename T>
+cv::Mat copy_to_opencv_mat(const Image<T>& img);
 
 // ----------
 // Implementation:
 
 namespace detail {
 
+// clang-format off
 template <typename T> struct PixelToOpenCVType;
 
 template <> struct PixelToOpenCVType<std::uint8_t>{ static constexpr auto type = CV_8UC1; };
@@ -79,6 +84,7 @@ template <> struct PixelToOpenCVType<img::Pixel<float64_t, 1>>{ static constexpr
 template <> struct PixelToOpenCVType<img::Pixel<float64_t, 2>>{ static constexpr auto type = CV_64FC2; };
 template <> struct PixelToOpenCVType<img::Pixel<float64_t, 3>>{ static constexpr auto type = CV_64FC3; };
 template <> struct PixelToOpenCVType<img::Pixel<float64_t, 4>>{ static constexpr auto type = CV_64FC4; };
+// clang-format on
 
 inline int opencv_nr_bytes_per_channel(const cv::Mat& img_cv)
 {
@@ -91,7 +97,7 @@ inline int opencv_nr_bytes_per_channel(const cv::Mat& img_cv)
     case CV_32S:
     case CV_32F: return 4;
     case CV_64F: return 8;
-    default: return 0; // Unknown
+    default: return 0;  // Unknown
   }
 }
 
@@ -110,7 +116,7 @@ inline bool opencv_mat_type_is_unsigned(const cv::Mat& img_cv)
   return (img_cv.depth() == CV_8U || img_cv.depth() == CV_16U);
 }
 
-} // namespace detail
+}  // namespace detail
 
 /** \brief Wraps an OpenCV `cv::Mat` matrix instance in an `Image<T>`.
  *
@@ -121,7 +127,8 @@ inline bool opencv_mat_type_is_unsigned(const cv::Mat& img_cv)
  * @param img_cv An OpenCV matrix.
  * @return An `Image<T>`, providing a non-owning view on the OpenCV matrix `img_cv`.
  */
-template <typename T> inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
+template <typename T>
+inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
 {
   SELENE_ASSERT(static_cast<std::int64_t>(img_cv.rows)
                 <= static_cast<std::int64_t>(std::numeric_limits<Length>::max()));
@@ -152,7 +159,8 @@ template <typename T> inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
  * @param img_cv An OpenCV matrix.
  * @return An `Image<T>`, providing a copy of the contents of the OpenCV matrix `img_cv`.
  */
-template <typename T> Image<T> copy_opencv_mat(const cv::Mat& img_cv)
+template <typename T>
+Image<T> copy_opencv_mat(const cv::Mat& img_cv)
 {
   SELENE_ASSERT(static_cast<std::int64_t>(img_cv.rows)
                 <= static_cast<std::int64_t>(std::numeric_limits<Length>::max()));
@@ -189,7 +197,8 @@ template <typename T> Image<T> copy_opencv_mat(const cv::Mat& img_cv)
  * @param img An image.
  * @return A `cv::Mat`, providing a non-owning view on the data of `img`.
  */
-template <typename T> inline cv::Mat wrap_in_opencv_mat(Image<T>& img)
+template <typename T>
+inline cv::Mat wrap_in_opencv_mat(Image<T>& img)
 {
   SELENE_ASSERT(img.width() <= std::numeric_limits<int>::max());
   SELENE_ASSERT(img.height() <= std::numeric_limits<int>::max());
@@ -211,7 +220,8 @@ template <typename T> inline cv::Mat wrap_in_opencv_mat(Image<T>& img)
  * @param img An image.
  * @return A `cv::Mat`, providing a copy of the contents of `img`.
  */
-template <typename T> cv::Mat copy_to_opencv_mat(const Image<T>& img)
+template <typename T>
+cv::Mat copy_to_opencv_mat(const Image<T>& img)
 {
   SELENE_ASSERT(img.width() <= std::numeric_limits<int>::max());
   SELENE_ASSERT(img.height() <= std::numeric_limits<int>::max());
@@ -234,9 +244,9 @@ template <typename T> cv::Mat copy_to_opencv_mat(const Image<T>& img)
   return img_cv;
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_OPENCV)
+#endif  // defined(SELENE_WITH_OPENCV)
 
-#endif // SELENE_IMG_OPENCV_HPP
+#endif  // SELENE_IMG_OPENCV_HPP

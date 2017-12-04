@@ -26,7 +26,8 @@ namespace img {
  * \tparam T The type for each channel element.
  * \tparam nr_channels_ The number of channels.
  */
-template <typename T, std::uint32_t nr_channels_> class Pixel
+template <typename T, std::uint32_t nr_channels_>
+class Pixel
 {
 public:
   using value_type = T;  ///< The type of each pixel sample (channel).
@@ -35,15 +36,15 @@ public:
   Pixel() = default;  ///< Default constructor. Pixel values are uninitialized.
 
   template <typename... Args, typename = typename std::enable_if_t<sizeof...(Args) == nr_channels_>>
-    constexpr explicit Pixel(Args... args);
+  constexpr explicit Pixel(Args... args);
 
   constexpr explicit Pixel(const std::array<T, nr_channels>& arr);
   ~Pixel() = default;
 
-  Pixel(const Pixel<T, nr_channels_>&) = default;   ///< Copy constructor.
-  Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;   ///< Copy assignment operator.
-  Pixel(Pixel<T, nr_channels_>&&) noexcept = default;   ///< Move constructor.
-  Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;   ///< Move assignment operator.
+  Pixel(const Pixel<T, nr_channels_>&) = default;  ///< Copy constructor.
+  Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;  ///< Copy assignment operator.
+  Pixel(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move constructor.
+  Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move assignment operator.
 
   T* data() noexcept;
   const T* data() const noexcept;
@@ -130,8 +131,7 @@ using Pixel_64f4 = Pixel<float64_t, 4>;  ///< 64-bit floating point 4-channel pi
  */
 template <typename T, std::uint32_t nr_channels_>
 template <typename... Args, typename>
-inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args)
-    : data_{{static_cast<T>(args)...}}
+inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cast<T>(args)...}}
 {
   static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel type is not POD");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
@@ -144,8 +144,7 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args)
  * \param arr The channel values as std::array<>.
  */
 template <typename T, std::uint32_t nr_channels_>
-inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr)
-    : data_(arr)
+inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) : data_(arr)
 {
 }
 
@@ -237,7 +236,7 @@ inline bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_chan
   return !(px0 == px1);
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_PIXEL_HPP
+#endif  // SELENE_IMG_PIXEL_HPP

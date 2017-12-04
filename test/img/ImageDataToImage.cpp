@@ -31,7 +31,7 @@ ImageData create_test_image_data(Length width, Length height, std::uint16_t nr_c
   return img_data;
 }
 
-} // namespace _
+}  // namespace
 
 TEST_CASE("Converting ImageData to Image<>", "[img]")
 {

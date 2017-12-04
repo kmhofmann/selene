@@ -11,8 +11,8 @@
 #include <boost/filesystem.hpp>
 
 #include <selene/io/FileReader.hpp>
-#include <selene/io/FileWriter.hpp>
 #include <selene/io/FileUtils.hpp>
+#include <selene/io/FileWriter.hpp>
 #include <selene/io/MemoryReader.hpp>
 #include <selene/io/VectorWriter.hpp>
 
@@ -31,13 +31,15 @@ using namespace selene::io;
 
 namespace fs = boost::filesystem;
 
+// clang-format off
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;
 constexpr std::array<std::array<int, 6>, 3> px = {
     {std::array<int, 6>{{226, 180, 244, 198, 0, 189}},
      std::array<int, 6>{{582, 415, 228, 227, 232, 228}},
-     std::array<int, 6>{{878, 597, 57, 60, 69, 60}}}}; // {x, y}, {r, g, b}, {y}
+     std::array<int, 6>{{878, 597, 57, 60, 69, 60}}}};  // {x, y}, {r, g, b}, {y}
 constexpr auto compression_factor = 70;
+// clang-format on
 
 namespace {
 
@@ -47,7 +49,7 @@ fs::path in_filename()
   return (env_var) ? fs::path(env_var) / "bike_duck.jpg" : fs::path("../data/bike_duck.jpg");
 }
 
-} // namespace _
+}  // namespace
 
 TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
 {
@@ -326,7 +328,7 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
 
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
-  REQUIRE(compressed_data.size() > 80000); // conservative lower bound estimate; should be around 118000
+  REQUIRE(compressed_data.size() > 80000);  // conservative lower bound estimate; should be around 118000
 }
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)

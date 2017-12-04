@@ -37,7 +37,7 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
   }
 }
 
-} // namespace _
+}  // namespace
 
 
 /** \brief Reads an image stream, trying all supported formats.
@@ -72,7 +72,7 @@ ImageData read_image(SourceType& source, MessageLog* messages)
       return img_data;
     }
   }
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)
 
   // In case that failed, try to read as PNG image:
   SELENE_ASSERT(!img_data.is_valid());
@@ -93,7 +93,7 @@ ImageData read_image(SourceType& source, MessageLog* messages)
       return img_data;
     }
   }
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)
 
   // Image reading failed: return an ImageData instance that is invalid:
 
@@ -130,9 +130,9 @@ bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, 
 
     add_messages(messages_jpeg, messages);
     return success;
-#else // defined(SELENE_WITH_LIBJPEG)
+#else  // defined(SELENE_WITH_LIBJPEG)
     throw std::runtime_error("ERROR: JPEG writing unsupported; recompile with the respective external dependency.");
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)
   }
   else if (format == ImageFormat::PNG)
   {
@@ -142,9 +142,9 @@ bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, 
 
     add_messages(messages_png, messages);
     return success;
-#else // defined(SELENE_WITH_LIBPNG)
+#else  // defined(SELENE_WITH_LIBPNG)
     throw std::runtime_error("ERROR: PNG writing unsupported; recompile with the respective external dependency.");
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)
   }
   else
   {
@@ -165,5 +165,5 @@ template bool write_image<io::VectorWriter>(const ImageData&, ImageFormat, io::V
 
 /// \endcond
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene

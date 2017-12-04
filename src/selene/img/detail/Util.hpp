@@ -9,10 +9,10 @@
 
 namespace selene {
 namespace img {
-namespace detail
-{
+namespace detail {
 
-template <typename T> inline void assign_message_log(const T& obj, MessageLog* messages)
+template <typename T>
+inline void assign_message_log(const T& obj, MessageLog* messages)
 {
   if (messages)
   {
@@ -20,8 +20,8 @@ template <typename T> inline void assign_message_log(const T& obj, MessageLog* m
   }
 }
 
-} // namespace detail
-} // namespace img
-} // namespace selene
+}  // namespace detail
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_DETAIL_UTIL_HPP
+#endif  // SELENE_IMG_DETAIL_UTIL_HPP

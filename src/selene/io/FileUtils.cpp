@@ -42,5 +42,5 @@ std::vector<std::uint8_t> read_file_contents(const std::string& path)
 }
 
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene

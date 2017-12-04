@@ -32,8 +32,7 @@ inline JPEGColorSpace pixel_format_to_color_space(PixelFormat pixel_format)
     case PixelFormat::ARGB: return JPEGColorSpace::EXT_ARGB;
     case PixelFormat::ABGR: return JPEGColorSpace::EXT_ABGR;
 #endif
-    default:
-      return JPEGColorSpace::Unknown;
+    default: return JPEGColorSpace::Unknown;
   }
 }
 
@@ -53,20 +52,19 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
     case JPEGColorSpace::EXT_BGRA: return PixelFormat::BGRA;
     case JPEGColorSpace::EXT_ARGB: return PixelFormat::ARGB;
     case JPEGColorSpace::EXT_ABGR: return PixelFormat::ABGR;
-    case JPEGColorSpace::EXT_RGBX: return PixelFormat::RGBA; // interpreting X as A here...
-    case JPEGColorSpace::EXT_BGRX: return PixelFormat::BGRA; // interpreting X as A here...
-    case JPEGColorSpace::EXT_XRGB: return PixelFormat::ARGB; // interpreting X as A here...
-    case JPEGColorSpace::EXT_XBGR: return PixelFormat::ABGR; // interpreting X as A here...
+    case JPEGColorSpace::EXT_RGBX: return PixelFormat::RGBA;  // interpreting X as A here...
+    case JPEGColorSpace::EXT_BGRX: return PixelFormat::BGRA;  // interpreting X as A here...
+    case JPEGColorSpace::EXT_XRGB: return PixelFormat::ARGB;  // interpreting X as A here...
+    case JPEGColorSpace::EXT_XBGR: return PixelFormat::ABGR;  // interpreting X as A here...
 #endif
-    default:
-      return PixelFormat::Unknown;
+    default: return PixelFormat::Unknown;
   }
 }
 
-} // namespace detail
-} // namespace img
-} // namespace selene
+}  // namespace detail
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)
 
-#endif // SELENE_IMG_DETAIL_JPEG_COMMON_HPP
+#endif  // SELENE_IMG_DETAIL_JPEG_COMMON_HPP

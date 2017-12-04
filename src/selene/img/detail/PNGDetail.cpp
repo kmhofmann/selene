@@ -24,6 +24,6 @@ void warning_handler(png_structp png_ptr, const char* msg)
   err_man.message_log.add_message(std::string("Warning: ") + std::string(msg));
 }
 
-} // namespace detail
-} // namespace img
-} // namespace selene
+}  // namespace detail
+}  // namespace img
+}  // namespace selene

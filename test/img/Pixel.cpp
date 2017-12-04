@@ -28,7 +28,7 @@ TEST_CASE("Pixel construction", "[img]")
   px0_ptr[1] = 66;
   REQUIRE(*(px0_ptr + 1) == 66);
 
-  std::array<std::int32_t, 6> arr = {{ 123, 6001, -32, 65535, 0, -40000 }};
+  std::array<std::int32_t, 6> arr = {{123, 6001, -32, 65535, 0, -40000}};
   const Pixel<std::int32_t, 6> px1(arr);
   REQUIRE(px1[0] == 123);
   REQUIRE(px1[1] == 6001);
@@ -42,5 +42,5 @@ TEST_CASE("Pixel construction", "[img]")
   REQUIRE(px2[1] == 2.0);
 
   Pixel<std::uint8_t, 1> px3(192);
-  REQUIRE(px3 == 192); // test implicit conversion
+  REQUIRE(px3 == 192);  // test implicit conversion
 }

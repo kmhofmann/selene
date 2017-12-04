@@ -35,8 +35,8 @@ public:
 
   FileWriter(const FileWriter&) = delete;
   FileWriter& operator=(const FileWriter&) = delete;
-  FileWriter(FileWriter&&) noexcept = default;   ///< Move constructor.
-  FileWriter& operator=(FileWriter&&) noexcept = default;   ///< Move assignment operator.
+  FileWriter(FileWriter&&) noexcept = default;  ///< Move constructor.
+  FileWriter& operator=(FileWriter&&) noexcept = default;  ///< Move assignment operator.
 
   std::FILE* handle() noexcept;
 
@@ -53,10 +53,10 @@ public:
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    bool write(const T& value) noexcept;
+  bool write(const T& value) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    std::size_t write(const T* values, std::size_t nr_values) noexcept;
+  std::size_t write(const T* values, std::size_t nr_values) noexcept;
 
 private:
   std::FILE* fp_ = nullptr;
@@ -318,7 +318,7 @@ inline std::size_t write(FileWriter& sink, const T* values, std::size_t nr_value
   return sink.write(values, nr_values);
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_FILE_WRITER_HPP
+#endif  // SELENE_IO_FILE_WRITER_HPP

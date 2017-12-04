@@ -16,30 +16,30 @@ namespace img {
  */
 enum class JPEGColorSpace : std::uint8_t
 {
-  Unknown,    ///< Unknown.
+  Unknown,  ///< Unknown.
   Grayscale,  ///< 1-channel grayscale
-  RGB,        ///< 3-channel RGB
-  YCbCr,      ///< 3-channel YCbCr
-  CMYK,       ///< 4-channel CMYK
-  YCCK,       ///< 4-channel YCCK
+  RGB,  ///< 3-channel RGB
+  YCbCr,  ///< 3-channel YCbCr
+  CMYK,  ///< 4-channel CMYK
+  YCCK,  ///< 4-channel YCCK
 #if defined(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-  EXT_RGB,        ///< 3-channel RGB (libjpeg-turbo)
-  EXT_BGR,        ///< 3-channel BGR (libjpeg-turbo)
-  EXT_RGBX,       ///< 4-channel RGBX (libjpeg-turbo)
-  EXT_BGRX,       ///< 4-channel BGRX (libjpeg-turbo)
-  EXT_XBGR,       ///< 4-channel XBGR (libjpeg-turbo)
-  EXT_XRGB,       ///< 4-channel XRGB (libjpeg-turbo)
-  EXT_RGBA,       ///< 4-channel RGBA (libjpeg-turbo)
-  EXT_BGRA,       ///< 4-channel BGRA (libjpeg-turbo)
-  EXT_ABGR,       ///< 4-channel ABGR (libjpeg-turbo)
-  EXT_ARGB,       ///< 4-channel ARGB (libjpeg-turbo)
+  EXT_RGB,  ///< 3-channel RGB (libjpeg-turbo)
+  EXT_BGR,  ///< 3-channel BGR (libjpeg-turbo)
+  EXT_RGBX,  ///< 4-channel RGBX (libjpeg-turbo)
+  EXT_BGRX,  ///< 4-channel BGRX (libjpeg-turbo)
+  EXT_XBGR,  ///< 4-channel XBGR (libjpeg-turbo)
+  EXT_XRGB,  ///< 4-channel XRGB (libjpeg-turbo)
+  EXT_RGBA,  ///< 4-channel RGBA (libjpeg-turbo)
+  EXT_BGRA,  ///< 4-channel BGRA (libjpeg-turbo)
+  EXT_ABGR,  ///< 4-channel ABGR (libjpeg-turbo)
+  EXT_ARGB,  ///< 4-channel ARGB (libjpeg-turbo)
 #endif
-  Auto        ///< Automatic determination
+  Auto  ///< Automatic determination
 };
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)
 
-#endif // SELENE_IMG_JPEG_COMMON_HPP
+#endif  // SELENE_IMG_JPEG_COMMON_HPP

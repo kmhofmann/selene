@@ -38,8 +38,8 @@ public:
 
   MemoryWriter(const MemoryWriter&) = delete;
   MemoryWriter& operator=(const MemoryWriter&) = delete;
-  MemoryWriter(MemoryWriter&&) noexcept = default;   ///< Move constructor.
-  MemoryWriter& operator=(MemoryWriter&&) noexcept = default;   ///< Move assignment operator.
+  MemoryWriter(MemoryWriter&&) noexcept = default;  ///< Move constructor.
+  MemoryWriter& operator=(MemoryWriter&&) noexcept = default;  ///< Move assignment operator.
 
   std::uint8_t* handle() noexcept;
 
@@ -272,7 +272,7 @@ inline bool MemoryWriter::write(const T& value) noexcept
     return false;
   }
 
-  std::memcpy(ptr_, value, sizeof(T)); // memory access might be unaligned
+  std::memcpy(ptr_, value, sizeof(T));  // memory access might be unaligned
   ptr_ += sizeof(T);
   return true;
 }
@@ -327,7 +327,7 @@ inline std::size_t write(MemoryWriter& sink, const T* values, std::size_t nr_val
   return sink.write(values, nr_values);
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_MEMORY_WRITER_HPP
+#endif  // SELENE_IO_MEMORY_WRITER_HPP

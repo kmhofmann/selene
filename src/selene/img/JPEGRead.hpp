@@ -33,13 +33,12 @@ namespace img {
 struct JPEGHeaderInfo;
 class JPEGDecompressionObject;
 
-namespace detail
-{
+namespace detail {
 class JPEGDecompressionCycle;
 void set_source(JPEGDecompressionObject&, io::FileReader&);
 void set_source(JPEGDecompressionObject&, io::MemoryReader&);
 JPEGHeaderInfo read_header(JPEGDecompressionObject&);
-} // namespace detail
+}  // namespace detail
 
 /** \brief JPEG header information, containing the image size, the number of channels, and the color space.
  *
@@ -72,9 +71,10 @@ struct JPEGDecompressionOptions
    */
   explicit JPEGDecompressionOptions(JPEGColorSpace out_color_space_ = JPEGColorSpace::Auto
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
-                                    , const BoundingBox<Index>& region_ = BoundingBox<Index>()
+                                    ,
+                                    const BoundingBox<Index>& region_ = BoundingBox<Index>()
 #endif
-                                    )
+                                        )
       : out_color_space(out_color_space_)
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
       , region(region_)
@@ -152,7 +152,7 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source
  */
 template <typename SourceType>
 ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-               MessageLog* messages = nullptr);
+                    MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a JPEG image data stream.
  *
@@ -173,12 +173,12 @@ ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGD
  */
 template <typename SourceType>
 ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source,
-               JPEGDecompressionOptions options = JPEGDecompressionOptions(), MessageLog* messages = nullptr,
-               const JPEGHeaderInfo* provided_header_info = nullptr);
+                    JPEGDecompressionOptions options = JPEGDecompressionOptions(), MessageLog* messages = nullptr,
+                    const JPEGHeaderInfo* provided_header_info = nullptr);
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)
 
-#endif // SELENE_IMG_JPEG_READ_HPP
+#endif  // SELENE_IMG_JPEG_READ_HPP

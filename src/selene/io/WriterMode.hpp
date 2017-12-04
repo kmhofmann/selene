@@ -18,7 +18,7 @@ enum class WriterMode : unsigned char
   Append = 1  ///< Append to existing contents.
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_WRITER_MODE_HPP
+#endif  // SELENE_IO_WRITER_MODE_HPP

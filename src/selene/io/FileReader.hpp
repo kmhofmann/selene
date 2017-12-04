@@ -34,8 +34,8 @@ public:
 
   FileReader(const FileReader&) = delete;
   FileReader& operator=(const FileReader&) = delete;
-  FileReader(FileReader&&) noexcept = default;   ///< Move constructor.
-  FileReader& operator=(FileReader&&) noexcept = default;   ///< Move assignment operator.
+  FileReader(FileReader&&) noexcept = default;  ///< Move constructor.
+  FileReader& operator=(FileReader&&) noexcept = default;  ///< Move assignment operator.
 
   std::FILE* handle() noexcept;
 
@@ -51,10 +51,10 @@ public:
   bool seek_rel(std::ptrdiff_t offset) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    bool read(T& value) noexcept;
+  bool read(T& value) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    std::size_t read(T* values, std::size_t nr_values) noexcept;
+  std::size_t read(T* values, std::size_t nr_values) noexcept;
 
 private:
   std::FILE* fp_ = nullptr;
@@ -306,7 +306,7 @@ inline std::size_t read(FileReader& source, T* values, std::size_t nr_values) no
   return source.read(values, nr_values);
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_FILE_READER_HPP
+#endif  // SELENE_IO_FILE_READER_HPP

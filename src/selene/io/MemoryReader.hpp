@@ -33,8 +33,8 @@ public:
 
   MemoryReader(const MemoryReader&) = delete;
   MemoryReader& operator=(const MemoryReader&) = delete;
-  MemoryReader(MemoryReader&&) noexcept = default;   ///< Move constructor.
-  MemoryReader& operator=(MemoryReader&&) noexcept = default;   ///< Move assignment operator.
+  MemoryReader(MemoryReader&&) noexcept = default;  ///< Move constructor.
+  MemoryReader& operator=(MemoryReader&&) noexcept = default;  ///< Move assignment operator.
 
   const std::uint8_t* handle() noexcept;
 
@@ -257,7 +257,7 @@ inline bool MemoryReader::read(T& value) noexcept
     return false;
   }
 
-  std::memcpy(value, ptr_, sizeof(T)); // memory access might be unaligned
+  std::memcpy(value, ptr_, sizeof(T));  // memory access might be unaligned
   ptr_ += sizeof(T);
   return true;
 };
@@ -330,7 +330,7 @@ inline std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) 
   return source.read(values, nr_values);
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_MEMORY_READER_HPP
+#endif  // SELENE_IO_MEMORY_READER_HPP

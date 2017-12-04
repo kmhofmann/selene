@@ -23,14 +23,13 @@ struct JPEGCompressionObject::Impl
   jpeg_compress_struct cinfo;
   detail::JPEGErrorManager error_manager;
 
-  unsigned char* output_buffer = nullptr; // temporary buffer for in-memory decompression
-  unsigned long output_size = 0; // size of in-memory buffer
+  unsigned char* output_buffer = nullptr;  // temporary buffer for in-memory decompression
+  unsigned long output_size = 0;  // size of in-memory buffer
 
   bool valid = false;
 };
 
-JPEGCompressionObject::JPEGCompressionObject()
-    : impl_(std::make_unique<JPEGCompressionObject::Impl>())
+JPEGCompressionObject::JPEGCompressionObject() : impl_(std::make_unique<JPEGCompressionObject::Impl>())
 {
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
   impl_->cinfo.err->error_exit = detail::error_exit;
@@ -118,8 +117,7 @@ const MessageLog& JPEGCompressionObject::message_log() const
 }
 
 
-namespace detail
-{
+namespace detail {
 
 class JPEGCompressionCycle
 {
@@ -133,8 +131,7 @@ private:
   JPEGCompressionObject& obj_;
 };
 
-JPEGCompressionCycle::JPEGCompressionCycle(JPEGCompressionObject& obj)
-    : obj_(obj)
+JPEGCompressionCycle::JPEGCompressionCycle(JPEGCompressionObject& obj) : obj_(obj)
 {
   jpeg_start_compress(&obj_.impl_->cinfo, TRUE);
 }
@@ -147,7 +144,7 @@ JPEGCompressionCycle::~JPEGCompressionCycle()
 void JPEGCompressionCycle::compress(const ConstRowPointers& row_pointers)
 {
   auto& cinfo = obj_.impl_->cinfo;
-  std::array<JSAMPLE*, 1> row_ptr = { {nullptr} };
+  std::array<JSAMPLE*, 1> row_ptr = {{nullptr}};
 
   if (setjmp(obj_.impl_->error_manager.setjmp_buffer))
   {
@@ -218,7 +215,7 @@ bool flush_data_buffer(JPEGCompressionObject& obj, io::VectorWriter& sink)
   return true;
 }
 
-} // namespace detail
+}  // namespace detail
 
 
 // ----------------
@@ -245,11 +242,11 @@ bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType&
   }
 
   const auto nr_channels = img_data.nr_channels();
-  const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto) ?
-                              detail::pixel_format_to_color_space(img_data.pixel_format()) : options.in_color_space;
+  const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto)
+                                  ? detail::pixel_format_to_color_space(img_data.pixel_format())
+                                  : options.in_color_space;
 
-  const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()),
-                                               static_cast<int>(img_data.height()),
+  const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()), static_cast<int>(img_data.height()),
                                                static_cast<int>(nr_channels), in_color_space);
 
   if (!img_info_set)
@@ -294,11 +291,11 @@ template bool write_jpeg<io::VectorWriter>(const ImageData&, io::VectorWriter&, 
 template bool write_jpeg<io::FileWriter>(const ImageData&, JPEGCompressionObject&, io::FileWriter&,
                                          JPEGCompressionOptions, MessageLog*);
 template bool write_jpeg<io::VectorWriter>(const ImageData&, JPEGCompressionObject&, io::VectorWriter&,
-                                          JPEGCompressionOptions, MessageLog*);
+                                           JPEGCompressionOptions, MessageLog*);
 
 /// \endcond
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBJPEG)
+#endif  // defined(SELENE_WITH_LIBJPEG)

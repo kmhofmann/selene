@@ -21,11 +21,12 @@ namespace selene {
  * \param max The maximum value/upper bound.
  * \return The clamped value.
  */
-template <typename T> inline T clamp(T value, T min, T max)
+template <typename T>
+inline T clamp(T value, T min, T max)
 {
   return (value < min) ? min : ((value > max) ? max : value);
 }
 
-} // namespace selene
+}  // namespace selene
 
-#endif // SELENE_BASE_UTILS_HPP
+#endif  // SELENE_BASE_UTILS_HPP

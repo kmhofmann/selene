@@ -9,7 +9,8 @@
 using namespace selene;
 using namespace selene::img;
 
-template <typename T> void image_tests(Index width, Index height, T fill_value)
+template <typename T>
+void image_tests(Index width, Index height, T fill_value)
 {
   Image<T> img(width, height);
   REQUIRE((img.width() == width));

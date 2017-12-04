@@ -33,7 +33,7 @@ fs::path full_path(const char* filename)
   return (env_var) ? (fs::path(env_var) / fs::path(filename)) : (fs::path("../data") / fs::path(filename));
 }
 
-} // namespace _
+}  // namespace
 
 TEST_CASE("Image reading with automatic format selection", "[img]")
 {
@@ -101,5 +101,4 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
     REQUIRE(status_write);
     REQUIRE(messages_write.messages().empty());
   }
-
 }

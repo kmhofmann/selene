@@ -20,4 +20,4 @@ inline boost::filesystem::path get_tmp_path()
   return tmp_path;
 }
 
-#endif // SELENE_TEST_UTILS_HPP
+#endif  // SELENE_TEST_UTILS_HPP

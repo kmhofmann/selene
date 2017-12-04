@@ -36,12 +36,11 @@ int determine_color_type(PixelFormat pixel_format)
     case PixelFormat::RGBA: return PNG_COLOR_TYPE_RGBA;
     case PixelFormat::BGRA: return PNG_COLOR_TYPE_RGBA;
     case PixelFormat::XXXX: return PNG_COLOR_TYPE_RGBA;
-    default:
-      return PNG_COLOR_TYPE_INVALID;
+    default: return PNG_COLOR_TYPE_INVALID;
   }
 }
 
-} // namespace _
+}  // namespace
 
 /// \cond INTERNAL
 
@@ -53,8 +52,7 @@ struct PNGCompressionObject::Impl
   bool valid = false;
 };
 
-PNGCompressionObject::PNGCompressionObject()
-    : impl_(std::make_unique<PNGCompressionObject::Impl>())
+PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompressionObject::Impl>())
 {
   auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
   png_error_ptr user_error_fn = detail::error_handler;
@@ -70,7 +68,7 @@ PNGCompressionObject::PNGCompressionObject()
 
   if (!impl_->info_ptr)
   {
-    png_destroy_write_struct(&impl_->png_ptr, (png_infopp)nullptr);
+    png_destroy_write_struct(&impl_->png_ptr, (png_infopp) nullptr);
     return;
   }
 
@@ -106,10 +104,10 @@ bool PNGCompressionObject::set_image_info(int width, int height, int nr_channels
     return false;
   }
 
-  if ((color_type == PNG_COLOR_TYPE_GRAY && nr_channels != 1) ||
-      (color_type == PNG_COLOR_TYPE_GRAY_ALPHA && nr_channels != 2) ||
-      (color_type == PNG_COLOR_TYPE_RGB && nr_channels != 3) ||
-      (color_type == PNG_COLOR_TYPE_RGB_ALPHA && nr_channels != 4))
+  if ((color_type == PNG_COLOR_TYPE_GRAY && nr_channels != 1)
+      || (color_type == PNG_COLOR_TYPE_GRAY_ALPHA && nr_channels != 2)
+      || (color_type == PNG_COLOR_TYPE_RGB && nr_channels != 3)
+      || (color_type == PNG_COLOR_TYPE_RGB_ALPHA && nr_channels != 4))
   {
     impl_->error_manager.message_log.add_message("Mismatch between determined PNG color type and nr of channels");
     return false;
@@ -167,8 +165,7 @@ const MessageLog& PNGCompressionObject::message_log() const
 }
 
 
-namespace detail
-{
+namespace detail {
 
 // ----------------------
 // Compression structures
@@ -187,8 +184,7 @@ private:
   bool error_state_;
 };
 
-PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr,
-                                         bool invert_monochrome)
+PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr, bool invert_monochrome)
     : obj_(obj), error_state_(false)
 {
   auto png_ptr = obj_.impl_->png_ptr;
@@ -279,7 +275,7 @@ void set_destination(PNGCompressionObject& obj, io::VectorWriter& sink)
 failure_state:;
 }
 
-} // namespace detail
+}  // namespace detail
 
 
 // ----------------
@@ -346,14 +342,14 @@ bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& s
 template bool write_png<io::FileWriter>(const ImageData&, io::FileWriter&, PNGCompressionOptions, MessageLog*);
 template bool write_png<io::VectorWriter>(const ImageData&, io::VectorWriter&, PNGCompressionOptions, MessageLog*);
 
-template bool write_png<io::FileWriter>(const ImageData&, PNGCompressionObject&, io::FileWriter&,
-                                         PNGCompressionOptions, MessageLog*);
+template bool write_png<io::FileWriter>(const ImageData&, PNGCompressionObject&, io::FileWriter&, PNGCompressionOptions,
+                                        MessageLog*);
 template bool write_png<io::VectorWriter>(const ImageData&, PNGCompressionObject&, io::VectorWriter&,
-                                           PNGCompressionOptions, MessageLog*);
+                                          PNGCompressionOptions, MessageLog*);
 
 /// \endcond
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)

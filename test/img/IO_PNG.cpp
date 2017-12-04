@@ -12,8 +12,8 @@
 #include <boost/filesystem.hpp>
 
 #include <selene/io/FileReader.hpp>
-#include <selene/io/FileWriter.hpp>
 #include <selene/io/FileUtils.hpp>
+#include <selene/io/FileWriter.hpp>
 #include <selene/io/MemoryReader.hpp>
 #include <selene/io/VectorWriter.hpp>
 
@@ -35,9 +35,8 @@ namespace fs = boost::filesystem;
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;
 constexpr std::array<std::array<int, 6>, 3> px = {
-    {std::array<int, 6>{{226, 180, 244, 198, 0, 203}},
-     std::array<int, 6>{{582, 415, 228, 227, 233, 227}},
-     std::array<int, 6>{{878, 597, 57, 60, 69, 61}}}}; // {x, y}, {r, g, b}, {y}
+    {std::array<int, 6>{{226, 180, 244, 198, 0, 203}}, std::array<int, 6>{{582, 415, 228, 227, 233, 227}},
+     std::array<int, 6>{{878, 597, 57, 60, 69, 61}}}};  // {x, y}, {r, g, b}, {y}
 
 namespace {
 
@@ -91,7 +90,7 @@ void check_write_read(ImageData& img_data, const boost::filesystem::path& tmp_pa
   }
 }
 
-} // namespace _
+}  // namespace
 
 TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 {
@@ -175,7 +174,8 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 
   // Test writing of grayscale image
   MessageLog messages_write;
-  bool status_write = write_png(to_image_data_view(img, PixelFormat::Y), sink, PNGCompressionOptions(), &messages_write);
+  bool status_write = write_png(to_image_data_view(img, PixelFormat::Y), sink, PNGCompressionOptions(),
+                                &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
 }
@@ -289,7 +289,7 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
 
       if (!is_broken)
       {
-        //REQUIRE(messages_read.messages().empty());  // Might not be guaranteed, so this is disabled
+        // REQUIRE(messages_read.messages().empty());  // Might not be guaranteed, so this is disabled
         REQUIRE(img_data.width() > 0);
         REQUIRE(img_data.height() > 0);
         REQUIRE(img_data.stride_bytes() > 0);
@@ -312,4 +312,4 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
   }
 }
 
-#endif // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+find ./src/  -type f -iname *.hpp -o -iname *.cpp | xargs clang-format -style=file -i
+find ./test/ -type f -iname *.hpp -o -iname *.cpp | xargs clang-format -style=file -i

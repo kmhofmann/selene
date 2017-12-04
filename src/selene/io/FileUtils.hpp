@@ -16,7 +16,7 @@ namespace io {
 
 std::vector<std::uint8_t> read_file_contents(const std::string& path);
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_FILE_UTILS_HPP
+#endif  // SELENE_IO_FILE_UTILS_HPP

@@ -38,8 +38,8 @@ public:
 
   VectorWriter(const VectorWriter&) = delete;
   VectorWriter& operator=(const VectorWriter&) = delete;
-  VectorWriter(VectorWriter&&) noexcept = default;   ///< Move constructor.
-  VectorWriter& operator=(VectorWriter&&) noexcept = default;   ///< Move assignment operator.
+  VectorWriter(VectorWriter&&) noexcept = default;  ///< Move constructor.
+  VectorWriter& operator=(VectorWriter&&) noexcept = default;  ///< Move assignment operator.
 
   std::vector<std::uint8_t>* handle() noexcept;
 
@@ -56,10 +56,10 @@ public:
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    bool write(const T& value) noexcept;
+  bool write(const T& value) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
-    std::size_t write(const T* values, std::size_t nr_values) noexcept;
+  std::size_t write(const T* values, std::size_t nr_values) noexcept;
 
 private:
   std::vector<std::uint8_t>* data_ = nullptr;
@@ -277,13 +277,13 @@ inline bool VectorWriter::write_bytes(const std::uint8_t* ptr, std::size_t len)
   if (bytes_to_copy > 0)
   {
     std::copy(cur_ptr, cur_ptr + bytes_to_copy, &(*data_)[static_cast<std::size_t>(pos_)]);
-    cur_ptr += bytes_to_copy; // for the assert below
+    cur_ptr += bytes_to_copy;  // for the assert below
     len_remaining -= bytes_to_copy;
   }
   if (len_remaining > 0)
   {
     data_->insert(data_->end(), cur_ptr, cur_ptr + len_remaining);
-    cur_ptr += len_remaining; // for the assert below
+    cur_ptr += len_remaining;  // for the assert below
   }
 
   SELENE_ASSERT(cur_ptr - ptr == static_cast<std::ptrdiff_t>(len));
@@ -320,7 +320,7 @@ inline std::size_t write(VectorWriter& sink, const T* values, std::size_t nr_val
   return sink.write(values, nr_values);
 };
 
-} // namespace io
-} // namespace selene
+}  // namespace io
+}  // namespace selene
 
-#endif // SELENE_IO_VECTOR_WRITER_HPP
+#endif  // SELENE_IO_VECTOR_WRITER_HPP

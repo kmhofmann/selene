@@ -23,9 +23,15 @@ namespace selene {
 namespace img {
 
 class ImageData;
-template <typename PixelType> class Image;
-template <typename PixelType> void clone(const Image<PixelType>& src, Image<PixelType>& dst);
-template <typename PixelType> ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
+
+template <typename PixelType>
+class Image;
+
+template <typename PixelType>
+void clone(const Image<PixelType>& src, Image<PixelType>& dst);
+
+template <typename PixelType>
+ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
 
 
 /** \brief Statically typed image class.
@@ -35,8 +41,8 @@ template <typename PixelType> ImageData to_image_data(Image<PixelType>&& img, Pi
  * channels/samples is always interleaved, as opposed to planar.
  * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
  *
- * The memory of an `Image<PixelType>` instance may either be owned or non-owned; in the latter case, the instance is a "view"
- * on image data.
+ * The memory of an `Image<PixelType>` instance may either be owned or non-owned; in the latter case, the instance is a
+ * "view" on image data.
  */
 template <typename PixelType>
 class Image
@@ -202,8 +208,7 @@ using Image_64f4 = Image<Pixel<float64_t, 4>>;  ///< 64-bit floating point 4-cha
  * @tparam PixelType The pixel type.
  */
 template <typename PixelType>
-Image<PixelType>::Image()
-    : data_(nullptr), stride_bytes_(0), width_(0), height_(0), owns_memory_(true)
+Image<PixelType>::Image() : data_(nullptr), stride_bytes_(0), width_(0), height_(0), owns_memory_(true)
 {
 }
 
@@ -218,8 +223,11 @@ Image<PixelType>::Image()
  */
 template <typename PixelType>
 Image<PixelType>::Image(Length width, Length height)
-    : data_(nullptr), stride_bytes_(PixelTraits<PixelType>::nr_bytes * width),
-      width_(width), height_(height), owns_memory_(true)
+    : data_(nullptr)
+    , stride_bytes_(PixelTraits<PixelType>::nr_bytes * width)
+    , width_(width)
+    , height_(height)
+    , owns_memory_(true)
 {
   allocate_bytes(stride_bytes_ * height_);
 }
@@ -236,8 +244,11 @@ Image<PixelType>::Image(Length width, Length height)
  */
 template <typename PixelType>
 Image<PixelType>::Image(Length width, Length height, Stride stride_bytes)
-    : data_(nullptr), stride_bytes_(std::max(stride_bytes, PixelTraits<PixelType>::nr_bytes * width)),
-      width_(width), height_(height), owns_memory_(true)
+    : data_(nullptr)
+    , stride_bytes_(std::max(stride_bytes, PixelTraits<PixelType>::nr_bytes * width))
+    , width_(width)
+    , height_(height)
+    , owns_memory_(true)
 {
   allocate_bytes(stride_bytes_ * height_);
 }
@@ -267,8 +278,7 @@ Image<PixelType>::Image(std::uint8_t* data, Length width, Length height, Stride 
  */
 template <typename PixelType>
 Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes)
-    : data_(data.transfer_data()), stride_bytes_(stride_bytes), width_(width), height_(height),
-      owns_memory_(true)
+    : data_(data.transfer_data()), stride_bytes_(stride_bytes), width_(width), height_(height), owns_memory_(true)
 {
   SELENE_ASSERT(width_ > 0 && height_ > 0 && stride_bytes_ > 0);
 }
@@ -286,8 +296,11 @@ Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, Length width, Length h
  */
 template <typename PixelType>
 inline Image<PixelType>::Image(const Image<PixelType>& other)
-    : data_(other.data_), stride_bytes_(other.stride_bytes_), width_(other.width_), height_(other.height_),
-      owns_memory_(other.owns_memory_)
+    : data_(other.data_)
+    , stride_bytes_(other.stride_bytes_)
+    , width_(other.width_)
+    , height_(other.height_)
+    , owns_memory_(other.owns_memory_)
 {
   // Keep the image semantics, i.e. owned will be owned, and non-owned will stay non-owned
   if (!other.owns_memory_ || other.is_empty())
@@ -359,8 +372,11 @@ inline Image<PixelType>& Image<PixelType>::operator=(const Image<PixelType>& oth
  */
 template <typename PixelType>
 inline Image<PixelType>::Image(Image<PixelType>&& other) noexcept
-    : data_(other.data_), stride_bytes_(other.stride_bytes_), width_(other.width_), height_(other.height_),
-      owns_memory_(other.owns_memory_)
+    : data_(other.data_)
+    , stride_bytes_(other.stride_bytes_)
+    , width_(other.width_)
+    , height_(other.height_)
+    , owns_memory_(other.owns_memory_)
 {
   other.reset();
 }
@@ -655,7 +671,8 @@ inline void Image<PixelType>::set_view(std::uint8_t* data, Length width, Length 
  * @param stride_bytes The row stride in bytes.
  */
 template <typename PixelType>
-inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes)
+inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height,
+                                       Stride stride_bytes)
 {
   SELENE_ASSERT(data.size() == stride_bytes * height);
 
@@ -1070,7 +1087,7 @@ void crop(Image<PixelType>& img, Index x0, Index y0, Length width, Length height
   img = std::move(cropped_clone);
 }
 
-} // namespace img
-} // namespace selene
+}  // namespace img
+}  // namespace selene
 
-#endif // SELENE_IMG_IMAGE_HPP
+#endif  // SELENE_IMG_IMAGE_HPP
