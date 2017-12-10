@@ -28,6 +28,12 @@ template <typename PixelType>
 class Image;
 
 template <typename PixelType>
+class ImageRowIterator;
+
+template <typename PixelType>
+class ConstImageRowIterator;
+
+template <typename PixelType>
 void clone(const Image<PixelType>& src, Image<PixelType>& dst);
 
 template <typename PixelType>
@@ -44,10 +50,14 @@ ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
  * The memory of an `Image<PixelType>` instance may either be owned or non-owned; in the latter case, the instance is a
  * "view" on image data.
  */
-template <typename PixelType>
+template <typename PixelType_>
 class Image
 {
 public:
+  using PixelType = PixelType_;  ///< The pixel type.
+  using iterator = ImageRowIterator<PixelType>;  ///< The iterator type.
+  using const_iterator = ConstImageRowIterator<PixelType>;  ///< The const_iterator type.
+
   Image();
   Image(Length width, Length height);
   Image(Length width, Length height, Stride stride_bytes);
@@ -78,6 +88,13 @@ public:
   void allocate(Length width, Length height, Stride stride_bytes);
   void set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes);
   void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes);
+
+  iterator begin();
+  const_iterator begin() const;
+  const_iterator cbegin() const;
+  iterator end();
+  const_iterator end() const;
+  const_iterator cend() const;
 
   PixelType* data();
   const PixelType* data() const;
@@ -122,6 +139,8 @@ private:
 
   friend void clone<PixelType>(const Image<PixelType>& src, Image<PixelType>& dst);
   friend ImageData to_image_data<PixelType>(Image<PixelType>&&, PixelFormat);
+  friend class ImageRowIterator<Image<PixelType>>;
+  friend class ConstImageRowIterator<Image<PixelType>>;
 };
 
 template <typename PixelType>
@@ -197,6 +216,390 @@ using Image_64f1 = Image<Pixel<float64_t, 1>>;  ///< 64-bit floating point 1-cha
 using Image_64f2 = Image<Pixel<float64_t, 2>>;  ///< 64-bit floating point 2-channel image.
 using Image_64f3 = Image<Pixel<float64_t, 3>>;  ///< 64-bit floating point 3-channel image.
 using Image_64f4 = Image<Pixel<float64_t, 4>>;  ///< 64-bit floating point 4-channel image.
+
+// ----------
+
+/** \brief Represents an image row (of a non-const image) whose elements can be iterated through.
+ *
+ * @tparam PixelType The pixel type.
+ */
+template <typename PixelType>
+class ImageRow
+{
+public:
+  ~ImageRow() = default;  ///< Destructor.
+  ImageRow(const ImageRow&) = default;  ///< Copy constructor.
+  ImageRow& operator=(const ImageRow&) = default;  ///< Copy assigment operator.
+
+  /** \brief Returns an iterator to the first element of the image row.
+   *
+   * @return Iterator to the first row element.
+   */
+  PixelType* begin() noexcept
+  {
+    return img_->data(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the first element of the image row.
+   *
+   * @return Const iterator to the first row element.
+   */
+  const PixelType* begin() const noexcept
+  {
+    return img_->data(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the first element of the image row.
+   *
+   * @return Const iterator to the first row element.
+   */
+  const PixelType* cbegin() const noexcept
+  {
+    return img_->data(row_index_);
+  }
+
+  /** \brief Returns an iterator to the one-past-the-last element of the image row.
+   *
+   * @return Iterator to the one-past-the-last row element.
+   */
+  PixelType* end() noexcept
+  {
+    return img_->data_row_end(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the one-past-the-last element of the image row.
+   *
+   * @return Const iterator to the one-past-the-last row element.
+   */
+  const PixelType* end() const noexcept
+  {
+    return img_->data_row_end(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the one-past-the-last element of the image row.
+   *
+   * @return Const iterator to the one-past-the-last row element.
+   */
+  const PixelType* cend() const noexcept
+  {
+    return img_->data_row_end(row_index_);
+  }
+
+  /** \brief Returns the row index.
+   *
+   * @return Row index.
+   */
+  Index index() const noexcept
+  {
+    return row_index_;
+  }
+
+  /** \brief Indicates row equality.
+   *
+   * @param it Another image row.
+   * @return True, if both instances refer to the same image row; false otherwise.
+   */
+  bool operator==(const ImageRow& it) const noexcept
+  {
+    return row_index_ == it.row_index_ && img_ == it.img_;
+  }
+
+  /** \brief Indicates row inequality.
+   *
+   * @param it Another image row.
+   * @return True, if both instances do not refer to the same image row; false if they do.
+   */
+  bool operator!=(const ImageRow& it) const noexcept
+  {
+    return row_index_ != it.row_index_ || img_ != it.img_;
+  }
+
+private:
+  Image<PixelType>* img_;
+  Index row_index_;
+
+  ImageRow(Image<PixelType>* img, Index row_index) : img_(img), row_index_(row_index)
+  {
+  }
+  friend class Image<PixelType>;
+  friend class ImageRowIterator<PixelType>;
+};
+
+
+/** \brief Bidirectional iterator over rows of a (non-const) image.
+ *
+ * @tparam PixelType The pixel type.
+ */
+template <typename PixelType>
+class ImageRowIterator
+{
+public:
+  ~ImageRowIterator() = default;  ///< Destructor.
+  ImageRowIterator(const ImageRowIterator&) = default;  ///< Copy constructor.
+  ImageRowIterator& operator=(const ImageRowIterator&) = default;  ///< Copy assignment operator.
+
+  /** \brief Iterator pre-decrement.
+   *
+   * @return Reference to *this.
+   */
+  ImageRowIterator& operator--() noexcept
+  {
+    --row_.row_index_;
+    return *this;
+  }
+
+  /** \brief Iterator pre-increment.
+   *
+   * @return Reference to *this.
+   */
+
+  ImageRowIterator& operator++() noexcept
+  {
+    ++row_.row_index_;
+    return *this;
+  }
+
+  /** \brief Iterator post-decrement.
+   *
+   * @return Reference to *this.
+   */
+  ImageRowIterator operator--(int) noexcept
+  {
+    ImageRowIterator it(*this);
+    operator--();
+    return it;
+  }
+
+  /** \brief Iterator post-increment.
+   *
+   * @return Reference to *this.
+   */
+  ImageRowIterator operator++(int) noexcept
+  {
+    ImageRowIterator it(*this);
+    operator++();
+    return it;
+  }
+
+  /** \brief Indicates iterator equality.
+   *
+   * @param it Another ImageRowIterator instance.
+   * @return True, if both iterators reference the same row; false otherwise.
+   */
+  bool operator==(const ImageRowIterator& it) const noexcept
+  {
+    return row_ == it.row_;
+  }
+
+  /** \brief Indicates iterator inequality.
+   *
+   * @param it Another ImageRowIterator instance.
+   * @return True, if both iterators not reference the same row; false if they do.
+   */
+  bool operator!=(const ImageRowIterator& it) const noexcept
+  {
+    return row_ != it.row_;
+  }
+
+  /** Iterator dereferencing operator.
+   *
+   * @return An `ImageRow` instance representing the respective row.
+   */
+  ImageRow<PixelType>& operator*() noexcept
+  {
+    return row_;
+  }
+
+private:
+  ImageRow<PixelType> row_;
+
+  explicit ImageRowIterator(ImageRow<PixelType> row) : row_(row)
+  {
+  }
+  friend class Image<PixelType>;
+};
+
+
+/** \brief Represents an image row (of a const image) whose elements can be iterated through.
+ *
+ * @tparam PixelType The pixel type.
+ */
+template <typename PixelType>
+class ConstImageRow
+{
+public:
+  ~ConstImageRow() = default;  ///< Destructor.
+  ConstImageRow(const ConstImageRow&) = default;  ///< Copy constructor.
+  ConstImageRow& operator=(const ConstImageRow&) = default;  ///< Copy assigment operator.
+
+  /** \brief Returns a const iterator to the first element of the image row.
+   *
+   * @return Const iterator to the first row element.
+   */
+  const PixelType* begin() const noexcept
+  {
+    return img_->data(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the first element of the image row.
+   *
+   * @return Const iterator to the first row element.
+   */
+  const PixelType* cbegin() const noexcept
+  {
+    return img_->data(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the one-past-the-last element of the image row.
+   *
+   * @return Const iterator to the one-past-the-last row element.
+   */
+  const PixelType* end() const noexcept
+  {
+    return img_->data_row_end(row_index_);
+  }
+
+  /** \brief Returns a const iterator to the one-past-the-last element of the image row.
+   *
+   * @return Const iterator to the one-past-the-last row element.
+   */
+  const PixelType* cend() const noexcept
+  {
+    return img_->data_row_end(row_index_);
+  }
+
+  /** \brief Returns the row index.
+   *
+   * @return Row index.
+   */
+  Index index() const noexcept
+  {
+    return row_index_;
+  }
+
+  /** \brief Indicates row equality.
+   *
+   * @param it Another image row.
+   * @return True, if both instances refer to the same image row; false otherwise.
+   */
+  bool operator==(const ConstImageRow& it) const noexcept
+  {
+    return row_index_ == it.row_index_ && img_ == it.img_;
+  }
+
+  /** \brief Indicates row inequality.
+   *
+   * @param it Another image row.
+   * @return True, if both instances do not refer to the same image row; false if they do.
+   */
+  bool operator!=(const ConstImageRow& it) const noexcept
+  {
+    return row_index_ != it.row_index_ || img_ != it.img_;
+  }
+
+private:
+  const Image<PixelType>* img_;
+  Index row_index_;
+
+  ConstImageRow(const Image<PixelType>* img, Index row_index) : img_(img), row_index_(row_index)
+  {
+  }
+  friend class Image<PixelType>;
+  friend class ConstImageRowIterator<PixelType>;
+};
+
+
+/** \brief Bidirectional iterator over rows of a (const) image.
+ *
+ * @tparam PixelType The pixel type.
+ */
+template <typename PixelType>
+class ConstImageRowIterator
+{
+public:
+  ~ConstImageRowIterator() = default;  ///< Destructor.
+  ConstImageRowIterator(const ConstImageRowIterator&) = default;  ///< Copy constructor.
+  ConstImageRowIterator& operator=(const ConstImageRowIterator&) = default;  ///< Copy assignment operator.
+
+  /** \brief Iterator pre-decrement.
+   *
+   * @return Reference to *this.
+   */
+  ConstImageRowIterator& operator--() noexcept
+  {
+    --row_.row_index_;
+    return *this;
+  }
+
+  /** \brief Iterator pre-increment.
+   *
+   * @return Reference to *this.
+   */
+  ConstImageRowIterator& operator++() noexcept
+  {
+    ++row_.row_index_;
+    return *this;
+  }
+
+  /** \brief Iterator post-decrement.
+   *
+   * @return Reference to *this.
+   */
+  ConstImageRowIterator operator--(int) noexcept
+  {
+    ConstImageRowIterator it(*this);
+    operator--();
+    return it;
+  }
+
+  /** \brief Iterator post-increment.
+   *
+   * @return Reference to *this.
+   */
+  ConstImageRowIterator operator++(int) noexcept
+  {
+    ConstImageRowIterator it(*this);
+    operator++();
+    return it;
+  }
+
+  /** \brief Indicates iterator equality.
+   *
+   * @param it Another ConstImageRowIterator instance.
+   * @return True, if both iterators reference the same row; false otherwise.
+   */
+  bool operator==(const ConstImageRowIterator& it) const noexcept
+  {
+    return row_ == it.row_;
+  }
+
+  /** \brief Indicates iterator inequality.
+   *
+   * @param it Another ConstImageRowIterator instance.
+   * @return True, if both iterators not reference the same row; false if they do.
+   */
+  bool operator!=(const ConstImageRowIterator& it) const noexcept
+  {
+    return row_ != it.row_;
+  }
+
+  /** Iterator dereferencing operator.
+   *
+   * @return A `ConstImageRow` instance representing the respective row.
+   */
+  const ConstImageRow<PixelType>& operator*() const noexcept
+  {
+    return row_;
+  }
+
+private:
+  ConstImageRow<PixelType> row_;
+
+  explicit ConstImageRowIterator(ConstImageRow<PixelType> row) : row_(row)
+  {
+  }
+  friend class Image<PixelType>;
+};
 
 // ----------
 // Implementation:
@@ -685,6 +1088,72 @@ inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data, Length 
   width_ = width;
   height_ = height;
   owns_memory_ = true;
+}
+
+/** \brief Returns an iterator to the first row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Iterator to the first image row.
+ */
+template <typename PixelType>
+inline typename Image<PixelType>::iterator Image<PixelType>::begin()
+{
+  return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, 0_px));
+}
+
+/** \brief Returns a const iterator to the first row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Const iterator to the first image row.
+ */
+template <typename PixelType>
+inline typename Image<PixelType>::const_iterator Image<PixelType>::begin() const
+{
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_px));
+}
+
+/** \brief Returns a const iterator to the first row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Const iterator to the first image row.
+ */
+template <typename PixelType>
+inline typename Image<PixelType>::const_iterator Image<PixelType>::cbegin() const
+{
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_px));
+}
+
+/** \brief Returns an iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Iterator to image row after the last row.
+ */
+template <typename PixelType>
+inline typename Image<PixelType>::iterator Image<PixelType>::end()
+{
+  return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, height_));
+}
+
+/** \brief Returns a const iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Const iterator to image row after the last row.
+ */
+template <typename PixelType>
+inline typename Image<PixelType>::const_iterator Image<PixelType>::end() const
+{
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
+}
+
+/** \brief Returns a const iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Const iterator to image row after the last row.
+ */
+template <typename PixelType>
+inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const
+{
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
 }
 
 /** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
