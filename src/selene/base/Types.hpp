@@ -7,6 +7,9 @@
 
 /// @file
 
+#include <selene/base/Assert.hpp>
+#include <selene/base/ExplicitType.hpp>
+
 namespace selene {
 
 using float32_t = float;  ///< 32-bit floating point type.
@@ -14,6 +17,25 @@ using float64_t = double;  ///< 64-bit floating point type.
 
 static_assert(sizeof(float32_t) == 4, "type size mismatch");
 static_assert(sizeof(float64_t) == 8, "type size mismatch");
+
+namespace detail {
+
+class BytesTag;
+
+}  // namespace detail
+
+using Bytes = ExplicitType<std::size_t, detail::BytesTag>;  ///< Type representing a number of bytes.
+
+/** \brief User-defined literal representing a number of bytes.
+ *
+ * @param nr_bytes Number of bytes.
+ * @return A `Bytes` instance.
+ */
+constexpr inline Bytes operator"" _b(unsigned long long nr_bytes)
+{
+  //  SELENE_ASSERT(nr_bytes <= std::numeric_limits<Bytes::value_type>::max());
+  return Bytes(static_cast<Bytes::value_type>(nr_bytes));
+}
 
 }  // namespace selene
 

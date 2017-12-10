@@ -17,6 +17,7 @@ target_sources(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Assert.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MessageLog.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/ExplicitType.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Utils.hpp
         )

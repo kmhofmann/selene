@@ -21,7 +21,7 @@ ImageData create_test_image_data(Length width, Length height, std::uint16_t nr_c
 {
   ImageData img_data(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 
-  for (Index y = 0; y < img_data.height(); ++y)
+  for (Index y = 0_px; y < img_data.height(); ++y)
   {
     std::uint8_t* begin = img_data.byte_ptr(y);
     std::uint8_t* end = begin + img_data.row_bytes();
@@ -37,7 +37,7 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 {
   // Packed image, single-channel
   {
-    auto img_data = create_test_image_data(16, 20, 1, 1, 16, PixelFormat::Y, SampleFormat::UnsignedInteger);
+    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 16_b, PixelFormat::Y, SampleFormat::UnsignedInteger);
 
     auto img_view = to_image_view<Pixel_8u1>(img_data);
     REQUIRE(img_view.width() == 16);
@@ -46,9 +46,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(img_view.is_packed());
     REQUIRE(img_view.is_view());
     REQUIRE(img_view.is_valid());
-    for (Index y = 0; y < img_view.height(); ++y)
+    for (Index y = 0_px; y < img_view.height(); ++y)
     {
-      for (Index x = 0; x < img_view.width(); ++x)
+      for (Index x = 0_px; x < img_view.width(); ++x)
       {
         REQUIRE(img_view(x, y) == x + y);
       }
@@ -61,9 +61,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(img.is_packed());
     REQUIRE(!img.is_view());
     REQUIRE(img.is_valid());
-    for (Index y = 0; y < img.height(); ++y)
+    for (Index y = 0_px; y < img.height(); ++y)
     {
-      for (Index x = 0; x < img.width(); ++x)
+      for (Index x = 0_px; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == x + y);
       }
@@ -72,7 +72,7 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 
   // Non-packed image, single-channel
   {
-    auto img_data = create_test_image_data(16, 20, 1, 1, 19, PixelFormat::Y, SampleFormat::UnsignedInteger);
+    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 19_b, PixelFormat::Y, SampleFormat::UnsignedInteger);
 
     auto img_view = to_image_view<Pixel_8u1>(img_data);
     REQUIRE(img_view.width() == 16);
@@ -81,9 +81,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img_view.is_packed());
     REQUIRE(img_view.is_view());
     REQUIRE(img_view.is_valid());
-    for (Index y = 0; y < img_view.height(); ++y)
+    for (Index y = 0_px; y < img_view.height(); ++y)
     {
-      for (Index x = 0; x < img_view.width(); ++x)
+      for (Index x = 0_px; x < img_view.width(); ++x)
       {
         REQUIRE(img_view(x, y) == x + y);
       }
@@ -96,9 +96,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img.is_packed());
     REQUIRE(!img.is_view());
     REQUIRE(img.is_valid());
-    for (Index y = 0; y < img.height(); ++y)
+    for (Index y = 0_px; y < img.height(); ++y)
     {
-      for (Index x = 0; x < img.width(); ++x)
+      for (Index x = 0_px; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == x + y);
       }
@@ -107,7 +107,7 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 
   // Non-packed image, multi-channel
   {
-    auto img_data = create_test_image_data(16, 20, 3, 1, 52, PixelFormat::RGB, SampleFormat::UnsignedInteger);
+    auto img_data = create_test_image_data(16_px, 20_px, 3, 1, 52_b, PixelFormat::RGB, SampleFormat::UnsignedInteger);
 
     auto img_view = to_image_view<Pixel_8u3>(img_data);
     REQUIRE(img_view.width() == 16);
@@ -116,9 +116,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img_view.is_packed());
     REQUIRE(img_view.is_view());
     REQUIRE(img_view.is_valid());
-    for (Index y = 0; y < img_view.height(); ++y)
+    for (Index y = 0_px; y < img_view.height(); ++y)
     {
-      for (Index x = 0; x < img_view.width(); ++x)
+      for (Index x = 0_px; x < img_view.width(); ++x)
       {
         REQUIRE(img_view(x, y) == Pixel_8u3(3 * x + 0 + y, 3 * x + 1 + y, 3 * x + 2 + y));
       }
@@ -131,9 +131,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img.is_packed());
     REQUIRE(!img.is_view());
     REQUIRE(img.is_valid());
-    for (Index y = 0; y < img.height(); ++y)
+    for (Index y = 0_px; y < img.height(); ++y)
     {
-      for (Index x = 0; x < img.width(); ++x)
+      for (Index x = 0_px; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == Pixel_8u3(3 * x + 0 + y, 3 * x + 1 + y, 3 * x + 2 + y));
       }

@@ -21,10 +21,10 @@ void image_tests(Index width, Index height, T fill_value)
   REQUIRE(!img.is_empty());
 
   img.fill(fill_value);
-  for (Index y = 0; y < img.height(); ++y)
+  for (Index y = 0_px; y < img.height(); ++y)
   {
     auto ptr = img.data(y);
-    for (Index x = 0; x < img.width(); ++x)
+    for (Index x = 0_px; x < img.width(); ++x)
     {
       REQUIRE(img(x, y) == fill_value);
       REQUIRE(*(ptr + x) == fill_value);
@@ -40,9 +40,9 @@ void image_tests(Index width, Index height, T fill_value)
 
 TEST_CASE("Image construction", "[img]")
 {
-  for (Index h = 10; h < 100; h += 20)
+  for (Index h = 10_px; h < 100_px; h += 20_px)
   {
-    for (Index w = 10; w < 100; w += 10)
+    for (Index w = 10_px; w < 100_px; w += 10_px)
     {
       image_tests<unsigned char>(w, h, 42);
     }

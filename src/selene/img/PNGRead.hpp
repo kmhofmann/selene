@@ -55,7 +55,7 @@ public:
   const int nr_channels;  ///< Number of image channels.
   const int bit_depth;  ///< Image bit depth (8 or 16).
 
-  explicit PNGHeaderInfo(Length width_ = 0, Length height_ = 0, int nr_channels_ = 0, int bit_depth_ = 0);
+  explicit PNGHeaderInfo(Length width_ = 0_px, Length height_ = 0_px, int nr_channels_ = 0, int bit_depth_ = 0);
 
   bool is_valid() const;
 };

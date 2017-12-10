@@ -46,7 +46,8 @@ bool JPEGDecompressionObject::valid() const
 JPEGHeaderInfo JPEGDecompressionObject::get_header_info() const
 {
   const auto color_space = detail::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
-  return JPEGHeaderInfo(impl_->cinfo.image_width, impl_->cinfo.image_height, impl_->cinfo.num_components, color_space);
+  return JPEGHeaderInfo(Index(impl_->cinfo.image_width), Index(impl_->cinfo.image_height), impl_->cinfo.num_components,
+                        color_space);
 }
 
 void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)
@@ -87,7 +88,7 @@ struct JPEGOutputInfo
 class JPEGDecompressionCycle
 {
 public:
-  JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox<Index>& region);
+  JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region);
 
   ~JPEGDecompressionCycle();
 
@@ -96,11 +97,11 @@ public:
 
 private:
   JPEGDecompressionObject& obj_;
-  BoundingBox<Index> region_;
+  BoundingBox region_;
 };
 
 
-JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox<Index>& region)
+JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region)
     : obj_(obj), region_(region)
 {
   auto& cinfo = obj_.impl_->cinfo;
@@ -114,8 +115,7 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
     JDIMENSION xoffset = region_.x0();
     JDIMENSION width = region_.width();
     jpeg_crop_scanline(&cinfo, &xoffset, &width);
-    region_ = BoundingBox<Index>(static_cast<Index>(xoffset), region_.y0(), static_cast<Index>(width),
-                                 region_.height());
+    region_ = BoundingBox(Index(xoffset), region_.y0(), Index(width), region_.height());
   }
 #endif
 }
@@ -130,7 +130,8 @@ JPEGOutputInfo JPEGDecompressionCycle::get_output_info() const
   auto& cinfo = obj_.impl_->cinfo;
   SELENE_FORCED_ASSERT(cinfo.out_color_components == cinfo.output_components);
   const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
-  return JPEGOutputInfo(cinfo.output_width, cinfo.output_height, cinfo.out_color_components, out_color_space);
+  return JPEGOutputInfo(Index(cinfo.output_width), Index(cinfo.output_height), cinfo.out_color_components,
+                        out_color_space);
 }
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)

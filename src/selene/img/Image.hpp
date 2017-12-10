@@ -115,8 +115,8 @@ private:
   void deallocate_bytes_if_owned();
   void reset();
   void copy_rows_from(const Image<PixelType>& src);
-  std::uint32_t compute_data_offset(Index y) const;
-  std::uint32_t compute_data_offset(Index x, Index y) const;
+  Bytes compute_data_offset(Index y) const;
+  Bytes compute_data_offset(Index x, Index y) const;
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
@@ -245,7 +245,7 @@ Image<PixelType>::Image(Length width, Length height)
 template <typename PixelType>
 Image<PixelType>::Image(Length width, Length height, Stride stride_bytes)
     : data_(nullptr)
-    , stride_bytes_(std::max(stride_bytes, PixelTraits<PixelType>::nr_bytes * width))
+    , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
     , height_(height)
     , owns_memory_(true)
@@ -564,7 +564,7 @@ void Image<PixelType>::clear()
 template <typename PixelType>
 void Image<PixelType>::fill(PixelType value)
 {
-  for (std::uint32_t y = 0; y < height_; ++y)
+  for (Index y = 0_px; y < height_; ++y)
   {
     std::fill(data(y), data_row_end(y), value);
   }
@@ -587,7 +587,7 @@ void Image<PixelType>::fill(PixelType value)
 template <typename PixelType>
 void Image<PixelType>::allocate(Length width, Length height)
 {
-  const auto stride_bytes = PixelTraits<PixelType>::nr_bytes * width;
+  const auto stride_bytes = Stride(PixelTraits<PixelType>::nr_bytes * width);
   allocate(width, height, stride_bytes);
 }
 
@@ -623,7 +623,7 @@ void Image<PixelType>::allocate(Length width, Length height, Stride stride_bytes
     throw std::runtime_error("Cannot reallocate external data");
   }
 
-  stride_bytes = std::max(stride_bytes, PixelTraits<PixelType>::nr_bytes * width);
+  stride_bytes = std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width));
 
   deallocate_bytes();
   allocate_bytes(stride_bytes * height);
@@ -931,22 +931,22 @@ void Image<PixelType>::copy_rows_from(const Image<PixelType>& src)
   SELENE_ASSERT(data_ && src.data_);
   SELENE_ASSERT(width_ == src.width_ && height_ == src.height_);
 
-  for (Index y = 0; y < height_; ++y)
+  for (Index y = 0_px; y < height_; ++y)
   {
     std::copy(src.data(y), src.data_row_end(y), data(y));
   }
 }
 
 template <typename PixelType>
-inline std::uint32_t Image<PixelType>::compute_data_offset(Index y) const
+inline Bytes Image<PixelType>::compute_data_offset(Index y) const
 {
-  return stride_bytes_ * y;
+  return Bytes(stride_bytes_ * y);
 }
 
 template <typename PixelType>
-inline std::uint32_t Image<PixelType>::compute_data_offset(Index x, Index y) const
+inline Bytes Image<PixelType>::compute_data_offset(Index x, Index y) const
 {
-  return stride_bytes_ * y + PixelTraits<PixelType>::nr_bytes * x;
+  return Bytes(stride_bytes_ * y + PixelTraits<PixelType>::nr_bytes * x);
 }
 
 template <typename PixelType>

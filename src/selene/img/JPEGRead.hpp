@@ -50,7 +50,7 @@ struct JPEGHeaderInfo
   const int nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
-  explicit JPEGHeaderInfo(Index width_ = 0, Index height_ = 0, int nr_channels_ = 0,
+  explicit JPEGHeaderInfo(Index width_ = 0_px, Index height_ = 0_px, int nr_channels_ = 0,
                           JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
   bool is_valid() const;
@@ -62,7 +62,7 @@ struct JPEGHeaderInfo
 struct JPEGDecompressionOptions
 {
   JPEGColorSpace out_color_space;  ///< The color space for the uncompressed data.
-  BoundingBox<Index> region;  ///< If set (and supported), decompress only the specified image region (libjpeg-turbo).
+  BoundingBox region;  ///< If set (and supported), decompress only the specified image region (libjpeg-turbo).
 
   /** \brief Constructor, setting the respective JPEG decompression options.
    *
@@ -72,7 +72,7 @@ struct JPEGDecompressionOptions
   explicit JPEGDecompressionOptions(JPEGColorSpace out_color_space_ = JPEGColorSpace::Auto
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
                                     ,
-                                    const BoundingBox<Index>& region_ = BoundingBox<Index>()
+                                    const BoundingBox& region_ = BoundingBox()
 #endif
                                         )
       : out_color_space(out_color_space_)

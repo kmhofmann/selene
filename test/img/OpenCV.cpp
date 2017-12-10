@@ -59,9 +59,9 @@ Image<PixelType> create_test_image(Length width, Length height)
 {
   Image<PixelType> img(width, height);
 
-  for (Index y = 0; y < img.height(); ++y)
+  for (Index y = 0_px; y < img.height(); ++y)
   {
-    for (Index x = 0; x < img.width(); ++x)
+    for (Index x = 0_px; x < img.width(); ++x)
     {
       img(x, y) = PixelProducer<PixelType>::get(x, y);
     }
@@ -85,7 +85,7 @@ cv::Mat create_test_image_cv(Length width, Length height)
   {
     for (int col = 0; col < img_cv.cols; ++col)
     {
-      const auto pixel = PixelProducer<PixelType>::get(col, row);
+      const auto pixel = PixelProducer<PixelType>::get(Index(col), Index(row));
       cv::Vec<Element, nr_channels> pixel_cv;
 
       for (int channel = 0; channel < img_cv.channels(); ++channel)
@@ -118,7 +118,7 @@ void compare_images(const Image<PixelType>& img, const cv::Mat& img_cv)
   {
     for (int col = 0; col < img_cv.cols; ++col)
     {
-      const auto pixel = img(col, row);
+      const auto pixel = img(Index(col), Index(row));
 
       for (std::uint32_t channel = 0; channel < nr_channels; ++channel)
       {
@@ -152,9 +152,9 @@ void test_functions(Length width, Length height)
 
 TEST_CASE("OpenCV interoperability", "[img]")
 {
-  for (Length w = 1; w < 32; w += 1)
+  for (Length w = 1_px; w < 32; w += 1)
   {
-    for (Length h = 1; h < 32; h += 1)
+    for (Length h = 1_px; h < 32; h += 1)
     {
       test_functions<Pixel_8u1>(w, h);
       test_functions<Pixel_8u2>(w, h);

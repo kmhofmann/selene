@@ -34,9 +34,10 @@ namespace fs = boost::filesystem;
 
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;
-constexpr std::array<std::array<int, 6>, 3> px = {
-    {std::array<int, 6>{{226, 180, 244, 198, 0, 203}}, std::array<int, 6>{{582, 415, 228, 227, 233, 227}},
-     std::array<int, 6>{{878, 597, 57, 60, 69, 61}}}};  // {x, y}, {r, g, b}, {y}
+constexpr std::array<std::array<unsigned int, 6>, 3> px = {
+    {std::array<unsigned int, 6>{{226, 180, 244, 198, 0, 203}},
+     std::array<unsigned int, 6>{{582, 415, 228, 227, 233, 227}},
+     std::array<unsigned int, 6>{{878, 597, 57, 60, 69, 61}}}};  // {x, y}, {r, g, b}, {y}
 
 namespace {
 
@@ -84,7 +85,7 @@ void check_write_read(ImageData& img_data, const boost::filesystem::path& tmp_pa
   REQUIRE(img_data_2.total_bytes() == img_data.total_bytes());
 
   const auto nr_bytes_per_row = img_data_2.width() * img_data_2.nr_channels() * img_data_2.nr_bytes_per_channel();
-  for (Index y = 0; y < img_data_2.height(); ++y)
+  for (Index y = 0_px; y < img_data_2.height(); ++y)
   {
     REQUIRE(std::memcmp(img_data_2.byte_ptr(y), img_data.byte_ptr(y), nr_bytes_per_row) == 0);
   }
@@ -121,7 +122,9 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(img(px[i][0], px[i][1]) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
   FileWriter sink((tmp_path / "test_duck.png").c_str());
@@ -166,7 +169,9 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 1);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(static_cast<int>(img(px[i][0], px[i][1])) == static_cast<int>(Pixel_8u1(px[i][5])));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(Pixel_8u1(px[i][5])));
   }
 
   FileWriter sink((tmp_path / "test_duck_gray.png").c_str());
@@ -217,7 +222,9 @@ TEST_CASE("PNG image reading and writing, reusing decompression object", "[img]"
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(img(px[i][0], px[i][1]) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 }
 
@@ -254,7 +261,9 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(img(px[i][0], px[i][1]) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
   // Test writing to memory

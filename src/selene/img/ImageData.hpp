@@ -112,9 +112,9 @@ public:
 
 private:
   std::uint8_t* data_ = nullptr;
-  Length width_ = 0;
-  Length height_ = 0;
-  Stride stride_bytes_ = 0;
+  Length width_ = 0_px;
+  Length height_ = 0_px;
+  Stride stride_bytes_ = 0_b;
   std::uint16_t nr_channels_ = 0;
   std::uint8_t nr_bytes_per_channel_ = 0;
   PixelFormat pixel_format_ = PixelFormat::Unknown;
@@ -125,8 +125,8 @@ private:
   void deallocate_bytes();
   void deallocate_bytes_if_owned();
   void reset();
-  std::uint32_t compute_data_offset(Index y) const;
-  std::uint32_t compute_data_offset(Index x, Index y) const;
+  Bytes compute_data_offset(Index y) const;
+  Bytes compute_data_offset(Index x, Index y) const;
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
@@ -532,7 +532,7 @@ inline void ImageData::clear()
 inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_channels,
                                 std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
-  Stride stride_bytes = nr_bytes_per_channel * nr_channels * width;
+  const auto stride_bytes = Stride(nr_bytes_per_channel * nr_channels * width);
   allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
@@ -563,7 +563,7 @@ inline void ImageData::allocate(Length width, Length height, std::uint16_t nr_ch
     return;
   }
 
-  stride_bytes = std::max(stride_bytes, nr_bytes_per_channel * nr_channels * width);
+  stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
 
   deallocate_bytes_if_owned();
   width_ = width;
@@ -600,7 +600,7 @@ inline void ImageData::set_view(std::uint8_t* data, Length width, Length height,
   data_ = data;
   width_ = width;
   height_ = height;
-  stride_bytes_ = nr_bytes_per_channel * nr_channels * width;
+  stride_bytes_ = Stride(nr_bytes_per_channel * nr_channels * width);
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
@@ -663,7 +663,7 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, Length width, 
   data_ = data.transfer_data();
   width_ = width;
   height_ = height;
-  stride_bytes_ = nr_bytes_per_channel * nr_channels * width;
+  stride_bytes_ = Stride(nr_bytes_per_channel * nr_channels * width);
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
@@ -801,14 +801,14 @@ inline void ImageData::reset()
   owns_memory_ = false;
 }
 
-inline std::uint32_t ImageData::compute_data_offset(Index y) const
+inline Bytes ImageData::compute_data_offset(Index y) const
 {
-  return stride_bytes_ * y;
+  return Bytes(stride_bytes_ * y);
 }
 
-inline std::uint32_t ImageData::compute_data_offset(Index x, Index y) const
+inline Bytes ImageData::compute_data_offset(Index x, Index y) const
 {
-  return stride_bytes_ * y + nr_bytes_per_channel_ * nr_channels_ * x;
+  return Bytes(stride_bytes_ * y + nr_bytes_per_channel_ * nr_channels_ * x);
 }
 
 inline MemoryBlock<NewAllocator> ImageData::relinquish_data_ownership()

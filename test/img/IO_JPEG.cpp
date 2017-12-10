@@ -34,10 +34,10 @@ namespace fs = boost::filesystem;
 // clang-format off
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;
-constexpr std::array<std::array<int, 6>, 3> px = {
-    {std::array<int, 6>{{226, 180, 244, 198, 0, 189}},
-     std::array<int, 6>{{582, 415, 228, 227, 232, 228}},
-     std::array<int, 6>{{878, 597, 57, 60, 69, 60}}}};  // {x, y}, {r, g, b}, {y}
+constexpr std::array<std::array<unsigned int, 6>, 3> px = {
+    {std::array<unsigned int, 6>{{226, 180, 244, 198, 0, 189}},
+     std::array<unsigned int, 6>{{582, 415, 228, 227, 232, 228}},
+     std::array<unsigned int, 6>{{878, 597, 57, 60, 69, 60}}}};  // {x, y}, {r, g, b}, {y}
 constexpr auto compression_factor = 70;
 // clang-format on
 
@@ -82,7 +82,9 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(img(px[i][0], px[i][1]) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
   // Test writing of RGB image
@@ -129,7 +131,9 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 1);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(static_cast<int>(img(px[i][0], px[i][1])) == static_cast<int>(Pixel_8u1(px[i][5])));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(Pixel_8u1(px[i][5])));
   }
 
   // Test writing of grayscale image
@@ -205,7 +209,9 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(img(px[i][0], px[i][1]) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 }
 
@@ -215,9 +221,9 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   const auto tmp_path = get_tmp_path();
 
   // Test reading of partial image
-  const auto expected_width = 404;
-  const auto targeted_height = 350;
-  BoundingBox<Index> region(100, 100, 400, targeted_height);
+  const auto expected_width = 404_px;
+  const auto targeted_height = 350_px;
+  BoundingBox region(100_px, 100_px, 400_px, targeted_height);
 
   FileReader source(in_filename().c_str());
   REQUIRE(source.is_open());
@@ -311,7 +317,9 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    REQUIRE(img(px[i][0], px[i][1]) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = Index(px[i][0]);
+    const auto y = Index(px[i][1]);
+    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
   // Test writing to memory

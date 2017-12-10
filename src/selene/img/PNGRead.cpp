@@ -489,8 +489,8 @@ PNGHeaderInfo read_header_info(PNGDecompressionObject& obj, const std::array<std
     return PNGHeaderInfo();
   }
 
-  Index width = 0;
-  Index height = 0;
+  Index width = 0_px;
+  Index height = 0_px;
   int bit_depth = 0;
   int nr_channels = 0;
 

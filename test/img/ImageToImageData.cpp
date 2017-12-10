@@ -57,9 +57,9 @@ Image<PixelType> create_test_image(Length width, Length height)
 {
   Image<PixelType> img(width, height);
 
-  for (Index y = 0; y < img.height(); ++y)
+  for (Index y = 0_px; y < img.height(); ++y)
   {
-    for (Index x = 0; x < img.width(); ++x)
+    for (Index x = 0_px; x < img.width(); ++x)
     {
       img(x, y) = PixelProducer<PixelType>::get(x, y);
     }
@@ -101,9 +101,9 @@ TEST_CASE("Converting Image<> to ImageData", "[img]")
     REQUIRE_THROWS(img_data = to_image_data(std::move(img), PixelFormat::Unknown));
   }
 
-  for (Length w = 1; w < 32; w += 1)
+  for (Length w = 1_px; w < 32_px; w += 1_px)
   {
-    for (Length h = 1; h < 32; h += 1)
+    for (Length h = 1_px; h < 32_px; h += 1_px)
     {
       test_image<Pixel_8u1>(w, h);
       test_image<Pixel_8u2>(w, h);

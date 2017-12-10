@@ -7,15 +7,36 @@
 
 /// @file
 
+#include <selene/base/Assert.hpp>
+#include <selene/base/Types.hpp>
+
 #include <cstdint>
+#include <limits>
 
 namespace selene {
 namespace img {
 
+namespace detail {
+
+class IndexTag;
+
+}  // namespace detail
+
 // use 32-bit values as indices for data access, for now
-using Index = std::uint32_t;  ///< Type representing a scalar as part of an image coordinate (x or y).
-using Length = std::uint32_t;  ///< Type representing a length in x or y-direction.
-using Stride = std::uint32_t;  ///< Type representing an image stride (nr of bytes per row).
+using Index = ExplicitType<std::uint32_t, detail::IndexTag>;  ///< Type representing a scalar as part of an image
+                                                              ///< coordinate (x or y).
+using Length = Index;  ///< Type representing a length in x or y-direction.
+using Stride = Bytes;  ///< Type representing an image stride (nr of bytes per row).
+
+/** \brief User-defined literal representing a pixel index
+ *
+ * @param index Pixel index.
+ * @return An `Index` instance.
+ */
+constexpr inline Index operator"" _px(unsigned long long index)
+{
+  return Index(static_cast<Index::value_type>(index));
+}
 
 }  // namespace img
 }  // namespace selene

@@ -130,12 +130,7 @@ inline bool opencv_mat_type_is_unsigned(const cv::Mat& img_cv)
 template <typename T>
 inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
 {
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.rows)
-                <= static_cast<std::int64_t>(std::numeric_limits<Length>::max()));
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.cols)
-                <= static_cast<std::int64_t>(std::numeric_limits<Length>::max()));
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step)
-                <= static_cast<std::int64_t>(std::numeric_limits<Stride>::max()));
+  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<T>::nr_channels);
   SELENE_ASSERT(detail::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<T>::nr_bytes_per_channel);
@@ -144,9 +139,9 @@ inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
   SELENE_ASSERT(detail::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
 
   const auto data = img_cv.data;
-  const auto width = static_cast<Length>(img_cv.cols);
-  const auto height = static_cast<Length>(img_cv.rows);
-  const auto stride_bytes = static_cast<Stride>(img_cv.step);
+  const auto width = Length(static_cast<Length::value_type>(img_cv.cols));
+  const auto height = Length(static_cast<Length::value_type>(img_cv.rows));
+  const auto stride_bytes = Stride(img_cv.step);
   return Image<T>(data, width, height, stride_bytes);
 }
 
@@ -162,12 +157,7 @@ inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
 template <typename T>
 Image<T> copy_opencv_mat(const cv::Mat& img_cv)
 {
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.rows)
-                <= static_cast<std::int64_t>(std::numeric_limits<Length>::max()));
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.cols)
-                <= static_cast<std::int64_t>(std::numeric_limits<Length>::max()));
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step)
-                <= static_cast<std::int64_t>(std::numeric_limits<Stride>::max()));
+  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<T>::nr_channels);
   SELENE_ASSERT(detail::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<T>::nr_bytes_per_channel);
@@ -175,14 +165,14 @@ Image<T> copy_opencv_mat(const cv::Mat& img_cv)
   SELENE_ASSERT(detail::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<T>::is_floating_point);
   SELENE_ASSERT(detail::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
 
-  const auto width = static_cast<Length>(img_cv.cols);
-  const auto height = static_cast<Length>(img_cv.rows);
-  const auto stride_bytes = static_cast<Stride>(img_cv.step);
+  const auto width = Length(static_cast<Length::value_type>(img_cv.cols));
+  const auto height = Length(static_cast<Length::value_type>(img_cv.rows));
+  const auto stride_bytes = Stride(img_cv.step);
 
   const auto nr_bytes_per_row = width * PixelTraits<T>::nr_bytes;
 
   Image<T> img(width, height, stride_bytes);
-  for (Index y = 0; y < height; ++y)
+  for (Index y = 0_px; y < height; ++y)
   {
     const auto begin = img_cv.ptr(y);
     const auto end = img_cv.ptr(y) + nr_bytes_per_row;
@@ -236,8 +226,8 @@ cv::Mat copy_to_opencv_mat(const Image<T>& img)
 
   for (int row = 0; row < img_cv.rows; ++row)
   {
-    const auto begin = img.byte_ptr(row);
-    const auto end = img.byte_ptr(row) + nr_bytes_per_row;
+    const auto begin = img.byte_ptr(Index(row));
+    const auto end = img.byte_ptr(Index(row)) + nr_bytes_per_row;
     std::copy(begin, end, img_cv.ptr(row));
   }
 
