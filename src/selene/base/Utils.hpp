@@ -7,25 +7,53 @@
 
 /// @file
 
+#include <selene/base/Assert.hpp>
+
 #include <cstdint>
+#include <functional>
 
 namespace selene {
 
 /** \brief Clamp a value between a minimum and a maximum value.
  *
- * Mathematically, the function returns max(a, min(b, x)), where x is the input value and a, b are minimum and maximum,
- * respectively.
+ * If `value` compares less than `min`, returns `min`. Otherwise if `max` compares less than `value`, returns `max`.
+ * Otherwise returns `value`.
  *
- * \param value The value to clamp.
- * \param min The minimum value/lower bound.
- * \param max The maximum value/upper bound.
- * \return The clamped value.
+ * @tparam T The value type.
+ * @tparam Compare The comparison function.
+ * @param value The value to clamp.
+ * @param min The minimum value/lower bound.
+ * @param max The maximum value/upper bound.
+ * @param comp The comparison function.
+ * @return The clamped value.
+ */
+template <typename T, typename Compare>
+inline constexpr const T& clamp(const T& value, const T& min, const T& max, Compare comp)
+{
+  SELENE_ASSERT(!comp(max, min));
+  return comp(value, min) ? min : comp(max, value) ? max : value;
+}
+
+/** \brief Clamp a value between a minimum and a maximum value.
+ *
+ * If `value` compares less than `min`, returns `min`. Otherwise if `max` compares less than `value`, returns `max`.
+ * Otherwise returns `value`. Uses `operator<()` to compare the values.
+ *
+ * Given usual semantics, the function returns max(a, min(b, x)), where x is the input value and a, b are minimum and
+ * maximum, respectively.
+ *
+ * @tparam T The value type.
+ * @param value The value to clamp.
+ * @param min The minimum value/lower bound.
+ * @param max The maximum value/upper bound.
+ * @return The clamped value.
  */
 template <typename T>
-inline T clamp(T value, T min, T max)
+inline constexpr const T& clamp(const T& value, const T& min, const T& max)
 {
-  return (value < min) ? min : ((value > max) ? max : value);
+  return clamp(value, min, max, std::less<T>());
 }
+
 
 }  // namespace selene
 
