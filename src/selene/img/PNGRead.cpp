@@ -14,8 +14,7 @@
 #include <cstdio>
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief Constructor. Instantiates a PNGHeaderInfo object with the specified parameters.
  *
@@ -24,7 +23,7 @@ namespace img {
  * @param nr_channels_ The number of image channels.
  * @param bit_depth_ The image bit depth (8 or 16).
  */
-PNGHeaderInfo::PNGHeaderInfo(Length width_, Length height_, int nr_channels_, int bit_depth_)
+PNGHeaderInfo::PNGHeaderInfo(PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_)
 {
 }
@@ -325,21 +324,22 @@ namespace detail {
 
 struct PNGOutputInfo
 {
-  Index width;
-  Index height;
+  PixelIndex width;
+  PixelIndex height;
   int nr_channels;
   int bit_depth;
   std::size_t row_bytes;
 
   PNGOutputInfo();
-  PNGOutputInfo(Index width_, Index height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_);
+  PNGOutputInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_);
 };
 
 PNGOutputInfo::PNGOutputInfo() : width(0), height(0), nr_channels(0), bit_depth(0), row_bytes(0)
 {
 }
 
-PNGOutputInfo::PNGOutputInfo(Length width_, Length height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_)
+PNGOutputInfo::PNGOutputInfo(PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_,
+                             std::size_t row_bytes_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_), row_bytes(row_bytes_)
 {
 }
@@ -373,8 +373,8 @@ PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_
 
   png_read_update_info(png_ptr, info_ptr);
 
-  output_info_ = PNGOutputInfo(static_cast<Length>(png_get_image_width(png_ptr, info_ptr)),
-                               static_cast<Length>(png_get_image_height(png_ptr, info_ptr)),
+  output_info_ = PNGOutputInfo(static_cast<PixelLength>(png_get_image_width(png_ptr, info_ptr)),
+                               static_cast<PixelLength>(png_get_image_height(png_ptr, info_ptr)),
                                static_cast<int>(png_get_channels(png_ptr, info_ptr)),
                                static_cast<int>(png_get_bit_depth(png_ptr, info_ptr)),
                                static_cast<std::size_t>(png_get_rowbytes(png_ptr, info_ptr)));
@@ -437,7 +437,7 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
     detail::error_handler(png_ptr, "[selene] png_get_io_ptr() failed");
   }
 
-  auto reader = static_cast<io::MemoryReader*>(io_ptr);
+  auto reader = static_cast<MemoryReader*>(io_ptr);
   SELENE_ASSERT(reader);
 
   if (static_cast<png_size_t>(reader->bytes_remaining()) < length)
@@ -445,11 +445,11 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
     detail::error_handler(png_ptr, "[selene] access in user_read_data() out of bounds");
   }
 
-  auto nr_bytes_read = io::read(*reader, data, length);
+  auto nr_bytes_read = read(*reader, data, length);
   SELENE_FORCED_ASSERT(nr_bytes_read == length);
 }
 
-void set_source(PNGDecompressionObject& obj, io::FileReader& source)
+void set_source(PNGDecompressionObject& obj, FileReader& source)
 {
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
@@ -461,7 +461,7 @@ void set_source(PNGDecompressionObject& obj, io::FileReader& source)
 failure_state:;
 }
 
-void set_source(PNGDecompressionObject& obj, io::MemoryReader& source)
+void set_source(PNGDecompressionObject& obj, MemoryReader& source)
 {
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
@@ -489,8 +489,8 @@ PNGHeaderInfo read_header_info(PNGDecompressionObject& obj, const std::array<std
     return PNGHeaderInfo();
   }
 
-  Index width = 0_px;
-  Index height = 0_px;
+  PixelIndex width = 0_px;
+  PixelIndex height = 0_px;
   int bit_depth = 0;
   int nr_channels = 0;
 
@@ -501,8 +501,8 @@ PNGHeaderInfo read_header_info(PNGDecompressionObject& obj, const std::array<std
 
   png_read_info(png_ptr, info_ptr);
 
-  width = static_cast<Length>(png_get_image_width(png_ptr, info_ptr));
-  height = static_cast<Length>(png_get_image_height(png_ptr, info_ptr));
+  width = static_cast<PixelLength>(png_get_image_width(png_ptr, info_ptr));
+  height = static_cast<PixelLength>(png_get_image_height(png_ptr, info_ptr));
   bit_depth = static_cast<int>(png_get_bit_depth(png_ptr, info_ptr));
   nr_channels = static_cast<int>(png_get_channels(png_ptr, info_ptr));
 
@@ -512,7 +512,7 @@ failure_state:
   return PNGHeaderInfo();
 }
 
-PNGHeaderInfo read_header(io::FileReader& source, PNGDecompressionObject& obj)
+PNGHeaderInfo read_header(FileReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
   std::array<std::uint8_t, 8> header_bytes;
@@ -521,7 +521,7 @@ PNGHeaderInfo read_header(io::FileReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
-PNGHeaderInfo read_header(io::MemoryReader& source, PNGDecompressionObject& obj)
+PNGHeaderInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
   std::array<std::uint8_t, 8> header_bytes;
@@ -651,23 +651,22 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompres
 // ----------
 // Explicit instantiations:
 
-template PNGHeaderInfo read_png_header<io::FileReader>(io::FileReader&, bool, MessageLog*);
-template PNGHeaderInfo read_png_header<io::MemoryReader>(io::MemoryReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<FileReader>(FileReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<MemoryReader>(MemoryReader&, bool, MessageLog*);
 
-template PNGHeaderInfo read_png_header<io::FileReader>(PNGDecompressionObject&, io::FileReader&, bool, MessageLog*);
-template PNGHeaderInfo read_png_header<io::MemoryReader>(PNGDecompressionObject&, io::MemoryReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<FileReader>(PNGDecompressionObject&, FileReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<MemoryReader>(PNGDecompressionObject&, MemoryReader&, bool, MessageLog*);
 
-template ImageData read_png<io::FileReader>(io::FileReader&, PNGDecompressionOptions, MessageLog*);
-template ImageData read_png<io::MemoryReader>(io::MemoryReader&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<FileReader>(FileReader&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<MemoryReader>(MemoryReader&, PNGDecompressionOptions, MessageLog*);
 
-template ImageData read_png<io::FileReader>(PNGDecompressionObject&, io::FileReader&, PNGDecompressionOptions,
-                                            MessageLog*, const PNGHeaderInfo*);
-template ImageData read_png<io::MemoryReader>(PNGDecompressionObject&, io::MemoryReader&, PNGDecompressionOptions,
-                                              MessageLog*, const PNGHeaderInfo*);
+template ImageData read_png<FileReader>(PNGDecompressionObject&, FileReader&, PNGDecompressionOptions, MessageLog*,
+                                        const PNGHeaderInfo*);
+template ImageData read_png<MemoryReader>(PNGDecompressionObject&, MemoryReader&, PNGDecompressionOptions, MessageLog*,
+                                          const PNGHeaderInfo*);
 
 /// \endcond
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBPNG)

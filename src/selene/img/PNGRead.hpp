@@ -28,8 +28,7 @@
 #include <cstdio>
 #include <memory>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 class PNGHeaderInfo;
 struct PNGDecompressionOptions;
@@ -37,11 +36,11 @@ class PNGDecompressionObject;
 
 namespace detail {
 class PNGDecompressionCycle;
-void set_source(PNGDecompressionObject&, io::FileReader&);
-void set_source(PNGDecompressionObject&, io::MemoryReader&);
+void set_source(PNGDecompressionObject&, FileReader&);
+void set_source(PNGDecompressionObject&, MemoryReader&);
 PNGHeaderInfo read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
-PNGHeaderInfo read_header(io::FileReader&, PNGDecompressionObject&);
-PNGHeaderInfo read_header(io::MemoryReader&, PNGDecompressionObject&);
+PNGHeaderInfo read_header(FileReader&, PNGDecompressionObject&);
+PNGHeaderInfo read_header(MemoryReader&, PNGDecompressionObject&);
 }  // namespace detail
 
 /** \brief JPEG header information, containing the image size, the number of channels, and the bit depth.
@@ -50,12 +49,13 @@ PNGHeaderInfo read_header(io::MemoryReader&, PNGDecompressionObject&);
 class PNGHeaderInfo
 {
 public:
-  const Length width;  ///< Image width.
-  const Length height;  ///< Image height.
+  const PixelLength width;  ///< Image width.
+  const PixelLength height;  ///< Image height.
   const int nr_channels;  ///< Number of image channels.
   const int bit_depth;  ///< Image bit depth (8 or 16).
 
-  explicit PNGHeaderInfo(Length width_ = 0_px, Length height_ = 0_px, int nr_channels_ = 0, int bit_depth_ = 0);
+  explicit PNGHeaderInfo(PixelLength width_ = 0_px, PixelLength height_ = 0_px, int nr_channels_ = 0,
+                         int bit_depth_ = 0);
 
   bool is_valid() const;
 };
@@ -130,14 +130,14 @@ private:
   std::unique_ptr<Impl> impl_;
 
   friend class detail::PNGDecompressionCycle;
-  friend void detail::set_source(PNGDecompressionObject&, io::FileReader&);
-  friend void detail::set_source(PNGDecompressionObject&, io::MemoryReader&);
+  friend void detail::set_source(PNGDecompressionObject&, FileReader&);
+  friend void detail::set_source(PNGDecompressionObject&, MemoryReader&);
   friend PNGHeaderInfo detail::read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
 };
 
 /** \brief Reads header of PNG image data stream.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param rewind If true, the source position will be re-set to the position before reading the header.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
@@ -150,7 +150,7 @@ PNGHeaderInfo read_png_header(SourceType& source, bool rewind = false, MessageLo
  *
  * This function overload enables re-use of a PNGDecompressionObject instance.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param obj A PNGDecompressionObject instance.
  * @param source Input source instance.
  * @param rewind If true, the source position will be re-set to the position before reading the header.
@@ -166,7 +166,7 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, b
  * The source position must be set to the beginning of the PNG stream, including header. In case img::read_png_header
  * is called before, then it must be with `rewind == true`.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param options The decompression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
@@ -185,7 +185,7 @@ ImageData read_png(SourceType& source, PNGDecompressionOptions options = PNGDeco
  *
  * This function overload enables re-use of a PNGDecompressionObject instance.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param obj A PNGDecompressionObject instance.
  * @param source Input source instance.
  * @param options The decompression options.
@@ -199,8 +199,7 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source,
                    PNGDecompressionOptions options = PNGDecompressionOptions(), MessageLog* messages = nullptr,
                    const PNGHeaderInfo* provided_header_info = nullptr);
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBPNG)
 

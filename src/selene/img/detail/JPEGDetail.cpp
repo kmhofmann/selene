@@ -8,8 +8,7 @@
 
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 namespace detail {
 
 J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space)
@@ -81,7 +80,6 @@ void output_message(j_common_ptr cinfo)
 }
 
 }  // namespace detail
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)

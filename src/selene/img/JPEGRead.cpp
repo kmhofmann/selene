@@ -12,8 +12,7 @@
 #include <cstdio>
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /// \cond INTERNAL
 
@@ -46,8 +45,8 @@ bool JPEGDecompressionObject::valid() const
 JPEGHeaderInfo JPEGDecompressionObject::get_header_info() const
 {
   const auto color_space = detail::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
-  return JPEGHeaderInfo(Index(impl_->cinfo.image_width), Index(impl_->cinfo.image_height), impl_->cinfo.num_components,
-                        color_space);
+  return JPEGHeaderInfo(PixelIndex(impl_->cinfo.image_width), PixelIndex(impl_->cinfo.image_height),
+                        impl_->cinfo.num_components, color_space);
 }
 
 void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)
@@ -73,12 +72,12 @@ namespace detail {
 
 struct JPEGOutputInfo
 {
-  const Index width;
-  const Index height;
+  const PixelIndex width;
+  const PixelIndex height;
   const int nr_channels;
   const JPEGColorSpace color_space;
 
-  JPEGOutputInfo(Index width_, Index height_, int nr_channels_, JPEGColorSpace color_space_)
+  JPEGOutputInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
       : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
   {
   }
@@ -115,7 +114,7 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
     JDIMENSION xoffset = region_.x0();
     JDIMENSION width = region_.width();
     jpeg_crop_scanline(&cinfo, &xoffset, &width);
-    region_ = BoundingBox(Index(xoffset), region_.y0(), Index(width), region_.height());
+    region_ = BoundingBox(PixelIndex(xoffset), region_.y0(), PixelIndex(width), region_.height());
   }
 #endif
 }
@@ -130,7 +129,7 @@ JPEGOutputInfo JPEGDecompressionCycle::get_output_info() const
   auto& cinfo = obj_.impl_->cinfo;
   SELENE_FORCED_ASSERT(cinfo.out_color_components == cinfo.output_components);
   const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
-  return JPEGOutputInfo(Index(cinfo.output_width), Index(cinfo.output_height), cinfo.out_color_components,
+  return JPEGOutputInfo(PixelIndex(cinfo.output_width), PixelIndex(cinfo.output_height), cinfo.out_color_components,
                         out_color_space);
 }
 
@@ -171,7 +170,7 @@ failure_state:
 // -------------------------------
 // Decompression related functions
 
-void set_source(JPEGDecompressionObject& obj, io::FileReader& source)
+void set_source(JPEGDecompressionObject& obj, FileReader& source)
 {
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
@@ -184,7 +183,7 @@ failure_state:;
 }
 
 
-void set_source(JPEGDecompressionObject& obj, io::MemoryReader& source)
+void set_source(JPEGDecompressionObject& obj, MemoryReader& source)
 {
   // Unfortunately, the libjpeg API is not const-correct before version 9b (or before libjpeg-turbo 1.5.0).
   auto handle = const_cast<unsigned char*>(source.handle());
@@ -229,7 +228,7 @@ failure_state:
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
-JPEGHeaderInfo::JPEGHeaderInfo(Index width_, Index height_, int nr_channels_, JPEGColorSpace color_space_)
+JPEGHeaderInfo::JPEGHeaderInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }
@@ -342,24 +341,22 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source, JPEGDecomp
 // ----------
 // Explicit instantiations:
 
-template JPEGHeaderInfo read_jpeg_header<io::FileReader>(io::FileReader&, bool, MessageLog*);
-template JPEGHeaderInfo read_jpeg_header<io::MemoryReader>(io::MemoryReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<FileReader>(FileReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<MemoryReader>(MemoryReader&, bool, MessageLog*);
 
-template JPEGHeaderInfo read_jpeg_header<io::FileReader>(JPEGDecompressionObject&, io::FileReader&, bool, MessageLog*);
-template JPEGHeaderInfo read_jpeg_header<io::MemoryReader>(JPEGDecompressionObject&, io::MemoryReader&, bool,
-                                                           MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<FileReader>(JPEGDecompressionObject&, FileReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<MemoryReader>(JPEGDecompressionObject&, MemoryReader&, bool, MessageLog*);
 
-template ImageData read_jpeg<io::FileReader>(io::FileReader&, JPEGDecompressionOptions, MessageLog*);
-template ImageData read_jpeg<io::MemoryReader>(io::MemoryReader&, JPEGDecompressionOptions, MessageLog*);
+template ImageData read_jpeg<FileReader>(FileReader&, JPEGDecompressionOptions, MessageLog*);
+template ImageData read_jpeg<MemoryReader>(MemoryReader&, JPEGDecompressionOptions, MessageLog*);
 
-template ImageData read_jpeg<io::FileReader>(JPEGDecompressionObject&, io::FileReader&, JPEGDecompressionOptions,
-                                             MessageLog*, const JPEGHeaderInfo*);
-template ImageData read_jpeg<io::MemoryReader>(JPEGDecompressionObject&, io::MemoryReader&, JPEGDecompressionOptions,
-                                               MessageLog*, const JPEGHeaderInfo*);
+template ImageData read_jpeg<FileReader>(JPEGDecompressionObject&, FileReader&, JPEGDecompressionOptions, MessageLog*,
+                                         const JPEGHeaderInfo*);
+template ImageData read_jpeg<MemoryReader>(JPEGDecompressionObject&, MemoryReader&, JPEGDecompressionOptions,
+                                           MessageLog*, const JPEGHeaderInfo*);
 
 /// \endcond
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)

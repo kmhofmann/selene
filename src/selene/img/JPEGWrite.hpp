@@ -27,17 +27,16 @@
 #include <cstdio>
 #include <memory>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 class JPEGCompressionObject;
 
 namespace detail {
 class JPEGCompressionCycle;
-void set_destination(JPEGCompressionObject&, io::FileWriter&);
-void set_destination(JPEGCompressionObject&, io::VectorWriter&);
-bool flush_data_buffer(JPEGCompressionObject&, io::FileWriter&);
-bool flush_data_buffer(JPEGCompressionObject&, io::VectorWriter&);
+void set_destination(JPEGCompressionObject&, FileWriter&);
+void set_destination(JPEGCompressionObject&, VectorWriter&);
+bool flush_data_buffer(JPEGCompressionObject&, FileWriter&);
+bool flush_data_buffer(JPEGCompressionObject&, VectorWriter&);
 }  // namespace detail
 
 /** \brief JPEG compression options.
@@ -92,16 +91,16 @@ private:
   std::unique_ptr<Impl> impl_;
 
   friend class detail::JPEGCompressionCycle;
-  friend void detail::set_destination(JPEGCompressionObject&, io::FileWriter&);
-  friend void detail::set_destination(JPEGCompressionObject&, io::VectorWriter&);
-  friend bool detail::flush_data_buffer(JPEGCompressionObject&, io::FileWriter&);
-  friend bool detail::flush_data_buffer(JPEGCompressionObject&, io::VectorWriter&);
+  friend void detail::set_destination(JPEGCompressionObject&, FileWriter&);
+  friend void detail::set_destination(JPEGCompressionObject&, VectorWriter&);
+  friend bool detail::flush_data_buffer(JPEGCompressionObject&, FileWriter&);
+  friend bool detail::flush_data_buffer(JPEGCompressionObject&, VectorWriter&);
 };
 
 
 /** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
  * @param img_data The image data to be written.
  * @param sink Output sink instance.
  * @param options The compression options.
@@ -116,7 +115,7 @@ bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOption
  *
  * This function overload enables re-use of a JPEGCompressionObject instance.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
  * @param img_data The image data to be written.
  * @param obj A JPEGCompressionObject instance.
  * @param sink Output sink instance.
@@ -128,8 +127,7 @@ template <typename SinkType>
 bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(), MessageLog* messages = nullptr);
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 

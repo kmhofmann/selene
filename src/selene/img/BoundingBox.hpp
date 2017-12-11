@@ -9,8 +9,7 @@
 
 #include <selene/img/Types.hpp>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief Represents an axis-aligned, rectangular bounding box.
  *
@@ -20,30 +19,31 @@ class BoundingBox
 {
 public:
   BoundingBox();
-  BoundingBox(Index x0, Index y0, Length width, Length height);
+  BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height);
 
-  Index x0() const;
-  Index y0() const;
-  Length width() const;
-  Length height() const;
+  PixelIndex x0() const;
+  PixelIndex y0() const;
+  PixelLength width() const;
+  PixelLength height() const;
 
-  Index x1() const;
-  Index y1() const;
-  Index x_end() const;
-  Index y_end() const;
+  PixelIndex x1() const;
+  PixelIndex y1() const;
+  PixelIndex x_end() const;
+  PixelIndex y_end() const;
 
   bool empty() const;
 
 private:
-  Index x0_;
-  Index y0_;
-  Length width_;
-  Length height_;
+  PixelIndex x0_;
+  PixelIndex y0_;
+  PixelLength width_;
+  PixelLength height_;
 };
 
 /** Default constructor. Constructs a bounding box of size (0, 0) top-left corner (0, 0).
  */
-inline BoundingBox::BoundingBox() : x0_(Index{0}), y0_(Index{0}), width_(Length{0}), height_(Length{0})
+inline BoundingBox::BoundingBox()
+    : x0_(PixelIndex{0}), y0_(PixelIndex{0}), width_(PixelLength{0}), height_(PixelLength{0})
 {
 }
 
@@ -54,7 +54,7 @@ inline BoundingBox::BoundingBox() : x0_(Index{0}), y0_(Index{0}), width_(Length{
  * \param width Box width.
  * \param height Box height.
  */
-inline BoundingBox::BoundingBox(Index x0, Index y0, Length width, Length height)
+inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
     : x0_(x0), y0_(y0), width_(width), height_(height)
 {
 }
@@ -63,7 +63,7 @@ inline BoundingBox::BoundingBox(Index x0, Index y0, Length width, Length height)
  *
  * \return x-coordinate of the top-left corner.
  */
-inline Index BoundingBox::x0() const
+inline PixelIndex BoundingBox::x0() const
 {
   return x0_;
 }
@@ -72,7 +72,7 @@ inline Index BoundingBox::x0() const
  *
  * \return y-coordinate of the top-left corner.
  */
-inline Index BoundingBox::y0() const
+inline PixelIndex BoundingBox::y0() const
 {
   return y0_;
 }
@@ -81,7 +81,7 @@ inline Index BoundingBox::y0() const
  *
  * \return Box width.
  */
-inline Length BoundingBox::width() const
+inline PixelLength BoundingBox::width() const
 {
   return width_;
 }
@@ -90,7 +90,7 @@ inline Length BoundingBox::width() const
  *
  * \return Box height.
  */
-inline Length BoundingBox::height() const
+inline PixelLength BoundingBox::height() const
 {
   return height_;
 }
@@ -108,39 +108,38 @@ inline bool BoundingBox::empty() const
  *
  * \return x-coordinate of the bottom-right corner.
  */
-inline Index BoundingBox::x1() const
+inline PixelIndex BoundingBox::x1() const
 {
-  return Index(x0_ + width_ - 1);
+  return PixelIndex(x0_ + width_ - 1);
 }
 
 /** Returns the y-coordinate of the bottom-right corner, i.e. the y-coordinate of the bottom box side.
  *
  * \return y-coordinate of the bottom-right corner.
  */
-inline Index BoundingBox::y1() const
+inline PixelIndex BoundingBox::y1() const
 {
-  return Index(y0_ + height_ - 1);
+  return PixelIndex(y0_ + height_ - 1);
 }
 
 /** Returns the x-coordinate one past the the bottom-right corner.
  *
  * \return x-coordinate one past the bottom-right corner.
  */
-inline Index BoundingBox::x_end() const
+inline PixelIndex BoundingBox::x_end() const
 {
-  return Index(x0_ + width_);
+  return PixelIndex(x0_ + width_);
 }
 
 /** Returns the y-coordinate one past the the bottom-right corner.
  *
  * \return y-coordinate one past the bottom-right corner.
  */
-inline Index BoundingBox::y_end() const
+inline PixelIndex BoundingBox::y_end() const
 {
-  return Index(y0_ + height_);
+  return PixelIndex(y0_ + height_);
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_BOUNDING_BOX_HPP

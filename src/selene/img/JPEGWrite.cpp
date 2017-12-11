@@ -13,8 +13,7 @@
 #include <cstdio>
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /// \cond INTERNAL
 
@@ -169,7 +168,7 @@ failure_state:
 // -----------------------------
 // Compression related functions
 
-void set_destination(JPEGCompressionObject& obj, io::FileWriter& sink)
+void set_destination(JPEGCompressionObject& obj, FileWriter& sink)
 {
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
@@ -181,7 +180,7 @@ void set_destination(JPEGCompressionObject& obj, io::FileWriter& sink)
 failure_state:;
 }
 
-void set_destination(JPEGCompressionObject& obj, io::VectorWriter& /*sink*/)
+void set_destination(JPEGCompressionObject& obj, VectorWriter& /*sink*/)
 {
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
@@ -193,12 +192,12 @@ void set_destination(JPEGCompressionObject& obj, io::VectorWriter& /*sink*/)
 failure_state:;
 }
 
-bool flush_data_buffer(JPEGCompressionObject& /*obj*/, io::FileWriter& /*sink*/)
+bool flush_data_buffer(JPEGCompressionObject& /*obj*/, FileWriter& /*sink*/)
 {
   return true;
 }
 
-bool flush_data_buffer(JPEGCompressionObject& obj, io::VectorWriter& sink)
+bool flush_data_buffer(JPEGCompressionObject& obj, VectorWriter& sink)
 {
   if (obj.impl_->output_buffer != nullptr)
   {
@@ -285,17 +284,16 @@ bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType&
 // ----------
 // Explicit instantiations:
 
-template bool write_jpeg<io::FileWriter>(const ImageData&, io::FileWriter&, JPEGCompressionOptions, MessageLog*);
-template bool write_jpeg<io::VectorWriter>(const ImageData&, io::VectorWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<FileWriter>(const ImageData&, FileWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<VectorWriter>(const ImageData&, VectorWriter&, JPEGCompressionOptions, MessageLog*);
 
-template bool write_jpeg<io::FileWriter>(const ImageData&, JPEGCompressionObject&, io::FileWriter&,
-                                         JPEGCompressionOptions, MessageLog*);
-template bool write_jpeg<io::VectorWriter>(const ImageData&, JPEGCompressionObject&, io::VectorWriter&,
-                                           JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<FileWriter>(const ImageData&, JPEGCompressionObject&, FileWriter&, JPEGCompressionOptions,
+                                     MessageLog*);
+template bool write_jpeg<VectorWriter>(const ImageData&, JPEGCompressionObject&, VectorWriter&, JPEGCompressionOptions,
+                                       MessageLog*);
 
 /// \endcond
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)

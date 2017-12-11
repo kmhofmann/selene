@@ -14,8 +14,7 @@
 #include <cstdlib>
 #include <type_traits>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief Class representing traits of a pixel.
  *
@@ -75,7 +74,6 @@ struct PixelTraits<Pixel<T, N>>
                                                                                         : SampleFormat::Unknown);
 };
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_PIXEL_TRAITS_HPP

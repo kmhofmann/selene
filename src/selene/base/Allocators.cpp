@@ -7,7 +7,7 @@
 
 #include <new>
 
-namespace selene {
+namespace sln {
 
 /** \brief Allocates the specified number of bytes via `std::malloc` and returns a MemoryBlock.
  *
@@ -68,4 +68,4 @@ void NewAllocator::deallocate(std::uint8_t*& data)
   data = nullptr;
 }
 
-}  // namespace selene
+}  // namespace sln

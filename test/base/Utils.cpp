@@ -12,14 +12,12 @@
 #include <random>
 #include <type_traits>
 
-using namespace selene;
-
 namespace {
 
 template <typename T>
 void test_clamp(const T& value, const T& min, const T& max)
 {
-  const auto result = clamp(value, min, max);
+  const auto result = sln::clamp(value, min, max);
 
   REQUIRE(!(result < min));
   REQUIRE(!(result > max));
@@ -71,6 +69,6 @@ TEST_CASE("Clamp")
   test_clamps<std::int32_t>(rng, nr_trials);
   test_clamps<std::uint64_t>(rng, nr_trials);
   test_clamps<std::int64_t>(rng, nr_trials);
-  test_clamps<float32_t>(rng, nr_trials);
-  test_clamps<float64_t>(rng, nr_trials);
+  test_clamps<sln::float32_t>(rng, nr_trials);
+  test_clamps<sln::float64_t>(rng, nr_trials);
 }

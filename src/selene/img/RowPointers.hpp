@@ -14,8 +14,7 @@
 #include <memory>
 #include <vector>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 using RowPointers = std::vector<std::uint8_t*>;  ///< Type representing a list of image row pointers
 using ConstRowPointers = std::vector<const std::uint8_t*>;  ///< Type representing a list of constant image row pointers
@@ -44,7 +43,7 @@ RowPointers get_row_pointers(Image<T>& img)
 {
   RowPointers row_pointers(img.height());
 
-  for (Index y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_px; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -63,7 +62,7 @@ ConstRowPointers get_row_pointers(const Image<T>& img)
 {
   ConstRowPointers row_pointers(img.height());
 
-  for (Index y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_px; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -80,7 +79,7 @@ inline RowPointers get_row_pointers(ImageData& img)
 {
   RowPointers row_pointers(img.height());
 
-  for (Index y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_px; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -97,7 +96,7 @@ inline ConstRowPointers get_row_pointers(const ImageData& img)
 {
   ConstRowPointers row_pointers(img.height());
 
-  for (Index y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_px; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -105,8 +104,6 @@ inline ConstRowPointers get_row_pointers(const ImageData& img)
   return row_pointers;
 }
 
-
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_ROW_POINTERS_HPP

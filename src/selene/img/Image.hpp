@@ -19,8 +19,7 @@
 #include <cstdint>
 #include <memory>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 class ImageData;
 
@@ -59,10 +58,10 @@ public:
   using const_iterator = ConstImageRowIterator<PixelType>;  ///< The const_iterator type.
 
   Image();
-  Image(Length width, Length height);
-  Image(Length width, Length height, Stride stride_bytes);
-  Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes);
-  Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes);
+  Image(PixelLength width, PixelLength height);
+  Image(PixelLength width, PixelLength height, Stride stride_bytes);
+  Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes);
+  Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes);
 
   Image(const Image<PixelType>& other);
   Image<PixelType>& operator=(const Image<PixelType>& other);
@@ -72,8 +71,8 @@ public:
 
   ~Image();
 
-  Length width() const;
-  Length height() const;
+  PixelLength width() const;
+  PixelLength height() const;
   Stride stride_bytes() const;
   std::size_t row_bytes() const;
   std::size_t total_bytes() const;
@@ -84,10 +83,10 @@ public:
 
   void clear();
   void fill(PixelType value);
-  void allocate(Length width, Length height);
-  void allocate(Length width, Length height, Stride stride_bytes);
-  void set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes);
-  void set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes);
+  void allocate(PixelLength width, PixelLength height);
+  void allocate(PixelLength width, PixelLength height, Stride stride_bytes);
+  void set_view(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes);
+  void set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes);
 
   iterator begin();
   const_iterator begin() const;
@@ -99,32 +98,32 @@ public:
   PixelType* data();
   const PixelType* data() const;
 
-  PixelType* data(Index y);
-  const PixelType* data(Index y) const;
+  PixelType* data(PixelIndex y);
+  const PixelType* data(PixelIndex y) const;
 
-  PixelType* data_row_end(Index y);
-  const PixelType* data_row_end(Index y) const;
+  PixelType* data_row_end(PixelIndex y);
+  const PixelType* data_row_end(PixelIndex y) const;
 
-  PixelType* data(Index x, Index y);
-  const PixelType* data(Index x, Index y) const;
+  PixelType* data(PixelIndex x, PixelIndex y);
+  const PixelType* data(PixelIndex x, PixelIndex y) const;
 
   std::uint8_t* byte_ptr();
   const std::uint8_t* byte_ptr() const;
 
-  std::uint8_t* byte_ptr(Index y);
-  const std::uint8_t* byte_ptr(Index y) const;
+  std::uint8_t* byte_ptr(PixelIndex y);
+  const std::uint8_t* byte_ptr(PixelIndex y) const;
 
-  std::uint8_t* byte_ptr(Index x, Index y);
-  const std::uint8_t* byte_ptr(Index x, Index y) const;
+  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y);
+  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const;
 
-  PixelType& operator()(Index x, Index y);
-  const PixelType& operator()(Index x, Index y) const;
+  PixelType& operator()(PixelIndex x, PixelIndex y);
+  const PixelType& operator()(PixelIndex x, PixelIndex y) const;
 
 private:
   std::uint8_t* data_;
   Stride stride_bytes_;
-  Length width_;
-  Length height_;
+  PixelLength width_;
+  PixelLength height_;
   bool owns_memory_;
 
   void allocate_bytes(std::size_t nr_bytes);
@@ -132,8 +131,8 @@ private:
   void deallocate_bytes_if_owned();
   void reset();
   void copy_rows_from(const Image<PixelType>& src);
-  Bytes compute_data_offset(Index y) const;
-  Bytes compute_data_offset(Index x, Index y) const;
+  Bytes compute_data_offset(PixelIndex y) const;
+  Bytes compute_data_offset(PixelIndex x, PixelIndex y) const;
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
@@ -147,22 +146,24 @@ template <typename PixelType>
 void clone(const Image<PixelType>& src, Image<PixelType>& dst);
 
 template <typename PixelType>
-void clone(const Image<PixelType>& src, Index x0, Index y0, Length width, Length height, Image<PixelType>& dst);
+void clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height,
+           Image<PixelType>& dst);
 
 template <typename PixelType>
 Image<PixelType> clone(const Image<PixelType>& src);
 
 template <typename PixelType>
-Image<PixelType> clone(const Image<PixelType>& src, Index x0, Index y0, Length width, Length height);
+Image<PixelType> clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width,
+                       PixelLength height);
 
 template <typename PixelType>
 Image<PixelType> view(const Image<PixelType>& src);
 
 template <typename PixelType>
-Image<PixelType> view(const Image<PixelType>& src, Index x0, Index y0, Length width, Length height);
+Image<PixelType> view(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height);
 
 template <typename PixelType>
-void crop(Image<PixelType>& img, Index x0, Index y0, Length width, Length height);
+void crop(Image<PixelType>& img, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height);
 
 // ----------
 // Aliases:
@@ -289,7 +290,7 @@ public:
    *
    * @return Row index.
    */
-  Index index() const noexcept
+  PixelIndex index() const noexcept
   {
     return row_index_;
   }
@@ -316,9 +317,9 @@ public:
 
 private:
   Image<PixelType>* img_;
-  Index row_index_;
+  PixelIndex row_index_;
 
-  ImageRow(Image<PixelType>* img, Index row_index) : img_(img), row_index_(row_index)
+  ImageRow(Image<PixelType>* img, PixelIndex row_index) : img_(img), row_index_(row_index)
   {
   }
   friend class Image<PixelType>;
@@ -472,7 +473,7 @@ public:
    *
    * @return Row index.
    */
-  Index index() const noexcept
+  PixelIndex index() const noexcept
   {
     return row_index_;
   }
@@ -499,9 +500,9 @@ public:
 
 private:
   const Image<PixelType>* img_;
-  Index row_index_;
+  PixelIndex row_index_;
 
-  ConstImageRow(const Image<PixelType>* img, Index row_index) : img_(img), row_index_(row_index)
+  ConstImageRow(const Image<PixelType>* img, PixelIndex row_index) : img_(img), row_index_(row_index)
   {
   }
   friend class Image<PixelType>;
@@ -625,7 +626,7 @@ Image<PixelType>::Image() : data_(nullptr), stride_bytes_(0), width_(0), height_
  * @param height Desired image height.
  */
 template <typename PixelType>
-Image<PixelType>::Image(Length width, Length height)
+Image<PixelType>::Image(PixelLength width, PixelLength height)
     : data_(nullptr)
     , stride_bytes_(PixelTraits<PixelType>::nr_bytes * width)
     , width_(width)
@@ -646,7 +647,7 @@ Image<PixelType>::Image(Length width, Length height)
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(Length width, Length height, Stride stride_bytes)
+Image<PixelType>::Image(PixelLength width, PixelLength height, Stride stride_bytes)
     : data_(nullptr)
     , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
@@ -665,7 +666,7 @@ Image<PixelType>::Image(Length width, Length height, Stride stride_bytes)
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(std::uint8_t* data, Length width, Length height, Stride stride_bytes)
+Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes)
     : data_(data), stride_bytes_(stride_bytes), width_(width), height_(height), owns_memory_(false)
 {
   SELENE_ASSERT(width_ > 0 && height_ > 0 && stride_bytes_ > 0);
@@ -680,7 +681,7 @@ Image<PixelType>::Image(std::uint8_t* data, Length width, Length height, Stride 
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, Length width, Length height, Stride stride_bytes)
+Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes)
     : data_(data.transfer_data()), stride_bytes_(stride_bytes), width_(width), height_(height), owns_memory_(true)
 {
   SELENE_ASSERT(width_ > 0 && height_ > 0 && stride_bytes_ > 0);
@@ -833,7 +834,7 @@ inline Image<PixelType>::~Image()
  * @return Width of the image in pixels.
  */
 template <typename PixelType>
-inline Length Image<PixelType>::width() const
+inline PixelLength Image<PixelType>::width() const
 {
   return width_;
 }
@@ -844,7 +845,7 @@ inline Length Image<PixelType>::width() const
  * @return Height of the image in pixels.
  */
 template <typename PixelType>
-inline Length Image<PixelType>::height() const
+inline PixelLength Image<PixelType>::height() const
 {
   return height_;
 }
@@ -967,7 +968,7 @@ void Image<PixelType>::clear()
 template <typename PixelType>
 void Image<PixelType>::fill(PixelType value)
 {
-  for (Index y = 0_px; y < height_; ++y)
+  for (PixelIndex y = 0_px; y < height_; ++y)
   {
     std::fill(data(y), data_row_end(y), value);
   }
@@ -988,7 +989,7 @@ void Image<PixelType>::fill(PixelType value)
  * @param height The new image height.
  */
 template <typename PixelType>
-void Image<PixelType>::allocate(Length width, Length height)
+void Image<PixelType>::allocate(PixelLength width, PixelLength height)
 {
   const auto stride_bytes = Stride(PixelTraits<PixelType>::nr_bytes * width);
   allocate(width, height, stride_bytes);
@@ -1013,7 +1014,7 @@ void Image<PixelType>::allocate(Length width, Length height)
  * @param stride_bytes The desired row stride in bytes.
  */
 template <typename PixelType>
-void Image<PixelType>::allocate(Length width, Length height, Stride stride_bytes)
+void Image<PixelType>::allocate(PixelLength width, PixelLength height, Stride stride_bytes)
 {
   // No need to act, if size parameters match
   if (width_ == width && height_ == height && stride_bytes_ == stride_bytes)
@@ -1048,7 +1049,7 @@ void Image<PixelType>::allocate(Length width, Length height, Stride stride_bytes
  * @param stride_bytes The row stride in bytes.
  */
 template <typename PixelType>
-inline void Image<PixelType>::set_view(std::uint8_t* data, Length width, Length height, Stride stride_bytes)
+inline void Image<PixelType>::set_view(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes)
 {
   // Clean up own data
   deallocate_bytes_if_owned();
@@ -1074,7 +1075,7 @@ inline void Image<PixelType>::set_view(std::uint8_t* data, Length width, Length 
  * @param stride_bytes The row stride in bytes.
  */
 template <typename PixelType>
-inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data, Length width, Length height,
+inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height,
                                        Stride stride_bytes)
 {
   SELENE_ASSERT(data.size() == stride_bytes * height);
@@ -1185,7 +1186,7 @@ inline const PixelType* Image<PixelType>::data() const
  * @return Pointer to the first pixel element of the y-th row.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data(Index y)
+inline PixelType* Image<PixelType>::data(PixelIndex y)
 {
   return reinterpret_cast<PixelType*>(byte_ptr(y));
 }
@@ -1197,7 +1198,7 @@ inline PixelType* Image<PixelType>::data(Index y)
  * @return Constant pointer to the first pixel element of the y-th row.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data(Index y) const
+inline const PixelType* Image<PixelType>::data(PixelIndex y) const
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(y));
 }
@@ -1209,7 +1210,7 @@ inline const PixelType* Image<PixelType>::data(Index y) const
  * @return Pointer to the one-past-the-last pixel element of the y-th row.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data_row_end(Index y)
+inline PixelType* Image<PixelType>::data_row_end(PixelIndex y)
 {
   return reinterpret_cast<PixelType*>(byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * width_);
 }
@@ -1222,7 +1223,7 @@ inline PixelType* Image<PixelType>::data_row_end(Index y)
  * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data_row_end(Index y) const
+inline const PixelType* Image<PixelType>::data_row_end(PixelIndex y) const
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * width_);
 }
@@ -1235,7 +1236,7 @@ inline const PixelType* Image<PixelType>::data_row_end(Index y) const
  * @return Pointer to the x-th pixel element of the y-th row.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data(Index x, Index y)
+inline PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y)
 {
   return reinterpret_cast<PixelType*>(byte_ptr(x, y));
 }
@@ -1248,7 +1249,7 @@ inline PixelType* Image<PixelType>::data(Index x, Index y)
  * @return Constant pointer to the x-th pixel element of the y-th row.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data(Index x, Index y) const
+inline const PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y) const
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(x, y));
 }
@@ -1282,7 +1283,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr() const
  * @return Pointer to the first image data byte of row `y`.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(Index y)
+inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y)
 {
   return data_ + compute_data_offset(y);
 }
@@ -1294,7 +1295,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr(Index y)
  * @return Constant pointer to the first image data byte of row `y`.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(Index y) const
+inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const
 {
   return data_ + compute_data_offset(y);
 }
@@ -1307,7 +1308,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr(Index y) const
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(Index x, Index y)
+inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y)
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -1321,7 +1322,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr(Index x, Index y)
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(Index x, Index y) const
+inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -1334,7 +1335,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr(Index x, Index y) const
  * @return Reference to the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline PixelType& Image<PixelType>::operator()(Index x, Index y)
+inline PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y)
 {
   return *data(x, y);
 }
@@ -1347,7 +1348,7 @@ inline PixelType& Image<PixelType>::operator()(Index x, Index y)
  * @return Constant reference to the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline const PixelType& Image<PixelType>::operator()(Index x, Index y) const
+inline const PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y) const
 {
   return *data(x, y);
 }
@@ -1389,8 +1390,8 @@ void Image<PixelType>::reset()
   // reset to default constructed state
   data_ = nullptr;
   stride_bytes_ = Stride{0};
-  width_ = Length{0};
-  height_ = Length{0};
+  width_ = PixelLength{0};
+  height_ = PixelLength{0};
   owns_memory_ = true;
 }
 
@@ -1400,20 +1401,20 @@ void Image<PixelType>::copy_rows_from(const Image<PixelType>& src)
   SELENE_ASSERT(data_ && src.data_);
   SELENE_ASSERT(width_ == src.width_ && height_ == src.height_);
 
-  for (Index y = 0_px; y < height_; ++y)
+  for (PixelIndex y = 0_px; y < height_; ++y)
   {
     std::copy(src.data(y), src.data_row_end(y), data(y));
   }
 }
 
 template <typename PixelType>
-inline Bytes Image<PixelType>::compute_data_offset(Index y) const
+inline Bytes Image<PixelType>::compute_data_offset(PixelIndex y) const
 {
   return Bytes(stride_bytes_ * y);
 }
 
 template <typename PixelType>
-inline Bytes Image<PixelType>::compute_data_offset(Index x, Index y) const
+inline Bytes Image<PixelType>::compute_data_offset(PixelIndex x, PixelIndex y) const
 {
   return Bytes(stride_bytes_ * y + PixelTraits<PixelType>::nr_bytes * x);
 }
@@ -1466,7 +1467,8 @@ void clone(const Image<PixelType>& src, Image<PixelType>& dst)
  * @param dst Destination image.
  */
 template <typename PixelType>
-void clone(const Image<PixelType>& src, Index x0, Index y0, Length width, Length height, Image<PixelType>& dst)
+void clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height,
+           Image<PixelType>& dst)
 {
   auto src_sub_view = view(src, x0, y0, width, height);
   clone(src_sub_view, dst);
@@ -1502,7 +1504,7 @@ Image<PixelType> clone(const Image<PixelType>& src)
  * @return Copied image, containing the sub-region.
  */
 template <typename PixelType>
-Image<PixelType> clone(const Image<PixelType>& src, Index x0, Index y0, Length width, Length height)
+Image<PixelType> clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
 {
   Image<PixelType> dst;
   clone(src, x0, y0, width, height, dst);
@@ -1532,7 +1534,7 @@ Image<PixelType> view(const Image<PixelType>& src)
  * @return An image (pointing to non-owned memory), which represents a view onto the source image sub-region.
  */
 template <typename PixelType>
-Image<PixelType> view(const Image<PixelType>& src, Index x0, Index y0, Length width, Length height)
+Image<PixelType> view(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
 {
   return Image<PixelType>(src.byte_ptr(x0, y0), width, height, src.stride_bytes());
 }
@@ -1550,13 +1552,12 @@ Image<PixelType> view(const Image<PixelType>& src, Index x0, Index y0, Length wi
  * @param height The height of the sub-region.
  */
 template <typename PixelType>
-void crop(Image<PixelType>& img, Index x0, Index y0, Length width, Length height)
+void crop(Image<PixelType>& img, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
 {
   auto cropped_clone = clone(img, x0, y0, width, height);
   img = std::move(cropped_clone);
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_IMAGE_HPP

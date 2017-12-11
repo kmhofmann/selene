@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-namespace selene {
+namespace sln {
 
 template <typename Allocator>
 class MemoryBlock;
@@ -143,6 +143,6 @@ inline MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::u
   return MemoryBlock<Allocator>(data, size);
 }
 
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_BASE_MEMORY_BLOCK_HPP

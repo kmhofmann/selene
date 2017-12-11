@@ -20,8 +20,7 @@
 #include <cstdint>
 #include <limits>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 template <typename T>
 Image<T> wrap_opencv_mat(cv::Mat& img_cv);
@@ -44,46 +43,46 @@ namespace detail {
 template <typename T> struct PixelToOpenCVType;
 
 template <> struct PixelToOpenCVType<std::uint8_t>{ static constexpr auto type = CV_8UC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint8_t, 1>>{ static constexpr auto type = CV_8UC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint8_t, 2>>{ static constexpr auto type = CV_8UC2; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint8_t, 3>>{ static constexpr auto type = CV_8UC3; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint8_t, 4>>{ static constexpr auto type = CV_8UC4; };
+template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 1>>{ static constexpr auto type = CV_8UC1; };
+template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 2>>{ static constexpr auto type = CV_8UC2; };
+template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 3>>{ static constexpr auto type = CV_8UC3; };
+template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 4>>{ static constexpr auto type = CV_8UC4; };
 
 template <> struct PixelToOpenCVType<std::int8_t>{ static constexpr auto type = CV_8SC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int8_t, 1>>{ static constexpr auto type = CV_8SC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int8_t, 2>>{ static constexpr auto type = CV_8SC2; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int8_t, 3>>{ static constexpr auto type = CV_8SC3; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int8_t, 4>>{ static constexpr auto type = CV_8SC4; };
+template <> struct PixelToOpenCVType<Pixel<std::int8_t, 1>>{ static constexpr auto type = CV_8SC1; };
+template <> struct PixelToOpenCVType<Pixel<std::int8_t, 2>>{ static constexpr auto type = CV_8SC2; };
+template <> struct PixelToOpenCVType<Pixel<std::int8_t, 3>>{ static constexpr auto type = CV_8SC3; };
+template <> struct PixelToOpenCVType<Pixel<std::int8_t, 4>>{ static constexpr auto type = CV_8SC4; };
 
 template <> struct PixelToOpenCVType<std::uint16_t>{ static constexpr auto type = CV_16UC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint16_t, 1>>{ static constexpr auto type = CV_16UC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint16_t, 2>>{ static constexpr auto type = CV_16UC2; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint16_t, 3>>{ static constexpr auto type = CV_16UC3; };
-template <> struct PixelToOpenCVType<img::Pixel<std::uint16_t, 4>>{ static constexpr auto type = CV_16UC4; };
+template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 1>>{ static constexpr auto type = CV_16UC1; };
+template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 2>>{ static constexpr auto type = CV_16UC2; };
+template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 3>>{ static constexpr auto type = CV_16UC3; };
+template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 4>>{ static constexpr auto type = CV_16UC4; };
 
 template <> struct PixelToOpenCVType<std::int16_t>{ static constexpr auto type = CV_16SC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int16_t, 1>>{ static constexpr auto type = CV_16SC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int16_t, 2>>{ static constexpr auto type = CV_16SC2; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int16_t, 3>>{ static constexpr auto type = CV_16SC3; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int16_t, 4>>{ static constexpr auto type = CV_16SC4; };
+template <> struct PixelToOpenCVType<Pixel<std::int16_t, 1>>{ static constexpr auto type = CV_16SC1; };
+template <> struct PixelToOpenCVType<Pixel<std::int16_t, 2>>{ static constexpr auto type = CV_16SC2; };
+template <> struct PixelToOpenCVType<Pixel<std::int16_t, 3>>{ static constexpr auto type = CV_16SC3; };
+template <> struct PixelToOpenCVType<Pixel<std::int16_t, 4>>{ static constexpr auto type = CV_16SC4; };
 
 template <> struct PixelToOpenCVType<std::int32_t>{ static constexpr auto type = CV_32SC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int32_t, 1>>{ static constexpr auto type = CV_32SC1; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int32_t, 2>>{ static constexpr auto type = CV_32SC2; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int32_t, 3>>{ static constexpr auto type = CV_32SC3; };
-template <> struct PixelToOpenCVType<img::Pixel<std::int32_t, 4>>{ static constexpr auto type = CV_32SC4; };
+template <> struct PixelToOpenCVType<Pixel<std::int32_t, 1>>{ static constexpr auto type = CV_32SC1; };
+template <> struct PixelToOpenCVType<Pixel<std::int32_t, 2>>{ static constexpr auto type = CV_32SC2; };
+template <> struct PixelToOpenCVType<Pixel<std::int32_t, 3>>{ static constexpr auto type = CV_32SC3; };
+template <> struct PixelToOpenCVType<Pixel<std::int32_t, 4>>{ static constexpr auto type = CV_32SC4; };
 
 template <> struct PixelToOpenCVType<float32_t>{ static constexpr auto type = CV_32FC1; };
-template <> struct PixelToOpenCVType<img::Pixel<float32_t, 1>>{ static constexpr auto type = CV_32FC1; };
-template <> struct PixelToOpenCVType<img::Pixel<float32_t, 2>>{ static constexpr auto type = CV_32FC2; };
-template <> struct PixelToOpenCVType<img::Pixel<float32_t, 3>>{ static constexpr auto type = CV_32FC3; };
-template <> struct PixelToOpenCVType<img::Pixel<float32_t, 4>>{ static constexpr auto type = CV_32FC4; };
+template <> struct PixelToOpenCVType<Pixel<float32_t, 1>>{ static constexpr auto type = CV_32FC1; };
+template <> struct PixelToOpenCVType<Pixel<float32_t, 2>>{ static constexpr auto type = CV_32FC2; };
+template <> struct PixelToOpenCVType<Pixel<float32_t, 3>>{ static constexpr auto type = CV_32FC3; };
+template <> struct PixelToOpenCVType<Pixel<float32_t, 4>>{ static constexpr auto type = CV_32FC4; };
 
 template <> struct PixelToOpenCVType<float64_t>{ static constexpr auto type = CV_64FC1; };
-template <> struct PixelToOpenCVType<img::Pixel<float64_t, 1>>{ static constexpr auto type = CV_64FC1; };
-template <> struct PixelToOpenCVType<img::Pixel<float64_t, 2>>{ static constexpr auto type = CV_64FC2; };
-template <> struct PixelToOpenCVType<img::Pixel<float64_t, 3>>{ static constexpr auto type = CV_64FC3; };
-template <> struct PixelToOpenCVType<img::Pixel<float64_t, 4>>{ static constexpr auto type = CV_64FC4; };
+template <> struct PixelToOpenCVType<Pixel<float64_t, 1>>{ static constexpr auto type = CV_64FC1; };
+template <> struct PixelToOpenCVType<Pixel<float64_t, 2>>{ static constexpr auto type = CV_64FC2; };
+template <> struct PixelToOpenCVType<Pixel<float64_t, 3>>{ static constexpr auto type = CV_64FC3; };
+template <> struct PixelToOpenCVType<Pixel<float64_t, 4>>{ static constexpr auto type = CV_64FC4; };
 // clang-format on
 
 inline int opencv_nr_bytes_per_channel(const cv::Mat& img_cv)
@@ -139,8 +138,8 @@ inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
   SELENE_ASSERT(detail::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
 
   const auto data = img_cv.data;
-  const auto width = Length(static_cast<Length::value_type>(img_cv.cols));
-  const auto height = Length(static_cast<Length::value_type>(img_cv.rows));
+  const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
+  const auto height = PixelLength(static_cast<PixelLength::value_type>(img_cv.rows));
   const auto stride_bytes = Stride(img_cv.step);
   return Image<T>(data, width, height, stride_bytes);
 }
@@ -165,14 +164,14 @@ Image<T> copy_opencv_mat(const cv::Mat& img_cv)
   SELENE_ASSERT(detail::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<T>::is_floating_point);
   SELENE_ASSERT(detail::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
 
-  const auto width = Length(static_cast<Length::value_type>(img_cv.cols));
-  const auto height = Length(static_cast<Length::value_type>(img_cv.rows));
+  const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
+  const auto height = PixelLength(static_cast<PixelLength::value_type>(img_cv.rows));
   const auto stride_bytes = Stride(img_cv.step);
 
   const auto nr_bytes_per_row = width * PixelTraits<T>::nr_bytes;
 
   Image<T> img(width, height, stride_bytes);
-  for (Index y = 0_px; y < height; ++y)
+  for (PixelIndex y = 0_px; y < height; ++y)
   {
     const auto begin = img_cv.ptr(y);
     const auto end = img_cv.ptr(y) + nr_bytes_per_row;
@@ -226,16 +225,15 @@ cv::Mat copy_to_opencv_mat(const Image<T>& img)
 
   for (int row = 0; row < img_cv.rows; ++row)
   {
-    const auto begin = img.byte_ptr(Index(row));
-    const auto end = img.byte_ptr(Index(row)) + nr_bytes_per_row;
+    const auto begin = img.byte_ptr(PixelIndex(row));
+    const auto end = img.byte_ptr(PixelIndex(row)) + nr_bytes_per_row;
     std::copy(begin, end, img_cv.ptr(row));
   }
 
   return img_cv;
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_OPENCV)
 

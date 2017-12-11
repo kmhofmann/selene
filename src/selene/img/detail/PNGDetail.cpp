@@ -6,8 +6,7 @@
 
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 namespace detail {
 
 void error_handler(png_structp png_ptr, const char* msg)
@@ -25,5 +24,4 @@ void warning_handler(png_structp png_ptr, const char* msg)
 }
 
 }  // namespace detail
-}  // namespace img
-}  // namespace selene
+}  // namespace sln

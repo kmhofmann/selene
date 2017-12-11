@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <functional>
 
-namespace selene {
+namespace sln {
 
 /** \brief Clamp a value between a minimum and a maximum value.
  *
@@ -55,6 +55,6 @@ inline constexpr const T& clamp(const T& value, const T& min, const T& max)
 }
 
 
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_BASE_UTILS_HPP

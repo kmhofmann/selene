@@ -8,8 +8,7 @@
 #include <cstdio>
 #include <sstream>
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Reads the binary contents of a file and returns them.
  *
@@ -41,6 +40,4 @@ std::vector<std::uint8_t> read_file_contents(const std::string& path)
   return contents;
 }
 
-
-}  // namespace io
-}  // namespace selene
+}  // namespace sln

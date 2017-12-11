@@ -15,8 +15,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Class for reading binary data from memory.
  *
@@ -330,7 +329,6 @@ inline std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) 
   return source.read(values, nr_values);
 };
 
-}  // namespace io
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IO_MEMORY_READER_HPP

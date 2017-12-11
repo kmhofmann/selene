@@ -12,8 +12,7 @@
 #include <csetjmp>
 #include <cstdio>
 
-namespace selene {
-namespace img {
+namespace sln {
 namespace detail {
 
 /// \cond INTERNAL
@@ -30,7 +29,6 @@ void warning_handler(png_structp png_ptr, const char* msg);
 /// \endcond
 
 }  // namespace detail
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_DETAIL_PNG_DETAIL_HPP

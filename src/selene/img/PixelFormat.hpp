@@ -10,8 +10,7 @@
 #include <cstdlib>
 #include <ostream>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief A pixel format enumeration.
  *
@@ -104,7 +103,6 @@ inline std::size_t get_nr_channels(PixelFormat pixel_format)
   return 0;
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_PIXEL_FORMAT_HPP

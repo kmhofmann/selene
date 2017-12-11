@@ -16,10 +16,6 @@
 
 #include <Utils.hpp>
 
-using namespace selene;
-using namespace selene::img;
-using namespace selene::io;
-
 namespace fs = boost::filesystem;
 
 constexpr auto ref_width = 1024;
@@ -42,11 +38,11 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
   {
     // Read a JPEG file
     const auto img_path = full_path("bike_duck.jpg");
-    FileReader source(img_path.c_str());
+    sln::FileReader source(img_path.c_str());
     REQUIRE(source.is_open());
 
-    MessageLog messages_read;
-    const auto img_data = read_image(source, &messages_read);
+    sln::MessageLog messages_read;
+    const auto img_data = sln::read_image(source, &messages_read);
 
     REQUIRE(messages_read.messages().empty());
     REQUIRE(img_data.width() == ref_width);
@@ -61,11 +57,11 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
     REQUIRE(img_data.is_valid());
 
     // Write as PNG
-    FileWriter sink((tmp_path / "test_duck_auto.png").c_str());
+    sln::FileWriter sink((tmp_path / "test_duck_auto.png").c_str());
     REQUIRE(sink.is_open());
 
-    MessageLog messages_write;
-    bool status_write = write_image(img_data, ImageFormat::PNG, sink, &messages_write);
+    sln::MessageLog messages_write;
+    bool status_write = sln::write_image(img_data, sln::ImageFormat::PNG, sink, &messages_write);
 
     REQUIRE(status_write);
     REQUIRE(messages_write.messages().empty());
@@ -73,11 +69,11 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
 
   {
     // Read the previously written PNG image
-    FileReader source((tmp_path / "test_duck_auto.png").c_str());
+    sln::FileReader source((tmp_path / "test_duck_auto.png").c_str());
     REQUIRE(source.is_open());
 
-    MessageLog messages;
-    const auto img_data = read_image(source, &messages);
+    sln::MessageLog messages;
+    const auto img_data = sln::read_image(source, &messages);
 
     REQUIRE(messages.messages().empty());
     REQUIRE(img_data.width() == ref_width);
@@ -93,10 +89,10 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
 
     // Write as JPEG, to memory
     std::vector<std::uint8_t> png_data;
-    VectorWriter sink(png_data);
+    sln::VectorWriter sink(png_data);
 
-    MessageLog messages_write;
-    bool status_write = write_image(img_data, ImageFormat::JPEG, sink, &messages_write);
+    sln::MessageLog messages_write;
+    bool status_write = write_image(img_data, sln::ImageFormat::JPEG, sink, &messages_write);
 
     REQUIRE(status_write);
     REQUIRE(messages_write.messages().empty());

@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-namespace selene {
+namespace sln {
 
 template <typename Allocator>
 class MemoryBlock;
@@ -39,6 +39,6 @@ struct NewAllocator
   static void deallocate(std::uint8_t*& data);
 };
 
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_BASE_ALLOCATORS_HPP

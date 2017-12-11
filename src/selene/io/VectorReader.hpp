@@ -15,8 +15,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Class for reading binary data from memory, stored in a std::vector<std::uint8_t>.
  *
@@ -321,7 +320,6 @@ inline std::size_t read(VectorReader& source, T* values, std::size_t nr_values) 
   return source.read(values, nr_values);
 };
 
-}  // namespace io
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IO_VECTOR_READER_HPP

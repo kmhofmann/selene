@@ -70,7 +70,7 @@ The presence (or lack of) these dependencies should be detected automatically by
 
 If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system, some of its additional capabilities will be taken into account and are enabled by the API (e.g. partial JPEG image decoding and extended color spaces).
 
-[OpenCV](https://opencv.org/) is only needed for converting between `selene::img::Image<T>` and OpenCV's `cv::Mat` structure, if so desired.
+[OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if so desired.
 
 ### Building and running the tests
 
@@ -97,3 +97,6 @@ Currently, no API or ABI stability guarantees are given.
 
 However, the code is well-tested and assumed to be not too far from production-level quality.
 Porting to accommodate potential API changes should not be very difficult.
+
+**selene** is currently developed and tested on Linux with GCC 7.2.0 and Clang 6.0.0 (trunk), and on MacOS with AppleClang 9.0.0.
+Support for Windows/Visual C++ 2017 is under consideration, but not a priority.

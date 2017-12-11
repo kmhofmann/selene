@@ -7,8 +7,7 @@
 
 #include <selene/base/MessageLog.hpp>
 
-namespace selene {
-namespace img {
+namespace sln {
 namespace detail {
 
 template <typename T>
@@ -21,7 +20,6 @@ inline void assign_message_log(const T& obj, MessageLog* messages)
 }
 
 }  // namespace detail
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_DETAIL_UTIL_HPP

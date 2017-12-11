@@ -27,16 +27,15 @@
 #include <cstdio>
 #include <memory>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 struct JPEGHeaderInfo;
 class JPEGDecompressionObject;
 
 namespace detail {
 class JPEGDecompressionCycle;
-void set_source(JPEGDecompressionObject&, io::FileReader&);
-void set_source(JPEGDecompressionObject&, io::MemoryReader&);
+void set_source(JPEGDecompressionObject&, FileReader&);
+void set_source(JPEGDecompressionObject&, MemoryReader&);
 JPEGHeaderInfo read_header(JPEGDecompressionObject&);
 }  // namespace detail
 
@@ -45,12 +44,12 @@ JPEGHeaderInfo read_header(JPEGDecompressionObject&);
  */
 struct JPEGHeaderInfo
 {
-  const Index width;  ///< Image width.
-  const Index height;  ///< Image height.
+  const PixelIndex width;  ///< Image width.
+  const PixelIndex height;  ///< Image height.
   const int nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
-  explicit JPEGHeaderInfo(Index width_ = 0_px, Index height_ = 0_px, int nr_channels_ = 0,
+  explicit JPEGHeaderInfo(PixelIndex width_ = 0_px, PixelIndex height_ = 0_px, int nr_channels_ = 0,
                           JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
   bool is_valid() const;
@@ -106,15 +105,15 @@ private:
   std::unique_ptr<Impl> impl_;
 
   friend class detail::JPEGDecompressionCycle;
-  friend void detail::set_source(JPEGDecompressionObject&, io::FileReader&);
-  friend void detail::set_source(JPEGDecompressionObject&, io::MemoryReader&);
+  friend void detail::set_source(JPEGDecompressionObject&, FileReader&);
+  friend void detail::set_source(JPEGDecompressionObject&, MemoryReader&);
   friend JPEGHeaderInfo detail::read_header(JPEGDecompressionObject&);
 };
 
 
 /** \brief Reads header of JPEG image data stream.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param rewind If true, the source position will be re-set to the position before reading the header.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
@@ -127,7 +126,7 @@ JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind = false, Message
  *
  * This function overload enables re-use of a JPEGDecompressionObject instance.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param obj A JPEGDecompressionObject instance.
  * @param source Input source instance.
  * @param rewind If true, the source position will be re-set to the position before reading the header.
@@ -143,7 +142,7 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source
  * The source position must be set to the beginning of the JPEG stream, including header. In case img::read_jpeg_header
  * is called before, then it must be with `rewind == true`.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param options The decompression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
@@ -162,7 +161,7 @@ ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGD
  *
  * This function overload enables re-use of a JPEGDecompressionObject instance.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param obj A JPEGDecompressionObject instance.
  * @param source Input source instance.
  * @param options The decompression options.
@@ -176,8 +175,7 @@ ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source,
                     JPEGDecompressionOptions options = JPEGDecompressionOptions(), MessageLog* messages = nullptr,
                     const JPEGHeaderInfo* provided_header_info = nullptr);
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 

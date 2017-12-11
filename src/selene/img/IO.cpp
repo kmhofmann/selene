@@ -19,8 +19,7 @@
 
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 namespace {
 
@@ -42,7 +41,7 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
 
 /** \brief Reads an image stream, trying all supported formats.
  *
- * @tparam SourceType Type of the input source. Can be io::FileReader or io::MemoryReader.
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return An `ImageData` instance. Reading the image stream was successful, if `is_valid() == true`, and unsuccessful
@@ -110,7 +109,7 @@ ImageData read_image(SourceType& source, MessageLog* messages)
 
 /** \brief Writes an image stream, given the supplied uncompressed image data.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
  * @param img_data The image data to be written.
  * @param format Desired output image format.
  * @param sink Output sink instance.
@@ -157,13 +156,12 @@ bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, 
 
 /// \cond INTERNAL
 
-template ImageData read_image<io::FileReader>(io::FileReader&, MessageLog*);
-template ImageData read_image<io::MemoryReader>(io::MemoryReader&, MessageLog*);
+template ImageData read_image<FileReader>(FileReader&, MessageLog*);
+template ImageData read_image<MemoryReader>(MemoryReader&, MessageLog*);
 
-template bool write_image<io::FileWriter>(const ImageData&, ImageFormat, io::FileWriter&, MessageLog*, int);
-template bool write_image<io::VectorWriter>(const ImageData&, ImageFormat, io::VectorWriter&, MessageLog*, int);
+template bool write_image<FileWriter>(const ImageData&, ImageFormat, FileWriter&, MessageLog*, int);
+template bool write_image<VectorWriter>(const ImageData&, ImageFormat, VectorWriter&, MessageLog*, int);
 
 /// \endcond
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln

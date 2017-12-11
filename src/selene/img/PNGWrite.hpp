@@ -27,8 +27,7 @@
 #include <cstdio>
 #include <memory>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 // Forward declarations
 
@@ -37,8 +36,8 @@ class PNGCompressionObject;
 
 namespace detail {
 class PNGCompressionCycle;
-void set_destination(PNGCompressionObject&, io::FileWriter&);
-void set_destination(PNGCompressionObject&, io::VectorWriter&);
+void set_destination(PNGCompressionObject&, FileWriter&);
+void set_destination(PNGCompressionObject&, VectorWriter&);
 }  // namespace detail
 
 /** \brief PNG compression options.
@@ -97,14 +96,14 @@ private:
   std::unique_ptr<Impl> impl_;
 
   friend class detail::PNGCompressionCycle;
-  friend void detail::set_destination(PNGCompressionObject&, io::FileWriter&);
-  friend void detail::set_destination(PNGCompressionObject&, io::VectorWriter&);
+  friend void detail::set_destination(PNGCompressionObject&, FileWriter&);
+  friend void detail::set_destination(PNGCompressionObject&, VectorWriter&);
 };
 
 
 /** \brief Writes a PNG image data stream, given the supplied uncompressed image data.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
  * @param img_data The image data to be written.
  * @param sink Output sink instance.
  * @param options The compression options.
@@ -119,7 +118,7 @@ bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions 
  *
  * This function overload enables re-use of a PNGCompressionObject instance.
  *
- * @tparam SinkType Type of the output sink. Can be io::FileWriter or io::VectorWriter.
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
  * @param img_data The image data to be written.
  * @param obj A PNGCompressionObject instance.
  * @param sink Output sink instance.
@@ -131,8 +130,7 @@ template <typename SinkType>
 bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink,
                PNGCompressionOptions options = PNGCompressionOptions(), MessageLog* messages = nullptr);
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBPNG)
 

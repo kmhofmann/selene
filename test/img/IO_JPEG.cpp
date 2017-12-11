@@ -25,11 +25,8 @@
 
 #include <Utils.hpp>
 
-using namespace selene;
-using namespace selene::img;
-using namespace selene::io;
-
 namespace fs = boost::filesystem;
+using namespace sln::literals;
 
 // clang-format off
 constexpr auto ref_width = 1024;
@@ -56,10 +53,10 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   const auto tmp_path = get_tmp_path();
 
   // Test reading without conversion
-  FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().c_str());
   REQUIRE(source.is_open());
-  MessageLog messages_read;
-  auto img_data = read_jpeg(source, JPEGDecompressionOptions(), &messages_read);
+  sln::MessageLog messages_read;
+  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -75,24 +72,24 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
-  auto img = to_image<Pixel_8u3>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
 
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = Index(px[i][0]);
-    const auto y = Index(px[i][1]);
-    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = sln::PixelIndex(px[i][0]);
+    const auto y = sln::PixelIndex(px[i][1]);
+    REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
   // Test writing of RGB image
-  FileWriter sink((tmp_path / "test_duck.jpg").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck.jpg").c_str());
   REQUIRE(sink.is_open());
-  MessageLog messages_write;
-  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::RGB), sink,
-                                 JPEGCompressionOptions(compression_factor), &messages_write);
+  sln::MessageLog messages_write;
+  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
+                                 sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 
@@ -105,10 +102,10 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   const auto tmp_path = get_tmp_path();
 
   // Test reading with conversion to grayscale
-  FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().c_str());
   REQUIRE(source.is_open());
-  MessageLog messages_read;
-  auto img_data = read_jpeg(source, JPEGDecompressionOptions(JPEGColorSpace::Grayscale), &messages_read);
+  sln::MessageLog messages_read;
+  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Grayscale), &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -124,24 +121,24 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
-  auto img = to_image<Pixel_8u1>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u1>(std::move(img_data));
 
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 1);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = Index(px[i][0]);
-    const auto y = Index(px[i][1]);
-    REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(Pixel_8u1(px[i][5])));
+    const auto x = sln::PixelIndex(px[i][0]);
+    const auto y = sln::PixelIndex(px[i][1]);
+    REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(px[i][5])));
   }
 
   // Test writing of grayscale image
-  FileWriter sink((tmp_path / "test_duck_gray.jpg").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck_gray.jpg").c_str());
   REQUIRE(sink.is_open());
-  MessageLog messages_write;
-  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::Y), sink,
-                                 JPEGCompressionOptions(compression_factor), &messages_write);
+  sln::MessageLog messages_write;
+  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::Y), sink,
+                                 sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 
@@ -149,10 +146,10 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(messages_write.messages().empty());
 
   // Test reading of grayscale JPEG again
-  FileReader source_2((tmp_path / "test_duck_gray.jpg").c_str());
+  sln::FileReader source_2((tmp_path / "test_duck_gray.jpg").c_str());
   REQUIRE(source_2.is_open());
-  MessageLog messages_read_2;
-  auto img_data_2 = read_jpeg(source_2, JPEGDecompressionOptions(), &messages_read_2);
+  sln::MessageLog messages_read_2;
+  auto img_data_2 = sln::read_jpeg(source_2, sln::JPEGDecompressionOptions(), &messages_read_2);
   source_2.close();
   REQUIRE(!source_2.is_open());
 
@@ -174,19 +171,19 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   const auto tmp_path = get_tmp_path();
 
   // Test reading of header...
-  FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().c_str());
   REQUIRE(source.is_open());
-  JPEGDecompressionObject decompression_object;
-  const auto header = read_jpeg_header(decompression_object, source);
+  sln::JPEGDecompressionObject decompression_object;
+  const auto header = sln::read_jpeg_header(decompression_object, source);
 
   REQUIRE(header.width == ref_width);
   REQUIRE(header.height == ref_height);
   REQUIRE(header.nr_channels == 3);
-  REQUIRE(header.color_space == JPEGColorSpace::YCbCr);
+  REQUIRE(header.color_space == sln::JPEGColorSpace::YCbCr);
 
   // ...and then reusing decompression object/header info for reading the image
-  MessageLog messages_read;
-  auto img_data = read_jpeg(decompression_object, source, JPEGDecompressionOptions(), &messages_read, &header);
+  sln::MessageLog messages_read;
+  auto img_data = sln::read_jpeg(decompression_object, source, sln::JPEGDecompressionOptions(), &messages_read, &header);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -202,16 +199,16 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
-  auto img = to_image<Pixel_8u3>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
 
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = Index(px[i][0]);
-    const auto y = Index(px[i][1]);
-    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = sln::PixelIndex(px[i][0]);
+    const auto y = sln::PixelIndex(px[i][1]);
+    REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 }
 
@@ -223,12 +220,12 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   // Test reading of partial image
   const auto expected_width = 404_px;
   const auto targeted_height = 350_px;
-  BoundingBox region(100_px, 100_px, 400_px, targeted_height);
+  sln::BoundingBox region(100_px, 100_px, 400_px, targeted_height);
 
-  FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().c_str());
   REQUIRE(source.is_open());
-  MessageLog messages_read;
-  auto img_data = read_jpeg(source, JPEGDecompressionOptions(JPEGColorSpace::Auto, region), &messages_read);
+  sln::MessageLog messages_read;
+  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Auto, region), &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -244,18 +241,18 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
-  auto img = to_image<Pixel_8u3>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
 
   REQUIRE(img.width() == expected_width);
   REQUIRE(img.height() == targeted_height);
   REQUIRE(img.stride_bytes() == expected_width * 3);
 
   // Test writing of RGB image
-  FileWriter sink((tmp_path / "test_duck_crop.jpg").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck_crop.jpg").c_str());
   REQUIRE(sink.is_open());
-  MessageLog messages_write;
-  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::RGB), sink,
-                                 JPEGCompressionOptions(compression_factor), &messages_write);
+  sln::MessageLog messages_write;
+  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
+                                 sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 
@@ -263,10 +260,10 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(messages_write.messages().empty());
 
   // Test reading of JPEG again
-  FileReader source_2((tmp_path / "test_duck_crop.jpg").c_str());
+  sln::FileReader source_2((tmp_path / "test_duck_crop.jpg").c_str());
   REQUIRE(source_2.is_open());
-  MessageLog messages_read_2;
-  auto img_data_2 = read_jpeg(source_2, JPEGDecompressionOptions(), &messages_read_2);
+  sln::MessageLog messages_read_2;
+  auto img_data_2 = sln::read_jpeg(source_2, sln::JPEGDecompressionOptions(), &messages_read_2);
   source_2.close();
   REQUIRE(!source_2.is_open());
 
@@ -287,14 +284,14 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = get_tmp_path();
-  const auto file_contents = read_file_contents(in_filename().c_str());
+  const auto file_contents = sln::read_file_contents(in_filename().c_str());
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory
-  MemoryReader source(file_contents.data(), file_contents.size());
+  sln::MemoryReader source(file_contents.data(), file_contents.size());
   REQUIRE(source.is_open());
-  MessageLog messages_read;
-  auto img_data = read_jpeg(source, JPEGDecompressionOptions(), &messages_read);
+  sln::MessageLog messages_read;
+  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -310,26 +307,26 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
-  auto img = to_image<Pixel_8u3>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
 
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = Index(px[i][0]);
-    const auto y = Index(px[i][1]);
-    REQUIRE(img(x, y) == Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = sln::PixelIndex(px[i][0]);
+    const auto y = sln::PixelIndex(px[i][1]);
+    REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
   // Test writing to memory
   std::vector<std::uint8_t> compressed_data;
-  VectorWriter sink(compressed_data);
+  sln::VectorWriter sink(compressed_data);
   REQUIRE(sink.is_open());
 
   // Test writing of RGB image
-  MessageLog messages_write;
-  bool status_write = write_jpeg(to_image_data_view(img, PixelFormat::RGB), sink, JPEGCompressionOptions(95),
+  sln::MessageLog messages_write;
+  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink, sln::JPEGCompressionOptions(95),
                                  &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());

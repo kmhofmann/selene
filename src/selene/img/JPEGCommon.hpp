@@ -9,8 +9,7 @@
 
 #include <cstdint>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief The color space used JPEG image data.
  */
@@ -37,8 +36,7 @@ enum class JPEGColorSpace : std::uint8_t
   Auto  ///< Automatic determination
 };
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace selene {
+namespace sln {
 
 /** \brief Very simple message log, containing a collection of messages.
  *
@@ -62,6 +62,6 @@ inline void MessageLog::add_message(const std::string& message)
   messages_.push_back(message);
 }
 
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_BASE_MESSAGE_LOG_HPP

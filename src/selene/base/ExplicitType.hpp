@@ -9,7 +9,7 @@
 
 #include <utility>
 
-namespace selene {
+namespace sln {
 
 /** \brief Utility class, representing a value type as an explicit, "strong" typedef.
  *
@@ -70,6 +70,6 @@ private:
   /// \endcond
 };
 
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_BASE_STRONG_TYPE_HPP

@@ -6,9 +6,6 @@
 
 #include <selene/thread/ThreadPool.hpp>
 
-using namespace selene::thread;
-
-
 double expensive_work(double seed)
 {
   auto x = seed;
@@ -25,7 +22,7 @@ double expensive_work(double seed)
 
 TEST_CASE("ThreadPool")
 {
-  ThreadPool tp(8);
+  sln::ThreadPool tp(8);
   REQUIRE(!tp.empty());
   REQUIRE(tp.size() == 8);
 

@@ -7,8 +7,7 @@
 
 /// @file
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Describes the IO write mode: write from start, or append.
  */
@@ -18,7 +17,6 @@ enum class WriterMode : unsigned char
   Append = 1  ///< Append to existing contents.
 };
 
-}  // namespace io
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IO_WRITER_MODE_HPP

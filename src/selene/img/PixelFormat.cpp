@@ -4,8 +4,7 @@
 
 #include <selene/img/PixelFormat.hpp>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief Converts a pixel format value into a character stream representation, e.g. for printing.
  *
@@ -63,5 +62,4 @@ std::ostream& operator<<(std::ostream& os, SampleFormat sample_format)
   return os;
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln

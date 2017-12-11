@@ -14,8 +14,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief Represents a statically typed pixel with arbitrary number of channels.
  *
@@ -236,7 +235,6 @@ inline bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_chan
   return !(px0 == px1);
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_PIXEL_HPP

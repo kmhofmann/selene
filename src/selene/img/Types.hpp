@@ -13,32 +13,34 @@
 #include <cstdint>
 #include <limits>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 namespace detail {
 
-class IndexTag;
+class PixelIndexTag;
 
 }  // namespace detail
 
 // use 32-bit values as indices for data access, for now
-using Index = ExplicitType<std::uint32_t, detail::IndexTag>;  ///< Type representing a scalar as part of an image
-                                                              ///< coordinate (x or y).
-using Length = Index;  ///< Type representing a length in x or y-direction.
+using PixelIndex = ExplicitType<std::uint32_t, detail::PixelIndexTag>;  ///< Type representing a scalar as part of an
+                                                                        ///< image coordinate (x or y).
+using PixelLength = PixelIndex;  ///< Type representing a length in x or y-direction.
 using Stride = Bytes;  ///< Type representing an image stride (nr of bytes per row).
+
+inline namespace literals {
 
 /** \brief User-defined literal representing a pixel index
  *
  * @param index Pixel index.
- * @return An `Index` instance.
+ * @return A `PixelIndex` instance.
  */
-constexpr inline Index operator"" _px(unsigned long long index)
+constexpr inline PixelIndex operator"" _px(unsigned long long index)
 {
-  return Index(static_cast<Index::value_type>(index));
+  return PixelIndex(static_cast<PixelIndex::value_type>(index));
 }
 
-}  // namespace img
-}  // namespace selene
+}  // inline namespace literals
+
+}  // namespace sln
 
 #endif  // SELENE_IMG_TYPES_HPP

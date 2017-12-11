@@ -15,8 +15,7 @@
 #include <cstdio>
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 namespace {
 
@@ -240,10 +239,10 @@ void user_write_data(png_structp png_ptr, png_bytep data, png_size_t length)
     detail::error_handler(png_ptr, "[selene] png_get_io_ptr() failed");
   }
 
-  auto writer = static_cast<io::VectorWriter*>(io_ptr);
+  auto writer = static_cast<VectorWriter*>(io_ptr);
   SELENE_ASSERT(writer);
 
-  auto nr_bytes_written = io::write(*writer, data, length);
+  auto nr_bytes_written = write(*writer, data, length);
   SELENE_FORCED_ASSERT(nr_bytes_written == length);
 }
 
@@ -251,7 +250,7 @@ void user_flush_data(png_structp /*png_ptr*/)
 {
 }
 
-void set_destination(PNGCompressionObject& obj, io::FileWriter& sink)
+void set_destination(PNGCompressionObject& obj, FileWriter& sink)
 {
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
@@ -263,7 +262,7 @@ void set_destination(PNGCompressionObject& obj, io::FileWriter& sink)
 failure_state:;
 }
 
-void set_destination(PNGCompressionObject& obj, io::VectorWriter& sink)
+void set_destination(PNGCompressionObject& obj, VectorWriter& sink)
 {
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
@@ -339,17 +338,16 @@ bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& s
 // ----------
 // Explicit instantiations:
 
-template bool write_png<io::FileWriter>(const ImageData&, io::FileWriter&, PNGCompressionOptions, MessageLog*);
-template bool write_png<io::VectorWriter>(const ImageData&, io::VectorWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<FileWriter>(const ImageData&, FileWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<VectorWriter>(const ImageData&, VectorWriter&, PNGCompressionOptions, MessageLog*);
 
-template bool write_png<io::FileWriter>(const ImageData&, PNGCompressionObject&, io::FileWriter&, PNGCompressionOptions,
-                                        MessageLog*);
-template bool write_png<io::VectorWriter>(const ImageData&, PNGCompressionObject&, io::VectorWriter&,
-                                          PNGCompressionOptions, MessageLog*);
+template bool write_png<FileWriter>(const ImageData&, PNGCompressionObject&, FileWriter&, PNGCompressionOptions,
+                                    MessageLog*);
+template bool write_png<VectorWriter>(const ImageData&, PNGCompressionObject&, VectorWriter&, PNGCompressionOptions,
+                                      MessageLog*);
 
 /// \endcond
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBPNG)

@@ -20,8 +20,7 @@
 
 #include <selene/thread/detail/TaskQueue.hpp>
 
-namespace selene {
-namespace thread {
+namespace sln {
 
 // Implementation inspired by:
 // https://github.com/progschj/ThreadPool/blob/master/ThreadPool.h
@@ -190,7 +189,6 @@ inline void ThreadPool::run_loop(std::size_t thread_index)
   }
 }
 
-}  // namespace thread
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_THREAD_THREAD_POOL_HPP

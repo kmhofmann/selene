@@ -7,9 +7,7 @@
 
 #include <memory>
 
-namespace selene {
-namespace thread {
-
+namespace sln {
 namespace detail {
 
 /// \cond INTERNAL
@@ -82,8 +80,6 @@ private:
 /// \endcond
 
 }  // namespace detail
-
-}  // namespace thread
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_THREAD_DETAIL_CALLABLE_HPP

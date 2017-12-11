@@ -16,8 +16,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Class for reading binary data from files.
  *
@@ -306,7 +305,6 @@ inline std::size_t read(FileReader& source, T* values, std::size_t nr_values) no
   return source.read(values, nr_values);
 };
 
-}  // namespace io
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IO_FILE_READER_HPP

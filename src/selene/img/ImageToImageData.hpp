@@ -15,8 +15,7 @@
 
 #include <stdexcept>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 template <typename PixelType>
 ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
@@ -125,7 +124,6 @@ ImageData to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
   return ImageData(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_IMAGE_TO_IMAGE_DATA_HPP

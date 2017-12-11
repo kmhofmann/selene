@@ -10,8 +10,7 @@
 #include <selene/img/OpenCV.hpp>
 #include <selene/img/Pixel.hpp>
 
-using namespace selene;
-using namespace selene::img;
+using namespace sln::literals;
 
 namespace {
 
@@ -19,49 +18,49 @@ template <typename PixelType>
 struct PixelProducer;
 
 template <typename T>
-struct PixelProducer<Pixel<T, 1>>
+struct PixelProducer<sln::Pixel<T, 1>>
 {
-  static Pixel<T, 1> get(Index x, Index y)
+  static sln::Pixel<T, 1> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 1>(x + y);
+    return sln::Pixel<T, 1>(x + y);
   }
 };
 
 template <typename T>
-struct PixelProducer<Pixel<T, 2>>
+struct PixelProducer<sln::Pixel<T, 2>>
 {
-  static Pixel<T, 2> get(Index x, Index y)
+  static sln::Pixel<T, 2> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 2>(x + y, 2 * x + y);
+    return sln::Pixel<T, 2>(x + y, 2 * x + y);
   }
 };
 
 template <typename T>
-struct PixelProducer<Pixel<T, 3>>
+struct PixelProducer<sln::Pixel<T, 3>>
 {
-  static Pixel<T, 3> get(Index x, Index y)
+  static sln::Pixel<T, 3> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 3>(x + y, 2 * x + y, x + 2 * y);
+    return sln::Pixel<T, 3>(x + y, 2 * x + y, x + 2 * y);
   }
 };
 
 template <typename T>
-struct PixelProducer<Pixel<T, 4>>
+struct PixelProducer<sln::Pixel<T, 4>>
 {
-  static Pixel<T, 4> get(Index x, Index y)
+  static sln::Pixel<T, 4> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 4>(x + y, 2 * x + y, x + 2 * y, 2 * x + 2 * y);
+    return sln::Pixel<T, 4>(x + y, 2 * x + y, x + 2 * y, 2 * x + 2 * y);
   }
 };
 
 template <typename PixelType>
-Image<PixelType> create_test_image(Length width, Length height)
+sln::Image<PixelType> create_test_image(sln::PixelLength width, sln::PixelLength height)
 {
-  Image<PixelType> img(width, height);
+  sln::Image<PixelType> img(width, height);
 
-  for (Index y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_px; y < img.height(); ++y)
   {
-    for (Index x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_px; x < img.width(); ++x)
     {
       img(x, y) = PixelProducer<PixelType>::get(x, y);
     }
@@ -71,21 +70,21 @@ Image<PixelType> create_test_image(Length width, Length height)
 }
 
 template <typename PixelType>
-cv::Mat create_test_image_cv(Length width, Length height)
+cv::Mat create_test_image_cv(sln::PixelLength width, sln::PixelLength height)
 {
-  using Element = typename PixelTraits<PixelType>::Element;
-  constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
+  using Element = typename sln::PixelTraits<PixelType>::Element;
+  constexpr auto nr_channels = sln::PixelTraits<PixelType>::nr_channels;
 
   const auto rows = static_cast<int>(height);
   const auto cols = static_cast<int>(width);
-  const auto type = img::detail::PixelToOpenCVType<PixelType>::type;
+  const auto type = sln::detail::PixelToOpenCVType<PixelType>::type;
   cv::Mat img_cv(rows, cols, type);
 
   for (int row = 0; row < img_cv.rows; ++row)
   {
     for (int col = 0; col < img_cv.cols; ++col)
     {
-      const auto pixel = PixelProducer<PixelType>::get(Index(col), Index(row));
+      const auto pixel = PixelProducer<PixelType>::get(sln::PixelIndex(col), sln::PixelIndex(row));
       cv::Vec<Element, nr_channels> pixel_cv;
 
       for (int channel = 0; channel < img_cv.channels(); ++channel)
@@ -102,15 +101,15 @@ cv::Mat create_test_image_cv(Length width, Length height)
 }
 
 template <typename PixelType>
-void compare_images(const Image<PixelType>& img, const cv::Mat& img_cv)
+void compare_images(const sln::Image<PixelType>& img, const cv::Mat& img_cv)
 {
-  using Element = typename PixelTraits<PixelType>::Element;
-  constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
-  constexpr auto nr_bytes = PixelTraits<PixelType>::nr_bytes;
-  constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  using Element = typename sln::PixelTraits<PixelType>::Element;
+  constexpr auto nr_channels = sln::PixelTraits<PixelType>::nr_channels;
+  constexpr auto nr_bytes = sln::PixelTraits<PixelType>::nr_bytes;
+  constexpr auto nr_bytes_per_channel = sln::PixelTraits<PixelType>::nr_bytes_per_channel;
 
   REQUIRE(img_cv.channels() == nr_channels);
-  REQUIRE(img::detail::opencv_nr_bytes_per_channel(img_cv) == nr_bytes_per_channel);
+  REQUIRE(sln::detail::opencv_nr_bytes_per_channel(img_cv) == nr_bytes_per_channel);
   REQUIRE(img_cv.cols == static_cast<int>(img.width()));
   REQUIRE(img_cv.rows == static_cast<int>(img.height()));
 
@@ -118,7 +117,7 @@ void compare_images(const Image<PixelType>& img, const cv::Mat& img_cv)
   {
     for (int col = 0; col < img_cv.cols; ++col)
     {
-      const auto pixel = img(Index(col), Index(row));
+      const auto pixel = img(sln::PixelIndex(col), sln::PixelIndex(row));
 
       for (std::uint32_t channel = 0; channel < nr_channels; ++channel)
       {
@@ -130,21 +129,21 @@ void compare_images(const Image<PixelType>& img, const cv::Mat& img_cv)
 }
 
 template <typename PixelType>
-void test_functions(Length width, Length height)
+void test_functions(sln::PixelLength width, sln::PixelLength height)
 {
   auto img = create_test_image<PixelType>(width, height);
   auto img_cv = create_test_image_cv<PixelType>(width, height);
 
-  const auto img_wrapped = wrap_opencv_mat<PixelType>(img_cv);
+  const auto img_wrapped = sln::wrap_opencv_mat<PixelType>(img_cv);
   compare_images(img_wrapped, img_cv);
 
-  const auto img_copied = copy_opencv_mat<PixelType>(img_cv);
+  const auto img_copied = sln::copy_opencv_mat<PixelType>(img_cv);
   compare_images(img_copied, img_cv);
 
-  const auto img_cv_wrapped = wrap_in_opencv_mat(img);
+  const auto img_cv_wrapped = sln::wrap_in_opencv_mat(img);
   compare_images(img, img_cv_wrapped);
 
-  const auto img_cv_copied = copy_to_opencv_mat(img);
+  const auto img_cv_copied = sln::copy_to_opencv_mat(img);
   compare_images(img, img_cv_copied);
 }
 
@@ -152,14 +151,14 @@ void test_functions(Length width, Length height)
 
 TEST_CASE("OpenCV interoperability", "[img]")
 {
-  for (Length w = 1_px; w < 32; w += 1)
+  for (auto w = 1_px; w < 32; w += 1)
   {
-    for (Length h = 1_px; h < 32; h += 1)
+    for (auto h = 1_px; h < 32; h += 1)
     {
-      test_functions<Pixel_8u1>(w, h);
-      test_functions<Pixel_8u2>(w, h);
-      test_functions<Pixel_8u3>(w, h);
-      test_functions<Pixel_8u4>(w, h);
+      test_functions<sln::Pixel_8u1>(w, h);
+      test_functions<sln::Pixel_8u2>(w, h);
+      test_functions<sln::Pixel_8u3>(w, h);
+      test_functions<sln::Pixel_8u4>(w, h);
     }
   }
 }

@@ -15,8 +15,7 @@
 #include <csetjmp>
 #include <cstdio>
 
-namespace selene {
-namespace img {
+namespace sln {
 namespace detail {
 
 /// \cond INTERNAL
@@ -41,8 +40,7 @@ void output_message(j_common_ptr cinfo);
 /// \endcond
 
 }  // namespace detail
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)SELENE_WITH_LIBJPEG_TURBO
 

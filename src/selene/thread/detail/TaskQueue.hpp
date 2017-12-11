@@ -13,9 +13,7 @@
 
 #include <selene/thread/detail/Callable.hpp>
 
-namespace selene {
-namespace thread {
-
+namespace sln {
 namespace detail {
 
 /// \cond INTERNAL
@@ -158,8 +156,6 @@ inline void TaskQueue::set_finished()
 /// \endcond
 
 }  // namespace detail
-
-}  // namespace thread
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_THREAD_DETAIL_TASK_QUEUE_HPP

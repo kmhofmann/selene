@@ -14,35 +14,32 @@
 
 #include <Utils.hpp>
 
-using namespace selene;
-using namespace selene::io;
-
-bool handle_valid(FileReader& source)
+bool handle_valid(sln::FileReader& source)
 {
   return source.handle() != nullptr;
 }
 
-bool handle_valid(FileWriter& source)
+bool handle_valid(sln::FileWriter& source)
 {
   return source.handle() != nullptr;
 }
 
-bool handle_valid(MemoryReader& source)
+bool handle_valid(sln::MemoryReader& source)
 {
   return source.handle() != nullptr;
 }
 
-bool handle_valid(MemoryWriter& source)
+bool handle_valid(sln::MemoryWriter& source)
 {
   return source.handle() != nullptr;
 }
 
-bool handle_valid(VectorReader& source)
+bool handle_valid(sln::VectorReader& source)
 {
   return source.handle() != nullptr;
 }
 
-bool handle_valid(VectorWriter& source)
+bool handle_valid(sln::VectorWriter& source)
 {
   return source.handle() != nullptr;
 }
@@ -56,7 +53,7 @@ void write_test_1(Target* target)
   REQUIRE(f.is_eof());
   REQUIRE(f.position() == -1);
 
-  f.open(*target, WriterMode::Write);
+  f.open(*target, sln::WriterMode::Write);
   REQUIRE(handle_valid(f));
   REQUIRE(f.is_open());
   REQUIRE(!f.is_eof());
@@ -64,12 +61,12 @@ void write_test_1(Target* target)
 
   write(f, std::uint8_t{'x'});
   write(f, std::int32_t{42});
-  write(f, float64_t{3.14});
+  write(f, sln::float64_t{3.14});
   REQUIRE(f.position() == 13);
 
   f.seek_rel(-8);
   REQUIRE(f.position() == 5);
-  write(f, float64_t(6.28));
+  write(f, sln::float64_t(6.28));
   REQUIRE(f.position() == 13);
   f.seek_abs(1);
   REQUIRE(f.position() == 1);
@@ -97,15 +94,15 @@ void read_test_1(Source* source)
   REQUIRE(!f.is_eof());
   REQUIRE(f.position() == 0);
 
-  REQUIRE(read<std::uint8_t>(f) == 'x');
-  REQUIRE(read<std::int32_t>(f) == 128);
-  REQUIRE(read<float64_t>(f) == 6.28);
+  REQUIRE(sln::read<std::uint8_t>(f) == 'x');
+  REQUIRE(sln::read<std::int32_t>(f) == 128);
+  REQUIRE(sln::read<sln::float64_t>(f) == 6.28);
 }
 
 template <typename SinkType, typename Target>
 void write_test_2(Target* target)
 {
-  SinkType f(*target, WriterMode::Append);
+  SinkType f(*target, sln::WriterMode::Append);
   REQUIRE(handle_valid(f));
   REQUIRE(f.is_open());
   REQUIRE(!f.is_eof());
@@ -128,19 +125,19 @@ void read_test_2(Source* source)
   REQUIRE(f.position() == 0);
 
   f.seek_abs(13);
-  REQUIRE(read<std::int16_t>(f) == 1000);
-  REQUIRE(read<std::uint8_t>(f) == 255);
+  REQUIRE(sln::read<std::int16_t>(f) == 1000);
+  REQUIRE(sln::read<std::uint8_t>(f) == 255);
   REQUIRE(f.position() == 16);
 
   std::uint8_t tmp;
-  bool rc = read<std::uint8_t>(f, tmp);
+  bool rc = sln::read<std::uint8_t>(f, tmp);
   REQUIRE(!rc);
   REQUIRE(f.is_eof());
 
   f.seek_abs(5);
   REQUIRE(!f.is_eof());
   REQUIRE(f.position() == 5);
-  REQUIRE(read<std::uint32_t>(f) == 43);
+  REQUIRE(sln::read<std::uint32_t>(f) == 43);
   REQUIRE(f.position() == 9);
 
   f.rewind();
@@ -154,20 +151,20 @@ TEST_CASE("IO")
   const auto filename = tmp_path / "test_io.bin";
 
   const char* c_filename = filename.c_str();
-  write_test_1<FileWriter>(&c_filename);
-  read_test_1<FileReader>(&c_filename);
-  write_test_2<FileWriter>(&c_filename);
-  read_test_2<FileReader>(&c_filename);
+  write_test_1<sln::FileWriter>(&c_filename);
+  read_test_1<sln::FileReader>(&c_filename);
+  write_test_2<sln::FileWriter>(&c_filename);
+  read_test_2<sln::FileReader>(&c_filename);
 
   std::vector<std::uint8_t> mem(100);
-  write_test_1<VectorWriter>(&mem);
-  read_test_1<VectorReader>(&mem);
-  write_test_2<VectorWriter>(&mem);
-  read_test_2<VectorReader>(&mem);
+  write_test_1<sln::VectorWriter>(&mem);
+  read_test_1<sln::VectorReader>(&mem);
+  write_test_2<sln::VectorWriter>(&mem);
+  read_test_2<sln::VectorReader>(&mem);
 
   std::vector<std::uint8_t> vec;
-  write_test_1<VectorWriter>(&vec);
-  read_test_1<VectorReader>(&vec);
-  write_test_2<VectorWriter>(&vec);
-  read_test_2<VectorReader>(&vec);
+  write_test_1<sln::VectorWriter>(&vec);
+  read_test_1<sln::VectorReader>(&vec);
+  write_test_2<sln::VectorWriter>(&vec);
+  read_test_2<sln::VectorReader>(&vec);
 }

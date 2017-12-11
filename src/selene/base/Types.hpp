@@ -10,7 +10,7 @@
 #include <selene/base/Assert.hpp>
 #include <selene/base/ExplicitType.hpp>
 
-namespace selene {
+namespace sln {
 
 using float32_t = float;  ///< 32-bit floating point type.
 using float64_t = double;  ///< 64-bit floating point type.
@@ -26,6 +26,8 @@ class BytesTag;
 
 using Bytes = ExplicitType<std::size_t, detail::BytesTag>;  ///< Type representing a number of bytes.
 
+inline namespace literals {
+
 /** \brief User-defined literal representing a number of bytes.
  *
  * @param nr_bytes Number of bytes.
@@ -37,6 +39,8 @@ constexpr inline Bytes operator"" _b(unsigned long long nr_bytes)
   return Bytes(static_cast<Bytes::value_type>(nr_bytes));
 }
 
-}  // namespace selene
+}  // inline namespace literals
+
+}  // namespace sln
 
 #endif  // SELENE_BASE_TYPES_HPP

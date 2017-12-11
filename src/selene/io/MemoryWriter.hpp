@@ -16,8 +16,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Class for writing binary data to memory.
  *
@@ -327,7 +326,6 @@ inline std::size_t write(MemoryWriter& sink, const T* values, std::size_t nr_val
   return sink.write(values, nr_values);
 };
 
-}  // namespace io
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IO_MEMORY_WRITER_HPP

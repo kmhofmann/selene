@@ -9,8 +9,7 @@
 
 #include <selene/img/ImageData.hpp>
 
-namespace selene {
-namespace img {
+namespace sln {
 
 /** \brief Describes a supported image format for reading or writing.
  */
@@ -27,7 +26,6 @@ template <typename SinkType>
 bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, MessageLog* messages = nullptr,
                  int jpeg_quality = 95);
 
-}  // namespace img
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IMG_IO_HPP

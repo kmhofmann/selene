@@ -8,8 +8,7 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/ImageToImageData.hpp>
 
-using namespace selene;
-using namespace selene::img;
+using namespace sln::literals;
 
 namespace {
 
@@ -17,49 +16,49 @@ template <typename PixelType>
 struct PixelProducer;
 
 template <typename T>
-struct PixelProducer<Pixel<T, 1>>
+struct PixelProducer<sln::Pixel<T, 1>>
 {
-  static Pixel<T, 1> get(Index x, Index y)
+  static sln::Pixel<T, 1> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 1>(x + y);
+    return sln::Pixel<T, 1>(x + y);
   }
 };
 
 template <typename T>
-struct PixelProducer<Pixel<T, 2>>
+struct PixelProducer<sln::Pixel<T, 2>>
 {
-  static Pixel<T, 2> get(Index x, Index y)
+  static sln::Pixel<T, 2> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 2>(x + y, 2 * x + y);
+    return sln::Pixel<T, 2>(x + y, 2 * x + y);
   }
 };
 
 template <typename T>
-struct PixelProducer<Pixel<T, 3>>
+struct PixelProducer<sln::Pixel<T, 3>>
 {
-  static Pixel<T, 3> get(Index x, Index y)
+  static sln::Pixel<T, 3> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 3>(x + y, 2 * x + y, x + 2 * y);
+    return sln::Pixel<T, 3>(x + y, 2 * x + y, x + 2 * y);
   }
 };
 
 template <typename T>
-struct PixelProducer<Pixel<T, 4>>
+struct PixelProducer<sln::Pixel<T, 4>>
 {
-  static Pixel<T, 4> get(Index x, Index y)
+  static sln::Pixel<T, 4> get(sln::PixelIndex x, sln::PixelIndex y)
   {
-    return Pixel<T, 4>(x + y, 2 * x + y, x + 2 * y, 2 * x + 2 * y);
+    return sln::Pixel<T, 4>(x + y, 2 * x + y, x + 2 * y, 2 * x + 2 * y);
   }
 };
 
 template <typename PixelType>
-Image<PixelType> create_test_image(Length width, Length height)
+sln::Image<PixelType> create_test_image(sln::PixelLength width, sln::PixelLength height)
 {
-  Image<PixelType> img(width, height);
+  sln::Image<PixelType> img(width, height);
 
-  for (Index y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_px; y < img.height(); ++y)
   {
-    for (Index x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_px; x < img.width(); ++x)
     {
       img(x, y) = PixelProducer<PixelType>::get(x, y);
     }
@@ -69,10 +68,10 @@ Image<PixelType> create_test_image(Length width, Length height)
 }
 
 template <typename PixelType>
-void test_image(Length width, Length height)
+void test_image(sln::PixelLength width, sln::PixelLength height)
 {
   auto img = create_test_image<PixelType>(width, height);
-  auto img_data_view = to_image_data_view(img, PixelFormat::Unknown);
+  auto img_data_view = to_image_data_view(img, sln::PixelFormat::Unknown);
   REQUIRE(img_data_view.width() == width);
   REQUIRE(img_data_view.height() == height);
   REQUIRE(img_data_view.is_packed());
@@ -81,7 +80,7 @@ void test_image(Length width, Length height)
   // TODO: Content tests
   // ...
 
-  auto img_data = to_image_data(std::move(img), PixelFormat::Unknown);
+  auto img_data = to_image_data(std::move(img), sln::PixelFormat::Unknown);
   REQUIRE(img_data.width() == width);
   REQUIRE(img_data.height() == height);
   REQUIRE(img_data.is_packed());
@@ -96,19 +95,19 @@ void test_image(Length width, Length height)
 TEST_CASE("Converting Image<> to ImageData", "[img]")
 {
   {
-    Image<Pixel_8u1> img;
-    ImageData img_data;
-    REQUIRE_THROWS(img_data = to_image_data(std::move(img), PixelFormat::Unknown));
+    sln::Image_8u1 img;
+    sln::ImageData img_data;
+    REQUIRE_THROWS(img_data = sln::to_image_data(std::move(img), sln::PixelFormat::Unknown));
   }
 
-  for (Length w = 1_px; w < 32_px; w += 1_px)
+  for (auto w = 1_px; w < 32_px; w += 1_px)
   {
-    for (Length h = 1_px; h < 32_px; h += 1_px)
+    for (auto h = 1_px; h < 32_px; h += 1_px)
     {
-      test_image<Pixel_8u1>(w, h);
-      test_image<Pixel_8u2>(w, h);
-      test_image<Pixel_8u3>(w, h);
-      test_image<Pixel_8u4>(w, h);
+      test_image<sln::Pixel_8u1>(w, h);
+      test_image<sln::Pixel_8u2>(w, h);
+      test_image<sln::Pixel_8u3>(w, h);
+      test_image<sln::Pixel_8u4>(w, h);
     }
   }
 }

@@ -16,8 +16,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace selene {
-namespace io {
+namespace sln {
 
 /** \brief Class for writing binary data to memory, stored in a std::vector<std::uint8_t>.
  *
@@ -320,7 +319,6 @@ inline std::size_t write(VectorWriter& sink, const T* values, std::size_t nr_val
   return sink.write(values, nr_values);
 };
 
-}  // namespace io
-}  // namespace selene
+}  // namespace sln
 
 #endif  // SELENE_IO_VECTOR_WRITER_HPP
