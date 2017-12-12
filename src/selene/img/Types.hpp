@@ -39,7 +39,7 @@ constexpr inline PixelIndex operator"" _px(unsigned long long index)
   return PixelIndex(static_cast<PixelIndex::value_type>(index));
 }
 
-}  // inline namespace literals
+}  // namespace literals
 
 }  // namespace sln
 

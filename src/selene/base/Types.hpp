@@ -39,7 +39,7 @@ constexpr inline Bytes operator"" _b(unsigned long long nr_bytes)
   return Bytes(static_cast<Bytes::value_type>(nr_bytes));
 }
 
-}  // inline namespace literals
+}  // namespace literals
 
 }  // namespace sln
 

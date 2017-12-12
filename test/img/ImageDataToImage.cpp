@@ -15,8 +15,8 @@ using namespace sln::literals;
 namespace {
 
 sln::ImageData create_test_image_data(sln::PixelLength width, sln::PixelLength height, std::uint16_t nr_channels,
-                                 std::uint8_t nr_bytes_per_channel, sln::Stride stride_bytes, sln::PixelFormat pixel_format,
-                                      sln::SampleFormat sample_format)
+                                      std::uint8_t nr_bytes_per_channel, sln::Stride stride_bytes,
+                                      sln::PixelFormat pixel_format, sln::SampleFormat sample_format)
 {
   sln::ImageData img_data(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 
@@ -36,7 +36,8 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 {
   // Packed image, single-channel
   {
-    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 16_b, sln::PixelFormat::Y, sln::SampleFormat::UnsignedInteger);
+    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 16_b, sln::PixelFormat::Y,
+                                           sln::SampleFormat::UnsignedInteger);
 
     auto img_view = sln::to_image_view<sln::Pixel_8u1>(img_data);
     REQUIRE(img_view.width() == 16);
@@ -71,7 +72,8 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 
   // Non-packed image, single-channel
   {
-    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 19_b, sln::PixelFormat::Y, sln::SampleFormat::UnsignedInteger);
+    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 19_b, sln::PixelFormat::Y,
+                                           sln::SampleFormat::UnsignedInteger);
 
     auto img_view = sln::to_image_view<sln::Pixel_8u1>(img_data);
     REQUIRE(img_view.width() == 16);
@@ -106,7 +108,8 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 
   // Non-packed image, multi-channel
   {
-    auto img_data = create_test_image_data(16_px, 20_px, 3, 1, 52_b, sln::PixelFormat::RGB, sln::SampleFormat::UnsignedInteger);
+    auto img_data = create_test_image_data(16_px, 20_px, 3, 1, 52_b, sln::PixelFormat::RGB,
+                                           sln::SampleFormat::UnsignedInteger);
 
     auto img_view = sln::to_image_view<sln::Pixel_8u3>(img_data);
     REQUIRE(img_view.width() == 16);

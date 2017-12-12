@@ -84,7 +84,7 @@ public:
   void clear();
   void fill(PixelType value);
   void allocate(PixelLength width, PixelLength height);
-  void allocate(PixelLength width, PixelLength height, Stride stride_bytes);
+  void allocate(PixelLength width, PixelLength height, Stride stride_bytes, bool force_allocation = false);
   void set_view(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes);
   void set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes);
 
@@ -976,8 +976,6 @@ void Image<PixelType>::fill(PixelType value)
 
 /** \brief Resizes the allocated image data to exactly fit an image of size (width x height).
  *
- * Precondition: `!is_view()`.
- *
  * Postconditions: `!is_view() && is_packed()`.
  *
  * Equivalent to `resize(width, height, width * PixelTraits::nr_bytes`.
@@ -992,13 +990,12 @@ template <typename PixelType>
 void Image<PixelType>::allocate(PixelLength width, PixelLength height)
 {
   const auto stride_bytes = Stride(PixelTraits<PixelType>::nr_bytes * width);
-  allocate(width, height, stride_bytes);
+  constexpr bool force_allocation = false;
+  allocate(width, height, stride_bytes, force_allocation);
 }
 
 /** \brief Resizes the allocated image data to exactly fit an image of size (width x height), with user-defined row
  * stride.
- *
- * Precondition: `!is_view()`.
  *
  * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits::nr_bytes)`.
  *
@@ -1014,28 +1011,25 @@ void Image<PixelType>::allocate(PixelLength width, PixelLength height)
  * @param stride_bytes The desired row stride in bytes.
  */
 template <typename PixelType>
-void Image<PixelType>::allocate(PixelLength width, PixelLength height, Stride stride_bytes)
+void Image<PixelType>::allocate(PixelLength width, PixelLength height, Stride stride_bytes, bool force_allocation)
 {
-  // No need to act, if size parameters match
-  if (width_ == width && height_ == height && stride_bytes_ == stride_bytes)
-  {
-    return;
-  }
-
-  if (!owns_memory_)
-  {
-    throw std::runtime_error("Cannot reallocate external data");
-  }
-
   stride_bytes = std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width));
-
-  deallocate_bytes();
-  allocate_bytes(stride_bytes * height);
+  const auto nr_bytes_to_allocate = stride_bytes * height;
+  const auto nr_currently_allocated_bytes = total_bytes();
 
   stride_bytes_ = stride_bytes;
   width_ = width;
   height_ = height;
+
+  // No need to act, if size parameters match
+  if (!force_allocation && nr_bytes_to_allocate == nr_currently_allocated_bytes)
+  {
+    return;
+  }
+
+  deallocate_bytes_if_owned();
   owns_memory_ = true;
+  allocate_bytes(nr_bytes_to_allocate);
 }
 
 /** \brief Sets the image data to be a view onto non-owned external memory.

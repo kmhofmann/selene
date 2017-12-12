@@ -89,7 +89,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
-                                 sln::JPEGCompressionOptions(compression_factor), &messages_write);
+                                      sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 
@@ -138,7 +138,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::Y), sink,
-                                 sln::JPEGCompressionOptions(compression_factor), &messages_write);
+                                      sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 
@@ -183,7 +183,8 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
 
   // ...and then reusing decompression object/header info for reading the image
   sln::MessageLog messages_read;
-  auto img_data = sln::read_jpeg(decompression_object, source, sln::JPEGDecompressionOptions(), &messages_read, &header);
+  auto img_data = sln::read_jpeg(decompression_object, source, sln::JPEGDecompressionOptions(), &messages_read,
+                                 &header);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -225,7 +226,8 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   sln::FileReader source(in_filename().c_str());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
-  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Auto, region), &messages_read);
+  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Auto, region),
+                                 &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
@@ -252,7 +254,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
-                                 sln::JPEGCompressionOptions(compression_factor), &messages_write);
+                                      sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 
@@ -326,8 +328,8 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
 
   // Test writing of RGB image
   sln::MessageLog messages_write;
-  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink, sln::JPEGCompressionOptions(95),
-                                 &messages_write);
+  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
+                                      sln::JPEGCompressionOptions(95), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
 

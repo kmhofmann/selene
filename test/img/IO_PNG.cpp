@@ -130,7 +130,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
   // Test writing of RGB image
   sln::MessageLog messages_write;
   bool status_write = sln::write_png(to_image_data_view(img, sln::PixelFormat::RGB), sink, sln::PNGCompressionOptions(),
-                                &messages_write);
+                                     &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
 }
@@ -177,7 +177,7 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   // Test writing of grayscale image
   sln::MessageLog messages_write;
   bool status_write = sln::write_png(to_image_data_view(img, sln::PixelFormat::Y), sink, sln::PNGCompressionOptions(),
-                                &messages_write);
+                                     &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
 }
@@ -271,7 +271,7 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
   // Test writing of RGB image
   sln::MessageLog messages_write;
   bool status_write = sln::write_png(to_image_data_view(img, sln::PixelFormat::RGB), sink, sln::PNGCompressionOptions(),
-                                &messages_write);
+                                     &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
 }

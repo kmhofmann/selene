@@ -84,7 +84,7 @@ public:
                 PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
   void allocate(PixelLength width, PixelLength height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
                 Stride stride_bytes, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleFormat sample_format = SampleFormat::Unknown);
+                SampleFormat sample_format = SampleFormat::Unknown, bool force_allocation = false);
 
   void set_view(std::uint8_t* data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
                 std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format = PixelFormat::Unknown,
@@ -534,7 +534,9 @@ inline void ImageData::allocate(PixelLength width, PixelLength height, std::uint
                                 std::uint8_t nr_bytes_per_channel, PixelFormat pixel_format, SampleFormat sample_format)
 {
   const auto stride_bytes = Stride(nr_bytes_per_channel * nr_channels * width);
-  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
+  constexpr bool force_allocation = false;
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format,
+           force_allocation);
 }
 
 /** \brief Allocates memory for an image with the specified parameters.
@@ -555,18 +557,12 @@ inline void ImageData::allocate(PixelLength width, PixelLength height, std::uint
 
 inline void ImageData::allocate(PixelLength width, PixelLength height, std::uint16_t nr_channels,
                                 std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                                SampleFormat sample_format)
+                                SampleFormat sample_format, bool force_allocation)
 {
-  if (width_ == width && height_ == height && stride_bytes_ == stride_bytes && nr_channels_ == nr_channels
-      && nr_bytes_per_channel_ == nr_bytes_per_channel && pixel_format_ == pixel_format
-      && sample_format_ == sample_format)
-  {
-    return;
-  }
-
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
+  const auto nr_bytes_to_allocate = stride_bytes * height;
+  const auto nr_currently_allocated_bytes = total_bytes();
 
-  deallocate_bytes_if_owned();
   width_ = width;
   height_ = height;
   stride_bytes_ = stride_bytes;
@@ -574,10 +570,15 @@ inline void ImageData::allocate(PixelLength width, PixelLength height, std::uint
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
   sample_format_ = sample_format;
-  owns_memory_ = true;
 
-  const auto nr_bytes = stride_bytes_ * height_;
-  allocate_bytes(nr_bytes);
+  if (!force_allocation && nr_bytes_to_allocate == nr_currently_allocated_bytes)
+  {
+    return;
+  }
+
+  deallocate_bytes_if_owned();
+  owns_memory_ = true;
+  allocate_bytes(nr_bytes_to_allocate);
 }
 
 /** \brief Sets the image data to be a view onto non-owned external memory.
