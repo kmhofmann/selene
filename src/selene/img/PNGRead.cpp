@@ -629,12 +629,14 @@ ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompres
   const auto output_nr_bytes_per_channel = output_bit_depth >> 3;
   const auto output_row_bytes = output_info.row_bytes;
   SELENE_FORCED_ASSERT(output_row_bytes == output_width * output_nr_channels * output_nr_bytes_per_channel);
+  const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
   const auto output_pixel_format = obj.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
   ImageData img;
   img.allocate(output_width, output_height, static_cast<std::uint16_t>(output_nr_channels),
-               static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_pixel_format, output_sample_format);
+               static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_stride_bytes, output_pixel_format,
+               output_sample_format);
   auto row_pointers = get_row_pointers(img);
   const auto dec_success = cycle.decompress(row_pointers);
 

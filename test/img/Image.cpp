@@ -4,6 +4,7 @@
 
 #include <catch.hpp>
 
+#include <selene/base/Allocators.hpp>
 #include <selene/base/Types.hpp>
 #include <selene/img/Image.hpp>
 
@@ -17,8 +18,8 @@ template <typename T>
 void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_value)
 {
   sln::Image<T> img(width, height);
-  REQUIRE((img.width() == width));
-  REQUIRE((img.height() == height));
+  REQUIRE(img.width() == width);
+  REQUIRE(img.height() == height);
   REQUIRE(img.stride_bytes() == img.width() * sizeof(T));
   REQUIRE(img.is_packed());
   REQUIRE(!img.is_view());
@@ -40,6 +41,53 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   REQUIRE(img2.width() == img.width());
   REQUIRE(img2.height() == img.height());
   REQUIRE(img2.stride_bytes() == img.stride_bytes());
+  REQUIRE(img2.is_packed());
+  REQUIRE(!img2.is_view());
+  REQUIRE(!img2.is_empty());
+
+  sln::Image<T> img3;
+  img3.set_view(img.byte_ptr(), img.width(), img.height(), img.stride_bytes());
+  REQUIRE(img3.width() == img.width());
+  REQUIRE(img3.height() == img.height());
+  REQUIRE(img3.stride_bytes() == img.stride_bytes());
+  REQUIRE(img3.is_packed());
+  REQUIRE(img3.is_view());
+  REQUIRE(!img3.is_empty());
+
+  img3.maybe_allocate(img3.width(), img3.height(),
+                      sln::Stride{img3.stride_bytes() + 1000});  // stride should be ignored
+  REQUIRE(img3.width() == img.width());
+  REQUIRE(img3.height() == img.height());
+  REQUIRE(img3.stride_bytes() == img.stride_bytes());
+  REQUIRE(img3.is_packed());
+  REQUIRE(img3.is_view());
+  REQUIRE(!img3.is_empty());
+
+  REQUIRE_THROWS(img3.maybe_allocate(sln::PixelLength{img3.width() + 1}, sln::PixelLength{img3.height() + 1}));
+
+  REQUIRE_NOTHROW(
+      img2.maybe_allocate(img2.width(), sln::PixelLength{img2.height() + 1}, sln::Stride{img2.stride_bytes() + 16}));
+  REQUIRE(img2.width() == img.width());
+  REQUIRE(img2.height() == img.height() + 1);
+  REQUIRE(img2.stride_bytes() == img.stride_bytes() + 16);
+  REQUIRE(!img2.is_packed());
+  REQUIRE(!img2.is_view());
+  REQUIRE(!img2.is_empty());
+
+  constexpr auto test_width = sln::PixelLength{16};
+  constexpr auto test_height = sln::PixelLength{20};
+  constexpr auto test_stride_offset = 8;
+  constexpr auto test_stride_bytes = sln::Bytes{test_width * sln::PixelTraits<T>::nr_bytes + test_stride_offset};
+  const auto nr_bytes_to_allocate = test_stride_bytes * test_height;
+  auto memory_block = sln::NewAllocator::allocate(nr_bytes_to_allocate);
+  img.set_data(std::move(memory_block), test_width, test_height, test_stride_bytes);
+
+  REQUIRE(img.width() == test_width);
+  REQUIRE(img.height() == test_height);
+  REQUIRE(img.stride_bytes() == test_stride_bytes);
+  REQUIRE(!img.is_packed());
+  REQUIRE(!img.is_view());
+  REQUIRE(!img.is_empty());
 }
 
 template <typename T, typename RNG>
@@ -178,11 +226,21 @@ void random_iteration(sln::PixelIndex w, sln::PixelIndex h, RNG& rng)
 
 TEST_CASE("Image construction", "[img]")
 {
+  constexpr auto fill_value = 42;
   for (auto h = 10_px; h < 100_px; h += 20_px)
   {
     for (auto w = 10_px; w < 100_px; w += 10_px)
     {
-      basic_image_tests<unsigned char>(w, h, 42);
+      basic_image_tests<std::uint8_t>(w, h, fill_value);
+      basic_image_tests<std::int8_t>(w, h, fill_value);
+      basic_image_tests<std::uint16_t>(w, h, fill_value);
+      basic_image_tests<std::int16_t>(w, h, fill_value);
+      basic_image_tests<std::uint32_t>(w, h, fill_value);
+      basic_image_tests<std::int32_t>(w, h, fill_value);
+      basic_image_tests<std::uint64_t>(w, h, fill_value);
+      basic_image_tests<std::int64_t>(w, h, fill_value);
+      basic_image_tests<sln::float32_t>(w, h, fill_value);
+      basic_image_tests<sln::float64_t>(w, h, fill_value);
     }
   }
 }
