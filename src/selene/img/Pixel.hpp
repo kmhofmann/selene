@@ -35,7 +35,7 @@ public:
   Pixel() = default;  ///< Default constructor. Pixel values are uninitialized.
 
   template <typename... Args, typename = typename std::enable_if_t<sizeof...(Args) == nr_channels_>>
-  constexpr explicit Pixel(Args... args);
+  constexpr Pixel(Args... args);
 
   constexpr explicit Pixel(const std::array<T, nr_channels>& arr);
   ~Pixel() = default;

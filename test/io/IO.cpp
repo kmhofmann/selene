@@ -145,7 +145,7 @@ void read_test_2(Source* source)
   REQUIRE(!f.is_eof());
 }
 
-TEST_CASE("IO")
+TEST_CASE("Test IO classes", "[io]")
 {
   const auto tmp_path = get_tmp_path();
   const auto filename = tmp_path / "test_io.bin";
@@ -155,12 +155,6 @@ TEST_CASE("IO")
   read_test_1<sln::FileReader>(&c_filename);
   write_test_2<sln::FileWriter>(&c_filename);
   read_test_2<sln::FileReader>(&c_filename);
-
-  std::vector<std::uint8_t> mem(100);
-  write_test_1<sln::VectorWriter>(&mem);
-  read_test_1<sln::VectorReader>(&mem);
-  write_test_2<sln::VectorWriter>(&mem);
-  read_test_2<sln::VectorReader>(&mem);
 
   std::vector<std::uint8_t> vec;
   write_test_1<sln::VectorWriter>(&vec);

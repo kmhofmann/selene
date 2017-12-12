@@ -56,7 +56,7 @@ void test_clamps(RNG& rng, int nr_trials)
 
 }  // namespace
 
-TEST_CASE("Clamp")
+TEST_CASE("Clamp", "[base]")
 {
   std::mt19937 rng(42ul);
 

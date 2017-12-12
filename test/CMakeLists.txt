@@ -11,6 +11,7 @@ target_sources(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/Algorithms.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Image.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.cpp

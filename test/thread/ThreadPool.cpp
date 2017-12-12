@@ -20,7 +20,7 @@ double expensive_work(double seed)
   return x;
 }
 
-TEST_CASE("ThreadPool")
+TEST_CASE("Simple ThreadPool test", "[thread]")
 {
   sln::ThreadPool tp(8);
   REQUIRE(!tp.empty());

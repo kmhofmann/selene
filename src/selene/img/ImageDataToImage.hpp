@@ -38,6 +38,9 @@ Image<PixelType> to_image_view(ImageData& img_data);
  * The `ImageData` instance `img_data` is moved from, i.e. it will be in a valid but unspecified state after the
  * function call.
  *
+ * If the `ImageData` instance is a view, then the returned `Image<PixelType>` instance will also be a view; image data
+ * will not be copied.
+ *
  * @tparam PixelType The pixel type of the `Image<PixelType>` instance to be returned.
  * @param img_data The dynamically typed image.
  * @return An `Image<PixelType>` instance.

@@ -69,6 +69,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp
         INTERFACE
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageData.hpp
