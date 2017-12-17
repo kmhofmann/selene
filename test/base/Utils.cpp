@@ -54,6 +54,21 @@ void test_clamps(RNG& rng, int nr_trials)
   }
 }
 
+template <typename T, int N>
+constexpr auto get_array_n_equal(T value)
+{
+  return sln::make_array_n_equal<T, N>(value);
+}
+
+template <typename T, int N>
+void test_array_n_equal(const std::array<T, N>& arr, T value)
+{
+  for (auto i = 0; i < N; ++i)
+  {
+    REQUIRE(arr[i] == value);
+  }
+}
+
 }  // namespace
 
 TEST_CASE("Clamp", "[base]")
@@ -71,4 +86,12 @@ TEST_CASE("Clamp", "[base]")
   test_clamps<std::int64_t>(rng, nr_trials);
   test_clamps<sln::float32_t>(rng, nr_trials);
   test_clamps<sln::float64_t>(rng, nr_trials);
+}
+
+TEST_CASE("Make constexpr array", "[base")
+{
+  test_array_n_equal<unsigned char, 1>(get_array_n_equal<unsigned char, 1>(255), (unsigned char)(255));
+  test_array_n_equal<int, 3>(get_array_n_equal<int, 3>(5), int(5));
+  test_array_n_equal<float, 17>(get_array_n_equal<float, 17>(42.5), float(42.5));
+  test_array_n_equal<double, 8>(get_array_n_equal<double, 8>(20.005), double(20.005));
 }

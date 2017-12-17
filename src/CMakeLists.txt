@@ -18,6 +18,7 @@ target_sources(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MessageLog.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/ExplicitType.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/Round.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Utils.hpp
         )
@@ -69,12 +70,15 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp
         INTERFACE
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/Accessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Image.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageAccess.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/Interpolators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.hpp

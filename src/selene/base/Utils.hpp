@@ -9,6 +9,7 @@
 
 #include <selene/base/Assert.hpp>
 
+#include <array>
 #include <cstdint>
 #include <functional>
 
@@ -54,6 +55,22 @@ inline constexpr const T& clamp(const T& value, const T& min, const T& max)
   return clamp(value, min, max, std::less<T>());
 }
 
+
+template <typename T, std::uint32_t N>
+constexpr std::array<T, N> make_array_n_equal(T value)
+{
+  using result_t = ::std::array<T, N>;
+  result_t arr = {{value}};
+  const result_t& const_arr = arr;
+
+  for (std::uint32_t i = 1; i < N; ++i)
+  {
+    // const_cast not needed anymore in C++17: https://stackoverflow.com/a/46779579/218634
+    const_cast<typename result_t::reference>(const_arr[i]) = value;
+  }
+
+  return arr;
+}
 
 }  // namespace sln
 

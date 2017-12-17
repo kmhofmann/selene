@@ -42,8 +42,14 @@ public:
 
   Pixel(const Pixel<T, nr_channels_>&) = default;  ///< Copy constructor.
   Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;  ///< Copy assignment operator.
+
   Pixel(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move constructor.
   Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move assignment operator.
+
+  template <typename U>
+  Pixel(const Pixel<U, nr_channels_>& other);
+  template <typename U>
+  Pixel<T, nr_channels_>& operator=(const Pixel<U, nr_channels_>& other);
 
   T* data() noexcept;
   const T* data() const noexcept;
@@ -126,6 +132,8 @@ using Pixel_64f4 = Pixel<float64_t, 4>;  ///< 64-bit floating point 4-channel pi
  *
  * This constructor takes exactly Pixel::nr_channels channel values of Pixel::value_type as separate argument inputs.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \param args The channel values as separate arguments.
  */
 template <typename T, std::uint32_t nr_channels_>
@@ -140,6 +148,8 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cas
  *
  * This constructor takes a std::array<> with exactly Pixel::nr_channels values of type Pixel::value_type as input.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \param arr The channel values as std::array<>.
  */
 template <typename T, std::uint32_t nr_channels_>
@@ -147,8 +157,47 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>&
 {
 }
 
+/** \brief Copy constructor taking a `Pixel<>` with a different element type.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam U The pixel element type of the argument pixel.
+ * @param other The pixel to copy from.
+ */
+template <typename T, std::uint32_t nr_channels_>
+template <typename U>
+Pixel<T, nr_channels_>::Pixel(const Pixel<U, nr_channels_>& other)
+{
+  for (std::uint32_t i = 0; i < nr_channels; ++i)
+  {
+    this->operator[](i) = static_cast<T>(other[i]);
+  }
+}
+
+/** \brief Copy assignment operator taking a `Pixel<>` with a different element type.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam U The pixel element type of the argument pixel.
+ * @param other The pixel to copy from.
+ * @return A reference to *this.
+ */
+template <typename T, std::uint32_t nr_channels_>
+template <typename U>
+Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator=(const Pixel<U, nr_channels_>& other)
+{
+  for (std::uint32_t i = 0; i < nr_channels; ++i)
+  {
+    this->operator[](i) = static_cast<T>(other[i]);
+  }
+
+  return *this;
+}
+
 /** \brief Returns a pointer to the first element of the pixel.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \return Pointer to the first pixel element.
  */
 template <typename T, std::uint32_t nr_channels_>
@@ -159,6 +208,8 @@ inline T* Pixel<T, nr_channels_>::data() noexcept
 
 /** \brief Returns a constant pointer to the first element of the pixel.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \return Constant pointer to the first pixel element.
  */
 template <typename T, std::uint32_t nr_channels_>
@@ -169,6 +220,8 @@ inline const T* Pixel<T, nr_channels_>::data() const noexcept
 
 /** \brief Provides read-write access to the n-th channel element of the pixel.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \param n Index of the channel to access.
  * \return Reference to the n-th channel element.
  */
@@ -181,6 +234,8 @@ inline constexpr T& Pixel<T, nr_channels_>::operator[](std::size_t n) noexcept
 
 /** \brief Provides read access to the n-th channel element of the pixel.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \param n Index of the channel to access.
  * \return Const reference to the n-th channel element.
  */
@@ -195,6 +250,9 @@ inline constexpr const T& Pixel<T, nr_channels_>::operator[](std::size_t n) cons
  *
  * This is useful for usage with any single-channel pixel instance, because the 0-th element will not have to be
  * accessed by operator[] anymore, but the instance decays to type Pixel::value_type.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  */
 template <typename T, std::uint32_t nr_channels_>
 inline Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T, void>() const
@@ -206,6 +264,8 @@ inline Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T,
 
 /** \brief Equality comparison for two pixels.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
  * \param px0 The left-hand side pixel to compare.
  * \param px1 The right-hand side pixel to compare.
  * \return True, if the two pixels have equal values for all channels; false otherwise.
@@ -225,6 +285,8 @@ inline bool operator==(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_chan
 
 /** \brief Inequality comparison for two pixels.
  *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.*
  * \param px0 The left-hand side pixel to compare.
  * \param px1 The right-hand side pixel to compare.
  * \return True, if the two pixels are not equal; false, if they are equal.

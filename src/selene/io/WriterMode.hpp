@@ -11,7 +11,7 @@ namespace sln {
 
 /** \brief Describes the IO write mode: write from start, or append.
  */
-enum class WriterMode : unsigned char
+enum class WriterMode
 {
   Write = 0,  ///< Overwrite/destroy existing contents.
   Append = 1  ///< Append to existing contents.

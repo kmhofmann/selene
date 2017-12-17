@@ -49,16 +49,6 @@ public:
     return value_;
   }
 
-  constexpr explicit operator value_type &&() && noexcept
-  {
-    return std::move(value_);
-  }
-
-  constexpr explicit operator const value_type &&() const&& noexcept
-  {
-    return std::move(value_);
-  }
-
   friend void swap(ExplicitType& a, ExplicitType& b) noexcept
   {
     using std::swap;

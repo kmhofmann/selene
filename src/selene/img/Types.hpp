@@ -24,6 +24,10 @@ class PixelIndexTag;
 // use 32-bit values as indices for data access, for now
 using PixelIndex = ExplicitType<std::uint32_t, detail::PixelIndexTag>;  ///< Type representing a scalar as part of an
                                                                         ///< image coordinate (x or y).
+
+// this is the data access type for one of the accessors
+using SignedPixelIndex = std::int32_t;
+
 using PixelLength = PixelIndex;  ///< Type representing a length in x or y-direction.
 using Stride = Bytes;  ///< Type representing an image stride (nr of bytes per row).
 

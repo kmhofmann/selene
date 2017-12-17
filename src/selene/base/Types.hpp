@@ -15,6 +15,13 @@ namespace sln {
 using float32_t = float;  ///< 32-bit floating point type.
 using float64_t = double;  ///< 64-bit floating point type.
 
+// TODO: Expose way to set this via CMake
+#if defined(SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
+using default_float_t = float32_t;
+#else
+using default_float_t = float64_t;
+#endif
+
 static_assert(sizeof(float32_t) == 4, "type size mismatch");
 static_assert(sizeof(float64_t) == 8, "type size mismatch");
 

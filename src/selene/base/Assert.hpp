@@ -8,6 +8,7 @@
 /// @file
 
 #include <cstdio>
+#include <cstdlib>
 
 /** \brief Forced assertion macro.
  *

@@ -42,4 +42,15 @@ TEST_CASE("Pixel construction", "[img]")
 
   sln::Pixel<std::uint8_t, 1> px3(192);
   REQUIRE(px3 == 192);  // test implicit conversion
+
+  sln::Pixel<std::int16_t, 3> px4 = px0;
+  REQUIRE(px4[0] == 11);
+  REQUIRE(px4[1] == 66);
+  REQUIRE(px4[2] == 33);
+  px4[2] = 127;
+
+  sln::Pixel<std::int8_t, 3> px5 = px4;
+  REQUIRE(px5[0] == 11);
+  REQUIRE(px5[1] == 66);
+  REQUIRE(px5[2] == 127);
 }
