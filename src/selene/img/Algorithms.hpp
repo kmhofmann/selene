@@ -39,7 +39,7 @@ void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& i
       *ptr_dst++ = op(*ptr_src++);
     }
   }
-};
+}
 
 template <typename PixelTypeDst, typename PixelTypeSrc, typename UnaryOperation>
 Image<PixelTypeDst> transform_pixels(const Image<PixelTypeSrc>& img_src, UnaryOperation op)
@@ -47,7 +47,7 @@ Image<PixelTypeDst> transform_pixels(const Image<PixelTypeSrc>& img_src, UnaryOp
   Image<PixelTypeDst> img_dst(img_src.width(), img_src.height());
   transform_pixels(img_src, img_dst, op);
   return img_dst;
-};
+}
 
 }  // namespace sln
 

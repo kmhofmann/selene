@@ -226,7 +226,7 @@ bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOption
   JPEGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
   return write_jpeg(img_data, obj, sink, options, messages);
-};
+}
 
 template <typename SinkType>
 bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink, JPEGCompressionOptions options,

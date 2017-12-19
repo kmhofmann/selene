@@ -42,4 +42,4 @@ TEST_CASE("Image algorithms", "[img]")
       }
     }
   }
-};
+}

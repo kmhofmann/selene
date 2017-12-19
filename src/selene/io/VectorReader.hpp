@@ -247,7 +247,7 @@ inline bool VectorReader::read(T& value) noexcept
   std::memcpy(&value, data_->data() + pos_, len);
   pos_ += len;
   return true;
-};
+}
 
 /** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
  *
@@ -271,7 +271,7 @@ inline std::size_t VectorReader::read(T* values, std::size_t nr_values) noexcept
   std::memcpy(values, data_->data() + pos_, available_values * len);
   pos_ += available_values * len;
   return available_values;
-};
+}
 
 // ----------
 
@@ -291,7 +291,7 @@ T read(VectorReader& source)
   [[maybe_unused]] bool read = source.read(value);
   SELENE_ASSERT(read);
   return value;
-};
+}
 
 /** \brief Reads an element of type T from `source` and writes the element to the output parameter `value`.
  *
@@ -304,7 +304,7 @@ template <typename T, typename>
 inline bool read(VectorReader& source, T& value) noexcept
 {
   return source.read(value);
-};
+}
 
 /** \brief Reads `nr_values` elements of type T from `source` and writes the elements to the output parameter `values`.
  *
@@ -318,7 +318,7 @@ template <typename T, typename>
 inline std::size_t read(VectorReader& source, T* values, std::size_t nr_values) noexcept
 {
   return source.read(values, nr_values);
-};
+}
 
 }  // namespace sln
 

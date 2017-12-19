@@ -259,7 +259,7 @@ inline bool MemoryReader::read(T& value) noexcept
   std::memcpy(value, ptr_, sizeof(T));  // memory access might be unaligned
   ptr_ += sizeof(T);
   return true;
-};
+}
 
 /** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
  *
@@ -280,7 +280,7 @@ inline std::size_t MemoryReader::read(T* values, std::size_t nr_values) noexcept
   std::memcpy(values, ptr_, static_cast<std::size_t>(nr_values_read * sizeof(T)));
   ptr_ += nr_values_read * sizeof(T);
   return static_cast<std::size_t>(nr_values_read);
-};
+}
 
 // ----------
 
@@ -300,7 +300,7 @@ T read(MemoryReader& source)
   [[maybe_unused]] bool read = source.read(value);
   SELENE_ASSERT(read);
   return value;
-};
+}
 
 /** \brief Reads an element of type T from `source` and writes the element to the output parameter `value`.
  *
@@ -313,7 +313,7 @@ template <typename T, typename>
 inline bool read(MemoryReader& source, T& value) noexcept
 {
   return source.read(value);
-};
+}
 
 /** \brief Reads `nr_values` elements of type T from `source` and writes the elements to the output parameter `values`.
  *
@@ -327,7 +327,7 @@ template <typename T, typename>
 inline std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) noexcept
 {
   return source.read(values, nr_values);
-};
+}
 
 }  // namespace sln
 

@@ -239,7 +239,7 @@ inline bool FileReader::read(T& value) noexcept
   SELENE_ASSERT(fp_);
   const auto nr_values_read = std::fread(&value, sizeof(T), 1, fp_);
   return (nr_values_read == 1);
-};
+}
 
 /** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
  *
@@ -256,7 +256,7 @@ inline std::size_t FileReader::read(T* values, std::size_t nr_values) noexcept
   SELENE_ASSERT(fp_);
   const auto nr_values_read = std::fread(values, sizeof(T), nr_values, fp_);
   return nr_values_read;
-};
+}
 
 // ----------
 
@@ -276,7 +276,7 @@ T read(FileReader& source)
   [[maybe_unused]] bool read = source.read(value);
   SELENE_ASSERT(read);
   return value;
-};
+}
 
 /** \brief Reads an element of type T from `source` and writes the element to the output parameter `value`.
  *
@@ -289,7 +289,7 @@ template <typename T, typename>
 inline bool read(FileReader& source, T& value) noexcept
 {
   return source.read(value);
-};
+}
 
 /** \brief Reads `nr_values` elements of type T from `source` and writes the elements to the output parameter `values`.
  *
@@ -303,7 +303,7 @@ template <typename T, typename>
 inline std::size_t read(FileReader& source, T* values, std::size_t nr_values) noexcept
 {
   return source.read(values, nr_values);
-};
+}
 
 }  // namespace sln
 

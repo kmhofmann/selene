@@ -286,7 +286,7 @@ bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions 
   PNGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
   return write_png(img_data, obj, sink, options, messages);
-};
+}
 
 template <typename SinkType>
 bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink, PNGCompressionOptions options,

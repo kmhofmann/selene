@@ -301,7 +301,7 @@ template <typename T, typename>
 inline bool write(FileWriter& sink, const T& value) noexcept
 {
   return sink.write(value);
-};
+}
 
 /** \brief Writes `nr_values` elements of type T to `sink`.
  *
@@ -315,7 +315,7 @@ template <typename T, typename>
 inline std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noexcept
 {
   return sink.write(values, nr_values);
-};
+}
 
 }  // namespace sln
 
