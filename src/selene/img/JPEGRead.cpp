@@ -288,8 +288,11 @@ ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options, Messag
 }
 
 template <typename SourceType>
-ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source, JPEGDecompressionOptions options,
-                    MessageLog* messages, const JPEGHeaderInfo* provided_header_info)
+ImageData read_jpeg(JPEGDecompressionObject& obj,
+                    SourceType& source,
+                    JPEGDecompressionOptions options,
+                    MessageLog* messages,
+                    const JPEGHeaderInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -351,10 +354,10 @@ template JPEGHeaderInfo read_jpeg_header<MemoryReader>(JPEGDecompressionObject&,
 template ImageData read_jpeg<FileReader>(FileReader&, JPEGDecompressionOptions, MessageLog*);
 template ImageData read_jpeg<MemoryReader>(MemoryReader&, JPEGDecompressionOptions, MessageLog*);
 
-template ImageData read_jpeg<FileReader>(JPEGDecompressionObject&, FileReader&, JPEGDecompressionOptions, MessageLog*,
-                                         const JPEGHeaderInfo*);
-template ImageData read_jpeg<MemoryReader>(JPEGDecompressionObject&, MemoryReader&, JPEGDecompressionOptions,
-                                           MessageLog*, const JPEGHeaderInfo*);
+template ImageData read_jpeg<FileReader>(
+    JPEGDecompressionObject&, FileReader&, JPEGDecompressionOptions, MessageLog*, const JPEGHeaderInfo*);
+template ImageData read_jpeg<MemoryReader>(
+    JPEGDecompressionObject&, MemoryReader&, JPEGDecompressionOptions, MessageLog*, const JPEGHeaderInfo*);
 
 /// \endcond
 

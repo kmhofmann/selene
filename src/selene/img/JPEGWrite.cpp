@@ -229,7 +229,10 @@ bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOption
 }
 
 template <typename SinkType>
-bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink, JPEGCompressionOptions options,
+bool write_jpeg(const ImageData& img_data,
+                JPEGCompressionObject& obj,
+                SinkType& sink,
+                JPEGCompressionOptions options,
                 MessageLog* messages)
 {
   detail::set_destination(obj, sink);
@@ -287,10 +290,10 @@ bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType&
 template bool write_jpeg<FileWriter>(const ImageData&, FileWriter&, JPEGCompressionOptions, MessageLog*);
 template bool write_jpeg<VectorWriter>(const ImageData&, VectorWriter&, JPEGCompressionOptions, MessageLog*);
 
-template bool write_jpeg<FileWriter>(const ImageData&, JPEGCompressionObject&, FileWriter&, JPEGCompressionOptions,
-                                     MessageLog*);
-template bool write_jpeg<VectorWriter>(const ImageData&, JPEGCompressionObject&, VectorWriter&, JPEGCompressionOptions,
-                                       MessageLog*);
+template bool write_jpeg<FileWriter>(
+    const ImageData&, JPEGCompressionObject&, FileWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<VectorWriter>(
+    const ImageData&, JPEGCompressionObject&, VectorWriter&, JPEGCompressionOptions, MessageLog*);
 
 /// \endcond
 

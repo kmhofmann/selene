@@ -23,7 +23,10 @@ template <typename SourceType>
 ImageData read_image(SourceType& source, MessageLog* messages = nullptr);
 
 template <typename SinkType>
-bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, MessageLog* messages = nullptr,
+bool write_image(const ImageData& img_data,
+                 ImageFormat format,
+                 SinkType& sink,
+                 MessageLog* messages = nullptr,
                  int jpeg_quality = 95);
 
 }  // namespace sln

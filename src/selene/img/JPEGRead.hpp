@@ -49,7 +49,9 @@ struct JPEGHeaderInfo
   const int nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
-  explicit JPEGHeaderInfo(PixelIndex width_ = 0_px, PixelIndex height_ = 0_px, int nr_channels_ = 0,
+  explicit JPEGHeaderInfo(PixelIndex width_ = 0_px,
+                          PixelIndex height_ = 0_px,
+                          int nr_channels_ = 0,
                           JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
   bool is_valid() const;
@@ -134,7 +136,9 @@ JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind = false, Message
  * @return A JPEG header info object.
  */
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source, bool rewind = false,
+JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj,
+                                SourceType& source,
+                                bool rewind = false,
                                 MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a JPEG image data stream.
@@ -150,7 +154,8 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+ImageData read_jpeg(SourceType& source,
+                    JPEGDecompressionOptions options = JPEGDecompressionOptions(),
                     MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a JPEG image data stream.
@@ -171,8 +176,10 @@ ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options = JPEGD
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_jpeg(JPEGDecompressionObject& obj, SourceType& source,
-                    JPEGDecompressionOptions options = JPEGDecompressionOptions(), MessageLog* messages = nullptr,
+ImageData read_jpeg(JPEGDecompressionObject& obj,
+                    SourceType& source,
+                    JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                    MessageLog* messages = nullptr,
                     const JPEGHeaderInfo* provided_header_info = nullptr);
 
 }  // namespace sln

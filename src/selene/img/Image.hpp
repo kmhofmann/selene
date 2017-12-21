@@ -82,11 +82,17 @@ public:
 
   void clear();
   void fill(PixelType value);
-  void allocate(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}, bool shrink_to_fit = true,
-                bool force_allocation = false, bool allow_view_reallocation = true);
+  void allocate(PixelLength width,
+                PixelLength height,
+                Stride stride_bytes = Stride{0},
+                bool shrink_to_fit = true,
+                bool force_allocation = false,
+                bool allow_view_reallocation = true);
   void maybe_allocate(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
   void set_view(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
-  void set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height,
+  void set_data(MemoryBlock<NewAllocator>&& data,
+                PixelLength width,
+                PixelLength height,
                 Stride stride_bytes = Stride{0});
 
   iterator begin();
@@ -147,15 +153,19 @@ template <typename PixelType>
 void clone(const Image<PixelType>& src, Image<PixelType>& dst);
 
 template <typename PixelType>
-void clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height,
+void clone(const Image<PixelType>& src,
+           PixelIndex x0,
+           PixelIndex y0,
+           PixelLength width,
+           PixelLength height,
            Image<PixelType>& dst);
 
 template <typename PixelType>
 Image<PixelType> clone(const Image<PixelType>& src);
 
 template <typename PixelType>
-Image<PixelType> clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width,
-                       PixelLength height);
+Image<PixelType> clone(
+    const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height);
 
 template <typename PixelType>
 Image<PixelType> view(const Image<PixelType>& src);
@@ -990,8 +1000,12 @@ void Image<PixelType>::fill(PixelType value)
  * is a view, a `std::runtime_error` exception will be thrown (respecting the strong exception guarantee).
  */
 template <typename PixelType>
-void Image<PixelType>::allocate(PixelLength width, PixelLength height, Stride stride_bytes, bool shrink_to_fit,
-                                bool force_allocation, bool allow_view_reallocation)
+void Image<PixelType>::allocate(PixelLength width,
+                                PixelLength height,
+                                Stride stride_bytes,
+                                bool shrink_to_fit,
+                                bool force_allocation,
+                                bool allow_view_reallocation)
 {
   stride_bytes = std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width));
   const auto nr_bytes_to_allocate = stride_bytes * height;
@@ -1101,7 +1115,9 @@ inline void Image<PixelType>::set_view(std::uint8_t* data, PixelLength width, Pi
  * @param stride_bytes The row stride in bytes.
  */
 template <typename PixelType>
-inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height,
+inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data,
+                                       PixelLength width,
+                                       PixelLength height,
                                        Stride stride_bytes)
 {
   stride_bytes = std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width));
@@ -1494,7 +1510,11 @@ void clone(const Image<PixelType>& src, Image<PixelType>& dst)
  * @param dst Destination image.
  */
 template <typename PixelType>
-void clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height,
+void clone(const Image<PixelType>& src,
+           PixelIndex x0,
+           PixelIndex y0,
+           PixelLength width,
+           PixelLength height,
            Image<PixelType>& dst)
 {
   auto src_sub_view = view(src, x0, y0, width, height);

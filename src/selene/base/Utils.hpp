@@ -55,7 +55,13 @@ inline constexpr const T& clamp(const T& value, const T& min, const T& max)
   return clamp(value, min, max, std::less<T>());
 }
 
-
+/** \brief Returns a `std::array` filled with `N` equal values.
+ *
+ * @tparam T The value type of the array.
+ * @tparam N The number of elements in the array.
+ * @param value The value to fill the array with.
+ * @return A `std::array<T, N>`, where each entry has value `value`.
+ */
 template <typename T, std::uint32_t N>
 constexpr std::array<T, N> make_array_n_equal(T value)
 {

@@ -17,9 +17,9 @@ using float64_t = double;  ///< 64-bit floating point type.
 
 // TODO: Expose way to set this via CMake
 #if defined(SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
-using default_float_t = float32_t;
+using default_float_t = float32_t;  ///< Default floating point type: single precision.
 #else
-using default_float_t = float64_t;
+using default_float_t = float64_t;  ///< Default floating point type: double precision.
 #endif
 
 static_assert(sizeof(float32_t) == 4, "type size mismatch");

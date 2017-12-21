@@ -86,8 +86,8 @@ bool PNGCompressionObject::valid() const
   return impl_->valid;
 }
 
-bool PNGCompressionObject::set_image_info(int width, int height, int nr_channels, int bit_depth, bool interlaced,
-                                          PixelFormat pixel_format)
+bool PNGCompressionObject::set_image_info(
+    int width, int height, int nr_channels, int bit_depth, bool interlaced, PixelFormat pixel_format)
 {
   auto png_ptr = impl_->png_ptr;
   auto info_ptr = impl_->info_ptr;
@@ -289,7 +289,10 @@ bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions 
 }
 
 template <typename SinkType>
-bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink, PNGCompressionOptions options,
+bool write_png(const ImageData& img_data,
+               PNGCompressionObject& obj,
+               SinkType& sink,
+               PNGCompressionOptions options,
                MessageLog* messages)
 {
   if (img_data.nr_bytes_per_channel() != 1 && img_data.nr_bytes_per_channel() != 2)
@@ -341,10 +344,10 @@ bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& s
 template bool write_png<FileWriter>(const ImageData&, FileWriter&, PNGCompressionOptions, MessageLog*);
 template bool write_png<VectorWriter>(const ImageData&, VectorWriter&, PNGCompressionOptions, MessageLog*);
 
-template bool write_png<FileWriter>(const ImageData&, PNGCompressionObject&, FileWriter&, PNGCompressionOptions,
-                                    MessageLog*);
-template bool write_png<VectorWriter>(const ImageData&, PNGCompressionObject&, VectorWriter&, PNGCompressionOptions,
-                                      MessageLog*);
+template bool write_png<FileWriter>(
+    const ImageData&, PNGCompressionObject&, FileWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<VectorWriter>(
+    const ImageData&, PNGCompressionObject&, VectorWriter&, PNGCompressionOptions, MessageLog*);
 
 /// \endcond
 

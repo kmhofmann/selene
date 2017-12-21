@@ -14,9 +14,13 @@ using namespace sln::literals;
 
 namespace {
 
-sln::ImageData create_test_image_data(sln::PixelLength width, sln::PixelLength height, std::uint16_t nr_channels,
-                                      std::uint8_t nr_bytes_per_channel, sln::Stride stride_bytes,
-                                      sln::PixelFormat pixel_format, sln::SampleFormat sample_format)
+sln::ImageData create_test_image_data(sln::PixelLength width,
+                                      sln::PixelLength height,
+                                      std::uint16_t nr_channels,
+                                      std::uint8_t nr_bytes_per_channel,
+                                      sln::Stride stride_bytes,
+                                      sln::PixelFormat pixel_format,
+                                      sln::SampleFormat sample_format)
 {
   sln::ImageData img_data(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 

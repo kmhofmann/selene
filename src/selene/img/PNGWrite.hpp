@@ -62,8 +62,11 @@ struct PNGCompressionOptions
    * @param invert_alpha_channel_ If true, invert values in alpha channel (e.g. 0 -> 255).
    * @param invert_monochrome_ If true, invert grayscale or grayscale_alpha image values.
    */
-  explicit PNGCompressionOptions(int compression_level_ = -1, bool interlaced_ = false, bool set_bgr_ = false,
-                                 bool invert_alpha_channel_ = false, bool invert_monochrome_ = false)
+  explicit PNGCompressionOptions(int compression_level_ = -1,
+                                 bool interlaced_ = false,
+                                 bool set_bgr_ = false,
+                                 bool invert_alpha_channel_ = false,
+                                 bool invert_monochrome_ = false)
       : compression_level(compression_level_)
       , interlaced(interlaced_)
       , set_bgr(set_bgr_)
@@ -111,7 +114,9 @@ private:
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions options = PNGCompressionOptions(),
+bool write_png(const ImageData& img_data,
+               SinkType& sink,
+               PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
 
 /** \brief Writes a PNG image data stream, given the supplied uncompressed image data.
@@ -127,8 +132,11 @@ bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions 
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_png(const ImageData& img_data, PNGCompressionObject& obj, SinkType& sink,
-               PNGCompressionOptions options = PNGCompressionOptions(), MessageLog* messages = nullptr);
+bool write_png(const ImageData& img_data,
+               PNGCompressionObject& obj,
+               SinkType& sink,
+               PNGCompressionOptions options = PNGCompressionOptions(),
+               MessageLog* messages = nullptr);
 
 }  // namespace sln
 

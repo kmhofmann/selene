@@ -96,10 +96,14 @@ bool PNGDecompressionObject::valid() const
   return impl_->valid;
 }
 
-bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8, bool set_background,
-                                                          bool strip_alpha_channel, bool swap_alpha_channel,
-                                                          bool set_bgr, bool invert_alpha_channel,
-                                                          bool invert_monochrome, bool convert_gray_to_rgb,
+bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8,
+                                                          bool set_background,
+                                                          bool strip_alpha_channel,
+                                                          bool swap_alpha_channel,
+                                                          bool set_bgr,
+                                                          bool invert_alpha_channel,
+                                                          bool invert_monochrome,
+                                                          bool convert_gray_to_rgb,
                                                           bool convert_rgb_to_gray)
 {
   auto png_ptr = impl_->png_ptr;
@@ -338,8 +342,8 @@ PNGOutputInfo::PNGOutputInfo() : width(0), height(0), nr_channels(0), bit_depth(
 {
 }
 
-PNGOutputInfo::PNGOutputInfo(PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_,
-                             std::size_t row_bytes_)
+PNGOutputInfo::PNGOutputInfo(
+    PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_), row_bytes(row_bytes_)
 {
 }
@@ -580,8 +584,11 @@ ImageData read_png(SourceType& source, PNGDecompressionOptions options, MessageL
 }
 
 template <typename SourceType>
-ImageData read_png(PNGDecompressionObject& obj, SourceType& source, PNGDecompressionOptions options,
-                   MessageLog* messages, const PNGHeaderInfo* provided_header_info)
+ImageData read_png(PNGDecompressionObject& obj,
+                   SourceType& source,
+                   PNGDecompressionOptions options,
+                   MessageLog* messages,
+                   const PNGHeaderInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -662,10 +669,10 @@ template PNGHeaderInfo read_png_header<MemoryReader>(PNGDecompressionObject&, Me
 template ImageData read_png<FileReader>(FileReader&, PNGDecompressionOptions, MessageLog*);
 template ImageData read_png<MemoryReader>(MemoryReader&, PNGDecompressionOptions, MessageLog*);
 
-template ImageData read_png<FileReader>(PNGDecompressionObject&, FileReader&, PNGDecompressionOptions, MessageLog*,
-                                        const PNGHeaderInfo*);
-template ImageData read_png<MemoryReader>(PNGDecompressionObject&, MemoryReader&, PNGDecompressionOptions, MessageLog*,
-                                          const PNGHeaderInfo*);
+template ImageData read_png<FileReader>(
+    PNGDecompressionObject&, FileReader&, PNGDecompressionOptions, MessageLog*, const PNGHeaderInfo*);
+template ImageData read_png<MemoryReader>(
+    PNGDecompressionObject&, MemoryReader&, PNGDecompressionOptions, MessageLog*, const PNGHeaderInfo*);
 
 /// \endcond
 

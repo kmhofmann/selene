@@ -12,6 +12,14 @@
 
 namespace sln {
 
+/** \brief Applies a unary function to each pixel value of an image.
+ *
+ * @tparam PixelType The pixel type of the image.
+ * @tparam UnaryFunction The unary function type.
+ * @param[in,out] img The image to apply the function on.
+ * @param f The unary function to apply to each pixel. Its signature should be `void f(PixelType&)`.
+ * @return `std::move(f)`.
+ */
 template <typename PixelType, typename UnaryFunction>
 UnaryFunction for_each_pixel(Image<PixelType>& img, UnaryFunction f)
 {
@@ -26,6 +34,18 @@ UnaryFunction for_each_pixel(Image<PixelType>& img, UnaryFunction f)
   return std::move(f);
 }
 
+/** \brief Transforms one image into another by applying a unary operation to each pixel value.
+ *
+ * `sln::Image<PixelTypeDst>::maybe_allocate` is called on the destination image prior to performing the operation.
+ *
+ * @tparam PixelTypeDst The pixel type of the destination image.
+ * @tparam PixelTypeSrc The pixel type of the source image.
+ * @tparam UnaryOperation The unary operation type.
+ * @param img_src The source image.
+ * @param[out] img_dst The destination image.
+ * @param op The unary operation. Its signature should be `PixelTypeDst f(const PixelTypeSrc&)` or `PixelTypeDst
+ * f(PixelTypeSrc)`.
+ */
 template <typename PixelTypeDst, typename PixelTypeSrc, typename UnaryOperation>
 void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& img_dst, UnaryOperation op)
 {
@@ -41,6 +61,16 @@ void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& i
   }
 }
 
+/** \brief Transforms one image into another by applying a unary operation to each pixel value.
+ *
+ * @tparam PixelTypeDst The pixel type of the destination image.
+ * @tparam PixelTypeSrc The pixel type of the source image.
+ * @tparam UnaryOperation The unary operation type.
+ * @param img_src The source image.
+ * @param op The unary operation. Its signature should be `PixelTypeDst f(const PixelTypeSrc&)` or `PixelTypeDst
+ * f(PixelTypeSrc)`.
+ * @return The destination image.
+ */
 template <typename PixelTypeDst, typename PixelTypeSrc, typename UnaryOperation>
 Image<PixelTypeDst> transform_pixels(const Image<PixelTypeSrc>& img_src, UnaryOperation op)
 {

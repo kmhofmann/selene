@@ -40,15 +40,32 @@ class ImageData
 {
 public:
   ImageData() = default;  ///< Default constructor. See clear() for the postconditions.
-  ImageData(PixelLength width, PixelLength height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
-            Stride stride_bytes = Stride{0}, PixelFormat pixel_format = PixelFormat::Unknown,
+
+  ImageData(PixelLength width,
+            PixelLength height,
+            std::uint16_t nr_channels,
+            std::uint8_t nr_bytes_per_channel,
+            Stride stride_bytes = Stride{0},
+            PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown);
-  ImageData(std::uint8_t* data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
-            std::uint8_t nr_bytes_per_channel, Stride stride_bytes = Stride{0},
-            PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
-  ImageData(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
-            std::uint8_t nr_bytes_per_channel, Stride stride_bytes = Stride{0},
-            PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
+
+  ImageData(std::uint8_t* data,
+            PixelLength width,
+            PixelLength height,
+            std::uint16_t nr_channels,
+            std::uint8_t nr_bytes_per_channel,
+            Stride stride_bytes = Stride{0},
+            PixelFormat pixel_format = PixelFormat::Unknown,
+            SampleFormat sample_format = SampleFormat::Unknown);
+
+  ImageData(MemoryBlock<NewAllocator>&& data,
+            PixelLength width,
+            PixelLength height,
+            std::uint16_t nr_channels,
+            std::uint8_t nr_bytes_per_channel,
+            Stride stride_bytes = Stride{0},
+            PixelFormat pixel_format = PixelFormat::Unknown,
+            SampleFormat sample_format = SampleFormat::Unknown);
   ~ImageData();
 
   ImageData(const ImageData&);
@@ -72,18 +89,34 @@ public:
 
   void clear();
 
-  void allocate(PixelLength width, PixelLength height, std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel,
-                Stride stride_bytes = Stride{0}, PixelFormat pixel_format = PixelFormat::Unknown,
-                SampleFormat sample_format = SampleFormat::Unknown, bool shrink_to_fit = true,
-                bool force_allocation = false, bool allow_view_reallocation = true);
+  void allocate(PixelLength width,
+                PixelLength height,
+                std::uint16_t nr_channels,
+                std::uint8_t nr_bytes_per_channel,
+                Stride stride_bytes = Stride{0},
+                PixelFormat pixel_format = PixelFormat::Unknown,
+                SampleFormat sample_format = SampleFormat::Unknown,
+                bool shrink_to_fit = true,
+                bool force_allocation = false,
+                bool allow_view_reallocation = true);
 
-  void set_view(std::uint8_t* data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
-                std::uint8_t nr_bytes_per_channel, Stride stride_bytes = Stride{0},
-                PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
+  void set_view(std::uint8_t* data,
+                PixelLength width,
+                PixelLength height,
+                std::uint16_t nr_channels,
+                std::uint8_t nr_bytes_per_channel,
+                Stride stride_bytes = Stride{0},
+                PixelFormat pixel_format = PixelFormat::Unknown,
+                SampleFormat sample_format = SampleFormat::Unknown);
 
-  void set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
-                std::uint8_t nr_bytes_per_channel, Stride stride_bytes = Stride{0},
-                PixelFormat pixel_format = PixelFormat::Unknown, SampleFormat sample_format = SampleFormat::Unknown);
+  void set_data(MemoryBlock<NewAllocator>&& data,
+                PixelLength width,
+                PixelLength height,
+                std::uint16_t nr_channels,
+                std::uint8_t nr_bytes_per_channel,
+                Stride stride_bytes = Stride{0},
+                PixelFormat pixel_format = PixelFormat::Unknown,
+                SampleFormat sample_format = SampleFormat::Unknown);
 
   std::uint8_t* byte_ptr();
   const std::uint8_t* byte_ptr() const;
@@ -134,8 +167,12 @@ private:
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData::ImageData(PixelLength width, PixelLength height, std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
+inline ImageData::ImageData(PixelLength width,
+                            PixelLength height,
+                            std::uint16_t nr_channels,
+                            std::uint8_t nr_bytes_per_channel,
+                            Stride stride_bytes,
+                            PixelFormat pixel_format,
                             SampleFormat sample_format)
 {
   allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
@@ -158,8 +195,13 @@ inline ImageData::ImageData(PixelLength width, PixelLength height, std::uint16_t
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData::ImageData(std::uint8_t* data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
+inline ImageData::ImageData(std::uint8_t* data,
+                            PixelLength width,
+                            PixelLength height,
+                            std::uint16_t nr_channels,
+                            std::uint8_t nr_bytes_per_channel,
+                            Stride stride_bytes,
+                            PixelFormat pixel_format,
                             SampleFormat sample_format)
 {
   set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
@@ -182,9 +224,14 @@ inline ImageData::ImageData(std::uint8_t* data, PixelLength width, PixelLength h
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height,
-                            std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel, Stride stride_bytes,
-                            PixelFormat pixel_format, SampleFormat sample_format)
+inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data,
+                            PixelLength width,
+                            PixelLength height,
+                            std::uint16_t nr_channels,
+                            std::uint8_t nr_bytes_per_channel,
+                            Stride stride_bytes,
+                            PixelFormat pixel_format,
+                            SampleFormat sample_format)
 {
   set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
            sample_format);
@@ -473,9 +520,15 @@ inline void ImageData::clear()
  * is a view, a `std::runtime_error` exception will be thrown (respecting the strong exception guarantee).
  */
 
-inline void ImageData::allocate(PixelLength width, PixelLength height, std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
-                                SampleFormat sample_format, bool shrink_to_fit, bool force_allocation,
+inline void ImageData::allocate(PixelLength width,
+                                PixelLength height,
+                                std::uint16_t nr_channels,
+                                std::uint8_t nr_bytes_per_channel,
+                                Stride stride_bytes,
+                                PixelFormat pixel_format,
+                                SampleFormat sample_format,
+                                bool shrink_to_fit,
+                                bool force_allocation,
                                 bool allow_view_reallocation)
 {
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
@@ -528,8 +581,13 @@ inline void ImageData::allocate(PixelLength width, PixelLength height, std::uint
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline void ImageData::set_view(std::uint8_t* data, PixelLength width, PixelLength height, std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel, Stride stride_bytes, PixelFormat pixel_format,
+inline void ImageData::set_view(std::uint8_t* data,
+                                PixelLength width,
+                                PixelLength height,
+                                std::uint16_t nr_channels,
+                                std::uint8_t nr_bytes_per_channel,
+                                Stride stride_bytes,
+                                PixelFormat pixel_format,
                                 SampleFormat sample_format)
 {
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
@@ -564,9 +622,14 @@ inline void ImageData::set_view(std::uint8_t* data, PixelLength width, PixelLeng
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height,
-                                std::uint16_t nr_channels, std::uint8_t nr_bytes_per_channel, Stride stride_bytes,
-                                PixelFormat pixel_format, SampleFormat sample_format)
+inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data,
+                                PixelLength width,
+                                PixelLength height,
+                                std::uint16_t nr_channels,
+                                std::uint8_t nr_bytes_per_channel,
+                                Stride stride_bytes,
+                                PixelFormat pixel_format,
+                                SampleFormat sample_format)
 {
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
   SELENE_ASSERT(data.size() >= stride_bytes * height);

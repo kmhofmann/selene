@@ -54,7 +54,9 @@ public:
   const int nr_channels;  ///< Number of image channels.
   const int bit_depth;  ///< Image bit depth (8 or 16).
 
-  explicit PNGHeaderInfo(PixelLength width_ = 0_px, PixelLength height_ = 0_px, int nr_channels_ = 0,
+  explicit PNGHeaderInfo(PixelLength width_ = 0_px,
+                         PixelLength height_ = 0_px,
+                         int nr_channels_ = 0,
                          int bit_depth_ = 0);
 
   bool is_valid() const;
@@ -89,10 +91,14 @@ struct PNGDecompressionOptions
    * @param convert_gray_to_rgb_ Convert grayscale images to RGB.
    * @param convert_rgb_to_gray_ Convert RGB images to grayscale.
    */
-  explicit PNGDecompressionOptions(bool force_bit_depth_8_ = false, bool set_background_ = false,
-                                   bool strip_alpha_channel_ = false, bool swap_alpha_channel_ = false,
-                                   bool set_bgr_ = false, bool invert_alpha_channel_ = false,
-                                   bool invert_monochrome_ = false, bool convert_gray_to_rgb_ = false,
+  explicit PNGDecompressionOptions(bool force_bit_depth_8_ = false,
+                                   bool set_background_ = false,
+                                   bool strip_alpha_channel_ = false,
+                                   bool swap_alpha_channel_ = false,
+                                   bool set_bgr_ = false,
+                                   bool invert_alpha_channel_ = false,
+                                   bool invert_monochrome_ = false,
+                                   bool convert_gray_to_rgb_ = false,
                                    bool convert_rgb_to_gray_ = false)
       : force_bit_depth_8(force_bit_depth_8_)
       , set_background(set_background_)
@@ -158,7 +164,9 @@ PNGHeaderInfo read_png_header(SourceType& source, bool rewind = false, MessageLo
  * @return A PNG header info object.
  */
 template <typename SourceType>
-PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, bool rewind = false,
+PNGHeaderInfo read_png_header(PNGDecompressionObject& obj,
+                              SourceType& source,
+                              bool rewind = false,
                               MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a PNG image data stream.
@@ -174,7 +182,8 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, b
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_png(SourceType& source, PNGDecompressionOptions options = PNGDecompressionOptions(),
+ImageData read_png(SourceType& source,
+                   PNGDecompressionOptions options = PNGDecompressionOptions(),
                    MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a PNG image data stream.
@@ -195,8 +204,10 @@ ImageData read_png(SourceType& source, PNGDecompressionOptions options = PNGDeco
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_png(PNGDecompressionObject& obj, SourceType& source,
-                   PNGDecompressionOptions options = PNGDecompressionOptions(), MessageLog* messages = nullptr,
+ImageData read_png(PNGDecompressionObject& obj,
+                   SourceType& source,
+                   PNGDecompressionOptions options = PNGDecompressionOptions(),
+                   MessageLog* messages = nullptr,
                    const PNGHeaderInfo* provided_header_info = nullptr);
 
 }  // namespace sln

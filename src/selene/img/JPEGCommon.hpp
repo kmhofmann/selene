@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_JPEG_COMMON_HPP
 #define SELENE_IMG_JPEG_COMMON_HPP
 
+/// @file
+
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <cstdint>

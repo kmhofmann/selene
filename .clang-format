@@ -30,7 +30,7 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
 
 BinPackArguments: true
-BinPackParameters: true
+BinPackParameters: false
 
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Custom

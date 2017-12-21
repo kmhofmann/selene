@@ -56,7 +56,8 @@ struct JPEGCompressionOptions
    * @param jpeg_color_space_ Color space of the compressed data inside the JPEG stream.
    * @param optimize_coding_ If true, compute optimal Huffman coding tables for the image (more expensive computation).
    */
-  explicit JPEGCompressionOptions(int quality_ = 95, JPEGColorSpace in_color_space_ = JPEGColorSpace::Auto,
+  explicit JPEGCompressionOptions(int quality_ = 95,
+                                  JPEGColorSpace in_color_space_ = JPEGColorSpace::Auto,
                                   JPEGColorSpace jpeg_color_space_ = JPEGColorSpace::Auto,
                                   bool optimize_coding_ = false)
       : quality(quality_)
@@ -82,7 +83,8 @@ public:
   const MessageLog& message_log() const;
 
   bool set_image_info(int width, int height, int nr_channels, JPEGColorSpace in_color_space);
-  bool set_compression_parameters(int quality, JPEGColorSpace color_space = JPEGColorSpace::Auto,
+  bool set_compression_parameters(int quality,
+                                  JPEGColorSpace color_space = JPEGColorSpace::Auto,
                                   bool optimize_coding = false);
   /// \endcond
 
@@ -108,7 +110,9 @@ private:
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOptions options = JPEGCompressionOptions(),
+bool write_jpeg(const ImageData& img_data,
+                SinkType& sink,
+                JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
 
 /** \brief Writes a JPEG image data stream, given the supplied uncompressed image data.
@@ -124,8 +128,11 @@ bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOption
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_jpeg(const ImageData& img_data, JPEGCompressionObject& obj, SinkType& sink,
-                JPEGCompressionOptions options = JPEGCompressionOptions(), MessageLog* messages = nullptr);
+bool write_jpeg(const ImageData& img_data,
+                JPEGCompressionObject& obj,
+                SinkType& sink,
+                JPEGCompressionOptions options = JPEGCompressionOptions(),
+                MessageLog* messages = nullptr);
 
 }  // namespace sln
 
