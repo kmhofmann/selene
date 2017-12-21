@@ -21,7 +21,8 @@ enum class BorderAccessMode
 {
   Unchecked,  ///< No additional checks are performed.
   ZeroPadding,  ///< Access outside of the image extents always returns 0.
-  Replicated,  ///< Access outside of the image extents is projected to the border, and the respective value is returned.
+  Replicated,  ///< Access outside of the image extents is projected to the border, and the respective value is
+               ///< returned.
 };
 
 template <BorderAccessMode>

@@ -17,48 +17,65 @@
 
 namespace sln {
 
-template <ImageInterpolationMode InterpolationMode, BorderAccessMode AccessMode, typename ImageType, typename Index,
-          typename = typename std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y)
+/** \brief Returns the pixel value of the image at the specified (floating point) location, using the specified
+ * interpolation method and border access mode.
+ *
+ * @tparam InterpolationMode The interpolation mode to use. Defaults to `ImageInterpolationMode::Bilinear`.
+ * @tparam AccessMode The border access mode to use. Defaults to BorderAccessMode::Unchecked.
+ * @tparam ImageType The image type, i.e. `Image<...>`.
+ * @tparam Index The index type. Must be floating point for this overload.
+ * @param img The image to return the pixel element from.
+ * @param x The floating point x-coordinate.
+ * @param y The floating point y-coordinate.
+ * @return Interpolated pixel value at the specified (x, y) location.
+ */
+template <ImageInterpolationMode InterpolationMode = ImageInterpolationMode::Bilinear,
+          BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType, typename Index>
+inline auto get(const ImageType& img, Index x, Index y,
+                typename std::enable_if_t<std::is_floating_point<Index>::value>* = nullptr)
 {
   return ImageInterpolator<InterpolationMode, AccessMode>::interpolate(img, x, y);
 }
 
-template <ImageInterpolationMode InterpolationMode, typename ImageType, typename Index,
-          typename = typename std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y)
-{
-  return get<InterpolationMode, BorderAccessMode::Unchecked>(img, x, y);
-}
-
-template <BorderAccessMode AccessMode, typename ImageType, typename Index,
-          typename = typename std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y)
+/** \brief Returns the pixel value of the image at the specified (floating point) location, using bilinear interpolation
+ * and the specified border access mode.
+ *
+ * This is a function overload where the border access mode can be selected, but the interpolation method is the default
+ * (bilinear interpolation).
+ *
+ * @tparam AccessMode The border access mode to use.
+ * @tparam ImageType The image type, i.e. `Image<...>`.
+ * @tparam Index The index type. Must be floating point for this overload.
+ * @param img The image to return the pixel element from.
+ * @param x The floating point x-coordinate.
+ * @param y The floating point y-coordinate.
+ * @return Interpolated pixel value at the specified (x, y) location.
+ */
+template <BorderAccessMode AccessMode, typename ImageType, typename Index>
+inline auto get(const ImageType& img, Index x, Index y,
+                typename std::enable_if_t<std::is_floating_point<Index>::value>* = nullptr)
 {
   return get<ImageInterpolationMode::Bilinear, AccessMode>(img, x, y);
 }
 
-template <typename ImageType, typename Index,
-          typename = typename std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y)
-{
-  return get<ImageInterpolationMode::Bilinear, BorderAccessMode::Unchecked>(img, x, y);
-}
-
-
-template <BorderAccessMode AccessMode, typename Index, typename ImageType,
-          typename = typename std::enable_if_t<std::is_integral<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y)
+/** \brief Returns the pixel value of the image at the specified (integral) location, using the specified border access
+ * mode.
+ *
+ * @tparam AccessMode The border access mode to use. Defaults to BorderAccessMode::Unchecked.
+ * @tparam ImageType The image type, i.e. `Image<...>`.
+ * @tparam Index The index type. Must be floating point for this overload.
+ * @param img The image to return the pixel element from.
+ * @param x The floating point x-coordinate.
+ * @param y The floating point y-coordinate.
+ * @return Pixel value at the specified (x, y) location.
+ */
+template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType, typename Index>
+inline auto get(const ImageType& img, Index x, Index y,
+                typename std::enable_if_t<std::is_integral<Index>::value>* = nullptr)
 {
   const auto si_x = static_cast<SignedPixelIndex>(x);
   const auto si_y = static_cast<SignedPixelIndex>(y);
   return ImageAccessor<AccessMode>::access(img, si_x, si_y);
-}
-
-template <typename Index, typename ImageType, typename = typename std::enable_if_t<std::is_integral<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y)
-{
-  return get<BorderAccessMode::Unchecked>(img, x, y);
 }
 
 }  // namespace sln
