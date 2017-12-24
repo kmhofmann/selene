@@ -32,7 +32,7 @@ public:
   using value_type = T;  ///< The type of each pixel sample (channel).
   static constexpr auto nr_channels = nr_channels_;  ///< The number of channels per pixel.
 
-  Pixel() = default;  ///< Default constructor. Pixel values are uninitialized.
+  constexpr Pixel() = default;  ///< Default constructor. Pixel values are uninitialized.
 
   template <typename... Args, typename = typename std::enable_if_t<sizeof...(Args) == nr_channels_>>
   constexpr Pixel(Args... args);
@@ -155,6 +155,8 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cas
 template <typename T, std::uint32_t nr_channels_>
 inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) : data_(arr)
 {
+  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel type is not POD");
+  static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 }
 
 /** \brief Copy constructor taking a `Pixel<>` with a different element type.

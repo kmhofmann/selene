@@ -18,6 +18,7 @@ target_sources(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MessageLog.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/ExplicitType.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/Promote.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Round.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Utils.hpp
@@ -60,6 +61,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.cpp
@@ -85,6 +87,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/OpenCV.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Pixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelTraits.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.hpp

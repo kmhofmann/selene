@@ -25,6 +25,7 @@ target_sources(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/IO_PNG.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.cpp
         )
