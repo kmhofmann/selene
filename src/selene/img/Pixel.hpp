@@ -34,7 +34,7 @@ public:
 
   constexpr Pixel() = default;  ///< Default constructor. Pixel values are uninitialized.
 
-  template <typename... Args, typename = typename std::enable_if_t<sizeof...(Args) == nr_channels_>>
+  template <typename... Args, typename = std::enable_if_t<sizeof...(Args) == nr_channels_>>
   constexpr Pixel(Args... args);
 
   constexpr explicit Pixel(const std::array<T, nr_channels>& arr);
@@ -61,7 +61,7 @@ public:
   operator std::conditional_t<nr_channels_ == 1, T, void>() const;
 
 private:
-  static_assert(std::is_arithmetic<T>::value, "Pixel type needs to be an arithmetic type");
+  static_assert(std::is_arithmetic<T>::value, "Pixel element type needs to be an arithmetic type");
   std::array<T, nr_channels> data_;
 };
 
@@ -140,7 +140,7 @@ template <typename T, std::uint32_t nr_channels_>
 template <typename... Args, typename>
 inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cast<T>(args)...}}
 {
-  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel type is not POD");
+  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 }
 
@@ -155,7 +155,7 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cas
 template <typename T, std::uint32_t nr_channels_>
 inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) : data_(arr)
 {
-  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel type is not POD");
+  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 }
 
@@ -170,6 +170,9 @@ template <typename T, std::uint32_t nr_channels_>
 template <typename U>
 Pixel<T, nr_channels_>::Pixel(const Pixel<U, nr_channels_>& other)
 {
+  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
+  static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
+
   for (std::uint32_t i = 0; i < nr_channels; ++i)
   {
     this->operator[](i) = static_cast<T>(other[i]);

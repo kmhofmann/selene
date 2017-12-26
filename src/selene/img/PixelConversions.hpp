@@ -10,6 +10,7 @@
 #include <selene/base/Utils.hpp>
 
 #include <selene/img/Pixel.hpp>
+#include <selene/img/PixelFormat.hpp>
 #include <selene/img/PixelTraits.hpp>
 
 #include <array>
@@ -17,6 +18,26 @@
 #include <type_traits>
 
 namespace sln {
+
+template <PixelFormat pixel_format_src,
+          PixelFormat pixel_format_dst,
+          typename PixelSrc,
+          typename = std::enable_if_t<!conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
+constexpr auto convert_pixel(const PixelSrc& px);
+
+template <PixelFormat pixel_format_src,
+          PixelFormat pixel_format_dst,
+          typename PixelSrc,
+          typename ElementType,
+          typename = std::enable_if_t<conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
+constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value);
+
+template <std::uint32_t N, typename T>
+constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src);
+
+
+// ----------
+// Implementation:
 
 namespace detail {
 
@@ -30,381 +51,703 @@ struct BGRToYCoefficients
   static constexpr std::array<default_float_t, 3> values = {0.114, 0.587, 0.299};
 };
 
-}  // namespace detail
+template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst>
+struct PixelConversion;
 
 // ------
 // From Y
 // ------
 
-// TODO: Documentation (for all of these)
 template <std::uint32_t N, typename T>
 constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src)
 {
   return Pixel<T, N>(make_array_n_equal<T, N>(src[0]));
 }
 
-template <typename T>
-constexpr Pixel<T, 2> y_to_ya(const Pixel<T, 1>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::Y>
 {
-  return Pixel<T, 2>(src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 1>& src)
+  {
+    return src;
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> y_to_rgb(const Pixel<T, 1>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::YA>
 {
-  return Pixel<T, 3>(src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 1>& src, const T a)
+  {
+    return Pixel<T, 2>(src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> y_to_bgr(const Pixel<T, 1>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 3>(src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 1>& src)
+  {
+    return Pixel<T, 3>(src[0], src[0], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> y_to_rgba(const Pixel<T, 1>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 4>(src[0], src[0], src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 1>& src)
+  {
+    return Pixel<T, 3>(src[0], src[0], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> y_to_bgra(const Pixel<T, 1>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[0], src[0], src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a)
+  {
+    return Pixel<T, 4>(src[0], src[0], src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> y_to_argb(const Pixel<T, 1>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::BGRA>
 {
-  return Pixel<T, 4>(a, src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a)
+  {
+    return Pixel<T, 4>(src[0], src[0], src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> y_to_abgr(const Pixel<T, 1>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::ARGB>
 {
-  return Pixel<T, 4>(a, src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+  }
+};
 
 // -------
 // From YA
 // -------
 
-template <typename T>
-constexpr Pixel<T, 1> ya_to_y(const Pixel<T, 2>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::Y>
 {
-  return Pixel<T, 1>(src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 2>& src)
+  {
+    return Pixel<T, 1>(src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> ya_to_rgb(const Pixel<T, 2>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::YA>
 {
-  return Pixel<T, 3>(src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 2>& src)
+  {
+    return src;
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> ya_to_bgr(const Pixel<T, 2>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 3>(src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 2>& src)
+  {
+    return Pixel<T, 3>(src[0], src[0], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> ya_to_rgba(const Pixel<T, 2>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 4>(src[0], src[0], src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> ya_to_bgr(const Pixel<T, 2>& src)
+  {
+    return Pixel<T, 3>(src[0], src[0], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> ya_to_bgra(const Pixel<T, 2>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[0], src[0], src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a)
+  {
+    return Pixel<T, 4>(src[0], src[0], src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> ya_to_argb(const Pixel<T, 2>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::BGRA>
 {
-  return Pixel<T, 4>(a, src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a)
+  {
+    return Pixel<T, 4>(src[0], src[0], src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> ya_to_abgr(const Pixel<T, 2>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::ARGB>
 {
-  return Pixel<T, 4>(a, src[0], src[0], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+  }
+};
 
 // --------
 // From RGB
 // --------
 
-template <typename T>
-constexpr Pixel<T, 1> rgb_to_y(const Pixel<T, 3>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::Y>
 {
-  return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src)};
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 3>& src)
+  {
+    return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src)};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 2> rgb_to_ya(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::YA>
 {
-  return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src), a};
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src), a};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> rgb_to_bgr(const Pixel<T, 3>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 3>(src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src)
+  {
+    return src;
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgb_to_rgba(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 4>(src[0], src[1], src[2], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src)
+  {
+    return Pixel<T, 3>(src[2], src[1], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgb_to_bgra(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[2], src[1], src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(src[0], src[1], src[2], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgb_to_argb(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::BGRA>
 {
-  return Pixel<T, 4>(a, src[0], src[1], src[2]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(src[2], src[1], src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgb_to_abgr(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::ARGB>
 {
-  return Pixel<T, 4>(a, src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[0], src[1], src[2]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[2], src[1], src[0]);
+  }
+};
 
 // --------
 // From BGR
 // --------
 
-template <typename T>
-constexpr Pixel<T, 1> bgr_to_y(const Pixel<T, 3>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::Y>
 {
-  return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src)};
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 3>& src)
+  {
+    return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src)};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 2> bgr_to_ya(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::YA>
 {
-  return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src), a};
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src), a};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> bgr_to_rgb(const Pixel<T, 3>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 3>(src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src)
+  {
+    return Pixel<T, 3>(src[2], src[1], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgr_to_rgba(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 4>(src[2], src[1], src[0], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src)
+  {
+    return src;
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgr_to_bgra(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[0], src[1], src[2], a);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(src[2], src[1], src[0], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgr_to_argb(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::BGRA>
 {
-  return Pixel<T, 4>(a, src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(src[0], src[1], src[2], a);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgr_to_abgr(const Pixel<T, 3>& src, const T a)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::ARGB>
 {
-  return Pixel<T, 4>(a, src[0], src[1], src[2]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[2], src[1], src[0]);
+  }
+};
 
-// ---------
-// From RGBA
-// ---------
-
-template <typename T>
-constexpr Pixel<T, 1> rgba_to_y(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::ABGR>
 {
-  return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src)};
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a)
+  {
+    return Pixel<T, 4>(a, src[0], src[1], src[2]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 2> rgba_to_ya(const Pixel<T, 4>& src)
-{
-  return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src), src[3]};
-}
+//// ---------
+//// From RGBA
+//// ---------
 
-template <typename T>
-constexpr Pixel<T, 3> rgba_to_rgb(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::Y>
 {
-  return Pixel<T, 3>(src[0], src[1], src[2]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src)};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> rgba_to_bgr(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::YA>
 {
-  return Pixel<T, 3>(src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src), src[3]};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgba_to_bgra(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 4>(src[2], src[1], src[0], src[3]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[0], src[1], src[2]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgba_to_argb(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 4>(src[3], src[0], src[1], src[2]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[2], src[1], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> rgba_to_abgr(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return src;
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::BGRA>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[2], src[1], src[0], src[3]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::ARGB>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[3], src[0], src[1], src[2]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+  }
+};
 
 // ---------
 // From BGRA
 // ---------
 
-template <typename T>
-constexpr Pixel<T, 1> bgra_to_y(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::Y>
 {
-  return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src)};
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src)};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 2> bgra_to_ya(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::YA>
 {
-  return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src), src[3]};
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src), src[3]};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> bgra_to_rgb(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 3>(src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[2], src[1], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> bgra_to_bgr(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 3>(src[0], src[1], src[2]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[0], src[1], src[2]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgra_to_rgba(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[2], src[1], src[0], src[3]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[2], src[1], src[0], src[3]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgra_to_argb(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::BGRA>
 {
-  return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return src;
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> bgra_to_abgr(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::ARGB>
 {
-  return Pixel<T, 4>(src[3], src[0], src[1], src[2]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[3], src[0], src[1], src[2]);
+  }
+};
 
 // ---------
 // From ARGB
 // ---------
 
-template <typename T>
-constexpr Pixel<T, 1> argb_to_y(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::Y>
 {
-  return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src.data() + 1)};
-}
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src.data() + 1)};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 2> argb_to_ya(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::YA>
 {
-  return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src.data() + 1), src[0]};
-}
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::RGBToYCoefficients>(src.data() + 1), src[0]};
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> argb_to_rgb(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::RGB>
 {
-  return Pixel<T, 3>(src[1], src[2], src[3]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[1], src[2], src[3]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 3> argb_to_bgr(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::BGR>
 {
-  return Pixel<T, 3>(src[3], src[2], src[1]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[3], src[2], src[1]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> argb_to_rgba(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::RGBA>
 {
-  return Pixel<T, 4>(src[1], src[2], src[3], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[1], src[2], src[3], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> argb_to_bgra(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::BGRA>
 {
-  return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+  }
+};
 
-template <typename T>
-constexpr Pixel<T, 4> argb_to_abgr(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ARGB>
 {
-  return Pixel<T, 4>(src[0], src[3], src[2], src[1]);
-}
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return src;
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[0], src[3], src[2], src[1]);
+  }
+};
 
 // ---------
 // From ABGR
 // ---------
 
-template <typename T>
-constexpr Pixel<T, 1> abgr_to_y(const Pixel<T, 4>& src)
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::Y>
 {
-  return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src.data() + 1)};
+  template <typename T>
+  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 1>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src.data() + 1)};
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::YA>
+{
+  template <typename T>
+  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src.data() + 1), src[0]};
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::RGB>
+{
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[3], src[2], src[1]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::BGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 3>(src[1], src[2], src[3]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::RGBA>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::BGRA>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[1], src[2], src[3], src[0]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ARGB>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return Pixel<T, 4>(src[0], src[3], src[2], src[1]);
+  }
+};
+
+template <>
+struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
+{
+  template <typename T>
+  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src)
+  {
+    return src;
+  }
+};
+
+}  // namespace detail
+
+template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename>
+inline constexpr auto convert_pixel(const PixelSrc& px)
+{
+  static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
+                "Incorrect source pixel format.");
+  return detail::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px);
 }
 
-template <typename T>
-constexpr Pixel<T, 2> abgr_to_ya(const Pixel<T, 4>& src)
+template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename>
+inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value)
 {
-  return Pixel<T, 2>{rounded_linear_combination<T, 3, detail::BGRToYCoefficients>(src.data() + 1), src[0]};
-}
-
-template <typename T>
-constexpr Pixel<T, 3> abgr_to_rgb(const Pixel<T, 4>& src)
-{
-  return Pixel<T, 3>(src[3], src[2], src[1]);
-}
-
-template <typename T>
-constexpr Pixel<T, 3> abgr_to_bgr(const Pixel<T, 4>& src)
-{
-  return Pixel<T, 3>(src[1], src[2], src[3]);
-}
-
-template <typename T>
-constexpr Pixel<T, 4> abgr_to_rgba(const Pixel<T, 4>& src)
-{
-  return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
-}
-
-template <typename T>
-constexpr Pixel<T, 4> abgr_to_bgra(const Pixel<T, 4>& src)
-{
-  return Pixel<T, 4>(src[1], src[2], src[3], src[0]);
-}
-
-template <typename T>
-constexpr Pixel<T, 4> abgr_to_argb(const Pixel<T, 4>& src)
-{
-  return Pixel<T, 4>(src[0], src[3], src[2], src[1]);
+  static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
+                "Incorrect source pixel format.");
+  return detail::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px, alpha_value);
 }
 
 

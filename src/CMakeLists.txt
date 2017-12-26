@@ -77,6 +77,7 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageAccess.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp

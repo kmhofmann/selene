@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <memory>
 
 namespace sln {
@@ -127,6 +128,8 @@ public:
   const PixelType& operator()(PixelIndex x, PixelIndex y) const;
 
 private:
+  static_assert(std::is_pod<PixelType>::value, "Pixel type is not POD");
+
   std::uint8_t* data_;
   Stride stride_bytes_;
   PixelLength width_;
@@ -148,6 +151,12 @@ private:
   friend class ImageRowIterator<Image<PixelType>>;
   friend class ConstImageRowIterator<Image<PixelType>>;
 };
+
+template <typename PixelType>
+bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1);
+
+template <typename PixelType>
+bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1);
 
 template <typename PixelType>
 void clone(const Image<PixelType>& src, Image<PixelType>& dst);
@@ -1475,6 +1484,41 @@ inline MemoryBlock<NewAllocator> Image<PixelType>::relinquish_data_ownership()
 }
 
 // ----------
+
+template <typename PixelType>
+bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
+{
+  if (img0.width() != img1.width() || img0.height() != img1.height())
+  {
+    return false;
+  }
+
+  for (auto y = 0_px; y < img0.height(); ++y)
+  {
+    const auto begin0 = img0.data(y);
+    const auto begin1 = img1.data(y);
+    const auto end0 = img0.data_row_end(y);
+
+    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
+    // const bool equal_row = std::equal(begin0, end0, begin1);
+    // ...so let's just call std::memcmp directly:
+    const auto nr_bytes = std::distance(begin0, end0) * sizeof(PixelType);
+    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
+
+    if (!equal_row)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template <typename PixelType>
+bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1)
+{
+  return !(img0 == img1);
+}
 
 /** \brief Copies the image represented by `src` into the image `dst`.
  *

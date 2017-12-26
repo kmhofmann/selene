@@ -14,8 +14,8 @@ namespace sln {
 
 /** \brief A pixel format enumeration.
  *
- * A pixel format is a semantic tag assigned to a pixel type, as part of a dynamically typed image, i.e. an `ImageData`
- * instance.
+ * A pixel format is a semantic tag assigned to a pixel type. For example, as part of a dynamically typed image, i.e. an
+ * `ImageData` instance.
  */
 enum class PixelFormat : unsigned char
 {
@@ -56,7 +56,9 @@ enum class SampleFormat : unsigned char
   Unknown
 };
 
-std::size_t get_nr_channels(PixelFormat pixel_format);
+constexpr std::size_t get_nr_channels(PixelFormat pixel_format);
+constexpr bool has_alpha_channel(PixelFormat pixel_format);
+constexpr bool conversion_requires_alpha_value(PixelFormat pixel_format_src, PixelFormat pixel_format_dst);
 
 std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format);
 
@@ -72,7 +74,7 @@ std::ostream& operator<<(std::ostream& os, SampleFormat sample_format);
  * @param pixel_format A pixel format value.
  * @return The number of channels of the provided pixel format.
  */
-inline std::size_t get_nr_channels(PixelFormat pixel_format)
+inline constexpr std::size_t get_nr_channels(PixelFormat pixel_format)
 {
   switch (pixel_format)
   {
@@ -101,6 +103,55 @@ inline std::size_t get_nr_channels(PixelFormat pixel_format)
   }
 
   return 0;
+}
+
+/** \brief Returns whether the given pixel format has an alpha channel.
+ *
+ * @param pixel_format A pixel format value.
+ * @return True, if the pixel format has an alpha channel; false otherwise.
+ */
+inline constexpr bool has_alpha_channel(PixelFormat pixel_format)
+{
+  switch (pixel_format)
+  {
+    case PixelFormat::Y: return false;
+    case PixelFormat::X: return false;
+
+    case PixelFormat::YA: return true;
+    case PixelFormat::XX: return false;
+
+    case PixelFormat::RGB: return false;
+    case PixelFormat::BGR: return false;
+    case PixelFormat::YCbCr: return false;
+    case PixelFormat::CIELab: return false;
+    case PixelFormat::ICCLab: return false;
+    case PixelFormat::XXX: return false;
+
+    case PixelFormat::RGBA: return true;
+    case PixelFormat::BGRA: return true;
+    case PixelFormat::ARGB: return true;
+    case PixelFormat::ABGR: return true;
+    case PixelFormat::CMYK: return false;
+    case PixelFormat::YCCK: return false;
+    case PixelFormat::XXXX: return false;
+
+    case PixelFormat::Unknown: return false;
+  }
+
+  return false;
+}
+
+/** \brief Returns whether, for conversion of a pixel value from a source to a target pixel format, an additional
+ * alpha value has to be specified.
+ *
+ * @param pixel_format_src The source pixel format.
+ * @param pixel_format_dst The target pixel format.
+ * @return True, if conversion of a pixel between the format requires additional specification of an alpha value; false
+ * otherwise.
+ */
+inline constexpr bool conversion_requires_alpha_value(PixelFormat pixel_format_src, PixelFormat pixel_format_dst)
+{
+  return !has_alpha_channel(pixel_format_src) && has_alpha_channel(pixel_format_dst);
 }
 
 }  // namespace sln
