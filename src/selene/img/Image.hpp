@@ -1485,6 +1485,13 @@ inline MemoryBlock<NewAllocator> Image<PixelType>::relinquish_data_ownership()
 
 // ----------
 
+/** \brief Equality comparison for two images.
+ *
+ * @tparam PixelType The pixel type.
+ * @param img0 The left-hand side image to compare.
+ * @param img1 The right-hand side image to compare.
+ * @return True, if the two images have equal extents and equal pixel values in all rows and columns; false otherwise.
+ */
 template <typename PixelType>
 bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
 {
@@ -1514,6 +1521,13 @@ bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
   return true;
 }
 
+/** \brief Inequality comparison for two images.
+ *
+ * @tparam PixelType The pixel type.
+ * @param img0 The left-hand side image to compare.
+ * @param img1 The right-hand side image to compare.
+ * @return True, if the two images are not equal; false otherwise.
+ */
 template <typename PixelType>
 bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1)
 {

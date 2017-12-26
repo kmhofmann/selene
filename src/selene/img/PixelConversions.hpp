@@ -58,12 +58,6 @@ struct PixelConversion;
 // From Y
 // ------
 
-template <std::uint32_t N, typename T>
-constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src)
-{
-  return Pixel<T, N>(make_array_n_equal<T, N>(src[0]));
-}
-
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::Y>
 {
@@ -734,6 +728,23 @@ struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
 
 }  // namespace detail
 
+/** \brief Converts a pixel value from a source to a target pixel format.
+ *
+ * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
+ * compile-time.
+ *
+ * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
+ * ARGB, ABGR.
+ *
+ * Example: `convert_pixel<PixelFormat::RGB, PixelFormat::Y>(Pixel_8u3(255, 0, 0))` will return a `Pixel_8u1` instance,
+ * performing an RGB -> grayscale conversion.
+ *
+ * @tparam pixel_format_src The source pixel format.
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam PixelSrc The pixel type (usually automatically deduced).
+ * @param px The pixel value to convert.
+ * @return A pixel value in the target format.
+ */
 template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename>
 inline constexpr auto convert_pixel(const PixelSrc& px)
 {
@@ -742,6 +753,28 @@ inline constexpr auto convert_pixel(const PixelSrc& px)
   return detail::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px);
 }
 
+/** \brief Converts a pixel value from a source to a target pixel format.
+ *
+ * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
+ * In this case, the additional alpha value has to be manually specified.
+ *
+ * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
+ * compile-time.
+ *
+ * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
+ * ARGB, ABGR.
+ *
+ * Example: `convert_pixel<PixelFormat::RGB, PixelFormat::Y>(Pixel_8u3(255, 0, 0))` will return a `Pixel_8u1` instance,
+ * performing an RGB -> grayscale conversion.
+ *
+ * @tparam pixel_format_src The source pixel format.
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam PixelSrc The pixel type (usually automatically deduced).
+ * @tparam ElementType The pixel element type (for the target format; usually automatically deduced).
+ * @param px The pixel value to convert.
+ * @param alpha_value The alpha value to assign to the output pixel.
+ * @return A pixel value in the target format.
+ */
 template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename>
 inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value)
 {
@@ -750,6 +783,19 @@ inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value)
   return detail::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px, alpha_value);
 }
 
+/** \brief Converts a one-channel pixel value to an n-channel pixel value, replicating the source value for each
+ * channel.
+ *
+ * @tparam N The number of output channels.
+ * @tparam T The pixel type (input/output).
+ * @param src The source pixel.
+ * @return The resulting n-channel pixel.
+ */
+template <std::uint32_t N, typename T>
+constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src)
+{
+  return Pixel<T, N>(make_array_n_equal<T, N>(src[0]));
+}
 
 }  // namespace sln
 
