@@ -53,7 +53,8 @@ private:
   std::size_t size_;
 
   MemoryBlock(std::uint8_t* data, std::size_t size);
-  friend MemoryBlock<Allocator> construct_memory_block_from_existing_memory<Allocator>(std::uint8_t*, std::size_t);
+  friend MemoryBlock<Allocator> construct_memory_block_from_existing_memory<Allocator>(std::uint8_t*,
+                                                                                       std::size_t) noexcept;
 };
 
 

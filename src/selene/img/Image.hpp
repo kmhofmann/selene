@@ -61,7 +61,10 @@ public:
   Image();
   Image(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
   Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
-  Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
+  Image(MemoryBlock<NewAllocator>&& data,
+        PixelLength width,
+        PixelLength height,
+        Stride stride_bytes = Stride{0}) noexcept;
 
   Image(const Image<PixelType>& other);
   Image<PixelType>& operator=(const Image<PixelType>& other);
@@ -691,7 +694,10 @@ Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength heigh
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes) noexcept
+Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data,
+                        PixelLength width,
+                        PixelLength height,
+                        Stride stride_bytes) noexcept
     : data_(data.transfer_data())
     , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)

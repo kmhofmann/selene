@@ -11,6 +11,7 @@
 
 #include <limits>
 #include <random>
+#include <type_traits>
 
 #include "_TestImages.hpp"
 
@@ -76,12 +77,46 @@ void check_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
   }
 }
 
+template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
+void floating_point_conversions(const sln::Pixel<T, 3>&, const sln::Pixel<T, 4>&)
+{
+}
+
+template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+void floating_point_conversions(const sln::Pixel<T, 3>& src_xxx, const sln::Pixel<T, 4>& src_xxxx)
+{
+  constexpr auto f_r = sln::detail::RGBToYCoefficients::values[0];
+  constexpr auto f_g = sln::detail::RGBToYCoefficients::values[1];
+  constexpr auto f_b = sln::detail::RGBToYCoefficients::values[2];
+
+  const auto dst_rgb_to_y = sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::Y>(src_xxx);
+  REQUIRE(static_cast<float>(dst_rgb_to_y)
+          == Approx(f_r * src_xxx[0] + f_g * src_xxx[1] + f_b * src_xxx[2]).epsilon(0.001));
+
+  const auto dst_rgba_to_y = sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::Y>(src_xxxx);
+  REQUIRE(static_cast<float>(dst_rgba_to_y)
+          == Approx(f_r * src_xxxx[0] + f_g * src_xxxx[1] + f_b * src_xxxx[2]).epsilon(0.001));
+
+  const auto dst_bgr_to_y = sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::Y>(src_xxx);
+  REQUIRE(static_cast<float>(dst_bgr_to_y)
+          == Approx(f_b * src_xxx[0] + f_g * src_xxx[1] + f_r * src_xxx[2]).epsilon(0.001));
+
+  const auto dst_bgra_to_y = sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::Y>(src_xxxx);
+  REQUIRE(static_cast<float>(dst_bgra_to_y)
+          == Approx(f_b * src_xxxx[0] + f_g * src_xxxx[1] + f_r * src_xxxx[2]).epsilon(0.001));
+}
+
 template <typename T>
 void check_random_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
                                     T lower_bound = std::numeric_limits<T>::min())
 {
+  constexpr auto is_int = std::is_integral<T>::value;
+  constexpr auto is_fp = std::is_floating_point<T>::value;
+  using DieType = std::conditional_t<is_int, std::uniform_int_distribution<T>,
+                                     std::conditional_t<is_fp, std::uniform_real_distribution<T>, void>>;
+
   std::mt19937 rng(42);
-  std::uniform_int_distribution<T> die(lower_bound, upper_bound);
+  DieType die(lower_bound, upper_bound);
 
   for (std::size_t i = 0; i < 1000; ++i)
   {
@@ -94,6 +129,8 @@ void check_random_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(
     sln::Pixel<T, 2> src_xx(x0, x1);
     sln::Pixel<T, 3> src_xxx(x0, x1, x2);
     sln::Pixel<T, 4> src_xxxx(x0, x1, x2, x3);
+
+    // Check that back-and-forth conversions yield the input result again
 
     REQUIRE(sln::convert_pixel<sln::PixelFormat::Y, sln::PixelFormat::YA>(
                 sln::convert_pixel<sln::PixelFormat::YA, sln::PixelFormat::Y>(src_xx), x1)
@@ -151,6 +188,8 @@ void check_random_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(
     REQUIRE(sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::ABGR>(
                 sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::ARGB>(src_xxxx))
             == src_xxxx);
+
+    floating_point_conversions(src_xxx, src_xxxx);
   }
 }
 
@@ -168,6 +207,18 @@ TEST_CASE("Pixel conversions", "[img]")
 
   check_random_pixel_conversions<std::uint8_t>();
   check_random_pixel_conversions<std::int8_t>();
+
+  check_random_pixel_conversions<std::uint16_t>();
+  check_random_pixel_conversions<std::int16_t>();
+
+  check_random_pixel_conversions<std::uint32_t>();
+  check_random_pixel_conversions<std::int32_t>();
+
+  check_random_pixel_conversions<std::uint64_t>();
+  check_random_pixel_conversions<std::int64_t>();
+
+  check_random_pixel_conversions<sln::float32_t>(10000.0f, -10000.0f);
+  check_random_pixel_conversions<sln::float64_t>(10000.0f, -10000.0f);
 
   constexpr auto px = sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::Y>(sln::Pixel_8u3(100, 100, 100));
   REQUIRE(px == 100);

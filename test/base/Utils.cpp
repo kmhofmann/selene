@@ -146,7 +146,7 @@ struct TestCoefficients
 TEST_CASE("Rounded linear combination", "[base]")
 {
   // Check that we can evaluate at compile time
-  constexpr auto r0 = sln::rounded_linear_combination<std::uint8_t, 3, TestCoefficients>(
+  constexpr auto r0 = sln::approximate_linear_combination<std::uint8_t, 3, TestCoefficients>(
       std::array<std::uint8_t, 3>{{50, 120, 255}});
   REQUIRE(r0 == 119);
 
@@ -155,13 +155,13 @@ TEST_CASE("Rounded linear combination", "[base]")
   {
     // This case needs a larger promoted type (uint32_t) than the default one (uint16_t), to not have errors from the
     // integer arithmetic from i=128 onwards.
-    const auto r = sln::rounded_linear_combination<std::uint8_t, 3, TestCoefficients, std::uint32_t>(
+    const auto r = sln::approximate_linear_combination<std::uint8_t, 3, TestCoefficients, std::uint32_t>(
         sln::make_array_n_equal<std::uint8_t, 3>(i));
     REQUIRE(r == i);
   }
 
   // Check that we can use floating point input values
-  const auto arr = sln::rounded_linear_combination<std::uint8_t, 3, TestCoefficients>(
+  const auto arr = sln::approximate_linear_combination<std::uint8_t, 3, TestCoefficients>(
       std::array<double, 3>{{50.0, 100.0, 200.0}});
   REQUIRE(arr == 100);
 }

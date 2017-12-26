@@ -94,6 +94,9 @@ Image<PixelType> to_image(ImageData&& img_data)
  * compatible with the `PixelTraits` of `PixelType`. If this is not the case, this function will throw a
  * `std::runtime_error` exception.
  *
+ * As the resulting `Image<PixelType>` is a non-owning view, the lifetime of the supplied `ImageData` instance must be
+ * equal to or exceed the lifetime of the returned instance.
+ *
  * @tparam PixelType The pixel type of the `Image<PixelType>` instance to be returned.
  * @param img_data The dynamically typed image.
  * @return An `Image<PixelType>` instance, which will be a view (i.e. `is_view() == true`).

@@ -94,6 +94,9 @@ ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
  * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
  * and desired number of channels. If this check is negative, this function will throw a `std::runtime_error` exception.
  *
+ * As the resulting `ImageData` is a non-owning view, the lifetime of the supplied `Image<PixelType>` instance must be
+ * equal to or exceed the lifetime of the returned instance.
+ *
  * @tparam PixelType The pixel type of the `Image<PixelType>` instance.
  * @param img The statically typed image.
  * @param pixel_format The pixel format of the `ImageData` instance to be created. If unknown, can be

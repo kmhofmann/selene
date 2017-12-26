@@ -141,8 +141,6 @@ inline constexpr auto rounded_linear_combination_coeff_func(std::size_t i)
  *
  * The computation is performed using integer arithmetic. The result is required to be of integral type.
  *
- * See the implementation of `sln::rgb_to_y` for a possible use case.
- *
  * @tparam T The result type. Needs to be integral.
  * @tparam N The number of input values/coefficients.
  * @tparam Coeff The type of the coefficient array. Needs to be a structure that contains a static variable `values`.
@@ -154,7 +152,7 @@ inline constexpr auto rounded_linear_combination_coeff_func(std::size_t i)
  * @return A linear combination of the input array with the provided coefficients.
  */
 template <typename T, std::size_t N, typename Coeff, typename PromotedType = promote_t<T>, typename Array>
-inline constexpr T rounded_linear_combination(const Array& src) noexcept
+inline constexpr T approximate_linear_combination(const Array& src) noexcept
 {
   static_assert(std::is_integral<T>::value, "Conversion type has to be integral");
 
@@ -175,6 +173,32 @@ inline constexpr T rounded_linear_combination(const Array& src) noexcept
   }
 
   return static_cast<T>((sum + half) >> shift);
+}
+
+/** \brief Computes a linear combination of values with coefficients provided at compile time.
+ *
+ * The result is required to be of floating point type.
+ *
+ * @tparam T The result type. Needs to be integral.
+ * @tparam N The number of input values/coefficients.
+ * @tparam Coeff The type of the coefficient array. Needs to be a structure that contains a static variable `values`.
+ * The type of `values` needs to support the subscript operator `operator[]`; e.g. it can be a `std::array<>`.
+ * @tparam Array The type of the input array. Needs to support the subscript operator `operator[]`.
+ * @param src The input array.
+ * @return A linear combination of the input array with the provided coefficients.
+ */
+template <typename T, std::size_t N, typename Coeff, typename Array>
+inline constexpr T linear_combination(const Array& src) noexcept
+{
+  static_assert(std::is_floating_point<T>::value, "Conversion type has to be floating point");
+
+  auto sum = T{0};
+  for (std::size_t i = 0; i < N; ++i)  // N is known at compile time
+  {
+    sum += static_cast<T>(Coeff::values[i]) * static_cast<T>(src[i]);
+  }
+
+  return sum;
 }
 
 }  // namespace sln

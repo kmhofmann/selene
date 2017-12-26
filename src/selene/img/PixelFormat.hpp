@@ -149,7 +149,8 @@ inline constexpr bool has_alpha_channel(PixelFormat pixel_format) noexcept
  * @return True, if conversion of a pixel between the format requires additional specification of an alpha value; false
  * otherwise.
  */
-inline constexpr bool conversion_requires_alpha_value(PixelFormat pixel_format_src, PixelFormat pixel_format_dst) noexcept
+inline constexpr bool conversion_requires_alpha_value(PixelFormat pixel_format_src,
+                                                      PixelFormat pixel_format_dst) noexcept
 {
   return !has_alpha_channel(pixel_format_src) && has_alpha_channel(pixel_format_dst);
 }
