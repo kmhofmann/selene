@@ -46,7 +46,7 @@ template <BorderAccessMode AccessMode>
 struct ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>
 {
   template <typename PixelType, typename ScalarAccess = default_float_t>
-  static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y);
+  static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept;
 };
 
 /** \brief Partial `ImageInterpolator` specialization for `ImageInterpolationMode::Bilinear`.
@@ -57,13 +57,13 @@ template <BorderAccessMode AccessMode>
 struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
 {
   template <typename PixelType, typename ScalarAccess = default_float_t, typename ScalarOutputElement = default_float_t>
-  static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y);
+  static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept;
 
   template <typename T,
             std::uint32_t nr_channels,
             typename ScalarAccess = default_float_t,
             typename ScalarOutputElement = default_float_t>
-  static auto interpolate(const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y);
+  static auto interpolate(const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y) noexcept;
 };
 
 
@@ -84,7 +84,7 @@ struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
 template <BorderAccessMode AccessMode>
 template <typename PixelType, typename ScalarAccess>
 inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>::interpolate(
-    const Image<PixelType>& img, ScalarAccess x, ScalarAccess y)
+    const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
   x = round<SignedPixelIndex>(x);
@@ -110,7 +110,7 @@ template <BorderAccessMode AccessMode>
 template <typename PixelType, typename ScalarAccess, typename ScalarOutputElement>
 inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(const Image<PixelType>& img,
                                                                                          ScalarAccess x,
-                                                                                         ScalarAccess y)
+                                                                                         ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
   static_assert(std::is_floating_point<ScalarOutputElement>::value,
@@ -150,7 +150,7 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
 template <BorderAccessMode AccessMode>
 template <typename T, std::uint32_t nr_channels, typename ScalarAccess, typename ScalarOutputElement>
 inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(
-    const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y)
+    const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
   static_assert(std::is_floating_point<ScalarOutputElement>::value,

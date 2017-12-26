@@ -32,7 +32,7 @@ namespace sln {
  * @return The clamped value.
  */
 template <typename T, typename Compare>
-inline constexpr const T& clamp(const T& value, const T& min, const T& max, Compare comp)
+inline constexpr const T& clamp(const T& value, const T& min, const T& max, Compare comp) noexcept
 {
   SELENE_ASSERT(!comp(max, min));
   return comp(value, min) ? min : comp(max, value) ? max : value;
@@ -53,7 +53,7 @@ inline constexpr const T& clamp(const T& value, const T& min, const T& max, Comp
  * @return The clamped value.
  */
 template <typename T>
-inline constexpr const T& clamp(const T& value, const T& min, const T& max)
+inline constexpr const T& clamp(const T& value, const T& min, const T& max) noexcept
 {
   return clamp(value, min, max, std::less<T>());
 }
@@ -67,7 +67,7 @@ inline constexpr const T& clamp(const T& value, const T& min, const T& max)
  * @return `base` raised to the power of `exponent`.
  */
 template <typename T, typename U>
-inline constexpr T power(T base, U exponent)
+inline constexpr T power(T base, U exponent) noexcept
 {
   static_assert(std::is_integral<U>::value, "Exponent needs to be integral");
   static_assert(std::is_unsigned<U>::value, "Exponent needs to be unsigned");
@@ -107,7 +107,7 @@ inline constexpr std::array<T, N> make_array_n_equal(T value)
  * @return A `std::array<T, N>` with the respective content.
  */
 template <typename T, std::size_t N, typename Func>
-inline constexpr auto make_array_from_function(Func func)
+inline constexpr auto make_array_from_function(Func func) noexcept
 {
   using result_t = ::std::array<T, N>;
   result_t arr = {};
@@ -154,7 +154,7 @@ inline constexpr auto rounded_linear_combination_coeff_func(std::size_t i)
  * @return A linear combination of the input array with the provided coefficients.
  */
 template <typename T, std::size_t N, typename Coeff, typename PromotedType = promote_t<T>, typename Array>
-inline constexpr T rounded_linear_combination(const Array& src)
+inline constexpr T rounded_linear_combination(const Array& src) noexcept
 {
   static_assert(std::is_integral<T>::value, "Conversion type has to be integral");
 

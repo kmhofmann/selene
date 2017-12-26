@@ -22,7 +22,7 @@ namespace sln {
  * @return The rounded output value.
  */
 template <typename Result, typename Value>
-inline constexpr Result round_half_up(Value val)
+inline constexpr Result round_half_up(Value val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
@@ -39,7 +39,7 @@ inline constexpr Result round_half_up(Value val)
  * @return The rounded output value.
  */
 template <typename Result, typename Value>
-inline constexpr Result round_half_down(Value val)
+inline constexpr Result round_half_down(Value val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
@@ -56,7 +56,7 @@ inline constexpr Result round_half_down(Value val)
  * @return The rounded output value.
  */
 template <typename Result, typename Value>
-inline constexpr Result round(Value val)
+inline constexpr Result round(Value val) noexcept
 {
   return round_half_up<Result>(val);
 }
@@ -64,77 +64,77 @@ inline constexpr Result round(Value val)
 /// \cond INTERNAL
 
 template <typename Result>
-inline constexpr Result round(char val)
+inline constexpr Result round(char val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(signed char val)
+inline constexpr Result round(signed char val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned char val)
+inline constexpr Result round(unsigned char val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(short val)
+inline constexpr Result round(short val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned short val)
+inline constexpr Result round(unsigned short val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(int val)
+inline constexpr Result round(int val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned int val)
+inline constexpr Result round(unsigned int val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(long val)
+inline constexpr Result round(long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned long val)
+inline constexpr Result round(unsigned long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(long long val)
+inline constexpr Result round(long long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned long long val)
+inline constexpr Result round(unsigned long long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);

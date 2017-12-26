@@ -30,7 +30,7 @@ public:
   {
   }
 
-  constexpr explicit ExplicitType(const value_type& value) : value_(value)
+  constexpr explicit ExplicitType(const value_type& value) noexcept : value_(value)
   {
   }
 

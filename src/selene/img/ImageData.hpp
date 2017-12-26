@@ -56,7 +56,7 @@ public:
             std::uint8_t nr_bytes_per_channel,
             Stride stride_bytes = Stride{0},
             PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleFormat sample_format = SampleFormat::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown) noexcept;
 
   ImageData(MemoryBlock<NewAllocator>&& data,
             PixelLength width,
@@ -65,7 +65,7 @@ public:
             std::uint8_t nr_bytes_per_channel,
             Stride stride_bytes = Stride{0},
             PixelFormat pixel_format = PixelFormat::Unknown,
-            SampleFormat sample_format = SampleFormat::Unknown);
+            SampleFormat sample_format = SampleFormat::Unknown) noexcept;
   ~ImageData();
 
   ImageData(const ImageData&);
@@ -73,21 +73,21 @@ public:
   ImageData(ImageData&&) noexcept;
   ImageData& operator=(ImageData&&) noexcept;
 
-  PixelLength width() const;
-  PixelLength height() const;
-  std::uint16_t nr_channels() const;
-  std::uint8_t nr_bytes_per_channel() const;
-  Stride stride_bytes() const;
-  std::size_t row_bytes() const;
-  std::size_t total_bytes() const;
-  PixelFormat pixel_format() const;
-  SampleFormat sample_format() const;
-  bool is_packed() const;
-  bool is_view() const;
-  bool is_empty() const;
-  bool is_valid() const;
+  PixelLength width() const noexcept;
+  PixelLength height() const noexcept;
+  std::uint16_t nr_channels() const noexcept;
+  std::uint8_t nr_bytes_per_channel() const noexcept;
+  Stride stride_bytes() const noexcept;
+  std::size_t row_bytes() const noexcept;
+  std::size_t total_bytes() const noexcept;
+  PixelFormat pixel_format() const noexcept;
+  SampleFormat sample_format() const noexcept;
+  bool is_packed() const noexcept;
+  bool is_view() const noexcept;
+  bool is_empty() const noexcept;
+  bool is_valid() const noexcept;
 
-  void clear();
+  void clear() noexcept;
 
   void allocate(PixelLength width,
                 PixelLength height,
@@ -118,14 +118,14 @@ public:
                 PixelFormat pixel_format = PixelFormat::Unknown,
                 SampleFormat sample_format = SampleFormat::Unknown);
 
-  std::uint8_t* byte_ptr();
-  const std::uint8_t* byte_ptr() const;
+  std::uint8_t* byte_ptr() noexcept;
+  const std::uint8_t* byte_ptr() const noexcept;
 
-  std::uint8_t* byte_ptr(PixelIndex y);
-  const std::uint8_t* byte_ptr(PixelIndex y) const;
+  std::uint8_t* byte_ptr(PixelIndex y) noexcept;
+  const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
 
-  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y);
-  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const;
+  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) noexcept;
+  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
 
 private:
   std::uint8_t* data_ = nullptr;
@@ -142,8 +142,8 @@ private:
   void deallocate_bytes();
   void deallocate_bytes_if_owned();
   void reset();
-  Bytes compute_data_offset(PixelIndex y) const;
-  Bytes compute_data_offset(PixelIndex x, PixelIndex y) const;
+  Bytes compute_data_offset(PixelIndex y) const noexcept;
+  Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
@@ -202,7 +202,7 @@ inline ImageData::ImageData(std::uint8_t* data,
                             std::uint8_t nr_bytes_per_channel,
                             Stride stride_bytes,
                             PixelFormat pixel_format,
-                            SampleFormat sample_format)
+                            SampleFormat sample_format) noexcept
 {
   set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
@@ -231,7 +231,7 @@ inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data,
                             std::uint8_t nr_bytes_per_channel,
                             Stride stride_bytes,
                             PixelFormat pixel_format,
-                            SampleFormat sample_format)
+                            SampleFormat sample_format) noexcept
 {
   set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
            sample_format);
@@ -355,7 +355,7 @@ inline ImageData& ImageData::operator=(ImageData&& other) noexcept
  *
  * @return Width of the image in pixels.
  */
-inline PixelLength ImageData::width() const
+inline PixelLength ImageData::width() const noexcept
 {
   return width_;
 }
@@ -364,7 +364,7 @@ inline PixelLength ImageData::width() const
  *
  * @return Height of the image in pixels.
  */
-inline PixelLength ImageData::height() const
+inline PixelLength ImageData::height() const noexcept
 {
   return height_;
 }
@@ -373,7 +373,7 @@ inline PixelLength ImageData::height() const
  *
  * @return Number of image channels.
  */
-inline std::uint16_t ImageData::nr_channels() const
+inline std::uint16_t ImageData::nr_channels() const noexcept
 {
   return nr_channels_;
 }
@@ -382,7 +382,7 @@ inline std::uint16_t ImageData::nr_channels() const
  *
  * @return Number of bytes stored for each sample, per image channel.
  */
-inline std::uint8_t ImageData::nr_bytes_per_channel() const
+inline std::uint8_t ImageData::nr_bytes_per_channel() const noexcept
 {
   return nr_bytes_per_channel_;
 }
@@ -396,7 +396,7 @@ inline std::uint8_t ImageData::nr_bytes_per_channel() const
  *
  * @return Row stride in bytes.
  */
-inline Stride ImageData::stride_bytes() const
+inline Stride ImageData::stride_bytes() const noexcept
 {
   return stride_bytes_;
 }
@@ -408,7 +408,7 @@ inline Stride ImageData::stride_bytes() const
  *
  * @return Number of data bytes occupied by each image row.
  */
-inline std::size_t ImageData::row_bytes() const
+inline std::size_t ImageData::row_bytes() const noexcept
 {
   return width_ * nr_channels_ * nr_bytes_per_channel_;
 }
@@ -419,7 +419,7 @@ inline std::size_t ImageData::row_bytes() const
  *
  * @return Number of bytes occupied by the image data in memory.
  */
-inline std::size_t ImageData::total_bytes() const
+inline std::size_t ImageData::total_bytes() const noexcept
 {
   return stride_bytes_ * height_;
 }
@@ -428,7 +428,7 @@ inline std::size_t ImageData::total_bytes() const
  *
  * @return The pixel format.
  */
-inline PixelFormat ImageData::pixel_format() const
+inline PixelFormat ImageData::pixel_format() const noexcept
 {
   return pixel_format_;
 }
@@ -437,7 +437,7 @@ inline PixelFormat ImageData::pixel_format() const
  *
  * @return The sample format.
  */
-inline SampleFormat ImageData::sample_format() const
+inline SampleFormat ImageData::sample_format() const noexcept
 {
   return sample_format_;
 }
@@ -448,7 +448,7 @@ inline SampleFormat ImageData::sample_format() const
  *
  * @return True, if the image data stored packed; false otherwise.
  */
-inline bool ImageData::is_packed() const
+inline bool ImageData::is_packed() const noexcept
 {
   return stride_bytes_ == nr_bytes_per_channel_ * nr_channels_ * width_;
 }
@@ -458,7 +458,7 @@ inline bool ImageData::is_packed() const
  * @return True, if the image data points to non-owned memory; false otherwise, i.e. if the instance owns its own
  *         memory.
  */
-inline bool ImageData::is_view() const
+inline bool ImageData::is_view() const noexcept
 {
   return !owns_memory_;
 }
@@ -470,7 +470,7 @@ inline bool ImageData::is_view() const
  *
  * @return True, if the image is empty; false if it is non-empty.
  */
-inline bool ImageData::is_empty() const
+inline bool ImageData::is_empty() const noexcept
 {
   return data_ == nullptr || width_ == 0 || height_ == 0 || nr_channels_ == 0 || nr_bytes_per_channel_ == 0;
 }
@@ -481,7 +481,7 @@ inline bool ImageData::is_empty() const
  *
  * @return True, if the image is valid; false otherwise.
  */
-inline bool ImageData::is_valid() const
+inline bool ImageData::is_valid() const noexcept
 {
   return !is_empty();
 }
@@ -493,7 +493,7 @@ inline bool ImageData::is_valid() const
  * nr_bytes_per_channel() == 0 && pixel_format() == PixelFormat::Unknown && output_sample_format() ==
  * SampleType::Unknown && is_empty() && !is_valid() && !is_view()`.
  */
-inline void ImageData::clear()
+inline void ImageData::clear() noexcept
 {
   deallocate_bytes_if_owned();
   reset();
@@ -650,7 +650,7 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data,
  *
  * @return Pointer to the first image data byte.
  */
-inline const std::uint8_t* ImageData::byte_ptr() const
+inline const std::uint8_t* ImageData::byte_ptr() const noexcept
 {
   return data_;
 }
@@ -659,7 +659,7 @@ inline const std::uint8_t* ImageData::byte_ptr() const
  *
  * @return Constant pointer to the first image data byte.
  */
-inline std::uint8_t* ImageData::byte_ptr()
+inline std::uint8_t* ImageData::byte_ptr() noexcept
 {
   return data_;
 }
@@ -669,7 +669,7 @@ inline std::uint8_t* ImageData::byte_ptr()
  * @param y Row index.
  * @return Pointer to the first image data byte of row `y`.
  */
-inline std::uint8_t* ImageData::byte_ptr(PixelIndex y)
+inline std::uint8_t* ImageData::byte_ptr(PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -679,7 +679,7 @@ inline std::uint8_t* ImageData::byte_ptr(PixelIndex y)
  * @param y Row index.
  * @return Constant pointer to the first image data byte of row `y`.
  */
-inline const std::uint8_t* ImageData::byte_ptr(PixelIndex y) const
+inline const std::uint8_t* ImageData::byte_ptr(PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -690,7 +690,7 @@ inline const std::uint8_t* ImageData::byte_ptr(PixelIndex y) const
  * @param y Row index.
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
-inline std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y)
+inline std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -702,7 +702,7 @@ inline std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y)
  * @param y Row index.
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
-inline const std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y) const
+inline const std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -743,12 +743,12 @@ inline void ImageData::reset()
   owns_memory_ = false;
 }
 
-inline Bytes ImageData::compute_data_offset(PixelIndex y) const
+inline Bytes ImageData::compute_data_offset(PixelIndex y) const noexcept
 {
   return Bytes(stride_bytes_ * y);
 }
 
-inline Bytes ImageData::compute_data_offset(PixelIndex x, PixelIndex y) const
+inline Bytes ImageData::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
 {
   return Bytes(stride_bytes_ * y + nr_bytes_per_channel_ * nr_channels_ * x);
 }

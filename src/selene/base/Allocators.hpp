@@ -23,8 +23,8 @@ class MemoryBlock;
  */
 struct MallocAllocator
 {
-  static MemoryBlock<MallocAllocator> allocate(std::size_t nr_bytes);
-  static void deallocate(std::uint8_t*& data);
+  static MemoryBlock<MallocAllocator> allocate(std::size_t nr_bytes) noexcept;
+  static void deallocate(std::uint8_t*& data) noexcept;
 };
 
 /** \brief Provides means for memory allocation and deallocation throughout the library.
@@ -35,8 +35,8 @@ struct MallocAllocator
  */
 struct NewAllocator
 {
-  static MemoryBlock<NewAllocator> allocate(std::size_t nr_bytes);
-  static void deallocate(std::uint8_t*& data);
+  static MemoryBlock<NewAllocator> allocate(std::size_t nr_bytes) noexcept;
+  static void deallocate(std::uint8_t*& data) noexcept;
 };
 
 }  // namespace sln

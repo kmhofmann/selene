@@ -21,7 +21,7 @@ namespace sln {
  * @return `std::move(f)`.
  */
 template <typename PixelType, typename UnaryFunction>
-UnaryFunction for_each_pixel(Image<PixelType>& img, UnaryFunction f)
+UnaryFunction for_each_pixel(Image<PixelType>& img, UnaryFunction f) noexcept
 {
   for (auto y = 0_px; y < img.height(); ++y)
   {
@@ -47,7 +47,7 @@ UnaryFunction for_each_pixel(Image<PixelType>& img, UnaryFunction f)
  * f(PixelTypeSrc)`.
  */
 template <typename PixelTypeDst, typename PixelTypeSrc, typename UnaryOperation>
-void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& img_dst, UnaryOperation op)
+void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& img_dst, UnaryOperation op) noexcept
 {
   img_dst.maybe_allocate(img_src.width(), img_src.height());
 
@@ -72,7 +72,7 @@ void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& i
  * @return The destination image.
  */
 template <typename PixelTypeDst, typename PixelTypeSrc, typename UnaryOperation>
-Image<PixelTypeDst> transform_pixels(const Image<PixelTypeSrc>& img_src, UnaryOperation op)
+Image<PixelTypeDst> transform_pixels(const Image<PixelTypeSrc>& img_src, UnaryOperation op) noexcept
 {
   Image<PixelTypeDst> img_dst(img_src.width(), img_src.height());
   transform_pixels(img_src, img_dst, op);

@@ -60,8 +60,8 @@ public:
 
   Image();
   Image(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
-  Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
-  Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
+  Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
+  Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
 
   Image(const Image<PixelType>& other);
   Image<PixelType>& operator=(const Image<PixelType>& other);
@@ -71,18 +71,18 @@ public:
 
   ~Image();
 
-  PixelLength width() const;
-  PixelLength height() const;
-  Stride stride_bytes() const;
-  std::size_t row_bytes() const;
-  std::size_t total_bytes() const;
-  bool is_packed() const;
-  bool is_view() const;
-  bool is_empty() const;
-  bool is_valid() const;
+  PixelLength width() const noexcept;
+  PixelLength height() const noexcept;
+  Stride stride_bytes() const noexcept;
+  std::size_t row_bytes() const noexcept;
+  std::size_t total_bytes() const noexcept;
+  bool is_packed() const noexcept;
+  bool is_view() const noexcept;
+  bool is_empty() const noexcept;
+  bool is_valid() const noexcept;
 
-  void clear();
-  void fill(PixelType value);
+  void clear() noexcept;
+  void fill(PixelType value) noexcept;
   void allocate(PixelLength width,
                 PixelLength height,
                 Stride stride_bytes = Stride{0},
@@ -96,36 +96,36 @@ public:
                 PixelLength height,
                 Stride stride_bytes = Stride{0});
 
-  iterator begin();
-  const_iterator begin() const;
-  const_iterator cbegin() const;
-  iterator end();
-  const_iterator end() const;
-  const_iterator cend() const;
+  iterator begin() noexcept;
+  const_iterator begin() const noexcept;
+  const_iterator cbegin() const noexcept;
+  iterator end() noexcept;
+  const_iterator end() const noexcept;
+  const_iterator cend() const noexcept;
 
-  PixelType* data();
-  const PixelType* data() const;
+  PixelType* data() noexcept;
+  const PixelType* data() const noexcept;
 
-  PixelType* data(PixelIndex y);
-  const PixelType* data(PixelIndex y) const;
+  PixelType* data(PixelIndex y) noexcept;
+  const PixelType* data(PixelIndex y) const noexcept;
 
-  PixelType* data_row_end(PixelIndex y);
-  const PixelType* data_row_end(PixelIndex y) const;
+  PixelType* data_row_end(PixelIndex y) noexcept;
+  const PixelType* data_row_end(PixelIndex y) const noexcept;
 
-  PixelType* data(PixelIndex x, PixelIndex y);
-  const PixelType* data(PixelIndex x, PixelIndex y) const;
+  PixelType* data(PixelIndex x, PixelIndex y) noexcept;
+  const PixelType* data(PixelIndex x, PixelIndex y) const noexcept;
 
-  std::uint8_t* byte_ptr();
-  const std::uint8_t* byte_ptr() const;
+  std::uint8_t* byte_ptr() noexcept;
+  const std::uint8_t* byte_ptr() const noexcept;
 
-  std::uint8_t* byte_ptr(PixelIndex y);
-  const std::uint8_t* byte_ptr(PixelIndex y) const;
+  std::uint8_t* byte_ptr(PixelIndex y) noexcept;
+  const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
 
-  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y);
-  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const;
+  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) noexcept;
+  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
 
-  PixelType& operator()(PixelIndex x, PixelIndex y);
-  const PixelType& operator()(PixelIndex x, PixelIndex y) const;
+  PixelType& operator()(PixelIndex x, PixelIndex y) noexcept;
+  const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept;
 
 private:
   static_assert(std::is_pod<PixelType>::value, "Pixel type is not POD");
@@ -141,8 +141,8 @@ private:
   void deallocate_bytes_if_owned();
   void reset();
   void copy_rows_from(const Image<PixelType>& src);
-  Bytes compute_data_offset(PixelIndex y) const;
-  Bytes compute_data_offset(PixelIndex x, PixelIndex y) const;
+  Bytes compute_data_offset(PixelIndex y) const noexcept;
+  Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
@@ -670,7 +670,7 @@ Image<PixelType>::Image(PixelLength width, PixelLength height, Stride stride_byt
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes)
+Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes) noexcept
     : data_(data)
     , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
@@ -691,7 +691,7 @@ Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength heigh
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes)
+Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data, PixelLength width, PixelLength height, Stride stride_bytes) noexcept
     : data_(data.transfer_data())
     , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
@@ -848,7 +848,7 @@ inline Image<PixelType>::~Image()
  * @return Width of the image in pixels.
  */
 template <typename PixelType>
-inline PixelLength Image<PixelType>::width() const
+inline PixelLength Image<PixelType>::width() const noexcept
 {
   return width_;
 }
@@ -859,7 +859,7 @@ inline PixelLength Image<PixelType>::width() const
  * @return Height of the image in pixels.
  */
 template <typename PixelType>
-inline PixelLength Image<PixelType>::height() const
+inline PixelLength Image<PixelType>::height() const noexcept
 {
   return height_;
 }
@@ -875,7 +875,7 @@ inline PixelLength Image<PixelType>::height() const
  * @return Row stride in bytes.
  */
 template <typename PixelType>
-inline Stride Image<PixelType>::stride_bytes() const
+inline Stride Image<PixelType>::stride_bytes() const noexcept
 {
   return stride_bytes_;
 }
@@ -889,7 +889,7 @@ inline Stride Image<PixelType>::stride_bytes() const
  * @return Number of data bytes occupied by each image row.
  */
 template <typename PixelType>
-inline std::size_t Image<PixelType>::row_bytes() const
+inline std::size_t Image<PixelType>::row_bytes() const noexcept
 {
   return width_ * PixelTraits<PixelType>::nr_bytes;
 }
@@ -902,7 +902,7 @@ inline std::size_t Image<PixelType>::row_bytes() const
  * @return Number of bytes occupied by the image data in memory.
  */
 template <typename PixelType>
-inline std::size_t Image<PixelType>::total_bytes() const
+inline std::size_t Image<PixelType>::total_bytes() const noexcept
 {
   return stride_bytes_ * height_;
 }
@@ -915,7 +915,7 @@ inline std::size_t Image<PixelType>::total_bytes() const
  * @return True, if the image data stored packed; false otherwise.
  */
 template <typename PixelType>
-inline bool Image<PixelType>::is_packed() const
+inline bool Image<PixelType>::is_packed() const noexcept
 {
   return stride_bytes_ == PixelTraits<PixelType>::nr_bytes * width_;
 }
@@ -927,7 +927,7 @@ inline bool Image<PixelType>::is_packed() const
  *         memory.
  */
 template <typename PixelType>
-inline bool Image<PixelType>::is_view() const
+inline bool Image<PixelType>::is_view() const noexcept
 {
   return !owns_memory_;
 }
@@ -941,7 +941,7 @@ inline bool Image<PixelType>::is_view() const
  * @return True, if the image is empty; false if it is non-empty.
  */
 template <typename PixelType>
-inline bool Image<PixelType>::is_empty() const
+inline bool Image<PixelType>::is_empty() const noexcept
 {
   return data_ == nullptr || width_ == 0 || height_ == 0;
 }
@@ -954,7 +954,7 @@ inline bool Image<PixelType>::is_empty() const
  * @return True, if the image is valid; false otherwise.
  */
 template <typename PixelType>
-inline bool Image<PixelType>::is_valid() const
+inline bool Image<PixelType>::is_valid() const noexcept
 {
   return !is_empty();
 }
@@ -968,7 +968,7 @@ inline bool Image<PixelType>::is_valid() const
  * @tparam PixelType The pixel type.
  */
 template <typename PixelType>
-void Image<PixelType>::clear()
+void Image<PixelType>::clear() noexcept
 {
   deallocate_bytes_if_owned();
   reset();
@@ -980,7 +980,7 @@ void Image<PixelType>::clear()
  * @param value The value that each image pixel should assume.
  */
 template <typename PixelType>
-void Image<PixelType>::fill(PixelType value)
+void Image<PixelType>::fill(PixelType value) noexcept
 {
   for (PixelIndex y = 0_px; y < height_; ++y)
   {
@@ -1149,7 +1149,7 @@ inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data,
  * @return Iterator to the first image row.
  */
 template <typename PixelType>
-inline typename Image<PixelType>::iterator Image<PixelType>::begin()
+inline typename Image<PixelType>::iterator Image<PixelType>::begin() noexcept
 {
   return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, 0_px));
 }
@@ -1160,7 +1160,7 @@ inline typename Image<PixelType>::iterator Image<PixelType>::begin()
  * @return Const iterator to the first image row.
  */
 template <typename PixelType>
-inline typename Image<PixelType>::const_iterator Image<PixelType>::begin() const
+inline typename Image<PixelType>::const_iterator Image<PixelType>::begin() const noexcept
 {
   return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_px));
 }
@@ -1171,7 +1171,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::begin() const
  * @return Const iterator to the first image row.
  */
 template <typename PixelType>
-inline typename Image<PixelType>::const_iterator Image<PixelType>::cbegin() const
+inline typename Image<PixelType>::const_iterator Image<PixelType>::cbegin() const noexcept
 {
   return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_px));
 }
@@ -1182,7 +1182,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::cbegin() cons
  * @return Iterator to image row after the last row.
  */
 template <typename PixelType>
-inline typename Image<PixelType>::iterator Image<PixelType>::end()
+inline typename Image<PixelType>::iterator Image<PixelType>::end() noexcept
 {
   return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, height_));
 }
@@ -1193,7 +1193,7 @@ inline typename Image<PixelType>::iterator Image<PixelType>::end()
  * @return Const iterator to image row after the last row.
  */
 template <typename PixelType>
-inline typename Image<PixelType>::const_iterator Image<PixelType>::end() const
+inline typename Image<PixelType>::const_iterator Image<PixelType>::end() const noexcept
 {
   return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
 }
@@ -1204,7 +1204,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::end() const
  * @return Const iterator to image row after the last row.
  */
 template <typename PixelType>
-inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const
+inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const noexcept
 {
   return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
 }
@@ -1215,7 +1215,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const
  * @return Pointer to the first pixel element.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data()
+inline PixelType* Image<PixelType>::data() noexcept
 {
   return reinterpret_cast<PixelType*>(byte_ptr());
 }
@@ -1226,7 +1226,7 @@ inline PixelType* Image<PixelType>::data()
  * @return Constant pointer to the first pixel element.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data() const
+inline const PixelType* Image<PixelType>::data() const noexcept
 {
   return reinterpret_cast<const PixelType*>(byte_ptr());
 }
@@ -1238,7 +1238,7 @@ inline const PixelType* Image<PixelType>::data() const
  * @return Pointer to the first pixel element of the y-th row.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data(PixelIndex y)
+inline PixelType* Image<PixelType>::data(PixelIndex y) noexcept
 {
   return reinterpret_cast<PixelType*>(byte_ptr(y));
 }
@@ -1250,7 +1250,7 @@ inline PixelType* Image<PixelType>::data(PixelIndex y)
  * @return Constant pointer to the first pixel element of the y-th row.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data(PixelIndex y) const
+inline const PixelType* Image<PixelType>::data(PixelIndex y) const noexcept
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(y));
 }
@@ -1262,7 +1262,7 @@ inline const PixelType* Image<PixelType>::data(PixelIndex y) const
  * @return Pointer to the one-past-the-last pixel element of the y-th row.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data_row_end(PixelIndex y)
+inline PixelType* Image<PixelType>::data_row_end(PixelIndex y) noexcept
 {
   return reinterpret_cast<PixelType*>(byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * width_);
 }
@@ -1275,7 +1275,7 @@ inline PixelType* Image<PixelType>::data_row_end(PixelIndex y)
  * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data_row_end(PixelIndex y) const
+inline const PixelType* Image<PixelType>::data_row_end(PixelIndex y) const noexcept
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * width_);
 }
@@ -1288,7 +1288,7 @@ inline const PixelType* Image<PixelType>::data_row_end(PixelIndex y) const
  * @return Pointer to the x-th pixel element of the y-th row.
  */
 template <typename PixelType>
-inline PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y)
+inline PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y) noexcept
 {
   return reinterpret_cast<PixelType*>(byte_ptr(x, y));
 }
@@ -1301,7 +1301,7 @@ inline PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y)
  * @return Constant pointer to the x-th pixel element of the y-th row.
  */
 template <typename PixelType>
-inline const PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y) const
+inline const PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y) const noexcept
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(x, y));
 }
@@ -1312,7 +1312,7 @@ inline const PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y) const
  * @return Pointer to the first image data byte.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr()
+inline std::uint8_t* Image<PixelType>::byte_ptr() noexcept
 {
   return data_;
 }
@@ -1323,7 +1323,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr()
  * @return Constant pointer to the first image data byte.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr() const
+inline const std::uint8_t* Image<PixelType>::byte_ptr() const noexcept
 {
   return data_;
 }
@@ -1335,7 +1335,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr() const
  * @return Pointer to the first image data byte of row `y`.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y)
+inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -1347,7 +1347,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y)
  * @return Constant pointer to the first image data byte of row `y`.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const
+inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -1360,7 +1360,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y)
+inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -1374,7 +1374,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y)
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const
+inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -1387,7 +1387,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y
  * @return Reference to the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y)
+inline PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y) noexcept
 {
   return *data(x, y);
 }
@@ -1400,7 +1400,7 @@ inline PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y)
  * @return Constant reference to the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline const PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y) const
+inline const PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y) const noexcept
 {
   return *data(x, y);
 }
@@ -1460,13 +1460,13 @@ void Image<PixelType>::copy_rows_from(const Image<PixelType>& src)
 }
 
 template <typename PixelType>
-inline Bytes Image<PixelType>::compute_data_offset(PixelIndex y) const
+inline Bytes Image<PixelType>::compute_data_offset(PixelIndex y) const noexcept
 {
   return Bytes(stride_bytes_ * y);
 }
 
 template <typename PixelType>
-inline Bytes Image<PixelType>::compute_data_offset(PixelIndex x, PixelIndex y) const
+inline Bytes Image<PixelType>::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
 {
   return Bytes(stride_bytes_ * y + PixelTraits<PixelType>::nr_bytes * x);
 }

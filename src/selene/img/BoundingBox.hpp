@@ -18,20 +18,20 @@ namespace sln {
 class BoundingBox
 {
 public:
-  BoundingBox();
-  BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height);
+  BoundingBox() noexcept;
+  BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept;
 
-  PixelIndex x0() const;
-  PixelIndex y0() const;
-  PixelLength width() const;
-  PixelLength height() const;
+  PixelIndex x0() const noexcept;
+  PixelIndex y0() const noexcept;
+  PixelLength width() const noexcept;
+  PixelLength height() const noexcept;
 
-  PixelIndex x1() const;
-  PixelIndex y1() const;
-  PixelIndex x_end() const;
-  PixelIndex y_end() const;
+  PixelIndex x1() const noexcept;
+  PixelIndex y1() const noexcept;
+  PixelIndex x_end() const noexcept;
+  PixelIndex y_end() const noexcept;
 
-  bool empty() const;
+  bool empty() const noexcept;
 
 private:
   PixelIndex x0_;
@@ -42,7 +42,7 @@ private:
 
 /** Default constructor. Constructs a bounding box of size (0, 0) top-left corner (0, 0).
  */
-inline BoundingBox::BoundingBox()
+inline BoundingBox::BoundingBox() noexcept
     : x0_(PixelIndex{0}), y0_(PixelIndex{0}), width_(PixelLength{0}), height_(PixelLength{0})
 {
 }
@@ -54,7 +54,7 @@ inline BoundingBox::BoundingBox()
  * \param width Box width.
  * \param height Box height.
  */
-inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
+inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept
     : x0_(x0), y0_(y0), width_(width), height_(height)
 {
 }
@@ -63,7 +63,7 @@ inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width,
  *
  * \return x-coordinate of the top-left corner.
  */
-inline PixelIndex BoundingBox::x0() const
+inline PixelIndex BoundingBox::x0() const noexcept
 {
   return x0_;
 }
@@ -72,7 +72,7 @@ inline PixelIndex BoundingBox::x0() const
  *
  * \return y-coordinate of the top-left corner.
  */
-inline PixelIndex BoundingBox::y0() const
+inline PixelIndex BoundingBox::y0() const noexcept
 {
   return y0_;
 }
@@ -81,7 +81,7 @@ inline PixelIndex BoundingBox::y0() const
  *
  * \return Box width.
  */
-inline PixelLength BoundingBox::width() const
+inline PixelLength BoundingBox::width() const noexcept
 {
   return width_;
 }
@@ -90,7 +90,7 @@ inline PixelLength BoundingBox::width() const
  *
  * \return Box height.
  */
-inline PixelLength BoundingBox::height() const
+inline PixelLength BoundingBox::height() const noexcept
 {
   return height_;
 }
@@ -99,7 +99,7 @@ inline PixelLength BoundingBox::height() const
  *
  * \return True, if box is empty, false otherwise.
  */
-inline bool BoundingBox::empty() const
+inline bool BoundingBox::empty() const noexcept
 {
   return width_ * height_ == 0;
 }
@@ -108,7 +108,7 @@ inline bool BoundingBox::empty() const
  *
  * \return x-coordinate of the bottom-right corner.
  */
-inline PixelIndex BoundingBox::x1() const
+inline PixelIndex BoundingBox::x1() const noexcept
 {
   return PixelIndex(x0_ + width_ - 1);
 }
@@ -117,7 +117,7 @@ inline PixelIndex BoundingBox::x1() const
  *
  * \return y-coordinate of the bottom-right corner.
  */
-inline PixelIndex BoundingBox::y1() const
+inline PixelIndex BoundingBox::y1() const noexcept
 {
   return PixelIndex(y0_ + height_ - 1);
 }
@@ -126,7 +126,7 @@ inline PixelIndex BoundingBox::y1() const
  *
  * \return x-coordinate one past the bottom-right corner.
  */
-inline PixelIndex BoundingBox::x_end() const
+inline PixelIndex BoundingBox::x_end() const noexcept
 {
   return PixelIndex(x0_ + width_);
 }
@@ -135,7 +135,7 @@ inline PixelIndex BoundingBox::x_end() const
  *
  * \return y-coordinate one past the bottom-right corner.
  */
-inline PixelIndex BoundingBox::y_end() const
+inline PixelIndex BoundingBox::y_end() const noexcept
 {
   return PixelIndex(y0_ + height_);
 }

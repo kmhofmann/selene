@@ -18,7 +18,7 @@ template <typename Allocator>
 class MemoryBlock;
 
 template <typename Allocator>
-MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size);
+MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size) noexcept;
 
 /** \brief Represents a contiguous block of memory, specified by a pointer to its beginning, and by its size.
  *
@@ -43,10 +43,10 @@ public:
   MemoryBlock(MemoryBlock&& other) noexcept;
   MemoryBlock& operator=(MemoryBlock&& other) noexcept;
 
-  std::uint8_t* data() const;
-  std::size_t size() const;
+  std::uint8_t* data() const noexcept;
+  std::size_t size() const noexcept;
 
-  std::uint8_t* transfer_data();
+  std::uint8_t* transfer_data() noexcept;
 
 private:
   std::uint8_t* data_;
@@ -95,7 +95,7 @@ inline MemoryBlock<Allocator>& MemoryBlock<Allocator>::operator=(MemoryBlock<All
  * \return Pointer to the allocated memory.
  */
 template <typename Allocator>
-inline std::uint8_t* MemoryBlock<Allocator>::data() const
+inline std::uint8_t* MemoryBlock<Allocator>::data() const noexcept
 {
   return data_;
 }
@@ -105,7 +105,7 @@ inline std::uint8_t* MemoryBlock<Allocator>::data() const
  * \return Size of the allocated memory in bytes.
  */
 template <typename Allocator>
-inline std::size_t MemoryBlock<Allocator>::size() const
+inline std::size_t MemoryBlock<Allocator>::size() const noexcept
 {
   return size_;
 }
@@ -119,7 +119,7 @@ inline std::size_t MemoryBlock<Allocator>::size() const
  * \return Pointer to the data, previously contained in the MemoryBlock instance.
  */
 template <typename Allocator>
-inline std::uint8_t* MemoryBlock<Allocator>::transfer_data()
+inline std::uint8_t* MemoryBlock<Allocator>::transfer_data() noexcept
 {
   auto data = data_;
   data_ = nullptr;
@@ -138,7 +138,7 @@ inline std::uint8_t* MemoryBlock<Allocator>::transfer_data()
  * @return A `MemoryBlock<Allocator>` instance.
  */
 template <typename Allocator>
-inline MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size)
+inline MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t* data, std::size_t size) noexcept
 {
   return MemoryBlock<Allocator>(data, size);
 }

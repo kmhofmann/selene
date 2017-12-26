@@ -39,7 +39,7 @@ template <>
 struct ImageAccessor<BorderAccessMode::Unchecked>
 {
   template <typename PixelType>
-  static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y);
+  static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y) noexcept;
 };
 
 /** \brief `ImageAccessor` specialization for `BorderAccessMode::ZeroPadding`.
@@ -48,7 +48,7 @@ template <>
 struct ImageAccessor<BorderAccessMode::ZeroPadding>
 {
   template <typename PixelType>
-  static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y);
+  static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y) noexcept;
 };
 
 /** \brief `ImageAccessor` specialization for `BorderAccessMode::Replicated`.
@@ -57,7 +57,7 @@ template <>
 struct ImageAccessor<BorderAccessMode::Replicated>
 {
   template <typename PixelType>
-  static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y);
+  static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y) noexcept;
 };
 
 
@@ -76,7 +76,7 @@ struct ImageAccessor<BorderAccessMode::Replicated>
 template <typename PixelType>
 inline auto ImageAccessor<BorderAccessMode::Unchecked>::access(const Image<PixelType>& img,
                                                                SignedPixelIndex x,
-                                                               SignedPixelIndex y)
+                                                               SignedPixelIndex y) noexcept
 {
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
 }
@@ -93,7 +93,7 @@ inline auto ImageAccessor<BorderAccessMode::Unchecked>::access(const Image<Pixel
 template <typename PixelType>
 inline auto ImageAccessor<BorderAccessMode::ZeroPadding>::access(const Image<PixelType>& img,
                                                                  SignedPixelIndex x,
-                                                                 SignedPixelIndex y)
+                                                                 SignedPixelIndex y) noexcept
 {
   if (x < 0 || x >= static_cast<SignedPixelIndex>(img.width()) || y < 0
       || y >= static_cast<SignedPixelIndex>(img.height()))
@@ -116,7 +116,7 @@ inline auto ImageAccessor<BorderAccessMode::ZeroPadding>::access(const Image<Pix
 template <typename PixelType>
 inline auto ImageAccessor<BorderAccessMode::Replicated>::access(const Image<PixelType>& img,
                                                                 SignedPixelIndex x,
-                                                                SignedPixelIndex y)
+                                                                SignedPixelIndex y) noexcept
 {
   if (x < 0)
   {

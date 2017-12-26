@@ -32,12 +32,13 @@ public:
   using value_type = T;  ///< The type of each pixel sample (channel).
   static constexpr auto nr_channels = nr_channels_;  ///< The number of channels per pixel.
 
-  constexpr Pixel() = default;  ///< Default constructor. Pixel values are uninitialized.
+  constexpr Pixel() noexcept = default;  ///< Default constructor. Pixel values are uninitialized.
 
   template <typename... Args, typename = std::enable_if_t<sizeof...(Args) == nr_channels_>>
-  constexpr Pixel(Args... args);
+  constexpr Pixel(Args... args) noexcept;
 
-  constexpr explicit Pixel(const std::array<T, nr_channels>& arr);
+  constexpr explicit Pixel(const std::array<T, nr_channels>& arr) noexcept;
+
   ~Pixel() = default;
 
   Pixel(const Pixel<T, nr_channels_>&) = default;  ///< Copy constructor.
@@ -48,6 +49,7 @@ public:
 
   template <typename U>
   Pixel(const Pixel<U, nr_channels_>& other);
+
   template <typename U>
   Pixel<T, nr_channels_>& operator=(const Pixel<U, nr_channels_>& other);
 
@@ -58,7 +60,7 @@ public:
   constexpr const T& operator[](std::size_t n) const noexcept;
 
   // Allow implicit conversion to T, iff nr_channels_ ==1:
-  operator std::conditional_t<nr_channels_ == 1, T, void>() const;
+  operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept;
 
 private:
   static_assert(std::is_arithmetic<T>::value, "Pixel element type needs to be an arithmetic type");
@@ -138,7 +140,7 @@ using Pixel_64f4 = Pixel<float64_t, 4>;  ///< 64-bit floating point 4-channel pi
  */
 template <typename T, std::uint32_t nr_channels_>
 template <typename... Args, typename>
-inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cast<T>(args)...}}
+inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) noexcept : data_{{static_cast<T>(args)...}}
 {
   static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
@@ -153,7 +155,7 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) : data_{{static_cas
  * \param arr The channel values as std::array<>.
  */
 template <typename T, std::uint32_t nr_channels_>
-inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) : data_(arr)
+inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) noexcept : data_(arr)
 {
   static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
@@ -260,7 +262,7 @@ inline constexpr const T& Pixel<T, nr_channels_>::operator[](std::size_t n) cons
  * @tparam nr_channels_ The number of channels.
  */
 template <typename T, std::uint32_t nr_channels_>
-inline Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T, void>() const
+inline Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept
 {
   return data_[0];
 }

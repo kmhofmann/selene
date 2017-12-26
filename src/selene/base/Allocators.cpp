@@ -15,7 +15,7 @@ namespace sln {
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes)
+MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes) noexcept
 {
   if (nr_bytes == 0)
   {
@@ -30,7 +30,7 @@ MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes)
  *
  * \param data A pointer to previously allocated data.
  */
-void MallocAllocator::deallocate(std::uint8_t*& data)
+void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
 {
   if (data != nullptr)
   {
@@ -47,7 +47,7 @@ void MallocAllocator::deallocate(std::uint8_t*& data)
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes)
+MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes) noexcept
 {
   if (nr_bytes == 0)
   {
@@ -62,7 +62,7 @@ MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes)
  *
  * \param data A pointer to previously allocated data.
  */
-void NewAllocator::deallocate(std::uint8_t*& data)
+void NewAllocator::deallocate(std::uint8_t*& data) noexcept
 {
   delete[] data;
   data = nullptr;
