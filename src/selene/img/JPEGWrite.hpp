@@ -68,7 +68,7 @@ struct JPEGCompressionOptions
   }
 };
 
-/** Opaque JPEG compression object, holding internal state.
+/** \brief Opaque JPEG compression object, holding internal state.
  *
  */
 class JPEGCompressionObject

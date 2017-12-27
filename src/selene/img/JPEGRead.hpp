@@ -84,7 +84,7 @@ struct JPEGDecompressionOptions
   }
 };
 
-/** Opaque JPEG decompression object, holding internal state.
+/** \brief Opaque JPEG decompression object, holding internal state.
  *
  */
 class JPEGDecompressionObject

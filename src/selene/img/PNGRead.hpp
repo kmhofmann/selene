@@ -113,7 +113,7 @@ struct PNGDecompressionOptions
   }
 };
 
-/** Opaque PNG decompression object, holding internal state.
+/** \brief Opaque PNG decompression object, holding internal state.
  *
  */
 class PNGDecompressionObject

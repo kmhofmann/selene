@@ -58,6 +58,13 @@ Or, alternatively, using [ninja](https://ninja-build.org/):
 
 Preferably use the library "at head", e.g. as submodule, instead of invoking the `install` target.
 
+Integrating the library into own CMake projects can be as easy as:
+
+    # ...
+    add_subdirectory(selene)
+    target_link_libraries(target_name selene::selene)
+    # ...
+
 The default settings will build a set of static libraries.
 If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command. 
 

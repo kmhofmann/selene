@@ -76,7 +76,7 @@ struct PNGCompressionOptions
   }
 };
 
-/** Opaque PNG compression object, holding internal state.
+/** \brief Opaque PNG compression object, holding internal state.
  *
  */
 class PNGCompressionObject
