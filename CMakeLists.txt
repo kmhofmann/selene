@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 project(selene CXX)
 
 option(SELENE_ENABLE_TESTS "Build selene tests" ON)
-option(SELENE_USE_LIBCXX "Use libc++" OFF)
-option(SELENE_USE_CXXABI "Use libc++abi" OFF)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 14)
@@ -21,24 +19,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(SELENE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-get_directory_property(has_parent PARENT_DIRECTORY)
-
-#------------------------------------------------------------------------------
-
-# Set compiler flags (GCC or Clang)
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wno-attributes -Wno-clobbered")
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-
-    if (SELENE_USE_LIBCXX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-    endif()
-
-    if (SELENE_USE_CXXABI)
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(SELENE_COMPILER_WARNING_OPTIONS -Wall -Wextra -Wpedantic)
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(SELENE_IMG_COMPILER_WARNING_OPTIONS -Wno-clobbered)
     endif()
 endif()
 
@@ -74,7 +58,6 @@ if (OPENCV_CORE_FOUND)
 else()
     message(WARNING "Building without OpenCV support.")
 endif()
-
 
 #------------------------------------------------------------------------------
 

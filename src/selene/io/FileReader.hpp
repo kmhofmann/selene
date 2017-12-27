@@ -273,7 +273,10 @@ template <typename T, typename>
 T read(FileReader& source)
 {
   T value{};
-  [[maybe_unused]] bool read = source.read(value);
+#ifndef NDEBUG // TODO: replace with [[maybe_unused]] (C++17)
+  bool read =
+#endif
+  source.read(value);
   SELENE_ASSERT(read);
   return value;
 }

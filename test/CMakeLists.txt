@@ -31,6 +31,10 @@ target_sources(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.cpp
         )
 
+target_compile_options(selene_tests
+        PRIVATE
+        ${SELENE_COMPILER_WARNING_OPTIONS})
+
 target_include_directories(selene_tests
         PRIVATE
         ${Boost_INCLUDE_DIR}

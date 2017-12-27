@@ -4,11 +4,8 @@ endif()
 
 #------------------------------------------------------------------------------
 
-install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/selene DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-#------------------------------------------------------------------------------
-
 add_library(selene_base "")
+
 target_sources(selene_base
         PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
@@ -23,39 +20,19 @@ target_sources(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Utils.hpp
         )
-target_include_directories(selene_base PUBLIC ${SELENE_DIR}/src)
 
-install(TARGETS selene_base
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-#------------------------------------------------------------------------------
-
-add_library(selene_io "")
-target_sources(selene_io
+target_compile_options(selene_base
         PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.cpp
-        INTERFACE
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/MemoryReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/MemoryWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/VectorReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/VectorWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/WriterMode.hpp
-        )
-target_include_directories(selene_io PUBLIC ${SELENE_DIR}/src)
+        ${SELENE_COMPILER_WARNING_OPTIONS})
 
-install(TARGETS selene_io
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+target_include_directories(selene_base
+        PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
 
 #------------------------------------------------------------------------------
 
 add_library(selene_img "")
+
 target_sources(selene_img
         PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.cpp
@@ -96,56 +73,133 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Types.hpp
         )
-target_include_directories(selene_img PUBLIC ${SELENE_DIR}/src)
-target_link_libraries(selene_img selene_base)
+
+target_compile_options(selene_img
+        PRIVATE
+        ${SELENE_COMPILER_WARNING_OPTIONS}
+        ${SELENE_IMG_COMPILER_WARNING_OPTIONS})
+
+target_include_directories(selene_img
+        PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
 
 if (JPEG_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_LIBJPEG)
+    target_compile_definitions(selene_img
+            PUBLIC
+            SELENE_WITH_LIBJPEG)
     if (JPEG_PARTIAL_DECODING)
-        target_compile_definitions(selene_img PUBLIC SELENE_LIBJPEG_PARTIAL_DECODING)
+        target_compile_definitions(selene_img
+                PUBLIC
+                SELENE_LIBJPEG_PARTIAL_DECODING)
     endif()
     if (JPEG_EXTENDED_COLORSPACES)
-        target_compile_definitions(selene_img PUBLIC SELENE_LIBJPEG_EXTENDED_COLORSPACES)
+        target_compile_definitions(selene_img
+                PUBLIC
+                SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     endif()
-    target_include_directories(selene_img PRIVATE ${JPEG_INCLUDE_DIR})
-    target_link_libraries(selene_img ${JPEG_LIBRARIES})
+    target_include_directories(selene_img
+            PRIVATE
+            ${JPEG_INCLUDE_DIR})
+    target_link_libraries(selene_img
+            PUBLIC
+            ${JPEG_LIBRARIES})
 endif()
 
 if (PNG_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_LIBPNG)
-    target_include_directories(selene_img PRIVATE ${PNG_INCLUDE_DIR})
-    target_link_libraries(selene_img ${PNG_LIBRARIES})
+    target_compile_definitions(selene_img
+            PUBLIC
+            SELENE_WITH_LIBPNG)
+    target_include_directories(selene_img
+            PRIVATE
+            ${PNG_INCLUDE_DIR})
+    target_link_libraries(selene_img
+            PUBLIC
+            ${PNG_LIBRARIES})
 endif()
 
 if (OPENCV_CORE_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_OPENCV)
-    target_include_directories(selene_img PRIVATE ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(selene_img ${OpenCV_LIBS})
+    target_compile_definitions(selene_img
+            PUBLIC
+            SELENE_WITH_OPENCV)
+    target_include_directories(selene_img
+            PRIVATE
+            ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(selene_img
+            PUBLIC
+            ${OpenCV_LIBS})
 endif()
 
-install(TARGETS selene_img
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+target_link_libraries(selene_img
+        PUBLIC
+        selene_base)
+
+#------------------------------------------------------------------------------
+
+add_library(selene_io "")
+
+target_sources(selene_io
+        PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.cpp
+        INTERFACE
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/MemoryReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/MemoryWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/VectorReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/VectorWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/WriterMode.hpp
+        )
+
+target_compile_options(selene_io
+        PRIVATE
+        ${SELENE_COMPILER_WARNING_OPTIONS})
+
+target_include_directories(selene_io
+        PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
 
 #------------------------------------------------------------------------------
 
 add_library(selene_thread INTERFACE)
+
 target_sources(selene_thread
         INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/selene/thread/ThreadPool.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/Callable.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/TaskQueue.hpp
         )
-target_include_directories(selene_thread INTERFACE ${SELENE_DIR}/src)
+
+target_include_directories(selene_thread
+        INTERFACE
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
 
 #------------------------------------------------------------------------------
 
 add_library(selene INTERFACE)
+
 target_include_directories(selene INTERFACE ${SELENE_DIR}/src)
+
 target_link_libraries(selene
         INTERFACE
         selene_base
         selene_img
         selene_io
         selene_thread)
+
+#------------------------------------------------------------------------------
+
+install(TARGETS selene_base selene_img selene_io selene_thread selene
+        EXPORT SeleneTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/selene
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+#install(EXPORT SeleneTargets
+#        FILE SeleneTargets.cmake
+#        NAMESPACE selene::
+#        DESTINATION lib/cmake/selene)
