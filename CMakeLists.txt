@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(selene CXX)
 
-option(SELENE_ENABLE_TESTS "Build selene tests" ON)
+option(SELENE_ENABLE_TESTS "Build selene tests" OFF)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 14)

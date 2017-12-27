@@ -4,7 +4,7 @@
 
 ## Introduction
 
-**selene** is a C++14 utility library for various image or IO related tasks.
+**selene** is a C++14 image representation, processing and I/O library.
 
 It currently contains, among other things
 
@@ -84,35 +84,98 @@ If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to t
 
 The presence (or lack of) these dependencies should be detected automatically by CMake.
 
-If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system, some of its additional capabilities will be taken into account and are enabled by the API (e.g. partial JPEG image decoding and extended color spaces).
+If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system, some of its additional
+capabilities (such as partial JPEG image decoding and extended color spaces) will be taken into account and are enabled
+by the API.
 
-[OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if so desired.
+[OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if
+so desired.
 
 ### Building and running the tests
 
-The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for building the tests.
+Building the tests is disabled by default, and can be enabled by adding `-DENABLE_SELENE_TESTS=ON` to the `cmake`
+command.
+
+The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for
+building the tests.
 The former is bundled as a Git submodule and will be automatically cloned during execution of the `cmake` command.
+The latter is automatically searched for by a CMake `find_package` command; its presence is required to build the tests.
 
-Building the tests is enabled by default, but can be disabled by adding `-DENABLE_SELENE_TESTS=OFF` to the `cmake` command. In this case, the `Boost.Filesystem` dependency disappears.
+The test suite can be run by executing `./test/selene_tests` from the `build` directory. `./test/selene_tests -h` lists
+available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
+for more information.
 
-The test suite can be run by executing `./test/selene_tests` from the `build` directory. `./test/selene_tests -h` lists available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md) for more information.
-
-In case some tests are failing because auxiliary data files can not be found automatically, specify the path to the `data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or similar).
+In case some tests are failing because auxiliary data files can not be found automatically, specify the path to the
+`data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or similar).
 
 ## Documentation
 
 **selene** is fully documented using the [_Doxygen_](http://www.stack.nl/~dimitri/doxygen/) format.
 _Doxygen_ documentation can be built using the provided `Doxyfile`.
+Simply run `doxygen` in the main library directory.
 
-Currently, this documentation is not hosted online, although this may change in the future.
+A regularly updated version of the documentation [is hosted here](https://michael-hofmann.info/selene/).
+
+While the Doxygen API documentation might provide a decent reference manual, there is currently a lack of usage
+tutorials and examples.
+More of these shall be added in the near future.
+
+## Rationale
+
+Why implement a new library for image representation, I/O and basic processing?
+It seems that existing solutions are somewhat lacking.
+
+Many C++ developers who quickly want to read or write image data for processing purposes, in particular in research,
+fall back to using [OpenCV](https://opencv.org/).
+
+OpenCV, however, is not only a heavy-weight solution from a binary size perspective; the interfaces it provides are
+also notoriously type-unsafe and do not generalize well.
+It has heaps of scaffolding and questionable abstractions to hide C code from 20 years ago.
+Examples:
+
+- Ever wondered how to access a pixel inside a `cv::Mat` correctly?
+Making a mistake here is far too easy, as the image data type has to be decided at each point of access.
+- Ever looked what lurks behind a `cv::InputArray` that so many functions like to take, or why it can be
+substituted by a `cv::InputArrayOfArrays`?
+Yep, there's a `void*` somewhere at the end of it.
+Good-bye type safety!
+
+Another option for C++ developers to read or write image data is to use the reference implementations for common formats
+directly; e.g. [libjpeg](http://www.ijg.org/) or [libpng](http://www.libpng.org/pub/png/libpng.html).
+
+This is also notoriously difficult to get right, because although these libraries are very well documented, their C
+interfaces are very low-level, require lots of boilerplate code, and provide even less type safety.
+Error handling even needs to be implemented using `setjmp` and `longjmp`!
+And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
+image representation class.
+
+**selene** aims to fill this gap by providing an easy to use API for the most common image I/O and processing needs.
+See the feature set above.
+
+Its goal is to provide a wide-enough feature set to be able to _build_ more complex functionality _on top_.
+It is not meant as a competitor to OpenCV's more specialized computer vision algorithms, and it does not aim to be a
+jack of all trades, master of none.
+
+Primary design criteria for the library are:
+- Ease of use ("easy to use correctly, hard to use incorrectly")
+- Sane and minimal interfaces
+- Type safety
+- Modularity
+
+The library might lack some much-needed features in its current state (such as image rescaling), but it is planned to
+add these over time.
 
 ## Status
 
 **selene** is work-in-progress and shall be considerably extended and modified in the future.
 Currently, no API or ABI stability guarantees are given.
-
 However, the code is well-tested and assumed to be not too far from production-level quality.
 Porting to accommodate potential API changes should not be very difficult.
 
-**selene** is currently developed and tested on Linux with GCC 7.2.0 and Clang 6.0.0 (trunk), and on MacOS with AppleClang 9.0.0.
+While performance is important, and premature pessimization is avoided wherever possible, some of the provided
+operations could be further sped up by explicit vectorization. As the library currently has one main author working on
+it in his free time, this is deemed out of scope at the moment.
+
+**selene** is currently developed and tested on Linux with GCC 7.2.0 and Clang 6.0.0 (trunk), and on MacOS with
+AppleClang 9.0.0.
 Support for Windows/Visual C++ 2017 is under consideration, but not a priority.
