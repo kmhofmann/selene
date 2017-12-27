@@ -9,7 +9,6 @@ add_library(selene_base "")
 target_sources(selene_base
         PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
-        INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Assert.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryBlock.hpp
@@ -27,7 +26,8 @@ target_compile_options(selene_base
 
 target_include_directories(selene_base
         PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>
+        $<INSTALL_INTERFACE:include>)
 
 #------------------------------------------------------------------------------
 
@@ -35,20 +35,6 @@ add_library(selene_img "")
 
 target_sources(selene_img
         PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp
-        INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Accessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/BoundingBox.hpp
@@ -59,19 +45,32 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Interpolators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/IO.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/JPEGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/OpenCV.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Pixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PixelTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Types.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp
         )
 
 target_compile_options(selene_img
@@ -81,7 +80,8 @@ target_compile_options(selene_img
 
 target_include_directories(selene_img
         PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>
+        $<INSTALL_INTERFACE:include>)
 
 if (JPEG_FOUND)
     target_compile_definitions(selene_img
@@ -139,9 +139,8 @@ add_library(selene_io "")
 
 target_sources(selene_io
         PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.cpp
-        INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileWriter.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/MemoryReader.hpp
@@ -157,7 +156,8 @@ target_compile_options(selene_io
 
 target_include_directories(selene_io
         PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>
+        $<INSTALL_INTERFACE:include>)
 
 #------------------------------------------------------------------------------
 
@@ -165,20 +165,24 @@ add_library(selene_thread INTERFACE)
 
 target_sources(selene_thread
         INTERFACE
-        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/ThreadPool.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/Callable.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/TaskQueue.hpp
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/selene/thread/ThreadPool.hpp>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/Callable.hpp>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/selene/thread/detail/TaskQueue.hpp>
         )
 
 target_include_directories(selene_thread
         INTERFACE
-        $<BUILD_INTERFACE:${SELENE_DIR}/src>)
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>
+        $<INSTALL_INTERFACE:include>)
 
 #------------------------------------------------------------------------------
 
 add_library(selene INTERFACE)
 
-target_include_directories(selene INTERFACE ${SELENE_DIR}/src)
+target_include_directories(selene
+        INTERFACE
+        $<BUILD_INTERFACE:${SELENE_DIR}/src>
+        $<INSTALL_INTERFACE:include>)
 
 target_link_libraries(selene
         INTERFACE
@@ -197,9 +201,10 @@ install(TARGETS selene_base selene_img selene_io selene_thread selene
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/selene
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.hpp")
 
-#install(EXPORT SeleneTargets
-#        FILE SeleneTargets.cmake
-#        NAMESPACE selene::
-#        DESTINATION lib/cmake/selene)
+install(EXPORT SeleneTargets
+        FILE SeleneTargets.cmake
+        NAMESPACE selene::
+        DESTINATION lib/cmake/selene)
