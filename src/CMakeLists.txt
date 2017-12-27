@@ -5,6 +5,7 @@ endif()
 #------------------------------------------------------------------------------
 
 add_library(selene_base "")
+add_library(selene::selene_base ALIAS selene_base)
 
 target_sources(selene_base
         PRIVATE
@@ -32,6 +33,7 @@ target_include_directories(selene_base
 #------------------------------------------------------------------------------
 
 add_library(selene_img "")
+add_library(selene::selene_img ALIAS selene_img)
 
 target_sources(selene_img
         PRIVATE
@@ -98,7 +100,7 @@ if (JPEG_FOUND)
                 SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     endif()
     target_include_directories(selene_img
-            PRIVATE
+            PUBLIC
             ${JPEG_INCLUDE_DIR})
     target_link_libraries(selene_img
             PUBLIC
@@ -110,7 +112,7 @@ if (PNG_FOUND)
             PUBLIC
             SELENE_WITH_LIBPNG)
     target_include_directories(selene_img
-            PRIVATE
+            PUBLIC
             ${PNG_INCLUDE_DIR})
     target_link_libraries(selene_img
             PUBLIC
@@ -122,7 +124,7 @@ if (OPENCV_CORE_FOUND)
             PUBLIC
             SELENE_WITH_OPENCV)
     target_include_directories(selene_img
-            PRIVATE
+            PUBLIC
             ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(selene_img
             PUBLIC
@@ -136,6 +138,7 @@ target_link_libraries(selene_img
 #------------------------------------------------------------------------------
 
 add_library(selene_io "")
+add_library(selene::selene_io ALIAS selene_io)
 
 target_sources(selene_io
         PRIVATE
@@ -162,6 +165,7 @@ target_include_directories(selene_io
 #------------------------------------------------------------------------------
 
 add_library(selene_thread INTERFACE)
+add_library(selene::selene_thread ALIAS selene_thread)
 
 target_sources(selene_thread
         INTERFACE
@@ -178,6 +182,7 @@ target_include_directories(selene_thread
 #------------------------------------------------------------------------------
 
 add_library(selene INTERFACE)
+add_library(selene::selene ALIAS selene)
 
 target_include_directories(selene
         INTERFACE
@@ -194,17 +199,19 @@ target_link_libraries(selene
 #------------------------------------------------------------------------------
 
 install(TARGETS selene_base selene_img selene_io selene_thread selene
-        EXPORT SeleneTargets
+        EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/selene
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp")
 
-install(EXPORT SeleneTargets
-        FILE SeleneTargets.cmake
+install(EXPORT selene-targets
+        FILE selene-targets.cmake
         NAMESPACE selene::
-        DESTINATION lib/cmake/selene)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/selene)
+
+install(FILES "selene-config.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/selene)
