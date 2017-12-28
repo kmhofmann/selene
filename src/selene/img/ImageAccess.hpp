@@ -17,6 +17,10 @@
 
 namespace sln {
 
+// The following function definitions employ some tricks to coerce Visual C++ into choosing the right overloads
+// (tested with Visual Studio v15.5.2). The std::integral_constant<> parameters should not be needed, and the
+// std::enable_if<> statements could all be part of the template parameters.
+
 /** \brief Returns the pixel value of the image at the specified (floating point) location, using the specified
  * interpolation method and border access mode.
  *
@@ -34,7 +38,8 @@ template <ImageInterpolationMode InterpolationMode = ImageInterpolationMode::Bil
           typename ImageType,
           typename Index,
           typename = std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y) noexcept
+inline auto get(const ImageType& img, Index x, Index y,
+                std::integral_constant<ImageInterpolationMode, InterpolationMode> = {}) noexcept
 {
   return ImageInterpolator<InterpolationMode, AccessMode>::interpolate(img, x, y);
 }
@@ -57,7 +62,8 @@ template <BorderAccessMode AccessMode,
           typename ImageType,
           typename Index,
           typename = std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img, Index x, Index y) noexcept
+inline auto get(const ImageType& img, Index x, Index y,
+                std::integral_constant<BorderAccessMode, AccessMode> = {}) noexcept
 {
   return get<ImageInterpolationMode::Bilinear, AccessMode>(img, x, y);
 }
@@ -75,10 +81,9 @@ inline auto get(const ImageType& img, Index x, Index y) noexcept
  */
 template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked,
           typename ImageType,
-          typename Index,
-          typename = std::enable_if_t<std::is_integral<Index>::value>,
-          typename = void>
-inline auto get(const ImageType& img, Index x, Index y) noexcept
+          typename Index>
+inline auto get(const ImageType& img, Index x, Index y,
+                typename std::enable_if_t<std::is_integral<Index>::value>* = nullptr) noexcept
 {
   const auto si_x = static_cast<SignedPixelIndex>(x);
   const auto si_y = static_cast<SignedPixelIndex>(y);
