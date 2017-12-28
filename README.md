@@ -35,7 +35,7 @@ It currently contains, among other things
   * A simple thread pool, to enable task-based parallelism.
     * [ThreadPool](https://github.com/kmhofmann/selene/blob/master/src/selene/thread/ThreadPool.hpp): Concurrent processing of tasks (function calls).
 
-## Installation
+## Building
 
 **selene** uses [CMake](https://cmake.org/) for building.
 
@@ -108,6 +108,34 @@ for more information.
 In case some tests are failing because auxiliary data files can not be found automatically, specify the path to the
 `data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or similar).
 
+### Installing dependencies
+
+The following are recommendations for installation of dependencies on various platforms.
+Of course any dependency can alternatively also be built from source.
+
+#### Linux
+
+On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as follows:
+
+    apt-get install libjpeg-turbo8-dev libpng16-dev libopencv-dev libboost-filesystem-dev
+
+However, OpenCV might need to be built from source and installed manually.
+
+#### MacOS
+
+Install [Homebrew](https://brew.sh/) to build and install the dependencies as follows:
+
+    brew install libjpeg-turbo libpng opencv3 boost
+
+#### Windows
+
+By far the easiest way is to install and then use the [vcpkg](https://github.com/Microsoft/vcpkg) package manager:
+
+    .\vcpkg.exe install libjpeg-turbo
+    .\vcpkg.exe install libpng
+    .\vcpkg.exe install opencv
+    .\vcpkg.exe install boost
+
 ## Documentation
 
 **selene** is fully documented using the [_Doxygen_](http://www.stack.nl/~dimitri/doxygen/) format.
@@ -176,6 +204,7 @@ While performance is important, and premature pessimization is avoided wherever 
 operations could be further sped up by explicit vectorization. As the library currently has one main author working on
 it in his free time, this is deemed out of scope at the moment.
 
-**selene** is currently developed and tested on Linux with GCC 7.2.0 and Clang 6.0.0 (trunk), and on MacOS with
-AppleClang 9.0.0.
-Support for Windows/Visual C++ 2017 is under consideration, but not a priority.
+**selene** is currently developed and tested on
+- Linux using GCC 7.2.0 and Clang 6.0.0 (trunk)
+- MacOS using AppleClang 9.0.0.
+- Windows using Visual C++ 2017 (compiler version >= 19.12.25831).
