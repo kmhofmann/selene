@@ -32,11 +32,9 @@ namespace sln {
 template <ImageInterpolationMode InterpolationMode = ImageInterpolationMode::Bilinear,
           BorderAccessMode AccessMode = BorderAccessMode::Unchecked,
           typename ImageType,
-          typename Index>
-inline auto get(const ImageType& img,
-                Index x,
-                Index y,
-                typename std::enable_if_t<std::is_floating_point<Index>::value>* = nullptr) noexcept
+          typename Index,
+          typename = std::enable_if_t<std::is_floating_point<Index>::value>>
+inline auto get(const ImageType& img, Index x, Index y) noexcept
 {
   return ImageInterpolator<InterpolationMode, AccessMode>::interpolate(img, x, y);
 }
@@ -55,11 +53,11 @@ inline auto get(const ImageType& img,
  * @param y The floating point y-coordinate.
  * @return Interpolated pixel value at the specified (x, y) location.
  */
-template <BorderAccessMode AccessMode, typename ImageType, typename Index>
-inline auto get(const ImageType& img,
-                Index x,
-                Index y,
-                typename std::enable_if_t<std::is_floating_point<Index>::value>* = nullptr) noexcept
+template <BorderAccessMode AccessMode,
+          typename ImageType,
+          typename Index,
+          typename = std::enable_if_t<std::is_floating_point<Index>::value>>
+inline auto get(const ImageType& img, Index x, Index y) noexcept
 {
   return get<ImageInterpolationMode::Bilinear, AccessMode>(img, x, y);
 }
@@ -75,11 +73,12 @@ inline auto get(const ImageType& img,
  * @param y The floating point y-coordinate.
  * @return Pixel value at the specified (x, y) location.
  */
-template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType, typename Index>
-inline auto get(const ImageType& img,
-                Index x,
-                Index y,
-                typename std::enable_if_t<std::is_integral<Index>::value>* = nullptr) noexcept
+template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked,
+          typename ImageType,
+          typename Index,
+          typename = std::enable_if_t<std::is_integral<Index>::value>,
+          typename = void>
+inline auto get(const ImageType& img, Index x, Index y) noexcept
 {
   const auto si_x = static_cast<SignedPixelIndex>(x);
   const auto si_y = static_cast<SignedPixelIndex>(y);
