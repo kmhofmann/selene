@@ -38,7 +38,7 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
   {
     // Read a JPEG file
     const auto img_path = full_path("bike_duck.jpg");
-    sln::FileReader source(img_path.c_str());
+    sln::FileReader source(img_path.string());
     REQUIRE(source.is_open());
 
     sln::MessageLog messages_read;
@@ -57,7 +57,7 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
     REQUIRE(img_data.is_valid());
 
     // Write as PNG
-    sln::FileWriter sink((tmp_path / "test_duck_auto.png").c_str());
+    sln::FileWriter sink((tmp_path / "test_duck_auto.png").string());
     REQUIRE(sink.is_open());
 
     sln::MessageLog messages_write;
@@ -69,7 +69,7 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
 
   {
     // Read the previously written PNG image
-    sln::FileReader source((tmp_path / "test_duck_auto.png").c_str());
+    sln::FileReader source((tmp_path / "test_duck_auto.png").string());
     REQUIRE(source.is_open());
 
     sln::MessageLog messages;

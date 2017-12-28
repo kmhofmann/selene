@@ -150,11 +150,11 @@ TEST_CASE("Test IO classes", "[io]")
   const auto tmp_path = get_tmp_path();
   const auto filename = tmp_path / "test_io.bin";
 
-  const char* c_filename = filename.c_str();
-  write_test_1<sln::FileWriter>(&c_filename);
-  read_test_1<sln::FileReader>(&c_filename);
-  write_test_2<sln::FileWriter>(&c_filename);
-  read_test_2<sln::FileReader>(&c_filename);
+  const auto filename_str = filename.string();
+  write_test_1<sln::FileWriter>(&filename_str);
+  read_test_1<sln::FileReader>(&filename_str);
+  write_test_2<sln::FileWriter>(&filename_str);
+  read_test_2<sln::FileReader>(&filename_str);
 
   std::vector<std::uint8_t> vec;
   write_test_1<sln::VectorWriter>(&vec);

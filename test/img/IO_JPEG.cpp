@@ -53,7 +53,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   const auto tmp_path = get_tmp_path();
 
   // Test reading without conversion
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);
@@ -85,7 +85,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   }
 
   // Test writing of RGB image
-  sln::FileWriter sink((tmp_path / "test_duck.jpg").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck.jpg").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
@@ -102,7 +102,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   const auto tmp_path = get_tmp_path();
 
   // Test reading with conversion to grayscale
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Grayscale), &messages_read);
@@ -134,7 +134,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   }
 
   // Test writing of grayscale image
-  sln::FileWriter sink((tmp_path / "test_duck_gray.jpg").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck_gray.jpg").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::Y), sink,
@@ -146,7 +146,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(messages_write.messages().empty());
 
   // Test reading of grayscale JPEG again
-  sln::FileReader source_2((tmp_path / "test_duck_gray.jpg").c_str());
+  sln::FileReader source_2((tmp_path / "test_duck_gray.jpg").string());
   REQUIRE(source_2.is_open());
   sln::MessageLog messages_read_2;
   auto img_data_2 = sln::read_jpeg(source_2, sln::JPEGDecompressionOptions(), &messages_read_2);
@@ -171,7 +171,7 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   const auto tmp_path = get_tmp_path();
 
   // Test reading of header...
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
   sln::JPEGDecompressionObject decompression_object;
   const auto header = sln::read_jpeg_header(decompression_object, source);
@@ -223,7 +223,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   const auto targeted_height = 350_px;
   sln::BoundingBox region(100_px, 100_px, 400_px, targeted_height);
 
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Auto, region),
@@ -250,7 +250,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(img.stride_bytes() == expected_width * 3);
 
   // Test writing of RGB image
-  sln::FileWriter sink((tmp_path / "test_duck_crop.jpg").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck_crop.jpg").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
@@ -262,7 +262,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(messages_write.messages().empty());
 
   // Test reading of JPEG again
-  sln::FileReader source_2((tmp_path / "test_duck_crop.jpg").c_str());
+  sln::FileReader source_2((tmp_path / "test_duck_crop.jpg").string());
   REQUIRE(source_2.is_open());
   sln::MessageLog messages_read_2;
   auto img_data_2 = sln::read_jpeg(source_2, sln::JPEGDecompressionOptions(), &messages_read_2);
@@ -286,7 +286,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = get_tmp_path();
-  const auto file_contents = sln::read_file_contents(in_filename().c_str());
+  const auto file_contents = sln::read_file_contents(in_filename().string());
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory

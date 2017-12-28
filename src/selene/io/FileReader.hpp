@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 
 namespace sln {
@@ -29,6 +30,7 @@ class FileReader
 public:
   FileReader() = default;
   explicit FileReader(const char* filename);
+  explicit FileReader(const std::string& filename);
   ~FileReader();
 
   FileReader(const FileReader&) = delete;
@@ -39,6 +41,7 @@ public:
   std::FILE* handle() noexcept;
 
   bool open(const char* filename) noexcept;
+  bool open(const std::string& filename) noexcept;
   void close() noexcept;
 
   bool is_open() const noexcept;
@@ -86,6 +89,21 @@ inline FileReader::FileReader(const char* filename)
   }
 }
 
+/** \brief Opens the specified file for reading and sets the file stream pointer to the beginning of the file.
+*
+* If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+* See also FileReader::open.
+*
+* \param filename The name of the file to be opened for reading.
+*/
+inline FileReader::FileReader(const std::string& filename)
+{
+  if (!open(filename))
+  {
+    throw std::runtime_error(std::strerror(errno));
+  }
+}
+
 /** \brief Destructor; closes the previously opened file stream. */
 inline FileReader::~FileReader()
 {
@@ -123,6 +141,20 @@ inline bool FileReader::open(const char* filename) noexcept
 
   fp_ = std::fopen(filename, "rb");
   return (fp_ != nullptr);
+}
+
+/** \brief Opens the specified file for reading and sets the file stream pointer to the beginning of the file.
+*
+* Any already open file will be closed.
+* Opening a file stream can fail for various reasons, e.g. if the specified file does not exist.
+* The failure cases generally match the failure cases of `std::fopen`.
+*
+* \param filename The name of the file to be opened for reading.
+* \return True, if the file was successfully opened; false otherwise.
+*/
+inline bool FileReader::open(const std::string& filename) noexcept
+{
+  return open(filename.c_str());
 }
 
 /** \brief Closes an open file stream.

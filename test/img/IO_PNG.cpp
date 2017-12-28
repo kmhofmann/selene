@@ -53,7 +53,7 @@ fs::path test_suite_dir()
 void check_write_read(sln::ImageData& img_data, const boost::filesystem::path& tmp_path)
 {
   // Write as PNG file...
-  sln::FileWriter sink((tmp_path / "test_img.png").c_str());
+  sln::FileWriter sink((tmp_path / "test_img.png").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_png(img_data, sink, sln::PNGCompressionOptions(), &messages_write);
@@ -63,7 +63,7 @@ void check_write_read(sln::ImageData& img_data, const boost::filesystem::path& t
   REQUIRE(!sink.is_open());
 
   // ...and read again
-  sln::FileReader source((tmp_path / "test_img.png").c_str());
+  sln::FileReader source((tmp_path / "test_img.png").string());
   sln::MessageLog messages_read;
   auto img_data_2 = sln::read_png(source, sln::PNGDecompressionOptions(), &messages_read);
   REQUIRE(messages_read.messages().empty());
@@ -93,7 +93,7 @@ void check_write_read(sln::ImageData& img_data, const boost::filesystem::path& t
 TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 {
   const auto tmp_path = get_tmp_path();
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
 
   // Test reading without conversion
@@ -124,7 +124,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
     REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
   }
 
-  sln::FileWriter sink((tmp_path / "test_duck.png").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck.png").string());
   REQUIRE(sink.is_open());
 
   // Test writing of RGB image
@@ -138,7 +138,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 {
   const auto tmp_path = get_tmp_path();
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
 
   // Test reading with conversion to grayscale
@@ -171,7 +171,7 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
     REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(px[i][5])));
   }
 
-  sln::FileWriter sink((tmp_path / "test_duck_gray.png").c_str());
+  sln::FileWriter sink((tmp_path / "test_duck_gray.png").string());
   REQUIRE(sink.is_open());
 
   // Test writing of grayscale image
@@ -185,7 +185,7 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 TEST_CASE("PNG image reading and writing, reusing decompression object", "[img]")
 {
   const auto tmp_path = get_tmp_path();
-  sln::FileReader source(in_filename().c_str());
+  sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
 
   // Test reading of header...
@@ -228,7 +228,7 @@ TEST_CASE("PNG image reading and writing, reusing decompression object", "[img]"
 TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = get_tmp_path();
-  const auto file_contents = sln::read_file_contents(in_filename().c_str());
+  const auto file_contents = sln::read_file_contents(in_filename().string());
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory
@@ -284,7 +284,7 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
   {
     if (e.path().extension() == ".png")
     {
-      sln::FileReader source(e.path().c_str());
+      sln::FileReader source(e.path().string());
       REQUIRE(source.is_open());
 
       sln::MessageLog messages_read;

@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 
 namespace sln {
@@ -30,6 +31,7 @@ class FileWriter
 public:
   FileWriter() = default;
   explicit FileWriter(const char* filename, WriterMode mode = WriterMode::Write);
+  explicit FileWriter(const std::string& filename, WriterMode mode = WriterMode::Write);
   ~FileWriter();
 
   FileWriter(const FileWriter&) = delete;
@@ -40,6 +42,7 @@ public:
   std::FILE* handle() noexcept;
 
   bool open(const char* filename, WriterMode mode = WriterMode::Write) noexcept;
+  bool open(const std::string& filename, WriterMode mode = WriterMode::Write) noexcept;
   void close() noexcept;
 
   bool is_open() const noexcept;
@@ -79,6 +82,22 @@ std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noex
  * \param mode The writing mode, WriterMode::Write or WriterMode::Append.
  */
 inline FileWriter::FileWriter(const char* filename, WriterMode mode)
+{
+  if (!open(filename, mode))
+  {
+    throw std::runtime_error(std::strerror(errno));
+  }
+}
+
+/** \brief Opens the specified file for writing.
+*
+* If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+* See also FileWriter::open.
+*
+* \param filename The name of the file to be opened for reading.
+* \param mode The writing mode, WriterMode::Write or WriterMode::Append.
+*/
+inline FileWriter::FileWriter(const std::string& filename, WriterMode mode)
 {
   if (!open(filename, mode))
   {
@@ -135,6 +154,21 @@ inline bool FileWriter::open(const char* filename, WriterMode mode) noexcept
   }
 
   return (fp_ != nullptr);
+}
+
+/** \brief Opens the specified file for writing.
+*
+* Any already open file will be closed.
+* Opening a file stream can fail for various reasons. The failure cases generally match the failure cases of
+* `std::fopen`.
+*
+* \param filename The name of the file to be opened for reading.
+* \param mode The writing mode, WriterMode::Write or WriterMode::Append.
+* \return True, if the file was successfully opened; false otherwise.
+*/
+inline bool FileWriter::open(const std::string& filename, WriterMode mode) noexcept
+{
+  return open(filename.c_str(), mode);
 }
 
 /** \brief Closes an open file stream.
