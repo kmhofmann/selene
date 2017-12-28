@@ -10,7 +10,7 @@
 inline boost::filesystem::path get_tmp_path()
 {
   namespace fs = boost::filesystem;
-  const auto tmp_path = fs::temp_directory_path() / "selene_test/";
+  const auto tmp_path = fs::temp_directory_path() / "selene_test";
 
   if (!fs::exists(tmp_path))
   {

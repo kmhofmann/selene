@@ -10,6 +10,7 @@
 #include <selene/base/Assert.hpp>
 #include <selene/io/WriterMode.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>

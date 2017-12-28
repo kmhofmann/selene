@@ -14,6 +14,7 @@
 #include <selene/img/PixelFormat.hpp>
 #include <selene/img/Types.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <utility>
 

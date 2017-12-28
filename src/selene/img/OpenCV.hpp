@@ -189,8 +189,8 @@ Image<T> copy_opencv_mat(const cv::Mat& img_cv)
 template <typename T>
 inline cv::Mat wrap_in_opencv_mat(Image<T>& img)
 {
-  SELENE_ASSERT(img.width() <= std::numeric_limits<int>::max());
-  SELENE_ASSERT(img.height() <= std::numeric_limits<int>::max());
+  SELENE_ASSERT(static_cast<std::int64_t>(img.width()) <= static_cast<std::int64_t>(std::numeric_limits<int>::max()));
+  SELENE_ASSERT(static_cast<std::int64_t>(img.height()) <= static_cast<std::int64_t>(std::numeric_limits<int>::max()));
   SELENE_ASSERT(img.stride_bytes() <= std::numeric_limits<std::size_t>::max());
 
   const auto width = img.width();
@@ -212,8 +212,8 @@ inline cv::Mat wrap_in_opencv_mat(Image<T>& img)
 template <typename T>
 cv::Mat copy_to_opencv_mat(const Image<T>& img)
 {
-  SELENE_ASSERT(img.width() <= std::numeric_limits<int>::max());
-  SELENE_ASSERT(img.height() <= std::numeric_limits<int>::max());
+  SELENE_ASSERT(static_cast<std::int64_t>(img.width()) <= static_cast<std::int64_t>(std::numeric_limits<int>::max()));
+  SELENE_ASSERT(static_cast<std::int64_t>(img.height()) <= static_cast<std::int64_t>(std::numeric_limits<int>::max()));
   SELENE_ASSERT(img.stride_bytes() <= std::numeric_limits<std::size_t>::max());
 
   const auto width = img.width();

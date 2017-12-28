@@ -87,9 +87,7 @@ inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMod
     const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
-  x = round<SignedPixelIndex>(x);
-  y = round<SignedPixelIndex>(y);
-  return ImageAccessor<AccessMode>::access(img, x, y);
+  return ImageAccessor<AccessMode>::access(img, round<SignedPixelIndex>(x), round<SignedPixelIndex>(y));
 }
 
 /** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
