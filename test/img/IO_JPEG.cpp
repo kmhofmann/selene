@@ -29,9 +29,9 @@ namespace fs = boost::filesystem;
 using namespace sln::literals;
 
 // clang-format off
-constexpr auto ref_width = 1024;
-constexpr auto ref_height = 684;
-constexpr std::array<std::array<unsigned int, 6>, 3> px = {
+constexpr auto ref_width = 1024u;
+constexpr auto ref_height = 684u;
+constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
     {std::array<unsigned int, 6>{{226, 180, 244, 198, 0, 189}},
      std::array<unsigned int, 6>{{582, 415, 228, 227, 232, 228}},
      std::array<unsigned int, 6>{{878, 597, 57, 60, 69, 60}}}};  // {x, y}, {r, g, b}, {y}
@@ -79,9 +79,9 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(px[i][0]);
-    const auto y = sln::PixelIndex(px[i][1]);
-    REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = sln::PixelIndex(pix[i][0]);
+    const auto y = sln::PixelIndex(pix[i][1]);
+    REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 
   // Test writing of RGB image
@@ -128,9 +128,9 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 1);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(px[i][0]);
-    const auto y = sln::PixelIndex(px[i][1]);
-    REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(px[i][5])));
+    const auto x = sln::PixelIndex(pix[i][0]);
+    const auto y = sln::PixelIndex(pix[i][1]);
+    REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(pix[i][5])));
   }
 
   // Test writing of grayscale image
@@ -207,9 +207,9 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(px[i][0]);
-    const auto y = sln::PixelIndex(px[i][1]);
-    REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = sln::PixelIndex(pix[i][0]);
+    const auto y = sln::PixelIndex(pix[i][1]);
+    REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 }
 
@@ -316,9 +316,9 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(img.stride_bytes() == ref_width * 3);
   for (int i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(px[i][0]);
-    const auto y = sln::PixelIndex(px[i][1]);
-    REQUIRE(img(x, y) == sln::Pixel_8u3(px[i][2], px[i][3], px[i][4]));
+    const auto x = sln::PixelIndex(pix[i][0]);
+    const auto y = sln::PixelIndex(pix[i][1]);
+    REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 
   // Test writing to memory

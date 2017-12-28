@@ -18,8 +18,8 @@
 
 namespace fs = boost::filesystem;
 
-constexpr auto ref_width = 1024;
-constexpr auto ref_height = 684;
+constexpr auto ref_width = 1024u;
+constexpr auto ref_height = 684u;
 
 namespace {
 
