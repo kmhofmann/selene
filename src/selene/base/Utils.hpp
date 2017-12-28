@@ -127,7 +127,7 @@ inline constexpr auto make_array_from_function(Func func) noexcept
 namespace detail {
 
 template <typename PT, typename Coeff, PT shift>
-inline constexpr auto rounded_linear_combination_coeff_func(std::size_t i)
+inline constexpr PT rounded_linear_combination_coeff_func(std::size_t i)
 {
   using UT = std::make_unsigned_t<PT>;
   return round_half_up<PT>(Coeff::values[i] * PT(power(UT{2}, UT{shift})));
@@ -160,7 +160,7 @@ inline constexpr T approximate_linear_combination(const Array& src) noexcept
   using PT = PromotedType;  // Larger type
   using UPT = std::make_unsigned_t<PT>;
   constexpr auto shift = UPT{(sizeof(PT) - sizeof(T)) * 8};
-  constexpr auto half = PT{power(UPT{2}, shift) / PT{2}};  // "0.5" for rounding
+  constexpr auto half = PT(power(UPT{2}, shift) / PT{2});  // "0.5" for rounding
 
   using Func = decltype(detail::rounded_linear_combination_coeff_func<PT, Coeff, shift>);  // GCC 7.2.0 wants this...
   constexpr auto c = make_array_from_function<PT, N, Func>(
@@ -169,7 +169,7 @@ inline constexpr T approximate_linear_combination(const Array& src) noexcept
   auto sum = PT{0};
   for (std::size_t i = 0; i < N; ++i)  // N is known at compile time
   {
-    sum += c[i] * src[i];
+    sum += static_cast<PT>(c[i] * src[i]);
   }
 
   return static_cast<T>((sum + half) >> shift);
