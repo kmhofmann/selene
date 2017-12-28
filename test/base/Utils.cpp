@@ -140,7 +140,7 @@ TEST_CASE("Make array functions", "[base]")
 
 struct TestCoefficients
 {
-  static constexpr std::array<float, 3> values = {0.6, 0.1, 0.3};
+  static constexpr std::array<float, 3> values = {{0.6, 0.1, 0.3}};
 };
 
 TEST_CASE("Rounded linear combination", "[base]")
