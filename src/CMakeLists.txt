@@ -4,11 +4,36 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_library(selene_base "")
-add_library(selene::selene_base ALIAS selene_base)
+find_package(JPEGTurbo)  # Use the custom JPEGTurbo module
+if (JPEG_FOUND)
+    message("Building with libjpeg support.")
+    if (JPEG_PARTIAL_DECODING)
+        message("libjpeg-turbo supports partial decoding.")
+    endif()
+    if (JPEG_EXTENDED_COLORSPACES)
+        message("libjpeg-turbo supports extended color spaces.")
+    endif()
+else()
+    message(WARNING "Building without libjpeg support.")
+endif()
 
-target_sources(selene_base
-        PRIVATE
+find_package(PNG 1.6)
+if (PNG_FOUND)
+    message("Building with libpng support.")
+else()
+    message(WARNING "Building without libpng support.")
+endif()
+
+find_package(OpenCV)
+if (OPENCV_CORE_FOUND)
+    message("Building with OpenCV support.")
+else()
+    message(WARNING "Building without OpenCV support.")
+endif()
+
+#------------------------------------------------------------------------------
+
+add_library(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Assert.hpp
@@ -20,10 +45,15 @@ target_sources(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Utils.hpp
         )
+add_library(selene::selene_base ALIAS selene_base)
 
 target_compile_options(selene_base
         PRIVATE
         ${SELENE_COMPILER_WARNING_OPTIONS})
+
+target_compile_definitions(selene_base
+        PRIVATE
+        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
 
 target_include_directories(selene_base
         PUBLIC
@@ -32,11 +62,7 @@ target_include_directories(selene_base
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img "")
-add_library(selene::selene_img ALIAS selene_img)
-
-target_sources(selene_img
-        PRIVATE
+add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Accessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/BoundingBox.hpp
@@ -74,11 +100,16 @@ target_sources(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/Util.hpp
         )
+add_library(selene::selene_img ALIAS selene_img)
 
 target_compile_options(selene_img
         PRIVATE
         ${SELENE_COMPILER_WARNING_OPTIONS}
         ${SELENE_IMG_COMPILER_WARNING_OPTIONS})
+
+target_compile_definitions(selene_img
+        PRIVATE
+        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
 
 target_include_directories(selene_img
         PUBLIC
@@ -137,11 +168,7 @@ target_link_libraries(selene_img
 
 #------------------------------------------------------------------------------
 
-add_library(selene_io "")
-add_library(selene::selene_io ALIAS selene_io)
-
-target_sources(selene_io
-        PRIVATE
+add_library(selene_io
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileReader.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/FileUtils.hpp
@@ -152,10 +179,15 @@ target_sources(selene_io
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/VectorWriter.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/io/WriterMode.hpp
         )
+add_library(selene::selene_io ALIAS selene_io)
 
 target_compile_options(selene_io
         PRIVATE
         ${SELENE_COMPILER_WARNING_OPTIONS})
+
+target_compile_definitions(selene_io
+        PRIVATE
+        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
 
 target_include_directories(selene_io
         PUBLIC

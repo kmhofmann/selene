@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.5)
 project(selene CXX)
 
 option(SELENE_ENABLE_TESTS "Build selene tests" OFF)
@@ -24,42 +24,12 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(SELENE_IMG_COMPILER_WARNING_OPTIONS -Wno-clobbered)
     endif()
+	set(SELENE_COMPILER_EXTRA_DEFINITIONS "")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    # TODO: Re-enable C4389 and remove all warnings
+	set(SELENE_COMPILER_WARNING_OPTIONS /MP /W4 /wd4996 /wd4611 /wd4389)
+	set(SELENE_COMPILER_EXTRA_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
 endif()
-
-#------------------------------------------------------------------------------
-
-if (SELENE_ENABLE_TESTS)
-    find_package(Boost REQUIRED filesystem system)
-endif()
-
-find_package(JPEGTurbo)  # Use the custom JPEGTurbo module
-if (JPEG_FOUND)
-    message("Building with libjpeg support.")
-    if (JPEG_PARTIAL_DECODING)
-        message("libjpeg-turbo supports partial decoding.")
-    endif()
-    if (JPEG_EXTENDED_COLORSPACES)
-        message("libjpeg-turbo supports extended color spaces.")
-    endif()
-else()
-    message(WARNING "Building without libjpeg support.")
-endif()
-
-find_package(PNG 1.6)
-if (PNG_FOUND)
-    message("Building with libpng support.")
-else()
-    message(WARNING "Building without libpng support.")
-endif()
-
-find_package(OpenCV)
-if (OPENCV_CORE_FOUND)
-    message("Building with OpenCV support.")
-else()
-    message(WARNING "Building without OpenCV support.")
-endif()
-
-#------------------------------------------------------------------------------
 
 # Add the selene library target
 add_subdirectory(src)
