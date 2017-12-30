@@ -31,7 +31,7 @@ class Image;
  * Each image pixel can have an arbitrary number of channels, and each channel/sample in a pixel can have an arbitrary
  * number of bytes.
  *
- * Optionally, an image can have be tagged with a particular `PixelFormat` or a partiular `SampleType`.
+ * Optionally, an image can have be tagged with a particular `PixelFormat` or a particular `SampleType`.
  * This is mostly a semantic tag and has little influence on the data content.
  *
  * The memory of an `ImageData` instance may either be owned or non-owned; in the latter case, the instance is a "view"
