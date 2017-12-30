@@ -45,7 +45,7 @@ public:
   ImageData(PixelLength width,
             PixelLength height,
             std::uint16_t nr_channels,
-            std::uint8_t nr_bytes_per_channel,
+            std::uint16_t nr_bytes_per_channel,
             Stride stride_bytes = Stride{0},
             PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown);
@@ -54,7 +54,7 @@ public:
             PixelLength width,
             PixelLength height,
             std::uint16_t nr_channels,
-            std::uint8_t nr_bytes_per_channel,
+            std::uint16_t nr_bytes_per_channel,
             Stride stride_bytes = Stride{0},
             PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown) noexcept;
@@ -63,7 +63,7 @@ public:
             PixelLength width,
             PixelLength height,
             std::uint16_t nr_channels,
-            std::uint8_t nr_bytes_per_channel,
+            std::uint16_t nr_bytes_per_channel,
             Stride stride_bytes = Stride{0},
             PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown) noexcept;
@@ -77,7 +77,7 @@ public:
   PixelLength width() const noexcept;
   PixelLength height() const noexcept;
   std::uint16_t nr_channels() const noexcept;
-  std::uint8_t nr_bytes_per_channel() const noexcept;
+  std::uint16_t nr_bytes_per_channel() const noexcept;
   Stride stride_bytes() const noexcept;
   std::size_t row_bytes() const noexcept;
   std::size_t total_bytes() const noexcept;
@@ -93,7 +93,7 @@ public:
   void allocate(PixelLength width,
                 PixelLength height,
                 std::uint16_t nr_channels,
-                std::uint8_t nr_bytes_per_channel,
+                std::uint16_t nr_bytes_per_channel,
                 Stride stride_bytes = Stride{0},
                 PixelFormat pixel_format = PixelFormat::Unknown,
                 SampleFormat sample_format = SampleFormat::Unknown,
@@ -105,7 +105,7 @@ public:
                 PixelLength width,
                 PixelLength height,
                 std::uint16_t nr_channels,
-                std::uint8_t nr_bytes_per_channel,
+                std::uint16_t nr_bytes_per_channel,
                 Stride stride_bytes = Stride{0},
                 PixelFormat pixel_format = PixelFormat::Unknown,
                 SampleFormat sample_format = SampleFormat::Unknown);
@@ -114,7 +114,7 @@ public:
                 PixelLength width,
                 PixelLength height,
                 std::uint16_t nr_channels,
-                std::uint8_t nr_bytes_per_channel,
+                std::uint16_t nr_bytes_per_channel,
                 Stride stride_bytes = Stride{0},
                 PixelFormat pixel_format = PixelFormat::Unknown,
                 SampleFormat sample_format = SampleFormat::Unknown);
@@ -134,7 +134,7 @@ private:
   PixelLength height_ = 0_px;
   Stride stride_bytes_ = 0_b;
   std::uint16_t nr_channels_ = 0;
-  std::uint8_t nr_bytes_per_channel_ = 0;
+  std::uint16_t nr_bytes_per_channel_ = 0;
   PixelFormat pixel_format_ = PixelFormat::Unknown;
   SampleFormat sample_format_ = SampleFormat::Unknown;
   bool owns_memory_ = false;
@@ -171,7 +171,7 @@ private:
 inline ImageData::ImageData(PixelLength width,
                             PixelLength height,
                             std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel,
+                            std::uint16_t nr_bytes_per_channel,
                             Stride stride_bytes,
                             PixelFormat pixel_format,
                             SampleFormat sample_format)
@@ -200,7 +200,7 @@ inline ImageData::ImageData(std::uint8_t* data,
                             PixelLength width,
                             PixelLength height,
                             std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel,
+                            std::uint16_t nr_bytes_per_channel,
                             Stride stride_bytes,
                             PixelFormat pixel_format,
                             SampleFormat sample_format) noexcept
@@ -229,7 +229,7 @@ inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data,
                             PixelLength width,
                             PixelLength height,
                             std::uint16_t nr_channels,
-                            std::uint8_t nr_bytes_per_channel,
+                            std::uint16_t nr_bytes_per_channel,
                             Stride stride_bytes,
                             PixelFormat pixel_format,
                             SampleFormat sample_format) noexcept
@@ -383,7 +383,7 @@ inline std::uint16_t ImageData::nr_channels() const noexcept
  *
  * @return Number of bytes stored for each sample, per image channel.
  */
-inline std::uint8_t ImageData::nr_bytes_per_channel() const noexcept
+inline std::uint16_t ImageData::nr_bytes_per_channel() const noexcept
 {
   return nr_bytes_per_channel_;
 }
@@ -524,7 +524,7 @@ inline void ImageData::clear() noexcept
 inline void ImageData::allocate(PixelLength width,
                                 PixelLength height,
                                 std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel,
+                                std::uint16_t nr_bytes_per_channel,
                                 Stride stride_bytes,
                                 PixelFormat pixel_format,
                                 SampleFormat sample_format,
@@ -586,7 +586,7 @@ inline void ImageData::set_view(std::uint8_t* data,
                                 PixelLength width,
                                 PixelLength height,
                                 std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel,
+                                std::uint16_t nr_bytes_per_channel,
                                 Stride stride_bytes,
                                 PixelFormat pixel_format,
                                 SampleFormat sample_format)
@@ -627,7 +627,7 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data,
                                 PixelLength width,
                                 PixelLength height,
                                 std::uint16_t nr_channels,
-                                std::uint8_t nr_bytes_per_channel,
+                                std::uint16_t nr_bytes_per_channel,
                                 Stride stride_bytes,
                                 PixelFormat pixel_format,
                                 SampleFormat sample_format)
@@ -738,7 +738,7 @@ inline void ImageData::reset()
   height_ = PixelLength{0};
   stride_bytes_ = Stride{0};
   nr_channels_ = std::uint16_t{0};
-  nr_bytes_per_channel_ = std::uint8_t{0};
+  nr_bytes_per_channel_ = std::uint16_t{0};
   pixel_format_ = PixelFormat::Unknown;
   sample_format_ = SampleFormat::Unknown;
   owns_memory_ = false;

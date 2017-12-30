@@ -27,8 +27,8 @@ struct PixelTraits
 {
   using Element = Element_;  ///< The pixel element type.
   static constexpr std::uint32_t nr_channels = 1;  ///< The number of channels per pixel.
-  static constexpr std::uint8_t nr_bytes = sizeof(Element);  ///< The number of bytes per pixel.
-  static constexpr std::uint8_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
+  static constexpr std::uint16_t nr_bytes = sizeof(Element);  ///< The number of bytes per pixel.
+  static constexpr std::uint16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise.
   static constexpr bool is_integral = std::is_integral<Element>::value;
@@ -59,8 +59,8 @@ struct PixelTraits<Pixel<T, N>>
 {
   using Element = T;  ///< The pixel element type.
   static constexpr std::uint32_t nr_channels = N;  ///< The number of channels per pixel.
-  static constexpr std::uint8_t nr_bytes = sizeof(Pixel<T, N>);  ///< The number of bytes per pixel.
-  static constexpr std::uint8_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
+  static constexpr std::uint16_t nr_bytes = sizeof(Pixel<T, N>);  ///< The number of bytes per pixel.
+  static constexpr std::uint16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise.
   static constexpr bool is_integral = std::is_integral<T>::value;
