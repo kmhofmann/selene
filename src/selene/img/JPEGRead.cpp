@@ -245,15 +245,15 @@ bool JPEGHeaderInfo::is_valid() const
 /// \cond INTERNAL
 
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind, MessageLog* messages)
+JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind, MessageLog* messages)
 {
   JPEGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return read_jpeg_header(obj, source, rewind, messages);
+  return read_jpeg_header(obj, std::forward<SourceType>(source), rewind, messages);
 }
 
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source, bool rewind, MessageLog* messages)
+JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
 {
   const auto src_pos = source.position();
 
@@ -280,16 +280,16 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType& source
 }
 
 template <typename SourceType>
-ImageData read_jpeg(SourceType& source, JPEGDecompressionOptions options, MessageLog* messages)
+ImageData read_jpeg(SourceType&& source, JPEGDecompressionOptions options, MessageLog* messages)
 {
   JPEGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return read_jpeg(obj, source, options, messages, nullptr);
+  return read_jpeg(obj, std::forward<SourceType>(source), options, messages, nullptr);
 }
 
 template <typename SourceType>
 ImageData read_jpeg(JPEGDecompressionObject& obj,
-                    SourceType& source,
+                    SourceType&& source,
                     JPEGDecompressionOptions options,
                     MessageLog* messages,
                     const JPEGHeaderInfo* provided_header_info)
@@ -345,19 +345,29 @@ ImageData read_jpeg(JPEGDecompressionObject& obj,
 // ----------
 // Explicit instantiations:
 
-template JPEGHeaderInfo read_jpeg_header<FileReader>(FileReader&, bool, MessageLog*);
-template JPEGHeaderInfo read_jpeg_header<MemoryReader>(MemoryReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<FileReader&>(FileReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<FileReader>(FileReader&&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<MemoryReader&>(MemoryReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<MemoryReader>(MemoryReader&&, bool, MessageLog*);
 
-template JPEGHeaderInfo read_jpeg_header<FileReader>(JPEGDecompressionObject&, FileReader&, bool, MessageLog*);
-template JPEGHeaderInfo read_jpeg_header<MemoryReader>(JPEGDecompressionObject&, MemoryReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<FileReader&>(JPEGDecompressionObject&, FileReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<FileReader>(JPEGDecompressionObject&, FileReader&&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<MemoryReader&>(JPEGDecompressionObject&, MemoryReader&, bool, MessageLog*);
+template JPEGHeaderInfo read_jpeg_header<MemoryReader>(JPEGDecompressionObject&, MemoryReader&&, bool, MessageLog*);
 
-template ImageData read_jpeg<FileReader>(FileReader&, JPEGDecompressionOptions, MessageLog*);
-template ImageData read_jpeg<MemoryReader>(MemoryReader&, JPEGDecompressionOptions, MessageLog*);
+template ImageData read_jpeg<FileReader&>(FileReader&, JPEGDecompressionOptions, MessageLog*);
+template ImageData read_jpeg<FileReader>(FileReader&&, JPEGDecompressionOptions, MessageLog*);
+template ImageData read_jpeg<MemoryReader&>(MemoryReader&, JPEGDecompressionOptions, MessageLog*);
+template ImageData read_jpeg<MemoryReader>(MemoryReader&&, JPEGDecompressionOptions, MessageLog*);
 
-template ImageData read_jpeg<FileReader>(
+template ImageData read_jpeg<FileReader&>(
     JPEGDecompressionObject&, FileReader&, JPEGDecompressionOptions, MessageLog*, const JPEGHeaderInfo*);
-template ImageData read_jpeg<MemoryReader>(
+template ImageData read_jpeg<FileReader>(
+    JPEGDecompressionObject&, FileReader&&, JPEGDecompressionOptions, MessageLog*, const JPEGHeaderInfo*);
+template ImageData read_jpeg<MemoryReader&>(
     JPEGDecompressionObject&, MemoryReader&, JPEGDecompressionOptions, MessageLog*, const JPEGHeaderInfo*);
+template ImageData read_jpeg<MemoryReader>(
+    JPEGDecompressionObject&, MemoryReader&&, JPEGDecompressionOptions, MessageLog*, const JPEGHeaderInfo*);
 
 /// \endcond
 

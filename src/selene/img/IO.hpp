@@ -7,6 +7,8 @@
 
 /// @file
 
+#include <selene/base/MessageLog.hpp>
+
 #include <selene/img/ImageData.hpp>
 
 namespace sln {
@@ -20,12 +22,12 @@ enum class ImageFormat
 };
 
 template <typename SourceType>
-ImageData read_image(SourceType& source, MessageLog* messages = nullptr);
+ImageData read_image(SourceType&& source, MessageLog* messages = nullptr);
 
 template <typename SinkType>
 bool write_image(const ImageData& img_data,
                  ImageFormat format,
-                 SinkType& sink,
+                 SinkType&& sink,
                  MessageLog* messages = nullptr,
                  int jpeg_quality = 95);
 

@@ -115,7 +115,7 @@ private:
  */
 template <typename SinkType>
 bool write_png(const ImageData& img_data,
-               SinkType& sink,
+               SinkType&& sink,
                PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
 
@@ -134,7 +134,7 @@ bool write_png(const ImageData& img_data,
 template <typename SinkType>
 bool write_png(const ImageData& img_data,
                PNGCompressionObject& obj,
-               SinkType& sink,
+               SinkType&& sink,
                PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
 

@@ -48,7 +48,7 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_image(SourceType& source, MessageLog* messages)
+ImageData read_image(SourceType&& source, MessageLog* messages)
 {
   bool reading_attempted = false;
   const auto source_pos = source.position();
@@ -60,12 +60,12 @@ ImageData read_image(SourceType& source, MessageLog* messages)
   {
     JPEGDecompressionObject obj;
     MessageLog messages_jpeg;
-    auto header_info = read_jpeg_header(obj, source, false, &messages_jpeg);
+    auto header_info = read_jpeg_header(obj, std::forward<SourceType>(source), false, &messages_jpeg);
     reading_attempted = true;
 
     if (header_info.is_valid())
     {
-      img_data = read_jpeg(obj, source, JPEGDecompressionOptions(), &messages_jpeg, &header_info);
+      img_data = read_jpeg(obj, std::forward<SourceType>(source), JPEGDecompressionOptions(), &messages_jpeg, &header_info);
 
       add_messages(messages_jpeg, messages);
       return img_data;
@@ -81,12 +81,12 @@ ImageData read_image(SourceType& source, MessageLog* messages)
   {
     PNGDecompressionObject obj;
     MessageLog messages_png;
-    auto header_info = read_png_header(obj, source, false, &messages_png);
+    auto header_info = read_png_header(obj, std::forward<SourceType>(source), false, &messages_png);
     reading_attempted = true;
 
     if (header_info.is_valid())
     {
-      img_data = read_png(obj, source, PNGDecompressionOptions(), &messages_png, &header_info);
+      img_data = read_png(obj, std::forward<SourceType>(source), PNGDecompressionOptions(), &messages_png, &header_info);
 
       add_messages(messages_png, messages);
       return img_data;
@@ -119,13 +119,13 @@ ImageData read_image(SourceType& source, MessageLog* messages)
  * @return True, if the write operation was successful; false otherwise.
  */
 template <typename SinkType>
-bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, MessageLog* messages, int jpeg_quality)
+bool write_image(const ImageData& img_data, ImageFormat format, SinkType&& sink, MessageLog* messages, int jpeg_quality)
 {
   if (format == ImageFormat::JPEG)
   {
 #if defined(SELENE_WITH_LIBJPEG)
     MessageLog messages_jpeg;
-    bool success = write_jpeg(img_data, sink, JPEGCompressionOptions(jpeg_quality), &messages_jpeg);
+    bool success = write_jpeg(img_data, std::forward<SinkType>(sink), JPEGCompressionOptions(jpeg_quality), &messages_jpeg);
 
     add_messages(messages_jpeg, messages);
     return success;
@@ -137,7 +137,7 @@ bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, 
   {
 #if defined(SELENE_WITH_LIBPNG)
     MessageLog messages_png;
-    bool success = write_png(img_data, sink, PNGCompressionOptions(), &messages_png);
+    bool success = write_png(img_data, std::forward<SinkType>(sink), PNGCompressionOptions(), &messages_png);
 
     add_messages(messages_png, messages);
     return success;
@@ -149,6 +149,8 @@ bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, 
   {
     throw std::runtime_error("ERROR: Unknown image format.");
   }
+
+  return false;
 }
 
 // ----------
@@ -156,11 +158,15 @@ bool write_image(const ImageData& img_data, ImageFormat format, SinkType& sink, 
 
 /// \cond INTERNAL
 
-template ImageData read_image<FileReader>(FileReader&, MessageLog*);
-template ImageData read_image<MemoryReader>(MemoryReader&, MessageLog*);
+template ImageData read_image<FileReader&>(FileReader&, MessageLog*);
+template ImageData read_image<FileReader>(FileReader&&, MessageLog*);
+template ImageData read_image<MemoryReader&>(MemoryReader&, MessageLog*);
+template ImageData read_image<MemoryReader>(MemoryReader&&, MessageLog*);
 
-template bool write_image<FileWriter>(const ImageData&, ImageFormat, FileWriter&, MessageLog*, int);
-template bool write_image<VectorWriter>(const ImageData&, ImageFormat, VectorWriter&, MessageLog*, int);
+template bool write_image<FileWriter&>(const ImageData&, ImageFormat, FileWriter&, MessageLog*, int);
+template bool write_image<FileWriter>(const ImageData&, ImageFormat, FileWriter&&, MessageLog*, int);
+template bool write_image<VectorWriter&>(const ImageData&, ImageFormat, VectorWriter&, MessageLog*, int);
+template bool write_image<VectorWriter>(const ImageData&, ImageFormat, VectorWriter&&, MessageLog*, int);
 
 /// \endcond
 

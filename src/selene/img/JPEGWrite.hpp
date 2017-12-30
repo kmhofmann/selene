@@ -11,6 +11,7 @@
 
 #include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
+#include <selene/base/MessageLog.hpp>
 #include <selene/base/Utils.hpp>
 
 #include <selene/img/BoundingBox.hpp>
@@ -111,7 +112,7 @@ private:
  */
 template <typename SinkType>
 bool write_jpeg(const ImageData& img_data,
-                SinkType& sink,
+                SinkType&& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
 
@@ -130,7 +131,7 @@ bool write_jpeg(const ImageData& img_data,
 template <typename SinkType>
 bool write_jpeg(const ImageData& img_data,
                 JPEGCompressionObject& obj,
-                SinkType& sink,
+                SinkType&& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
 

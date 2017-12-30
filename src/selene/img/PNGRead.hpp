@@ -150,7 +150,7 @@ private:
  * @return A PNG header info object.
  */
 template <typename SourceType>
-PNGHeaderInfo read_png_header(SourceType& source, bool rewind = false, MessageLog* messages = nullptr);
+PNGHeaderInfo read_png_header(SourceType&& source, bool rewind = false, MessageLog* messages = nullptr);
 
 /** \brief Reads header of PNG image data stream.
  *
@@ -165,7 +165,7 @@ PNGHeaderInfo read_png_header(SourceType& source, bool rewind = false, MessageLo
  */
 template <typename SourceType>
 PNGHeaderInfo read_png_header(PNGDecompressionObject& obj,
-                              SourceType& source,
+                              SourceType&& source,
                               bool rewind = false,
                               MessageLog* messages = nullptr);
 
@@ -182,7 +182,7 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj,
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_png(SourceType& source,
+ImageData read_png(SourceType&& source,
                    PNGDecompressionOptions options = PNGDecompressionOptions(),
                    MessageLog* messages = nullptr);
 
@@ -205,7 +205,7 @@ ImageData read_png(SourceType& source,
  */
 template <typename SourceType>
 ImageData read_png(PNGDecompressionObject& obj,
-                   SourceType& source,
+                   SourceType&& source,
                    PNGDecompressionOptions options = PNGDecompressionOptions(),
                    MessageLog* messages = nullptr,
                    const PNGHeaderInfo* provided_header_info = nullptr);

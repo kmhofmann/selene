@@ -281,17 +281,17 @@ failure_state:;
 // Public functions
 
 template <typename SinkType>
-bool write_png(const ImageData& img_data, SinkType& sink, PNGCompressionOptions options, MessageLog* messages)
+bool write_png(const ImageData& img_data, SinkType&& sink, PNGCompressionOptions options, MessageLog* messages)
 {
   PNGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return write_png(img_data, obj, sink, options, messages);
+  return write_png(img_data, obj, std::forward<SinkType>(sink), options, messages);
 }
 
 template <typename SinkType>
 bool write_png(const ImageData& img_data,
                PNGCompressionObject& obj,
-               SinkType& sink,
+               SinkType&& sink,
                PNGCompressionOptions options,
                MessageLog* messages)
 {
@@ -341,13 +341,19 @@ bool write_png(const ImageData& img_data,
 // ----------
 // Explicit instantiations:
 
-template bool write_png<FileWriter>(const ImageData&, FileWriter&, PNGCompressionOptions, MessageLog*);
-template bool write_png<VectorWriter>(const ImageData&, VectorWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<FileWriter&>(const ImageData&, FileWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<FileWriter>(const ImageData&, FileWriter&&, PNGCompressionOptions, MessageLog*);
+template bool write_png<VectorWriter&>(const ImageData&, VectorWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<VectorWriter>(const ImageData&, VectorWriter&&, PNGCompressionOptions, MessageLog*);
 
-template bool write_png<FileWriter>(
+template bool write_png<FileWriter&>(
     const ImageData&, PNGCompressionObject&, FileWriter&, PNGCompressionOptions, MessageLog*);
-template bool write_png<VectorWriter>(
+template bool write_png<FileWriter>(
+    const ImageData&, PNGCompressionObject&, FileWriter&&, PNGCompressionOptions, MessageLog*);
+template bool write_png<VectorWriter&>(
     const ImageData&, PNGCompressionObject&, VectorWriter&, PNGCompressionOptions, MessageLog*);
+template bool write_png<VectorWriter>(
+    const ImageData&, PNGCompressionObject&, VectorWriter&&, PNGCompressionOptions, MessageLog*);
 
 /// \endcond
 

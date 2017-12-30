@@ -221,17 +221,17 @@ bool flush_data_buffer(JPEGCompressionObject& obj, VectorWriter& sink)
 // Public functions
 
 template <typename SinkType>
-bool write_jpeg(const ImageData& img_data, SinkType& sink, JPEGCompressionOptions options, MessageLog* messages)
+bool write_jpeg(const ImageData& img_data, SinkType&& sink, JPEGCompressionOptions options, MessageLog* messages)
 {
   JPEGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return write_jpeg(img_data, obj, sink, options, messages);
+  return write_jpeg(img_data, obj, std::forward<SinkType>(sink), options, messages);
 }
 
 template <typename SinkType>
 bool write_jpeg(const ImageData& img_data,
                 JPEGCompressionObject& obj,
-                SinkType& sink,
+                SinkType&& sink,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
@@ -287,13 +287,19 @@ bool write_jpeg(const ImageData& img_data,
 // ----------
 // Explicit instantiations:
 
-template bool write_jpeg<FileWriter>(const ImageData&, FileWriter&, JPEGCompressionOptions, MessageLog*);
-template bool write_jpeg<VectorWriter>(const ImageData&, VectorWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<FileWriter&>(const ImageData&, FileWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<FileWriter>(const ImageData&, FileWriter&&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<VectorWriter&>(const ImageData&, VectorWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<VectorWriter>(const ImageData&, VectorWriter&&, JPEGCompressionOptions, MessageLog*);
 
-template bool write_jpeg<FileWriter>(
+template bool write_jpeg<FileWriter&>(
     const ImageData&, JPEGCompressionObject&, FileWriter&, JPEGCompressionOptions, MessageLog*);
-template bool write_jpeg<VectorWriter>(
+template bool write_jpeg<FileWriter>(
+    const ImageData&, JPEGCompressionObject&, FileWriter&&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<VectorWriter&>(
     const ImageData&, JPEGCompressionObject&, VectorWriter&, JPEGCompressionOptions, MessageLog*);
+template bool write_jpeg<VectorWriter>(
+    const ImageData&, JPEGCompressionObject&, VectorWriter&&, JPEGCompressionOptions, MessageLog*);
 
 /// \endcond
 

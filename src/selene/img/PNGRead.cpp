@@ -541,15 +541,15 @@ PNGHeaderInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
 // Public functions
 
 template <typename SourceType>
-PNGHeaderInfo read_png_header(SourceType& source, bool rewind, MessageLog* messages)
+PNGHeaderInfo read_png_header(SourceType&& source, bool rewind, MessageLog* messages)
 {
   PNGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return read_png_header(obj, source, rewind, messages);
+  return read_png_header(obj, std::forward<SourceType>(source), rewind, messages);
 }
 
 template <typename SourceType>
-PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, bool rewind, MessageLog* messages)
+PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
 {
   const auto src_pos = source.position();
 
@@ -576,16 +576,16 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType& source, b
 }
 
 template <typename SourceType>
-ImageData read_png(SourceType& source, PNGDecompressionOptions options, MessageLog* messages)
+ImageData read_png(SourceType&& source, PNGDecompressionOptions options, MessageLog* messages)
 {
   PNGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return read_png(obj, source, options, messages);
+  return read_png(obj, std::forward<SourceType>(source), options, messages);
 }
 
 template <typename SourceType>
 ImageData read_png(PNGDecompressionObject& obj,
-                   SourceType& source,
+                   SourceType&& source,
                    PNGDecompressionOptions options,
                    MessageLog* messages,
                    const PNGHeaderInfo* provided_header_info)
@@ -660,19 +660,29 @@ ImageData read_png(PNGDecompressionObject& obj,
 // ----------
 // Explicit instantiations:
 
-template PNGHeaderInfo read_png_header<FileReader>(FileReader&, bool, MessageLog*);
-template PNGHeaderInfo read_png_header<MemoryReader>(MemoryReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<FileReader&>(FileReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<FileReader>(FileReader&&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<MemoryReader&>(MemoryReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<MemoryReader>(MemoryReader&&, bool, MessageLog*);
 
-template PNGHeaderInfo read_png_header<FileReader>(PNGDecompressionObject&, FileReader&, bool, MessageLog*);
-template PNGHeaderInfo read_png_header<MemoryReader>(PNGDecompressionObject&, MemoryReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<FileReader&>(PNGDecompressionObject&, FileReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<FileReader>(PNGDecompressionObject&, FileReader&&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<MemoryReader&>(PNGDecompressionObject&, MemoryReader&, bool, MessageLog*);
+template PNGHeaderInfo read_png_header<MemoryReader>(PNGDecompressionObject&, MemoryReader&&, bool, MessageLog*);
 
-template ImageData read_png<FileReader>(FileReader&, PNGDecompressionOptions, MessageLog*);
-template ImageData read_png<MemoryReader>(MemoryReader&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<FileReader&>(FileReader&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<FileReader>(FileReader&&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<MemoryReader&>(MemoryReader&, PNGDecompressionOptions, MessageLog*);
+template ImageData read_png<MemoryReader>(MemoryReader&&, PNGDecompressionOptions, MessageLog*);
 
-template ImageData read_png<FileReader>(
+template ImageData read_png<FileReader&>(
     PNGDecompressionObject&, FileReader&, PNGDecompressionOptions, MessageLog*, const PNGHeaderInfo*);
-template ImageData read_png<MemoryReader>(
+template ImageData read_png<FileReader>(
+    PNGDecompressionObject&, FileReader&&, PNGDecompressionOptions, MessageLog*, const PNGHeaderInfo*);
+template ImageData read_png<MemoryReader&>(
     PNGDecompressionObject&, MemoryReader&, PNGDecompressionOptions, MessageLog*, const PNGHeaderInfo*);
+template ImageData read_png<MemoryReader>(
+    PNGDecompressionObject&, MemoryReader&&, PNGDecompressionOptions, MessageLog*, const PNGHeaderInfo*);
 
 /// \endcond
 

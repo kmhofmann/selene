@@ -11,6 +11,7 @@
 
 #include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
+#include <selene/base/MessageLog.hpp>
 #include <selene/base/Utils.hpp>
 
 #include <selene/img/BoundingBox.hpp>
@@ -122,7 +123,7 @@ private:
  * @return A JPEG header info object.
  */
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind = false, MessageLog* messages = nullptr);
+JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind = false, MessageLog* messages = nullptr);
 
 /** \brief Reads header of JPEG image data stream.
  *
@@ -137,7 +138,7 @@ JPEGHeaderInfo read_jpeg_header(SourceType& source, bool rewind = false, Message
  */
 template <typename SourceType>
 JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj,
-                                SourceType& source,
+                                SourceType&& source,
                                 bool rewind = false,
                                 MessageLog* messages = nullptr);
 
@@ -154,7 +155,7 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj,
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_jpeg(SourceType& source,
+ImageData read_jpeg(SourceType&& source,
                     JPEGDecompressionOptions options = JPEGDecompressionOptions(),
                     MessageLog* messages = nullptr);
 
@@ -177,7 +178,7 @@ ImageData read_jpeg(SourceType& source,
  */
 template <typename SourceType>
 ImageData read_jpeg(JPEGDecompressionObject& obj,
-                    SourceType& source,
+                    SourceType&& source,
                     JPEGDecompressionOptions options = JPEGDecompressionOptions(),
                     MessageLog* messages = nullptr,
                     const JPEGHeaderInfo* provided_header_info = nullptr);
