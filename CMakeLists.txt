@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(selene CXX)
 
-option(SELENE_ENABLE_TESTS "Build selene tests" OFF)
+option(SELENE_BUILD_TESTS "Build selene tests" OFF)
+option(SELENE_BUILD_EXAMPLES "Build selene examples" OFF)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 14)
@@ -34,6 +35,10 @@ endif()
 add_subdirectory(src)
 
 # Optionally add the tests target
-if (SELENE_ENABLE_TESTS)
+if (SELENE_BUILD_TESTS)
     add_subdirectory(test)
+endif()
+
+if (SELENE_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()

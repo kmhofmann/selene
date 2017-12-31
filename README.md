@@ -93,7 +93,7 @@ so desired.
 
 ### Building and running the tests
 
-Building the tests is disabled by default, and can be enabled by adding `-DENABLE_SELENE_TESTS=ON` to the `cmake`
+Building the tests is disabled by default, and can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake`
 command.
 
 The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for
