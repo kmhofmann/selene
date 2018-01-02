@@ -209,6 +209,6 @@ operations could be further sped up by explicit vectorization. As the library cu
 it in his free time, this is deemed out of scope at the moment.
 
 **selene** is currently developed and tested on
-- Linux using GCC 7.2.0 and Clang 6.0.0 (trunk)
+- Linux using GCC 5.4.0, GCC 7.2.0 and Clang 6.0.0 (trunk)
 - MacOS using AppleClang 9.0.0.
 - Windows using Visual C++ 2017 (compiler version >= 19.12.25831).
