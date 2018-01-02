@@ -38,10 +38,16 @@ template <typename PixelType>
 class ConstImageRowIterator;
 
 template <typename PixelType>
-void clone(const Image<PixelType>& src, Image<PixelType>& dst);
+void clone(const Image<PixelType>&, Image<PixelType>&);
 
 template <typename PixelType>
-ImageData<ImageDataStorage::Modifiable> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
+Image<PixelType> view(const Image<PixelType>&);
+
+template <typename PixelType>
+Image<PixelType> view(const Image<PixelType>&, PixelIndex, PixelIndex, PixelLength, PixelLength);
+
+template <typename PixelType>
+ImageData<ImageDataStorage::Modifiable> to_image_data(Image<PixelType>&&, PixelFormat);
 
 
 /** \brief Statically typed image class.
@@ -153,7 +159,10 @@ private:
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
-  friend void clone<PixelType>(const Image<PixelType>& src, Image<PixelType>& dst);
+  friend void clone<PixelType>(const Image<PixelType>&, Image<PixelType>&);
+  friend Image<PixelType> view<PixelType>(const Image<PixelType>&);
+  friend Image<PixelType> view<PixelType>(const Image<PixelType>&, PixelIndex, PixelIndex, PixelLength, PixelLength);
+
   friend ImageData<ImageDataStorage::Modifiable> to_image_data<PixelType>(Image<PixelType>&&, PixelFormat);
   friend class ImageRowIterator<Image<PixelType>>;
   friend class ConstImageRowIterator<Image<PixelType>>;
@@ -1635,7 +1644,7 @@ Image<PixelType> clone(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0
 template <typename PixelType>
 Image<PixelType> view(const Image<PixelType>& src)
 {
-  return Image<PixelType>(src.byte_ptr(), src.width(), src.height(), src.stride_bytes());
+  return Image<PixelType>(src.data_, src.width_, src.height_, src.stride_bytes_);
 }
 
 /** \brief Returns an image representing a view onto the specified sub-region of the provided source image.
@@ -1651,7 +1660,7 @@ Image<PixelType> view(const Image<PixelType>& src)
 template <typename PixelType>
 Image<PixelType> view(const Image<PixelType>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
 {
-  return Image<PixelType>(src.byte_ptr(x0, y0), width, height, src.stride_bytes());
+  return Image<PixelType>(src.data_ + src.compute_data_offset(x0, y0), width, height, src.stride_bytes_);
 }
 
 /** \brief Crops the image `img` to the specified sub-region.
