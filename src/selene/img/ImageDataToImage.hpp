@@ -17,10 +17,10 @@
 namespace sln {
 
 template <typename PixelType>
-Image<PixelType> to_image(ImageData&& img_data);
+Image<PixelType> to_image(ImageData<>&& img_data);
 
 template <typename PixelType>
-Image<PixelType> to_image_view(ImageData& img_data);
+Image<PixelType> to_image_view(ImageData<>& img_data);
 
 
 // ----------
@@ -46,7 +46,7 @@ Image<PixelType> to_image_view(ImageData& img_data);
  * @return An `Image<PixelType>` instance.
  */
 template <typename PixelType>
-Image<PixelType> to_image(ImageData&& img_data)
+Image<PixelType> to_image(ImageData<>&& img_data)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
@@ -102,7 +102,7 @@ Image<PixelType> to_image(ImageData&& img_data)
  * @return An `Image<PixelType>` instance, which will be a view (i.e. `is_view() == true`).
  */
 template <typename PixelType>
-Image<PixelType> to_image_view(ImageData& img_data)
+Image<PixelType> to_image_view(ImageData<>& img_data)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;

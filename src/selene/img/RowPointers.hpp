@@ -25,9 +25,10 @@ RowPointers get_row_pointers(Image<T>& img);
 template <typename T>
 ConstRowPointers get_row_pointers(const Image<T>& img);
 
-RowPointers get_row_pointers(ImageData& img);
+RowPointers get_row_pointers(ImageData<>& img);
 
-ConstRowPointers get_row_pointers(const ImageData& img);
+template <ImageDataStorage storage_type>
+ConstRowPointers get_row_pointers(const ImageData<storage_type>& img);
 
 // --------------
 // Implementation
@@ -75,7 +76,7 @@ ConstRowPointers get_row_pointers(const Image<T>& img)
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
-inline RowPointers get_row_pointers(ImageData& img)
+inline RowPointers get_row_pointers(ImageData<>& img)
 {
   RowPointers row_pointers(img.height());
 
@@ -92,7 +93,8 @@ inline RowPointers get_row_pointers(ImageData& img)
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
-inline ConstRowPointers get_row_pointers(const ImageData& img)
+template <ImageDataStorage storage_type>
+inline ConstRowPointers get_row_pointers(const ImageData<storage_type>& img)
 {
   ConstRowPointers row_pointers(img.height());
 

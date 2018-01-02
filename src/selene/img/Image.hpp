@@ -11,6 +11,7 @@
 #include <selene/base/Assert.hpp>
 #include <selene/base/MemoryBlock.hpp>
 
+#include <selene/img/ImageDataStorage.hpp>
 #include <selene/img/PixelFormat.hpp>
 #include <selene/img/PixelTraits.hpp>
 #include <selene/img/Types.hpp>
@@ -22,6 +23,9 @@
 
 namespace sln {
 
+enum class ImageDataStorage;
+
+template <ImageDataStorage storage_type>
 class ImageData;
 
 template <typename PixelType>
@@ -37,7 +41,7 @@ template <typename PixelType>
 void clone(const Image<PixelType>& src, Image<PixelType>& dst);
 
 template <typename PixelType>
-ImageData to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
+ImageData<ImageDataStorage::Modifiable> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
 
 
 /** \brief Statically typed image class.
@@ -150,7 +154,7 @@ private:
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
   friend void clone<PixelType>(const Image<PixelType>& src, Image<PixelType>& dst);
-  friend ImageData to_image_data<PixelType>(Image<PixelType>&&, PixelFormat);
+  friend ImageData<ImageDataStorage::Modifiable> to_image_data<PixelType>(Image<PixelType>&&, PixelFormat);
   friend class ImageRowIterator<Image<PixelType>>;
   friend class ConstImageRowIterator<Image<PixelType>>;
 };

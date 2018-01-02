@@ -70,6 +70,8 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageAccess.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataBase.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataStorage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageToImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Interpolators.hpp

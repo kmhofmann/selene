@@ -11,11 +11,14 @@
 #include <selene/base/Assert.hpp>
 #include <selene/base/MemoryBlock.hpp>
 
+#include <selene/img/ImageDataBase.hpp>
+#include <selene/img/ImageDataStorage.hpp>
 #include <selene/img/PixelFormat.hpp>
 #include <selene/img/Types.hpp>
 
 #include <algorithm>
 #include <cstdint>
+#include <type_traits>
 #include <utility>
 
 namespace sln {
@@ -37,7 +40,47 @@ class Image;
  * The memory of an `ImageData` instance may either be owned or non-owned; in the latter case, the instance is a "view"
  * on image data.
  */
-class ImageData
+template <ImageDataStorage storage_type = ImageDataStorage::Modifiable>
+class ImageData;
+
+/** \brief Explicit specialization of `ImageData` for constant image data.
+ *
+ * Can only point to non-owned memory, i.e. describe views onto constant image data.
+ */
+template <>
+class ImageData<ImageDataStorage::Constant> : public ImageDataBase<const std::uint8_t*>
+{
+public:
+  ImageData() = default;  ///< Default constructor. See clear() for the postconditions.
+
+  ImageData(const std::uint8_t* data,
+            PixelLength width,
+            PixelLength height,
+            std::uint16_t nr_channels,
+            std::uint16_t nr_bytes_per_channel,
+            Stride stride_bytes = Stride{0},
+            PixelFormat pixel_format = PixelFormat::Unknown,
+            SampleFormat sample_format = SampleFormat::Unknown) noexcept;
+
+  ~ImageData() = default;  ///< Destructor.
+
+  /// Copy constructor.
+  ImageData(const ImageData<ImageDataStorage::Constant>&) = default;
+  /// Copy assignment operator
+  ImageData<ImageDataStorage::Constant>& operator=(const ImageData<ImageDataStorage::Constant>&) = default;
+  /// Move constructor.
+  ImageData(ImageData<ImageDataStorage::Constant>&&) noexcept = default;
+  /// Move assignment operator
+  ImageData<ImageDataStorage::Constant>& operator=(ImageData<ImageDataStorage::Constant>&&) noexcept = default;
+};
+
+
+/** \brief Explicit specialization of `ImageData` for modifiable image data.
+ *
+ * Can only point to both owned as well as non-owned memory.
+ */
+template <>
+class ImageData<ImageDataStorage::Modifiable> : public ImageDataBase<std::uint8_t*>
 {
 public:
   ImageData() = default;  ///< Default constructor. See clear() for the postconditions.
@@ -67,26 +110,15 @@ public:
             Stride stride_bytes = Stride{0},
             PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown) noexcept;
+
   ~ImageData();
 
-  ImageData(const ImageData&);
-  ImageData& operator=(const ImageData&);
-  ImageData(ImageData&&) noexcept;
-  ImageData& operator=(ImageData&&) noexcept;
+  ImageData(const ImageData<ImageDataStorage::Modifiable>&);
+  ImageData<ImageDataStorage::Modifiable>& operator=(const ImageData<ImageDataStorage::Modifiable>&);
+  ImageData(ImageData<ImageDataStorage::Modifiable>&&) noexcept;
+  ImageData<ImageDataStorage::Modifiable>& operator=(ImageData<ImageDataStorage::Modifiable>&&) noexcept;
 
-  PixelLength width() const noexcept;
-  PixelLength height() const noexcept;
-  std::uint16_t nr_channels() const noexcept;
-  std::uint16_t nr_bytes_per_channel() const noexcept;
-  Stride stride_bytes() const noexcept;
-  std::size_t row_bytes() const noexcept;
-  std::size_t total_bytes() const noexcept;
-  PixelFormat pixel_format() const noexcept;
-  SampleFormat sample_format() const noexcept;
-  bool is_packed() const noexcept;
   bool is_view() const noexcept;
-  bool is_empty() const noexcept;
-  bool is_valid() const noexcept;
 
   void clear() noexcept;
 
@@ -129,28 +161,57 @@ public:
   const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
 
 private:
-  std::uint8_t* data_ = nullptr;
-  PixelLength width_ = 0_px;
-  PixelLength height_ = 0_px;
-  Stride stride_bytes_ = 0_b;
-  std::uint16_t nr_channels_ = 0;
-  std::uint16_t nr_bytes_per_channel_ = 0;
-  PixelFormat pixel_format_ = PixelFormat::Unknown;
-  SampleFormat sample_format_ = SampleFormat::Unknown;
   bool owns_memory_ = false;
 
   void allocate_bytes(std::size_t nr_bytes);
   void deallocate_bytes();
   void deallocate_bytes_if_owned();
   void reset();
-  Bytes compute_data_offset(PixelIndex y) const noexcept;
-  Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
   MemoryBlock<NewAllocator> relinquish_data_ownership();
 
   template <typename PixelType>
   friend Image<PixelType> to_image(ImageData&&);
 };
+
+
+// ----------
+// Implementation:
+
+
+// ImageData<ImageDataStorage::Constant>:
+
+/** \brief Constructs image data (a view onto non-owned memory) with the specified parameters.
+ *
+ * Effectively calls `set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
+ * output_sample_format);`.
+ *
+ * The row stride (in bytes) is chosen to be at least `nr_bytes_per_channel * nr_channels * width`, or the supplied
+ * value.
+ *
+ * @param data Pointer to the existing image data.
+ * @param width Desired image width.
+ * @param height Desired image height.
+ * @param nr_channels The number of channels per pixel element.
+ * @param nr_bytes_per_channel The number of bytes stored per channel.
+ * @param stride_bytes The desired row stride in bytes.
+ * @param pixel_format The pixel format (semantic tag).
+ * @param sample_format The sample format (semantic tag).
+ */
+inline ImageData<ImageDataStorage::Constant>::ImageData(const std::uint8_t* data,
+                                                        PixelLength width,
+                                                        PixelLength height,
+                                                        std::uint16_t nr_channels,
+                                                        std::uint16_t nr_bytes_per_channel,
+                                                        Stride stride_bytes,
+                                                        PixelFormat pixel_format,
+                                                        SampleFormat sample_format) noexcept
+{
+  set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
+}
+
+
+// ImageData<ImageDataStorage::Modifiable>:
 
 /** \brief Constructs image data (owned memory) with the specified parameters.
  *
@@ -168,13 +229,13 @@ private:
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData::ImageData(PixelLength width,
-                            PixelLength height,
-                            std::uint16_t nr_channels,
-                            std::uint16_t nr_bytes_per_channel,
-                            Stride stride_bytes,
-                            PixelFormat pixel_format,
-                            SampleFormat sample_format)
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(PixelLength width,
+                                                          PixelLength height,
+                                                          std::uint16_t nr_channels,
+                                                          std::uint16_t nr_bytes_per_channel,
+                                                          Stride stride_bytes,
+                                                          PixelFormat pixel_format,
+                                                          SampleFormat sample_format)
 {
   allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
@@ -196,14 +257,15 @@ inline ImageData::ImageData(PixelLength width,
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData::ImageData(std::uint8_t* data,
-                            PixelLength width,
-                            PixelLength height,
-                            std::uint16_t nr_channels,
-                            std::uint16_t nr_bytes_per_channel,
-                            Stride stride_bytes,
-                            PixelFormat pixel_format,
-                            SampleFormat sample_format) noexcept
+
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(std::uint8_t* data,
+                                                          PixelLength width,
+                                                          PixelLength height,
+                                                          std::uint16_t nr_channels,
+                                                          std::uint16_t nr_bytes_per_channel,
+                                                          Stride stride_bytes,
+                                                          PixelFormat pixel_format,
+                                                          SampleFormat sample_format) noexcept
 {
   set_view(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
 }
@@ -225,14 +287,14 @@ inline ImageData::ImageData(std::uint8_t* data,
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data,
-                            PixelLength width,
-                            PixelLength height,
-                            std::uint16_t nr_channels,
-                            std::uint16_t nr_bytes_per_channel,
-                            Stride stride_bytes,
-                            PixelFormat pixel_format,
-                            SampleFormat sample_format) noexcept
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(MemoryBlock<NewAllocator>&& data,
+                                                          PixelLength width,
+                                                          PixelLength height,
+                                                          std::uint16_t nr_channels,
+                                                          std::uint16_t nr_bytes_per_channel,
+                                                          Stride stride_bytes,
+                                                          PixelFormat pixel_format,
+                                                          SampleFormat sample_format) noexcept
 {
   set_data(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
            sample_format);
@@ -242,7 +304,7 @@ inline ImageData::ImageData(MemoryBlock<NewAllocator>&& data,
  *
  * Owned data will be deallocated at destruction time.
  */
-inline ImageData::~ImageData()
+inline ImageData<ImageDataStorage::Modifiable>::~ImageData()
 {
   deallocate_bytes_if_owned();
 }
@@ -257,16 +319,9 @@ inline ImageData::~ImageData()
  *
  * @param other The source image.
  */
-inline ImageData::ImageData(const ImageData& other)
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(const ImageData<ImageDataStorage::Modifiable>& other)
+    : ImageDataBase<std::uint8_t*>::ImageDataBase(other)
 {
-  data_ = other.data_;
-  width_ = other.width_;
-  height_ = other.height_;
-  stride_bytes_ = other.stride_bytes_;
-  nr_channels_ = other.nr_channels_;
-  nr_bytes_per_channel_ = other.nr_bytes_per_channel_;
-  pixel_format_ = other.pixel_format_;
-  sample_format_ = other.sample_format_;
   owns_memory_ = other.owns_memory_;
 
   if (other.owns_memory_)
@@ -287,7 +342,8 @@ inline ImageData::ImageData(const ImageData& other)
  * @param other The image to assign from.
  * @return A reference to this image.
  */
-inline ImageData& ImageData::operator=(const ImageData& other)
+inline ImageData<ImageDataStorage::Modifiable>& ImageData<ImageDataStorage::Modifiable>::operator=(
+    const ImageData<ImageDataStorage::Modifiable>& other)
 {
   deallocate_bytes_if_owned();
 
@@ -314,7 +370,7 @@ inline ImageData& ImageData::operator=(const ImageData& other)
  *
  * @param other The image to move from.
  */
-inline ImageData::ImageData(ImageData&& other) noexcept
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(ImageData<ImageDataStorage::Modifiable>&& other) noexcept
 {
   data_ = other.data_;
   width_ = other.width_;
@@ -334,7 +390,8 @@ inline ImageData::ImageData(ImageData&& other) noexcept
  * @param other The image to move assign from.
  * @return A reference to this image.
  */
-inline ImageData& ImageData::operator=(ImageData&& other) noexcept
+inline ImageData<ImageDataStorage::Modifiable>& ImageData<ImageDataStorage::Modifiable>::operator=(
+    ImageData<ImageDataStorage::Modifiable>&& other) noexcept
 {
   deallocate_bytes_if_owned();
 
@@ -352,139 +409,14 @@ inline ImageData& ImageData::operator=(ImageData&& other) noexcept
   return *this;
 }
 
-/** \brief Returns the image width.
- *
- * @return Width of the image in pixels.
- */
-inline PixelLength ImageData::width() const noexcept
-{
-  return width_;
-}
-
-/** \brief Returns the image height.
- *
- * @return Height of the image in pixels.
- */
-inline PixelLength ImageData::height() const noexcept
-{
-  return height_;
-}
-
-/** \brief Returns the number of image channels.
- *
- * @return Number of image channels.
- */
-inline std::uint16_t ImageData::nr_channels() const noexcept
-{
-  return nr_channels_;
-}
-
-/** \brief Returns the number of bytes stored for each sample, per image channel.
- *
- * @return Number of bytes stored for each sample, per image channel.
- */
-inline std::uint16_t ImageData::nr_bytes_per_channel() const noexcept
-{
-  return nr_bytes_per_channel_;
-}
-
-/** \brief Returns the row stride of the image in bytes.
- *
- * The row stride is the number of bytes that a row occupies in memory.
- * It has to be greater or equal to the width times the number of bytes for each pixel element:
- * `(stride_bytes() >= width() * nr_channels() * nr_bytes_per_channel())`.
- * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
- *
- * @return Row stride in bytes.
- */
-inline Stride ImageData::stride_bytes() const noexcept
-{
-  return stride_bytes_;
-}
-
-/** \brief Returns the number of data bytes occupied by each image row.
- *
- * The value returned is equal to `(width() * nr_channels() * nr_bytes_per_channel())`.
- * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
- *
- * @return Number of data bytes occupied by each image row.
- */
-inline std::size_t ImageData::row_bytes() const noexcept
-{
-  return width_ * nr_channels_ * nr_bytes_per_channel_;
-}
-
-/** \brief Returns the total number of bytes occupied by the image data in memory.
- *
- * The value returned is equal to `(stride_bytes() * height())`.
- *
- * @return Number of bytes occupied by the image data in memory.
- */
-inline std::size_t ImageData::total_bytes() const noexcept
-{
-  return stride_bytes_ * height_;
-}
-
-/** \brief Returns the pixel format (semantic tag).
- *
- * @return The pixel format.
- */
-inline PixelFormat ImageData::pixel_format() const noexcept
-{
-  return pixel_format_;
-}
-
-/** \brief Returns the sample format (semantic tag).
- *
- * @return The sample format.
- */
-inline SampleFormat ImageData::sample_format() const noexcept
-{
-  return sample_format_;
-}
-
-/** \brief Returns whether the image data is stored packed in memory.
- *
- * Returns the boolean expression `(stride_bytes() == width() * nr_channels() * nr_bytes_per_channel())`.
- *
- * @return True, if the image data stored packed; false otherwise.
- */
-inline bool ImageData::is_packed() const noexcept
-{
-  return stride_bytes_ == nr_bytes_per_channel_ * nr_channels_ * width_;
-}
-
 /** \brief Returns whether the image is a view onto (non-owned) memory.
  *
  * @return True, if the image data points to non-owned memory; false otherwise, i.e. if the instance owns its own
  *         memory.
  */
-inline bool ImageData::is_view() const noexcept
+inline bool ImageData<ImageDataStorage::Modifiable>::is_view() const noexcept
 {
   return !owns_memory_;
-}
-
-/** \brief Returns whether the image is empty.
- *
- * An image is considered empty if its internal data pointer points to `nullptr`, `width() == 0`, `height() == 0`,
- * `nr_channels() == 0`, `nr_bytes_per_channel() == 0`, or any combination of these.
- *
- * @return True, if the image is empty; false if it is non-empty.
- */
-inline bool ImageData::is_empty() const noexcept
-{
-  return data_ == nullptr || width_ == 0 || height_ == 0 || nr_channels_ == 0 || nr_bytes_per_channel_ == 0;
-}
-
-/** \brief Returns whether the instance represents a valid image.
- *
- * Semantically equal to `!is_empty()`.
- *
- * @return True, if the image is valid; false otherwise.
- */
-inline bool ImageData::is_valid() const noexcept
-{
-  return !is_empty();
 }
 
 /** \brief Resets the image instance by clearing the image data and resetting the internal state to the state after
@@ -494,7 +426,7 @@ inline bool ImageData::is_valid() const noexcept
  * nr_bytes_per_channel() == 0 && pixel_format() == PixelFormat::Unknown && output_sample_format() ==
  * SampleType::Unknown && is_empty() && !is_valid() && !is_view()`.
  */
-inline void ImageData::clear() noexcept
+inline void ImageData<ImageDataStorage::Modifiable>::clear() noexcept
 {
   deallocate_bytes_if_owned();
   reset();
@@ -520,17 +452,16 @@ inline void ImageData::clear() noexcept
  * @param allow_view_reallocation If true, allow allocation from `is_view() == true`. If false, and the existing image
  * is a view, a `std::runtime_error` exception will be thrown (respecting the strong exception guarantee).
  */
-
-inline void ImageData::allocate(PixelLength width,
-                                PixelLength height,
-                                std::uint16_t nr_channels,
-                                std::uint16_t nr_bytes_per_channel,
-                                Stride stride_bytes,
-                                PixelFormat pixel_format,
-                                SampleFormat sample_format,
-                                bool shrink_to_fit,
-                                bool force_allocation,
-                                bool allow_view_reallocation)
+inline void ImageData<ImageDataStorage::Modifiable>::allocate(PixelLength width,
+                                                              PixelLength height,
+                                                              std::uint16_t nr_channels,
+                                                              std::uint16_t nr_bytes_per_channel,
+                                                              Stride stride_bytes,
+                                                              PixelFormat pixel_format,
+                                                              SampleFormat sample_format,
+                                                              bool shrink_to_fit,
+                                                              bool force_allocation,
+                                                              bool allow_view_reallocation)
 {
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
   const auto nr_bytes_to_allocate = stride_bytes * height;
@@ -582,14 +513,14 @@ inline void ImageData::allocate(PixelLength width,
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline void ImageData::set_view(std::uint8_t* data,
-                                PixelLength width,
-                                PixelLength height,
-                                std::uint16_t nr_channels,
-                                std::uint16_t nr_bytes_per_channel,
-                                Stride stride_bytes,
-                                PixelFormat pixel_format,
-                                SampleFormat sample_format)
+inline void ImageData<ImageDataStorage::Modifiable>::set_view(std::uint8_t* data,
+                                                              PixelLength width,
+                                                              PixelLength height,
+                                                              std::uint16_t nr_channels,
+                                                              std::uint16_t nr_bytes_per_channel,
+                                                              Stride stride_bytes,
+                                                              PixelFormat pixel_format,
+                                                              SampleFormat sample_format)
 {
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
 
@@ -623,14 +554,14 @@ inline void ImageData::set_view(std::uint8_t* data,
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data,
-                                PixelLength width,
-                                PixelLength height,
-                                std::uint16_t nr_channels,
-                                std::uint16_t nr_bytes_per_channel,
-                                Stride stride_bytes,
-                                PixelFormat pixel_format,
-                                SampleFormat sample_format)
+inline void ImageData<ImageDataStorage::Modifiable>::set_data(MemoryBlock<NewAllocator>&& data,
+                                                              PixelLength width,
+                                                              PixelLength height,
+                                                              std::uint16_t nr_channels,
+                                                              std::uint16_t nr_bytes_per_channel,
+                                                              Stride stride_bytes,
+                                                              PixelFormat pixel_format,
+                                                              SampleFormat sample_format)
 {
   stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
   SELENE_ASSERT(data.size() >= stride_bytes * height);
@@ -651,7 +582,7 @@ inline void ImageData::set_data(MemoryBlock<NewAllocator>&& data,
  *
  * @return Pointer to the first image data byte.
  */
-inline const std::uint8_t* ImageData::byte_ptr() const noexcept
+inline std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr() noexcept
 {
   return data_;
 }
@@ -660,7 +591,7 @@ inline const std::uint8_t* ImageData::byte_ptr() const noexcept
  *
  * @return Constant pointer to the first image data byte.
  */
-inline std::uint8_t* ImageData::byte_ptr() noexcept
+inline const std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr() const noexcept
 {
   return data_;
 }
@@ -670,7 +601,7 @@ inline std::uint8_t* ImageData::byte_ptr() noexcept
  * @param y Row index.
  * @return Pointer to the first image data byte of row `y`.
  */
-inline std::uint8_t* ImageData::byte_ptr(PixelIndex y) noexcept
+inline std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr(PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -680,7 +611,7 @@ inline std::uint8_t* ImageData::byte_ptr(PixelIndex y) noexcept
  * @param y Row index.
  * @return Constant pointer to the first image data byte of row `y`.
  */
-inline const std::uint8_t* ImageData::byte_ptr(PixelIndex y) const noexcept
+inline const std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr(PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -691,7 +622,7 @@ inline const std::uint8_t* ImageData::byte_ptr(PixelIndex y) const noexcept
  * @param y Row index.
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
-inline std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y) noexcept
+inline std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr(PixelIndex x, PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -703,12 +634,12 @@ inline std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y) noexcept
  * @param y Row index.
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
-inline const std::uint8_t* ImageData::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+inline const std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
 
-inline void ImageData::allocate_bytes(std::size_t nr_bytes)
+inline void ImageData<ImageDataStorage::Modifiable>::allocate_bytes(std::size_t nr_bytes)
 {
   SELENE_ASSERT(owns_memory_);
   auto memory = NewAllocator::allocate(nr_bytes);
@@ -716,13 +647,13 @@ inline void ImageData::allocate_bytes(std::size_t nr_bytes)
   data_ = memory.transfer_data();
 }
 
-inline void ImageData::deallocate_bytes()
+inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes()
 {
   SELENE_ASSERT(owns_memory_);
   NewAllocator::deallocate(data_);
 }
 
-inline void ImageData::deallocate_bytes_if_owned()
+inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes_if_owned()
 {
   if (owns_memory_)
   {
@@ -730,31 +661,13 @@ inline void ImageData::deallocate_bytes_if_owned()
   }
 }
 
-inline void ImageData::reset()
+inline void ImageData<ImageDataStorage::Modifiable>::reset()
 {
-  // reset to default constructed state
-  data_ = nullptr;
-  width_ = PixelLength{0};
-  height_ = PixelLength{0};
-  stride_bytes_ = Stride{0};
-  nr_channels_ = std::uint16_t{0};
-  nr_bytes_per_channel_ = std::uint16_t{0};
-  pixel_format_ = PixelFormat::Unknown;
-  sample_format_ = SampleFormat::Unknown;
+  ImageDataBase<std::uint8_t*>::reset();
   owns_memory_ = false;
 }
 
-inline Bytes ImageData::compute_data_offset(PixelIndex y) const noexcept
-{
-  return Bytes(stride_bytes_ * y);
-}
-
-inline Bytes ImageData::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
-{
-  return Bytes(stride_bytes_ * y + nr_bytes_per_channel_ * nr_channels_ * x);
-}
-
-inline MemoryBlock<NewAllocator> ImageData::relinquish_data_ownership()
+inline MemoryBlock<NewAllocator> ImageData<ImageDataStorage::Modifiable>::relinquish_data_ownership()
 {
   SELENE_FORCED_ASSERT(owns_memory_);
   const auto ptr = data_;

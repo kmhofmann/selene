@@ -155,9 +155,9 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj,
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_jpeg(SourceType&& source,
-                    JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-                    MessageLog* messages = nullptr);
+ImageData<> read_jpeg(SourceType&& source,
+                      JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                      MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a JPEG image data stream.
  *
@@ -177,11 +177,143 @@ ImageData read_jpeg(SourceType&& source,
  * otherwise.
  */
 template <typename SourceType>
-ImageData read_jpeg(JPEGDecompressionObject& obj,
-                    SourceType&& source,
-                    JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-                    MessageLog* messages = nullptr,
-                    const JPEGHeaderInfo* provided_header_info = nullptr);
+ImageData<> read_jpeg(JPEGDecompressionObject& obj,
+                      SourceType&& source,
+                      JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                      MessageLog* messages = nullptr,
+                      const JPEGHeaderInfo* provided_header_info = nullptr);
+
+// ----------
+// Implementation:
+
+namespace detail {
+
+struct JPEGOutputInfo
+{
+  const PixelIndex width;
+  const PixelIndex height;
+  const int nr_channels;
+  const JPEGColorSpace color_space;
+
+  JPEGOutputInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
+      : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
+  {
+  }
+};
+
+class JPEGDecompressionCycle
+{
+public:
+  JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region);
+
+  ~JPEGDecompressionCycle();
+
+  JPEGOutputInfo get_output_info() const;
+  bool decompress(RowPointers& row_pointers);
+
+private:
+  JPEGDecompressionObject& obj_;
+  BoundingBox region_;
+};
+
+}  // namespace detail
+
+
+template <typename SourceType>
+JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind, MessageLog* messages)
+{
+  JPEGDecompressionObject obj;
+  SELENE_ASSERT(obj.valid());
+  return read_jpeg_header(obj, std::forward<SourceType>(source), rewind, messages);
+}
+
+template <typename SourceType>
+JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
+{
+  const auto src_pos = source.position();
+
+  auto scope_exit = [&source, rewind, messages, &obj, src_pos]() {
+    if (rewind)
+    {
+      source.seek_abs(src_pos);
+    }
+
+    detail::assign_message_log(obj, messages);
+  };
+
+  detail::set_source(obj, source);
+
+  if (obj.error_state())
+  {
+    scope_exit();
+    return JPEGHeaderInfo();
+  }
+
+  const auto header_info = detail::read_header(obj);
+  scope_exit();
+  return header_info;
+}
+
+template <typename SourceType>
+ImageData<> read_jpeg(SourceType&& source, JPEGDecompressionOptions options, MessageLog* messages)
+{
+  JPEGDecompressionObject obj;
+  SELENE_ASSERT(obj.valid());
+  return read_jpeg(obj, std::forward<SourceType>(source), options, messages, nullptr);
+}
+
+template <typename SourceType>
+ImageData<> read_jpeg(JPEGDecompressionObject& obj,
+                      SourceType&& source,
+                      JPEGDecompressionOptions options,
+                      MessageLog* messages,
+                      const JPEGHeaderInfo* provided_header_info)
+{
+  if (!provided_header_info)
+  {
+    detail::set_source(obj, source);
+
+    if (obj.error_state())
+    {
+      detail::assign_message_log(obj, messages);
+      return ImageData<>();
+    }
+  }
+
+  const auto header_info = provided_header_info ? *provided_header_info : detail::read_header(obj);
+
+  if (!header_info.is_valid())
+  {
+    detail::assign_message_log(obj, messages);
+    return ImageData<>();
+  }
+
+  obj.set_decompression_parameters(options.out_color_space);
+
+  detail::JPEGDecompressionCycle cycle(obj, options.region);
+
+  const auto output_info = cycle.get_output_info();
+  const auto output_width = output_info.width;
+  const auto output_height = options.region.empty() ? output_info.height : options.region.height();
+  const auto output_nr_channels = static_cast<std::uint16_t>(output_info.nr_channels);
+  const auto output_nr_bytes_per_channel = 1;
+  const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
+  const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
+  const auto output_sample_format = SampleFormat::UnsignedInteger;
+
+  ImageData<> img(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_stride_bytes,
+                  output_pixel_format, output_sample_format);
+  auto row_pointers = get_row_pointers(img);
+  const auto dec_success = cycle.decompress(row_pointers);
+
+  if (!dec_success)
+  {
+    img.clear();  // invalidates image data
+  }
+
+  detail::assign_message_log(obj, messages);
+  return img;
+}
 
 }  // namespace sln
 

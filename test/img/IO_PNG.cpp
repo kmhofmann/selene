@@ -50,7 +50,7 @@ fs::path test_suite_dir()
   return (env_var) ? fs::path(env_var) / "png_suite" : fs::path("../data/png_suite");
 }
 
-void check_write_read(sln::ImageData& img_data, const boost::filesystem::path& tmp_path)
+void check_write_read(sln::ImageData<>& img_data, const boost::filesystem::path& tmp_path)
 {
   // Write as PNG file...
   sln::FileWriter sink((tmp_path / "test_img.png").string());

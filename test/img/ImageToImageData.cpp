@@ -96,7 +96,7 @@ TEST_CASE("Converting Image<> to ImageData", "[img]")
 {
   {
     sln::Image_8u1 img;
-    sln::ImageData img_data;
+    sln::ImageData<> img_data;
     REQUIRE_THROWS(img_data = sln::to_image_data(std::move(img), sln::PixelFormat::Unknown));
   }
 

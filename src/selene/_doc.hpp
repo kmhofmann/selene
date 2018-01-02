@@ -13,7 +13,8 @@
  * - Statically and dynamically typed in-memory image data representations.
  * - Functions for reading and writing image data in JPEG and PNG formats (from/to files or memory).
  * - Basic image processing functionality, such as:
- *   - Image pixel access using various interpolation algorithms (nearest neighbor, bilinear) and boundary handling strategies (no check, replicate boundary, zero padding).
+ *   - Image pixel access using various interpolation algorithms (nearest neighbor, bilinear) and boundary handling
+ * strategies (no check, replicate boundary, zero padding).
  *   - Algorithms to apply point-wise operations to images/views.
  *   - Pixel-level and image-level conversion functions between different pixel formats (e.g. RGB -> Grayscale, etc.).
  * - Functions for interoperability with OpenCV cv::Mat matrices (wrapping or cloning).
