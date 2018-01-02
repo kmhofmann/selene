@@ -91,7 +91,7 @@ by the API.
 [OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if
 so desired.
 
-### Building and running the tests
+### Building and running the tests and examples
 
 Building the tests is disabled by default, and can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake`
 command.
@@ -105,8 +105,13 @@ The test suite can be run by executing `./test/selene_tests` from the `build` di
 available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
 for more information.
 
-In case some tests are failing because auxiliary data files can not be found automatically, specify the path to the
-`data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or similar).
+The repository also contains commented examples which can (but don't have to) be compiled.
+This can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake` command; the examples can then be found in the
+`./examples/` folder in the build directory.
+
+In case some tests or examples are failing because auxiliary data files can not be found automatically, specify the path
+to the `data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or
+similar).
 
 ### Installing dependencies
 
@@ -142,11 +147,10 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
 _Doxygen_ documentation can be built using the provided `Doxyfile`.
 Simply run `doxygen` in the main library directory.
 
-A regularly updated version of the documentation [is hosted here](https://michael-hofmann.info/selene/).
+A regularly updated version of the API documentation [is hosted here](https://michael-hofmann.info/selene/).
 
-While the Doxygen API documentation might provide a decent reference manual, there is currently a lack of usage
-tutorials and examples.
-More of these shall be added in the near future.
+Commented example code for select functionality (which can serve as a tutorial) can be found in the
+[`examples` folder of the repository](https://github.com/kmhofmann/selene/tree/master/examples). (To be extended)
 
 ## Rationale
 

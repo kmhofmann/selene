@@ -15,34 +15,78 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace sln_examples {
+
+inline void print_help_and_exit(const char* error_message,
+                                const std::vector<boost::filesystem::path>* paths_considered = nullptr)
+{
+  std::cout << "ERROR: " << error_message << "\n\n";
+  std::cout << "You likely need to specify the correct path to the selene 'data/' directory.\n";
+  std::cout << "There are two possible ways to accomplish this:\n";
+  std::cout << "- Give the path as the first (and only) argument to the example program;\n";
+  std::cout << "- Give the path as content of the environment variable SELENE_DATA_PATH.\n\n";
+
+  if (paths_considered != nullptr)
+  {
+    std::cout << "The following paths were considered:\n";
+    for (const auto& path : *paths_considered)
+    {
+      std::cout << "- " << path.string() << '\n';
+    }
+    std::cout << '\n';
+  }
+
+  std::exit(-1);
+}
 
 inline boost::filesystem::path full_data_path(const char* filename, const char* data_path = nullptr)
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
   boost::filesystem::path full_path;
+  std::vector<boost::filesystem::path> paths_considered;
 
   if (data_path)
   {
     full_path = boost::filesystem::path(data_path) / boost::filesystem::path(filename);
+    paths_considered.emplace_back(full_path);
+
+    if (boost::filesystem::exists(full_path))
+    {
+      return full_path;
+    }
   }
-  else if (env_var)
+
+  if (env_var)
   {
     full_path = boost::filesystem::path(env_var) / boost::filesystem::path(filename);
-  }
-  else
-  {
-    full_path = boost::filesystem::path("../data") / boost::filesystem::path(filename);
+    paths_considered.emplace_back(full_path);
+
+    if (boost::filesystem::exists(full_path))
+    {
+      return full_path;
+    }
   }
 
-  if (!boost::filesystem::exists(full_path))
+  full_path = boost::filesystem::path("../data") / boost::filesystem::path(filename);
+  paths_considered.emplace_back(full_path);
+
+  if (boost::filesystem::exists(full_path))
   {
-    std::cout << "ERROR: File '" << full_path.string() << "' not found.\n";
-    std::abort();
+    return full_path;
   }
 
-  return full_path;
+  full_path = boost::filesystem::path("../../data") / boost::filesystem::path(filename);
+  paths_considered.emplace_back(full_path);
+
+  if (boost::filesystem::exists(full_path))
+  {
+    return full_path;
+  }
+
+  print_help_and_exit("File not found.", &paths_considered);
+  return full_path;  // circumventing a compiler warning, but this is really unreachable code
 }
 
 template <typename PixelType>
@@ -50,14 +94,12 @@ sln::Image<PixelType> read_example_image(const char* filename, const char* data_
 {
   // Get full path of example image
   const auto img_path = sln_examples::full_data_path(filename, data_path);
-  std::cout << "Reading example image from '" << img_path.string() << "'\n";
+  std::cout << "Reading example image from file '" << img_path.string() << "'\n";
   auto img_data = sln::read_image(sln::FileReader(img_path.string()));
 
   if (!img_data.is_valid())
   {
-    std::cout << "ERROR: Image could not be read or decoded.\n";
-    std::cout << "You might need to specify SELENE_DATA_PATH to the data directory as an environment variable.\n";
-    std::abort();
+    print_help_and_exit("Image data could not be decoded.");
   }
 
   std::cout << "Decoded image data: (" << img_data.width() << " x " << img_data.height() << "), "
