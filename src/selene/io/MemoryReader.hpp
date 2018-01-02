@@ -297,10 +297,10 @@ template <typename T, typename>
 T read(MemoryReader& source)
 {
   T value{};
-#ifndef NDEBUG // TODO: replace with [[maybe_unused]] (C++17)
+#ifndef NDEBUG  // TODO: replace with [[maybe_unused]] (C++17)
   bool read =
 #endif
-  source.read(value);
+      source.read(value);
   SELENE_ASSERT(read);
   return value;
 }

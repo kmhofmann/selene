@@ -90,12 +90,12 @@ inline FileReader::FileReader(const char* filename)
 }
 
 /** \brief Opens the specified file for reading and sets the file stream pointer to the beginning of the file.
-*
-* If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
-* See also FileReader::open.
-*
-* \param filename The name of the file to be opened for reading.
-*/
+ *
+ * If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+ * See also FileReader::open.
+ *
+ * \param filename The name of the file to be opened for reading.
+ */
 inline FileReader::FileReader(const std::string& filename)
 {
   if (!open(filename))
@@ -144,14 +144,14 @@ inline bool FileReader::open(const char* filename) noexcept
 }
 
 /** \brief Opens the specified file for reading and sets the file stream pointer to the beginning of the file.
-*
-* Any already open file will be closed.
-* Opening a file stream can fail for various reasons, e.g. if the specified file does not exist.
-* The failure cases generally match the failure cases of `std::fopen`.
-*
-* \param filename The name of the file to be opened for reading.
-* \return True, if the file was successfully opened; false otherwise.
-*/
+ *
+ * Any already open file will be closed.
+ * Opening a file stream can fail for various reasons, e.g. if the specified file does not exist.
+ * The failure cases generally match the failure cases of `std::fopen`.
+ *
+ * \param filename The name of the file to be opened for reading.
+ * \return True, if the file was successfully opened; false otherwise.
+ */
 inline bool FileReader::open(const std::string& filename) noexcept
 {
   return open(filename.c_str());
@@ -305,10 +305,10 @@ template <typename T, typename>
 T read(FileReader& source)
 {
   T value{};
-#ifndef NDEBUG // TODO: replace with [[maybe_unused]] (C++17)
+#ifndef NDEBUG  // TODO: replace with [[maybe_unused]] (C++17)
   bool read =
 #endif
-  source.read(value);
+      source.read(value);
   SELENE_ASSERT(read);
   return value;
 }
