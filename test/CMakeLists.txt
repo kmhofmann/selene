@@ -33,11 +33,11 @@ add_executable(selene_tests
 
 target_compile_options(selene_tests
         PRIVATE
-        ${SELENE_COMPILER_WARNING_OPTIONS})
+        ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_tests
         PRIVATE
-        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
+        ${SELENE_COMPILER_DEFINITIONS})
 
 target_include_directories(selene_tests
         PRIVATE

@@ -42,8 +42,10 @@ int main(int argc, char** argv)
   // Ensure the decoded image data is 8-bit per channel
   assert(img_data_0.nr_bytes_per_channel() == 1);
 
+#ifndef NDEBUG
   const auto img_data_0_width = img_data_0.width();
   const auto img_data_0_height = img_data_0.height();
+#endif  // NDEBUG
 
   // If the read image data has the correct properties, we can convert it to a strongly typed instance of
   // `Image<Pixel_8u3>` to potentially perform further data manipulations.

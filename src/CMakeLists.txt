@@ -49,11 +49,11 @@ add_library(selene::selene_base ALIAS selene_base)
 
 target_compile_options(selene_base
         PRIVATE
-        ${SELENE_COMPILER_WARNING_OPTIONS})
+        ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_base
         PRIVATE
-        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
+        ${SELENE_COMPILER_DEFINITIONS})
 
 target_include_directories(selene_base
         PUBLIC
@@ -106,12 +106,12 @@ add_library(selene::selene_img ALIAS selene_img)
 
 target_compile_options(selene_img
         PRIVATE
-        ${SELENE_COMPILER_WARNING_OPTIONS}
-        ${SELENE_IMG_COMPILER_WARNING_OPTIONS})
+        ${SELENE_COMPILER_OPTIONS}
+        ${SELENE_IMG_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_img
         PRIVATE
-        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
+        ${SELENE_COMPILER_DEFINITIONS})
 
 target_include_directories(selene_img
         PUBLIC
@@ -185,11 +185,11 @@ add_library(selene::selene_io ALIAS selene_io)
 
 target_compile_options(selene_io
         PRIVATE
-        ${SELENE_COMPILER_WARNING_OPTIONS})
+        ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_io
         PRIVATE
-        ${SELENE_COMPILER_EXTRA_DEFINITIONS})
+        ${SELENE_COMPILER_DEFINITIONS})
 
 target_include_directories(selene_io
         PUBLIC
