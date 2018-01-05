@@ -48,12 +48,12 @@ First, clone the project and create a `build` directory (or use another name).
 
 Then call `cmake` and build the project. Using [GNU Make](https://www.gnu.org/software/make/):
 
-    cmake -DCMAKE_BUILD_TYPE=Release ..
+    cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release ..
     make
 
 Or, alternatively, using [ninja](https://ninja-build.org/):
 
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+    cmake -G Ninja -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release ..
     ninja
 
 Preferably use the library "at head", e.g. as submodule, instead of invoking the `install` target.
