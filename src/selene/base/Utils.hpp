@@ -55,7 +55,7 @@ inline constexpr const T& clamp(const T& value, const T& min, const T& max, Comp
 template <typename T>
 inline constexpr const T& clamp(const T& value, const T& min, const T& max) noexcept
 {
-  return clamp(value, min, max, std::less<T>());
+  return sln::clamp(value, min, max, std::less<T>());
 }
 
 /** \brief Computes the value of `base` raised to the power of `exponent`, where `exponent` is integral and unsigned.
