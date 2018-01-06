@@ -23,10 +23,6 @@ TEST_CASE("Image access convenience function", "[img]")
   REQUIRE(sln::get(img, 2.0, 0.0) == Approx(30.0));
   REQUIRE(sln::get(img, 0.0, 1.0) == Approx(40.0));
   REQUIRE(sln::get(img, 1.0, 1.0) == Approx(50.0));
-  REQUIRE(sln::get(img, 2.0, 1.0) == Approx(60.0));
-  REQUIRE(sln::get(img, 0.0, 2.0) == Approx(70.0));
-  REQUIRE(sln::get(img, 1.0, 2.0) == Approx(80.0));
-  REQUIRE(sln::get(img, 2.0, 2.0) == Approx(90.0));
 
   REQUIRE(sln::get(img, 0.5, 0.5) == Approx(30.0));
   REQUIRE(sln::get(img, 1.5, 0.5) == Approx(40.0));
@@ -44,10 +40,6 @@ TEST_CASE("Image access convenience function", "[img]")
   REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 2.0, 0.0) == Approx(30.0));
   REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 0.0, 1.0) == Approx(40.0));
   REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 1.0, 1.0) == Approx(50.0));
-  REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 2.0, 1.0) == Approx(60.0));
-  REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 0.0, 2.0) == Approx(70.0));
-  REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 1.0, 2.0) == Approx(80.0));
-  REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 2.0, 2.0) == Approx(90.0));
 
   REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 0.5, 0.5) == Approx(30.0));
   REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(img, 1.5, 0.5) == Approx(40.0));

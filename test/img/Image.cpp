@@ -110,7 +110,7 @@ sln::Image<T> construct_random_image(sln::PixelLength width, sln::PixelLength he
   DieType die;
 
   std::uniform_int_distribution<std::uint16_t> die_stride(0, 16);
-  const auto extra_stride_bytes = std::size_t{die_stride(rng)};
+  const auto extra_stride_bytes = std::size_t{die_stride(rng) * sizeof(Element)};
   const auto stride_bytes = sln::Bytes(width * sln::PixelTraits<T>::nr_bytes + extra_stride_bytes);
   sln::Image<T> img(width, height, stride_bytes);
 
