@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-find ${SCRIPT_DIR}/src/  -type f -iname *.hpp -o -iname *.cpp | xargs clang-format -style=file -i
-find ${SCRIPT_DIR}/test/ -type f -iname *.hpp -o -iname *.cpp | xargs clang-format -style=file -i

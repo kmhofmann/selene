@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+set -x
+set -e
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_DIR=${SCRIPT_DIR}/..
+
+export CC=clang
+export CXX=clang++
+
+function build_everything {
+  rm -f CMakeCache.txt
+  rm -rf CMakeFiles
+  cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ..
+  make clean
+  make -j$(nproc --all)
+}
+
+function run_all_binaries {
+  ./test/selene_tests -d yes
+
+  EXAMPLE_BINARIES=$(find ./examples/ -maxdepth 1 -type f -executable)
+  for file in ${EXAMPLE_BINARIES}
+  do
+    ${file}
+  done
+}
+
+# -------------------------------------------------------------------
+# Build and test with AddressSanitizer and UndefinedBehaviorSanitizer
+# -------------------------------------------------------------------
+
+mkdir -p ${REPO_DIR}/_build_with_asan_ubsan
+cd ${REPO_DIR}/_build_with_asan_ubsan
+
+SAN_FLAGS="-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fno-optimize-sibling-calls -g -O1"
+export CXXFLAGS=${SAN_FLAGS}
+export LDFLAGS=${SAN_FLAGS}
+build_everything
+run_all_binaries
+
+# -----------------------------------
+# Build and test with ThreadSanitizer
+# -----------------------------------
+
+mkdir -p ${REPO_DIR}/_build_with_tsan
+cd ${REPO_DIR}/_build_with_tsan
+
+SAN_FLAGS="-fsanitize=thread -g -O1"
+export CXXFLAGS=${SAN_FLAGS}
+export LDFLAGS=${SAN_FLAGS}
+
+build_everything
+run_all_binaries
+
+# --------
+# Clean up
+# --------
+
+rm -rf ${REPO_DIR}/_build_with_*
