@@ -32,7 +32,7 @@ template <PixelFormat pixel_format_src,
           typename = std::enable_if_t<conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
 constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept;
 
-template <std::uint32_t N, typename T>
+template <std::size_t N, typename T>
 constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept;
 
 
@@ -863,7 +863,7 @@ inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value)
  * @param src The source pixel.
  * @return The resulting n-channel pixel.
  */
-template <std::uint32_t N, typename T>
+template <std::size_t N, typename T>
 constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept
 {
   return Pixel<T, N>(make_array_n_equal<T, N>(src[0]));

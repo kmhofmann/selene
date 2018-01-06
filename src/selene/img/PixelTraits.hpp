@@ -26,7 +26,7 @@ template <typename Element_>
 struct PixelTraits
 {
   using Element = Element_;  ///< The pixel element type.
-  static constexpr std::uint32_t nr_channels = 1;  ///< The number of channels per pixel.
+  static constexpr std::size_t nr_channels = 1;  ///< The number of channels per pixel.
   static constexpr std::uint16_t nr_bytes = sizeof(Element);  ///< The number of bytes per pixel.
   static constexpr std::uint16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
@@ -54,11 +54,11 @@ struct PixelTraits
  * @tparam T The channel element type of the pixel type.
  * @tparam N The number of channels of the pixel type.
  */
-template <typename T, std::uint32_t N>
+template <typename T, std::size_t N>
 struct PixelTraits<Pixel<T, N>>
 {
   using Element = T;  ///< The pixel element type.
-  static constexpr std::uint32_t nr_channels = N;  ///< The number of channels per pixel.
+  static constexpr std::size_t nr_channels = N;  ///< The number of channels per pixel.
   static constexpr std::uint16_t nr_bytes = sizeof(Pixel<T, N>);  ///< The number of bytes per pixel.
   static constexpr std::uint16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
@@ -87,7 +87,7 @@ struct PixelTraits<Pixel<T, N>>
 template <typename Element_>
 constexpr Element_ PixelTraits<Element_>::zero_element;
 
-template <typename T, std::uint32_t N>
+template <typename T, std::size_t N>
 constexpr Pixel<T, N> PixelTraits<Pixel<T, N>>::zero_element;
 
 }  // namespace sln

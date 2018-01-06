@@ -25,7 +25,7 @@ namespace sln {
  * \tparam T The type for each channel element.
  * \tparam nr_channels_ The number of channels.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 class Pixel
 {
 public:
@@ -41,38 +41,79 @@ public:
 
   ~Pixel() = default;
 
-  Pixel(const Pixel<T, nr_channels_>&) = default;  ///< Copy constructor.
-  Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;  ///< Copy assignment operator.
+  constexpr Pixel(const Pixel<T, nr_channels_>&) = default;  ///< Copy constructor.
+  constexpr Pixel<T, nr_channels_>& operator=(const Pixel<T, nr_channels_>&) = default;  ///< Copy assignment operator.
 
-  Pixel(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move constructor.
-  Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move assignment operator.
-
-  template <typename U>
-  Pixel(const Pixel<U, nr_channels_>& other);
+  constexpr Pixel(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move constructor.
+  constexpr Pixel<T, nr_channels_>& operator=(Pixel<T, nr_channels_>&&) noexcept = default;  ///< Move assignment operator.
 
   template <typename U>
-  Pixel<T, nr_channels_>& operator=(const Pixel<U, nr_channels_>& other);
+  constexpr Pixel(const Pixel<U, nr_channels_>& other);
 
-  T* data() noexcept;
-  const T* data() const noexcept;
+  template <typename U>
+  constexpr Pixel<T, nr_channels_>& operator=(const Pixel<U, nr_channels_>& other);
+
+  constexpr T* data() noexcept;
+  constexpr const T* data() const noexcept;
 
   constexpr T& operator[](std::size_t n) noexcept;
   constexpr const T& operator[](std::size_t n) const noexcept;
 
   // Allow implicit conversion to T, iff nr_channels_ ==1:
-  operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept;
+  constexpr operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept;
+
+  constexpr Pixel<T, nr_channels_>& operator+=(const Pixel<T, nr_channels_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_>& operator-=(const Pixel<T, nr_channels_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_>& operator*=(const Pixel<T, nr_channels_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_>& operator/=(const Pixel<T, nr_channels_>& rhs) noexcept;
+
+  constexpr Pixel<T, nr_channels_>& operator+=(T rhs) noexcept;
+  constexpr Pixel<T, nr_channels_>& operator-=(T rhs) noexcept;
+  constexpr Pixel<T, nr_channels_>& operator*=(T rhs) noexcept;
+  constexpr Pixel<T, nr_channels_>& operator/=(T rhs) noexcept;
+
+  constexpr Pixel<T, nr_channels_> operator-() noexcept;
 
 private:
   static_assert(std::is_arithmetic<T>::value, "Pixel element type needs to be an arithmetic type");
   std::array<T, nr_channels> data_;
 };
 
-template <typename T, std::uint32_t nr_channels_>
-bool operator==(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1);
+template <typename T, std::size_t nr_channels_>
+constexpr bool operator==(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1) noexcept;
 
-template <typename T, std::uint32_t nr_channels_>
-bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1);
+template <typename T, std::size_t nr_channels_>
+constexpr bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1) noexcept;
 
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator+(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator-(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator*(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator/(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator+(Pixel<T, nr_channels_> lhs, U rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator+(T lhs, Pixel<U, nr_channels_> rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator-(Pixel<T, nr_channels_> lhs, U rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator*(Pixel<T, nr_channels_> lhs, U rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator*(T lhs, Pixel<U, nr_channels_> rhs) noexcept;
+
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator/(Pixel<T, nr_channels_> lhs, U rhs) noexcept;
 
 // ----------
 // Aliases:
@@ -138,7 +179,7 @@ using Pixel_64f4 = Pixel<float64_t, 4>;  ///< 64-bit floating point 4-channel pi
  * @tparam nr_channels_ The number of channels.
  * \param args The channel values as separate arguments.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 template <typename... Args, typename>
 inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) noexcept : data_{{static_cast<T>(args)...}}
 {
@@ -154,7 +195,7 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) noexcept : data_{{s
  * @tparam nr_channels_ The number of channels.
  * \param arr The channel values as std::array<>.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) noexcept : data_(arr)
 {
   static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
@@ -168,14 +209,14 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>&
  * @tparam U The pixel element type of the argument pixel.
  * @param other The pixel to copy from.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 template <typename U>
-Pixel<T, nr_channels_>::Pixel(const Pixel<U, nr_channels_>& other)
+inline constexpr Pixel<T, nr_channels_>::Pixel(const Pixel<U, nr_channels_>& other)
 {
   static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 
-  for (std::uint32_t i = 0; i < nr_channels; ++i)
+  for (std::size_t i = 0; i < nr_channels; ++i)
   {
     this->operator[](i) = static_cast<T>(other[i]);
   }
@@ -189,11 +230,11 @@ Pixel<T, nr_channels_>::Pixel(const Pixel<U, nr_channels_>& other)
  * @param other The pixel to copy from.
  * @return A reference to *this.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 template <typename U>
-Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator=(const Pixel<U, nr_channels_>& other)
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator=(const Pixel<U, nr_channels_>& other)
 {
-  for (std::uint32_t i = 0; i < nr_channels; ++i)
+  for (std::size_t i = 0; i < nr_channels; ++i)
   {
     this->operator[](i) = static_cast<T>(other[i]);
   }
@@ -207,8 +248,8 @@ Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator=(const Pixel<U, nr_chan
  * @tparam nr_channels_ The number of channels.
  * \return Pointer to the first pixel element.
  */
-template <typename T, std::uint32_t nr_channels_>
-inline T* Pixel<T, nr_channels_>::data() noexcept
+template <typename T, std::size_t nr_channels_>
+inline constexpr T* Pixel<T, nr_channels_>::data() noexcept
 {
   return data_.data();
 }
@@ -219,8 +260,8 @@ inline T* Pixel<T, nr_channels_>::data() noexcept
  * @tparam nr_channels_ The number of channels.
  * \return Constant pointer to the first pixel element.
  */
-template <typename T, std::uint32_t nr_channels_>
-inline const T* Pixel<T, nr_channels_>::data() const noexcept
+template <typename T, std::size_t nr_channels_>
+inline constexpr const T* Pixel<T, nr_channels_>::data() const noexcept
 {
   return data_.data();
 }
@@ -232,7 +273,7 @@ inline const T* Pixel<T, nr_channels_>::data() const noexcept
  * \param n Index of the channel to access.
  * \return Reference to the n-th channel element.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 inline constexpr T& Pixel<T, nr_channels_>::operator[](std::size_t n) noexcept
 {
   return data_[n];
@@ -245,7 +286,7 @@ inline constexpr T& Pixel<T, nr_channels_>::operator[](std::size_t n) noexcept
  * \param n Index of the channel to access.
  * \return Const reference to the n-th channel element.
  */
-template <typename T, std::uint32_t nr_channels_>
+template <typename T, std::size_t nr_channels_>
 inline constexpr const T& Pixel<T, nr_channels_>::operator[](std::size_t n) const noexcept
 {
   return data_[n];
@@ -259,10 +300,173 @@ inline constexpr const T& Pixel<T, nr_channels_>::operator[](std::size_t n) cons
  * @tparam T The pixel element type.
  * @tparam nr_channels_ The number of channels.
  */
-template <typename T, std::uint32_t nr_channels_>
-inline Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept
 {
   return data_[0];
+}
+
+/** \brief Addition operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The pixel value to add.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator+=(const Pixel<T, nr_channels_>& rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] += rhs.data_[i];
+  }
+
+  return *this;
+}
+
+/** \brief Subtraction operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The pixel value to subtract.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator-=(const Pixel<T, nr_channels_>& rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] -= rhs.data_[i];
+  }
+
+  return *this;
+}
+
+/** \brief Multiplication operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The pixel value to multiply with.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator*=(const Pixel<T, nr_channels_>& rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] *= rhs.data_[i];
+  }
+
+  return *this;
+}
+
+/** \brief Division operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The pixel value to divide by.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator/=(const Pixel<T, nr_channels_>& rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] /= rhs.data_[i];
+  }
+
+  return *this;
+}
+
+/** \brief Addition operation between the current pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The scalar to add to each pixel value element.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator+=(T rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] += rhs;
+  }
+
+  return *this;
+}
+
+/** \brief Subtraction operation between the current pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The scalar to subtract from each pixel value element.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator-=(T rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] -= rhs;
+  }
+
+  return *this;
+}
+
+/** \brief Multiplication operation between the current pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The scalar to multiply each pixel value element with.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator*=(T rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] *= rhs;
+  }
+
+  return *this;
+}
+
+/** \brief Division operation between the current pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @param rhs The scalar to divide each pixel value element by.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_>& Pixel<T, nr_channels_>::operator/=(T rhs) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    data_[i] /= rhs;
+  }
+
+  return *this;
+}
+
+/** \brief Unary negation operation on the current pixel value. Each element is negated.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @return A pixel value with all elements negated.
+ */
+template <typename T, std::size_t nr_channels_>
+inline constexpr Pixel<T, nr_channels_> Pixel<T, nr_channels_>::operator-() noexcept
+{
+  Pixel<T, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    result[i] = - data_[i];
+  }
+
+  return result;
 }
 
 // ----------
@@ -275,12 +479,12 @@ inline Pixel<T, nr_channels_>::operator std::conditional_t<nr_channels_ == 1, T,
  * \param px1 The right-hand side pixel to compare.
  * \return True, if the two pixels have equal values for all channels; false otherwise.
  */
-template <typename T, std::uint32_t nr_channels_>
-inline bool operator==(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1)
+template <typename T, std::size_t nr_channels_>
+inline constexpr bool operator==(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1) noexcept
 {
   bool equal = true;
 
-  for (auto i = 0u; i < nr_channels_; ++i)
+  for (std::size_t i = 0; i < nr_channels_; ++i)
   {
     equal &= (px0[i] == px1[i]);
   }
@@ -291,15 +495,235 @@ inline bool operator==(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_chan
 /** \brief Inequality comparison for two pixels.
  *
  * @tparam T The pixel element type.
- * @tparam nr_channels_ The number of channels.*
+ * @tparam nr_channels_ The number of channels.
  * \param px0 The left-hand side pixel to compare.
  * \param px1 The right-hand side pixel to compare.
  * \return True, if the two pixels are not equal; false, if they are equal.
  */
-template <typename T, std::uint32_t nr_channels_>
-inline bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1)
+template <typename T, std::size_t nr_channels_>
+inline constexpr bool operator!=(const Pixel<T, nr_channels_>& px0, const Pixel<T, nr_channels_>& px1) noexcept
 {
   return !(px0 == px1);
+}
+
+/** \brief Addition operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The pixel element type of the right-hand side pixel value.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side pixel value.
+ * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator+(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] + rhs[i];
+  }
+
+  return result;
+}
+
+/** \brief Subtraction operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The pixel element type of the right-hand side pixel value.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side pixel value.
+ * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator-(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] - rhs[i];
+  }
+
+  return result;
+}
+
+/** \brief Multiplication operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The pixel element type of the right-hand side pixel value.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side pixel value.
+ * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator*(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] * rhs[i];
+  }
+
+  return result;
+}
+
+/** \brief Division operation between pixel values, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The pixel element type of the right-hand side pixel value.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side pixel value.
+ * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator/(Pixel<T, nr_channels_> lhs, const Pixel<U, nr_channels_>& rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] / rhs[i];
+  }
+
+  return result;
+}
+
+/** \brief Addition operation between a pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The scalar type.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side scalar.
+ * @return The resulting pixel value. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator+(Pixel<T, nr_channels_> lhs, U rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] + rhs;
+  }
+
+  return result;
+}
+
+/** \brief Addition operation between a scalar and a pixel value, performed element-wise.
+ *
+ * @tparam T The scalar type.
+ * @tparam U The pixel element type of the right-hand side pixel value.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side scalar.
+ * @param rhs The right-hand side pixel value.
+ * @return The resulting pixel value. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator+(T lhs, Pixel<U, nr_channels_> rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs + rhs[i];
+  }
+
+  return result;
+}
+
+/** \brief Subtraction operation between a pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The scalar type.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side scalar.
+ * @return The resulting pixel value. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator-(Pixel<T, nr_channels_> lhs, U rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] - rhs;
+  }
+
+  return result;
+}
+
+/** \brief Multiplication operation between a pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The scalar type.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side scalar.
+ * @return The resulting pixel value. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator*(Pixel<T, nr_channels_> lhs, U rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] * rhs;
+  }
+
+  return result;
+}
+
+/** \brief Multiplication operation between a scalar and a pixel value, performed element-wise.
+ *
+ * @tparam T The scalar type.
+ * @tparam U The pixel element type of the right-hand side pixel value.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side scalar.
+ * @param rhs The right-hand side pixel value.
+ * @return The resulting pixel value. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator*(T lhs, Pixel<U, nr_channels_> rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs * rhs[i];
+  }
+
+  return result;
+}
+
+/** \brief Division operation between a pixel value and a scalar, performed element-wise.
+ *
+ * @tparam T The pixel element type of the left-hand side pixel value.
+ * @tparam U The scalar type.
+ * @tparam nr_channels_ The number of channels.
+ * @param lhs The left-hand side pixel value.
+ * @param rhs The right-hand side scalar.
+ * @return The resulting pixel value. Note that the element type will be `std::common_type_t<T, U>`.
+ */
+template <typename T, typename U, std::size_t nr_channels_>
+inline constexpr Pixel<std::common_type_t<T, U>, nr_channels_> operator/(Pixel<T, nr_channels_> lhs, U rhs) noexcept
+{
+  Pixel<std::common_type_t<T, U>, nr_channels_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = lhs[i] / rhs;
+  }
+
+  return result;
 }
 
 }  // namespace sln

@@ -60,7 +60,7 @@ struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
   static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept;
 
   template <typename T,
-            std::uint32_t nr_channels,
+            std::size_t nr_channels,
             typename ScalarAccess = default_float_t,
             typename ScalarOutputElement = default_float_t>
   static auto interpolate(const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y) noexcept;
@@ -146,7 +146,7 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
  * `Pixel<ScalarOutputElement, nr_channels>`.
  */
 template <BorderAccessMode AccessMode>
-template <typename T, std::uint32_t nr_channels, typename ScalarAccess, typename ScalarOutputElement>
+template <typename T, std::size_t nr_channels, typename ScalarAccess, typename ScalarOutputElement>
 inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(
     const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y) noexcept
 {
@@ -166,7 +166,7 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto& d = ImageAccessor<AccessMode>::access(img, xf + 1, yf + 1);
 
   Pixel<ScalarOutputElement, nr_channels> dst;
-  for (std::uint32_t i = 0; i < nr_channels; ++i)  // nr_channels is known at compile-time
+  for (std::size_t i = 0; i < nr_channels; ++i)  // nr_channels is known at compile-time
   {
     dst[i] = ScalarOutputElement(a[i]) + ((b[i] - a[i]) * dx) + ((c[i] - a[i]) * dy)
              + ((a[i] - b[i] - c[i] + d[i]) * dx * dy);
