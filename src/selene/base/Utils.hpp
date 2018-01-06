@@ -91,7 +91,7 @@ inline constexpr std::array<T, N> make_array_n_equal(T value)
   for (std::uint32_t i = 1; i < N; ++i)
   {
     // const_cast not needed anymore in C++17: https://stackoverflow.com/a/46779579/218634
-    const_cast<typename result_t::reference>(const_arr[i]) = value;
+    const_cast<typename result_t::reference>(const_arr[i]) = value;  // NOLINT
   }
 
   return arr;
@@ -116,7 +116,7 @@ inline constexpr auto make_array_from_function(Func func) noexcept
   for (std::size_t i = 0; i < N; ++i)
   {
     // const_cast not needed anymore in C++17: https://stackoverflow.com/a/46779579/218634
-    const_cast<typename result_t::reference>(const_arr[i]) = func(i);
+    const_cast<typename result_t::reference>(const_arr[i]) = func(i);  // NOLINT
   }
 
   return arr;
