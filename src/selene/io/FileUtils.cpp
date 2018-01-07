@@ -41,6 +41,13 @@ std::vector<std::uint8_t> read_file_contents(const std::string& path)
   return contents;
 }
 
+/** \brief Writes the contents of `data` to a file.
+ *
+ * If the file can not be opened or writing fails, the function will throw a `std::runtime_error` exception.
+ *
+ * @param path A string representing the path to the file to be written.
+ * @param data A `std::vector<std::uint8_t>` with the contents to be written.
+ */
 void write_data_contents(const std::string& path, const std::vector<std::uint8_t>& data)
 {
   auto fp = std::fopen(path.c_str(), "wb");
