@@ -17,7 +17,7 @@
 constexpr auto output_filename_interpolated = "bike_duck_bilinear_interpolation.png";
 constexpr auto output_filename_border_access = "bike_duck_border_access.png";
 
-using namespace sln;  // Please do not do this outside of example code...
+using namespace sln;  // Never outside of example code
 
 int main(int argc, char** argv)
 {

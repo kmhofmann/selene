@@ -15,6 +15,8 @@ namespace sln {
 
 std::vector<std::uint8_t> read_file_contents(const std::string& path);
 
+void write_data_contents(const std::string& path, const std::vector<std::uint8_t>& data);
+
 }  // namespace sln
 
 #endif  // SELENE_IO_FILE_UTILS_HPP

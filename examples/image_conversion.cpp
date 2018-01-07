@@ -17,7 +17,7 @@ constexpr auto output_filename_y = "bike_duck_converted_to_grayscale.png";
 constexpr auto output_filename_rgba = "bike_duck_converted_to_rgba.png";
 constexpr auto output_filename_bgr = "bike_duck_converted_to_bgr.png";
 
-using namespace sln;  // Please do not do this outside of example code...
+using namespace sln;  // Never outside of example code
 
 int main(int argc, char** argv)
 {

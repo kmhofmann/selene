@@ -18,7 +18,7 @@
 
 constexpr auto output_filename_png = "bike_duck.png";
 
-using namespace sln;  // Please do not do this outside of example code...
+using namespace sln;  // Never outside of example code
 
 int main(int argc, char** argv)
 {

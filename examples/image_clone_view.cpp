@@ -17,7 +17,7 @@
 constexpr auto output_filename_clone_crop = "bike_duck_clone_crop.png";
 constexpr auto output_filename_view_crop = "bike_duck_clone_view.png";
 
-using namespace sln;  // Please do not do this outside of example code...
+using namespace sln;  // Never outside of example code
 
 int main(int argc, char** argv)
 {
