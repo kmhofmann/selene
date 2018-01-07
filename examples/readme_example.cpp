@@ -3,6 +3,7 @@
 #include <selene/img/ImageDataToImage.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img/IO.hpp>
+#include <selene/img/Transformations.hpp>
 
 #include <selene/io/FileUtils.hpp>
 
@@ -34,6 +35,9 @@ int main(int argc, char** argv)
 
   // Darken this part
   for_each_pixel(img_part, [](auto& px){ px /= 4; });
+
+  // Flip this part horizontally
+  flip_horizontally_in_place(img_part);
 
   // Convert whole image to RGBA, adding semi-transparent alpha channel
   const Image<Pixel_8u4> img_rgba =

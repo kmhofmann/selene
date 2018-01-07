@@ -13,7 +13,7 @@
 #include <selene/img/PixelTraits.hpp>
 
 #include <algorithm>
-#include <vector>
+#include <utility>
 
 namespace sln {
 
@@ -45,7 +45,10 @@ template <FlipDirection flip_dir, typename PixelType>
 Image<PixelType> flip(const Image<PixelType>& img);
 
 template <typename PixelType>
-void flip_vertical_in_place(Image<PixelType>& img);
+void flip_horizontally_in_place(Image<PixelType>& img);
+
+template <typename PixelType>
+void flip_vertically_in_place(Image<PixelType>& img);
 
 template <bool flip_h = false, bool flip_v = false, typename PixelType>
 void transpose(const Image<PixelType>& img_src, Image<PixelType>& img_dst);
@@ -121,13 +124,35 @@ Image<PixelType> flip(const Image<PixelType>& img)
   return img_flip;
 }
 
+/** \brief Flips the image horizontally, in-place.
+ *
+ * @tparam PixelType The pixel type.
+ * @param img The image to be flipped horizontally.
+ */
+template <typename PixelType>
+void flip_horizontally_in_place(Image<PixelType>& img)
+{
+  const auto half_width = img.width() / 2;
+
+  for (auto y = 0_px; y < img.height(); ++y)
+  {
+    auto row_ptr = img.data(y);
+
+    for (auto x_left = 0_px; x_left < half_width; ++x_left)
+    {
+      const auto x_right = img.width() - x_left - 1;
+      std::swap(row_ptr[x_left], row_ptr[x_right]);
+    }
+  }
+}
+
 /** \brief Flips the image vertically, in-place.
  *
  * @tparam PixelType The pixel type.
  * @param img The image to be flipped vertically.
  */
 template <typename PixelType>
-void flip_vertical_in_place(Image<PixelType>& img)
+void flip_vertically_in_place(Image<PixelType>& img)
 {
   const auto half_height = img.height() / 2;
 

@@ -56,6 +56,10 @@ TEST_CASE("Image transformations", "[img]")
       }
     }
 
+    auto img_flip_h_in_place = clone(img);
+    sln::flip_horizontally_in_place(img_flip_h_in_place);
+    REQUIRE(img_flip_h_in_place == img_flip_h);
+
     // flip vertical
 
     const auto img_flip_v = sln::flip<sln::FlipDirection::Vertical>(img);
@@ -73,7 +77,7 @@ TEST_CASE("Image transformations", "[img]")
     }
 
     auto img_flip_v_in_place = clone(img);
-    sln::flip_vertical_in_place(img_flip_v_in_place);
+    sln::flip_vertically_in_place(img_flip_v_in_place);
     REQUIRE(img_flip_v_in_place == img_flip_v);
 
     // flip both

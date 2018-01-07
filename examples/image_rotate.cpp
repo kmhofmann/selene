@@ -17,6 +17,7 @@ constexpr auto output_filename_transposed = "bike_duck_transp.jpg";
 constexpr auto output_filename_flip_h = "bike_duck_flip_h.jpg";
 constexpr auto output_filename_flip_v = "bike_duck_flip_v.jpg";
 constexpr auto output_filename_flip_b = "bike_duck_flip_b.jpg";
+constexpr auto output_filename_flip_h_in_place = "bike_duck_flip_h_in_place.jpg";
 constexpr auto output_filename_flip_v_in_place = "bike_duck_flip_v_in_place.jpg";
 
 constexpr auto output_filename_rot_cw_090 = "bike_duck_rot_cw_090.jpg";
@@ -46,8 +47,10 @@ int main(int argc, char** argv)
   const auto img_flip_h = flip<FlipDirection::Horizontal>(img);
   const auto img_flip_v = flip<FlipDirection::Vertical>(img);
   const auto img_flip_b = flip<FlipDirection::Both>(img);
+  auto img_flip_h_in_place = clone(img);
+  flip_horizontally_in_place(img_flip_h_in_place);
   auto img_flip_v_in_place = clone(img);
-  flip_vertical_in_place(img_flip_v_in_place);
+  flip_vertically_in_place(img_flip_v_in_place);
 
   std::cout << "Rotating image clockwise...\n";
   const auto img_rot_cw_090 = rotate<RotationDirection::Clockwise90>(img);
@@ -70,6 +73,7 @@ int main(int argc, char** argv)
   write(img_flip_h, output_filename_flip_h);
   write(img_flip_v, output_filename_flip_v);
   write(img_flip_b, output_filename_flip_b);
+  write(img_flip_h_in_place, output_filename_flip_h_in_place);
   write(img_flip_v_in_place, output_filename_flip_v_in_place);
 
   write(img_rot_cw_090, output_filename_rot_cw_090);

@@ -12,7 +12,7 @@ type-safe API.
 
   * Offers flexible classes for image and multi-channel pixel representations, and functions for image data access.
   * Provides easy-to-use APIs to read and write images in JPEG and PNG formats (leveraging *libjpeg* and *libpng*).
-  * Offers basic image processing algorithms such as color conversions, pixel-wise operations, etc.
+  * Offers basic image processing algorithms such as color conversions, pixel-wise operations, rotation, flipping, etc.
   * Lightweight and easy to build using *CMake* on Linux, MacOS, Windows.
 
 ### Example code
@@ -33,6 +33,9 @@ Image<Pixel_8u3> img_part = view(img_rgb, 100_px, 100_px, 300_px, 250_px);
 
 // Darken this part
 for_each_pixel(img_part, [](auto& px){ px /= 4; });
+
+// Flip this part horizontally
+flip_horizontally_in_place(img_part);
 
 // Convert whole image to RGBA, adding semi-transparent alpha channel
 const Image<Pixel_8u4> img_rgba =

@@ -56,6 +56,11 @@ It currently contains, among other things
     functions between different pixel formats (e.g. RGB -> Grayscale, etc.).
       * Example: `const auto img_gray = convert_image<PixelFormat::RGB, PixelFormat::Y>(rgb_img);`
       * Example: `const auto img_bgra = convert_image<PixelFormat::RGB, PixelFormat::BGRA>(rgb_img, 255);`
+    * [Transformations](https://github.com/kmhofmann/selene/blob/master/src/selene/img/Transformations.hpp)
+    such as transposing, flipping and rotating image data. 
+      * Example: `const auto img_transposed = transpose(img);`
+      * Example: `const auto img_flipped = flip<FlipDirection::Horizontal>(img);`
+      * Example: `const auto img_rotated = rotate<RotationDirection::Clockwise90>(img);`
 
   * Functions for binary IO from and to files or memory. The type of source/sink can be transparent to users of this
   functionality, via static polymorphism.
