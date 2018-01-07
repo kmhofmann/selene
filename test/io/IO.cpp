@@ -153,7 +153,7 @@ void read_test_2(Source* source)
 
 TEST_CASE("Test I/O classes", "[io]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   const auto filename = tmp_path / "test_io.bin";
 
   const auto& filename_str = filename.string();
@@ -171,7 +171,7 @@ TEST_CASE("Test I/O classes", "[io]")
 
 TEST_CASE("Test binary data I/O", "[io]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   const auto filename = tmp_path / "test_file_utils.bin";
 
   SECTION("From string")
@@ -199,7 +199,7 @@ TEST_CASE("Test binary data I/O", "[io]")
     std::uniform_int_distribution<std::int16_t> dist_u8(std::numeric_limits<std::uint8_t>::min(),
                                                         std::numeric_limits<std::uint8_t>::max());
 
-    for (std::size_t i = 0; i < 20; ++i)
+    for (std::size_t i = 1; i < 20; ++i)
     {
       const auto len = i * 1024;
 

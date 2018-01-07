@@ -50,7 +50,7 @@ fs::path in_filename()
 
 TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
 
   // Test reading without conversion
   sln::FileReader source(in_filename().string());
@@ -99,7 +99,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
 
 TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
 
   // Test reading with conversion to grayscale
   sln::FileReader source(in_filename().string());
@@ -168,7 +168,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
 
 TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
 
   // Test reading of header...
   sln::FileReader source(in_filename().string());
@@ -216,7 +216,7 @@ TEST_CASE("JPEG image reading and writing, reusing decompression object", "[img]
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
 TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
 
   // Test reading of partial image
   const auto expected_width = 404_px;
@@ -285,7 +285,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 
 TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   const auto file_contents = sln::read_file_contents(in_filename().string());
   REQUIRE(!file_contents.empty());
 

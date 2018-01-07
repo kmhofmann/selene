@@ -6,7 +6,6 @@
 
 using namespace sln::literals;
 
-
 namespace sln_test {
 
 sln::Image_8u1 make_3x3_test_image_8u1()

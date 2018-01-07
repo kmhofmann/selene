@@ -92,7 +92,7 @@ void check_write_read(sln::ImageData<>& img_data, const boost::filesystem::path&
 
 TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
 
@@ -137,7 +137,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 
 TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
 
@@ -184,7 +184,7 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 
 TEST_CASE("PNG image reading and writing, reusing decompression object", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
 
@@ -227,7 +227,7 @@ TEST_CASE("PNG image reading and writing, reusing decompression object", "[img]"
 
 TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   const auto file_contents = sln::read_file_contents(in_filename().string());
   REQUIRE(!file_contents.empty());
 
@@ -278,7 +278,7 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
 
 TEST_CASE("PNG reading of the official test suite", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
   const auto test_suite_path = test_suite_dir();
   for (boost::filesystem::directory_entry& e : boost::filesystem::directory_iterator(test_suite_path))
   {

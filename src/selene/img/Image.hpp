@@ -1514,6 +1514,12 @@ inline MemoryBlock<NewAllocator> Image<PixelType>::relinquish_data_ownership()
 template <typename PixelType>
 bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
 {
+  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
+  if ((img0.width() == 0 || img0.height() == 0) && (img1.width() == 0 || img1.height() == 0))
+  {
+    return true;
+  }
+
   if (img0.width() != img1.width() || img0.height() != img1.height())
   {
     return false;
@@ -1521,9 +1527,9 @@ bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
 
   for (auto y = 0_px; y < img0.height(); ++y)
   {
+    const auto end0 = img0.data_row_end(y);
     const auto begin0 = img0.data(y);
     const auto begin1 = img1.data(y);
-    const auto end0 = img0.data_row_end(y);
 
     // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
     // const bool equal_row = std::equal(begin0, end0, begin1);
@@ -1567,6 +1573,12 @@ void clone(const Image<PixelType>& src, Image<PixelType>& dst)
   if (&src == &dst)
   {
     throw std::runtime_error("Destination cannot be the same as the source for image cloning");
+  }
+
+  if (!src.is_valid())
+  {
+    dst.clear();
+    return;
   }
 
   dst.allocate(src.width(), src.height(), src.stride_bytes());

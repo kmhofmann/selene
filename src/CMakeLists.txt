@@ -94,6 +94,7 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/RowPointers.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/Transformations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/detail/JPEGDetail.cpp

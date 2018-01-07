@@ -33,7 +33,7 @@ fs::path full_path(const char* filename)
 
 TEST_CASE("Image reading with automatic format selection", "[img]")
 {
-  const auto tmp_path = get_tmp_path();
+  const auto tmp_path = sln_test::get_tmp_path();
 
   {
     // Read a JPEG file
