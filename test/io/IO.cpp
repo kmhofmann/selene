@@ -6,6 +6,7 @@
 
 #include <selene/base/Types.hpp>
 #include <selene/io/FileReader.hpp>
+#include <selene/io/FileUtils.hpp>
 #include <selene/io/FileWriter.hpp>
 #include <selene/io/MemoryReader.hpp>
 #include <selene/io/MemoryWriter.hpp>
@@ -13,6 +14,11 @@
 #include <selene/io/VectorWriter.hpp>
 
 #include <Utils.hpp>
+
+#include <algorithm>
+#include <cstring>
+#include <limits>
+#include <random>
 
 bool handle_valid(sln::FileReader& source)
 {
@@ -145,12 +151,12 @@ void read_test_2(Source* source)
   REQUIRE(!f.is_eof());
 }
 
-TEST_CASE("Test IO classes", "[io]")
+TEST_CASE("Test I/O classes", "[io]")
 {
   const auto tmp_path = get_tmp_path();
   const auto filename = tmp_path / "test_io.bin";
 
-  const auto filename_str = filename.string();
+  const auto& filename_str = filename.string();
   write_test_1<sln::FileWriter>(&filename_str);
   read_test_1<sln::FileReader>(&filename_str);
   write_test_2<sln::FileWriter>(&filename_str);
@@ -161,4 +167,59 @@ TEST_CASE("Test IO classes", "[io]")
   read_test_1<sln::VectorReader>(&vec);
   write_test_2<sln::VectorWriter>(&vec);
   read_test_2<sln::VectorReader>(&vec);
+}
+
+TEST_CASE("Test binary data I/O", "[io]")
+{
+  const auto tmp_path = get_tmp_path();
+  const auto filename = tmp_path / "test_file_utils.bin";
+
+  SECTION("From string")
+  {
+    const std::string data_str =
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor "
+        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
+        "laboris "
+        "nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse "
+        "cillum "
+        "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia "
+        "deserunt mollit anim id est laborum.";
+
+    sln::write_data_contents(filename.string(), data_str.data(), data_str.size());
+    const std::vector<std::uint8_t> data_read = sln::read_file_contents(filename.string());
+    REQUIRE(data_read.size() == data_str.size());
+    REQUIRE(std::memcmp(data_str.data(), data_read.data(), data_str.size()) == 0);
+  }
+
+  SECTION("From random data")
+  {
+    std::mt19937 rng(12);
+    std::uniform_int_distribution<std::int16_t> dist_i8(std::numeric_limits<std::int8_t>::min(),
+                                                        std::numeric_limits<std::int8_t>::max());
+    std::uniform_int_distribution<std::int16_t> dist_u8(std::numeric_limits<std::uint8_t>::min(),
+                                                        std::numeric_limits<std::uint8_t>::max());
+
+    for (std::size_t i = 0; i < 20; ++i)
+    {
+      const auto len = i * 1024;
+
+      std::vector<std::int8_t> data_vec_i(len);
+      std::generate(std::begin(data_vec_i), std::end(data_vec_i), [&]() { return dist_i8(rng); });
+
+      sln::write_data_contents(filename.string(), data_vec_i.data(), data_vec_i.size());
+      const std::vector<std::uint8_t> data_read_i = sln::read_file_contents(filename.string());
+      REQUIRE(data_vec_i.size() == len);
+      REQUIRE(data_read_i.size() == len);
+      REQUIRE(std::memcmp(data_vec_i.data(), data_read_i.data(), data_read_i.size()) == 0);
+
+      std::vector<std::uint8_t> data_vec_u(len);
+      std::generate(std::begin(data_vec_u), std::end(data_vec_u), [&]() { return dist_u8(rng); });
+
+      sln::write_data_contents(filename.string(), data_vec_u.data(), data_vec_u.size());
+      const std::vector<std::uint8_t> data_read_u = sln::read_file_contents(filename.string());
+      REQUIRE(data_vec_u.size() == len);
+      REQUIRE(data_read_u.size() == len);
+      REQUIRE(std::memcmp(data_vec_u.data(), data_read_u.data(), data_read_u.size()) == 0);
+    }
+  }
 }

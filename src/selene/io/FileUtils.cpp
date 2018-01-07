@@ -46,9 +46,10 @@ std::vector<std::uint8_t> read_file_contents(const std::string& path)
  * If the file can not be opened or writing fails, the function will throw a `std::runtime_error` exception.
  *
  * @param path A string representing the path to the file to be written.
- * @param data A `std::vector<std::uint8_t>` with the contents to be written.
+ * @param data_ptr A pointer to the beginning of the data to be written.
+ * @param data_len The length of the data in bytes.
  */
-void write_data_contents(const std::string& path, const std::vector<std::uint8_t>& data)
+void write_data_contents(const std::string& path, const std::uint8_t* data_ptr, std::size_t data_len)
 {
   auto fp = std::fopen(path.c_str(), "wb");
 
@@ -60,10 +61,10 @@ void write_data_contents(const std::string& path, const std::vector<std::uint8_t
   }
 
   constexpr std::size_t chunk_size = 32768;
-  const std::size_t nr_full_chunks = data.size() / chunk_size;
-  const std::size_t last_chunk_size = data.size() % chunk_size;
+  const std::size_t nr_full_chunks = data_len / chunk_size;
+  const std::size_t last_chunk_size = data_len % chunk_size;
 
-  auto check_write = [&path, fp](std::size_t nr_written, std::size_t chunk_size){
+  auto check_write = [&path, fp](std::size_t nr_written, std::size_t chunk_size) {
     if (nr_written != chunk_size)
     {
       std::stringstream ss;
@@ -75,14 +76,44 @@ void write_data_contents(const std::string& path, const std::vector<std::uint8_t
 
   for (std::size_t i = 0; i < nr_full_chunks; ++i)
   {
-    const auto nr_written = std::fwrite(&data[i * chunk_size], std::size_t{1}, chunk_size, fp);
+    const auto nr_written = std::fwrite(data_ptr + i * chunk_size, std::size_t{1}, chunk_size, fp);
     check_write(nr_written, chunk_size);
   }
 
-  const auto nr_written = std::fwrite(&data[nr_full_chunks * chunk_size], std::size_t{1}, last_chunk_size, fp);
+  const auto nr_written = std::fwrite(data_ptr + nr_full_chunks * chunk_size, std::size_t{1}, last_chunk_size, fp);
   check_write(nr_written, last_chunk_size);
 
   std::fclose(fp);
+}
+
+/** \brief Writes the contents of `data` to a file.
+ *
+ * If the file can not be opened or writing fails, the function will throw a `std::runtime_error` exception.
+ *
+ * @param path A string representing the path to the file to be written.
+ * @param data_ptr A pointer to the beginning of the data to be written.
+ * @param data_len The length of the data in bytes.
+ */
+void write_data_contents(const std::string& path, const std::int8_t* data_ptr, std::size_t data_len)
+{
+  write_data_contents(path, static_cast<const std::uint8_t*>(static_cast<const void*>(data_ptr)), data_len);
+}
+
+void write_data_contents(const std::string& path, const char* data_ptr, std::size_t data_len)
+{
+  write_data_contents(path, static_cast<const std::uint8_t*>(static_cast<const void*>(data_ptr)), data_len);
+}
+
+/** \brief Writes the contents of `data` to a file.
+ *
+ * If the file can not be opened or writing fails, the function will throw a `std::runtime_error` exception.
+ *
+ * @param path A string representing the path to the file to be written.
+ * @param data A `std::vector<std::uint8_t>` with the contents to be written.
+ */
+void write_data_contents(const std::string& path, const std::vector<std::uint8_t>& data)
+{
+  write_data_contents(path, data.data(), data.size());
 }
 
 }  // namespace sln

@@ -79,9 +79,9 @@ TEST_CASE("Pixel operations", "[img]")
 // We can only use the below pixel arithmetic in a constexpr context with C++ 17, since std::array<>::operator[] is not
 // declared constexpr before C++17.
 #if __cplusplus >= 201703L
-  #define SELENE_CONSTEXPR constexpr
+#define SELENE_CONSTEXPR constexpr
 #else
-  #define SELENE_CONSTEXPR const
+#define SELENE_CONSTEXPR const
 #endif
 
   SECTION("Pixel arithmetic 1")
@@ -137,7 +137,7 @@ TEST_CASE("Pixel operations", "[img]")
     REQUIRE(std::is_same<std::decay_t<decltype(px6)>, sln::Pixel<sln::float32_t, 3>>::value);
     REQUIRE(px6 == sln::Pixel<sln::float32_t, 3>(50.0f, 60.0f, 70.0f));
 
-    SELENE_CONSTEXPR auto px7 = - sln::Pixel<std::int32_t, 3>(10, 20, 30);
+    SELENE_CONSTEXPR auto px7 = -sln::Pixel<std::int32_t, 3>(10, 20, 30);
     REQUIRE(px7 == sln::Pixel<std::int32_t, 3>(-10, -20, -30));
   }
 }
