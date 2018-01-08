@@ -3,6 +3,12 @@
 set -x
 set -e
 
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  export NCPUS=`sysctl -n hw.ncpu`
+elif [[ "$(uname -s)" == "Linux" ]]; then
+  export NCPUS=`nproc`
+fi
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR=${SCRIPT_DIR}/..
 
@@ -14,13 +20,15 @@ function build_everything {
   rm -rf CMakeFiles
   cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ..
   make clean
-  make -j$(nproc --all)
+  make -j${NCPUS}
 }
 
 function run_all_binaries {
   ./test/selene_tests -d yes
 
-  EXAMPLE_BINARIES=$(find ./examples/ -maxdepth 1 -type f -executable)
+  #EXAMPLE_BINARIES=$(find ./examples/ -maxdepth 1 -type f -executable)
+  # https://stackoverflow.com/questions/4458120/unix-find-search-for-executable-files
+  EXAMPLE_BINARIES=$(find -L ./examples/ -maxdepth 1 -type f \( -perm -u=x -o -perm -g=x -o -perm -o=x \))
   for file in ${EXAMPLE_BINARIES}
   do
     ${file}
