@@ -10,6 +10,8 @@ find_package(Threads REQUIRED)
 add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.hpp

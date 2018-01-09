@@ -74,6 +74,24 @@ inline constexpr T power(T base, U exponent) noexcept
   return (exponent == 0) ? T{1} : base * power(base, U(exponent - 1));
 }
 
+/** Computes the next largest power of two given an unsigned integer value.
+ *
+ * @param x An unsigned integer value.
+ * @return The next largest power of two.
+ */
+inline constexpr std::uint64_t next_power_of_two(std::uint64_t x)
+{
+  // from https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+  --x;
+  x |= x >> 1;
+  x |= x >> 2;
+  x |= x >> 4;
+  x |= x >> 8;
+  x |= x >> 16;
+  x |= x >> 32;
+  return ++x;
+}
+
 /** \brief Returns a `std::array` filled with `N` equal values.
  *
  * @tparam T The value type of the array.

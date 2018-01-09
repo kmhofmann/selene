@@ -4,6 +4,7 @@
 
 #include <catch.hpp>
 
+#include <selene/base/Bitcount.hpp>
 #include <selene/base/Promote.hpp>
 #include <selene/base/Types.hpp>
 #include <selene/base/Utils.hpp>
@@ -123,6 +124,51 @@ TEST_CASE("Power", "[base]")
 
   constexpr auto pow_10_0 = sln::power(10, 0u);
   REQUIRE(pow_10_0 == 1);
+}
+
+TEST_CASE("Next power of 2", "[base]")
+{
+  // Returns the position of the highest bit set;
+  // from http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious
+  auto log_base_2 = [](auto x){
+    std::size_t r = 0;
+    while (x >>= 1)
+    {
+      ++r;
+    }
+    return r;
+  };
+
+  std::mt19937 rng(42);
+  std::uniform_int_distribution<std::uint32_t> dist32(std::numeric_limits<std::uint32_t>::min(),
+                                                      std::numeric_limits<std::uint32_t>::max() / 2);
+  std::uniform_int_distribution<std::uint64_t> dist64(std::numeric_limits<std::uint64_t>::min(),
+                                                      std::numeric_limits<std::uint64_t>::max() / 2);
+
+  for (std::size_t i = 0; i < 100000; ++i)
+  {
+    {
+    const auto x = dist32(rng);
+    const auto next_power = sln::next_power_of_two(x);
+    REQUIRE(sln::bit_count(next_power) == 1);
+    REQUIRE(log_base_2(next_power) == log_base_2(x) + (sln::bit_count(x) == 1 ? 0 : 1));
+    }
+
+    {
+    const auto x = dist64(rng);
+    const auto next_power = sln::next_power_of_two(x);
+    REQUIRE(sln::bit_count(next_power) == 1);
+    REQUIRE(log_base_2(next_power) == log_base_2(x) + (sln::bit_count(x) == 1 ? 0 : 1));
+    }
+  }
+
+  // Explicitly test powers of 2
+  REQUIRE(sln::next_power_of_two(0) == 0);
+  std::size_t p2 = 1;
+  for (std::size_t i = 0; i < 63; ++i, p2 <<= 1)
+  {
+    REQUIRE(sln::next_power_of_two(p2) == p2);
+  }
 }
 
 TEST_CASE("Make array functions", "[base]")

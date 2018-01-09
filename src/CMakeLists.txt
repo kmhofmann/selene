@@ -37,6 +37,7 @@ add_library(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Assert.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/Bitcount.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/MessageLog.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/ExplicitType.hpp
