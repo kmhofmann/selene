@@ -79,9 +79,9 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   constexpr auto test_width = sln::PixelLength{16};
   constexpr auto test_height = sln::PixelLength{20};
   constexpr auto test_stride_offset = 8;
-  constexpr auto test_stride_bytes = sln::Bytes{test_width * sln::PixelTraits<T>::nr_bytes + test_stride_offset};
+  constexpr auto test_stride_bytes = sln::Stride{test_width * sln::PixelTraits<T>::nr_bytes + test_stride_offset};
   const auto nr_bytes_to_allocate = test_stride_bytes * test_height;
-  auto memory_block = sln::NewAllocator::allocate(nr_bytes_to_allocate);
+  auto memory_block = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, 16);
   img.set_data(std::move(memory_block), test_width, test_height, test_stride_bytes);
 
   REQUIRE(img.width() == test_width);
@@ -90,6 +90,32 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   REQUIRE(!img.is_packed());
   REQUIRE(!img.is_view());
   REQUIRE(!img.is_empty());
+
+  for (std::size_t alignment = 1; alignment <= 128; alignment <<= 1)
+  {
+    sln::Image<T> img4(width, height, sln::ImageRowAlignment{alignment});
+    REQUIRE(img4.width() == width);
+    REQUIRE(img4.height() == height);
+    REQUIRE(img4.stride_bytes() % alignment == 0);
+    REQUIRE(!img4.is_view());
+    REQUIRE(!img4.is_empty());
+    for (auto y = 0_px; y < img4.height(); ++y)
+    {
+      REQUIRE(reinterpret_cast<std::uintptr_t>(img4.data(y)) % alignment == 0);
+    }
+
+    const auto alignment2 = alignment / 2;
+    img4.allocate(sln::PixelLength{width + 1}, sln::PixelLength{height + 1}, sln::ImageRowAlignment{alignment2});
+    REQUIRE(img4.width() == width + 1);
+    REQUIRE(img4.height() == height + 1);
+    REQUIRE((alignment2 == 0 || img4.stride_bytes() % alignment2 == 0));
+    REQUIRE(!img4.is_view());
+    REQUIRE(!img4.is_empty());
+    for (auto y = 0_px; y < img4.height(); ++y)
+    {
+      REQUIRE((alignment2 == 0 || reinterpret_cast<std::uintptr_t>(img4.data(y)) % alignment2 == 0));
+    }
+  }
 }
 
 template <typename T, typename RNG>
@@ -106,7 +132,7 @@ sln::Image<T> construct_random_image(sln::PixelLength width, sln::PixelLength he
 
   std::uniform_int_distribution<std::uint16_t> die_stride(0, 16);
   const auto extra_stride_bytes = std::size_t{die_stride(rng) * sizeof(Element)};
-  const auto stride_bytes = sln::Bytes(width * sln::PixelTraits<T>::nr_bytes + extra_stride_bytes);
+  const auto stride_bytes = sln::Stride(width * sln::PixelTraits<T>::nr_bytes + extra_stride_bytes);
   sln::Image<T> img(width, height, stride_bytes);
 
   for (auto y = 0_px; y < img.height(); ++y)

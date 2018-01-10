@@ -93,6 +93,14 @@ public:
             PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown);
 
+  ImageData(PixelLength width,
+            PixelLength height,
+            std::uint16_t nr_channels,
+            std::uint16_t nr_bytes_per_channel,
+            ImageRowAlignment row_alignment_bytes,
+            PixelFormat pixel_format = PixelFormat::Unknown,
+            SampleFormat sample_format = SampleFormat::Unknown);
+
   ImageData(std::uint8_t* data,
             PixelLength width,
             PixelLength height,
@@ -102,7 +110,7 @@ public:
             PixelFormat pixel_format = PixelFormat::Unknown,
             SampleFormat sample_format = SampleFormat::Unknown) noexcept;
 
-  ImageData(MemoryBlock<NewAllocator>&& data,
+  ImageData(MemoryBlock<AlignedNewAllocator>&& data,
             PixelLength width,
             PixelLength height,
             std::uint16_t nr_channels,
@@ -133,6 +141,17 @@ public:
                 bool force_allocation = false,
                 bool allow_view_reallocation = true);
 
+  void allocate(PixelLength width,
+                PixelLength height,
+                std::uint16_t nr_channels,
+                std::uint16_t nr_bytes_per_channel,
+                ImageRowAlignment row_alignment_bytes,
+                PixelFormat pixel_format = PixelFormat::Unknown,
+                SampleFormat sample_format = SampleFormat::Unknown,
+                bool shrink_to_fit = true,
+                bool force_allocation = false,
+                bool allow_view_reallocation = true);
+
   void set_view(std::uint8_t* data,
                 PixelLength width,
                 PixelLength height,
@@ -142,7 +161,7 @@ public:
                 PixelFormat pixel_format = PixelFormat::Unknown,
                 SampleFormat sample_format = SampleFormat::Unknown);
 
-  void set_data(MemoryBlock<NewAllocator>&& data,
+  void set_data(MemoryBlock<AlignedNewAllocator>&& data,
                 PixelLength width,
                 PixelLength height,
                 std::uint16_t nr_channels,
@@ -163,12 +182,25 @@ public:
 private:
   bool owns_memory_ = false;
 
-  void allocate_bytes(std::size_t nr_bytes);
+  constexpr static std::size_t default_base_alignment_ = 16;
+
+  void allocate(PixelLength width,
+                PixelLength height,
+                std::uint16_t nr_channels,
+                std::uint16_t nr_bytes_per_channel,
+                Stride stride_bytes,
+                std::size_t base_alignment_bytes,
+                PixelFormat pixel_format,
+                SampleFormat sample_format,
+                bool shrink_to_fit,
+                bool force_allocation,
+                bool allow_view_reallocation);
+  void allocate_bytes(std::size_t nr_bytes, std::size_t alignment);
   void deallocate_bytes();
   void deallocate_bytes_if_owned();
   void reset();
 
-  MemoryBlock<NewAllocator> relinquish_data_ownership();
+  MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
   template <typename PixelType>
   friend Image<PixelType> to_image(ImageData&&);
@@ -221,6 +253,8 @@ inline ImageData<ImageDataStorage::Constant>::ImageData(const std::uint8_t* data
  * The row stride (in bytes) is chosen to be at least `nr_bytes_per_channel * nr_channels * width`, or the supplied
  * value.
  *
+ * The image (row) data is not guaranteed to be aligned in any way.
+ *
  * @param width Desired image width.
  * @param height Desired image height.
  * @param nr_channels The number of channels per pixel element.
@@ -237,7 +271,41 @@ inline ImageData<ImageDataStorage::Modifiable>::ImageData(PixelLength width,
                                                           PixelFormat pixel_format,
                                                           SampleFormat sample_format)
 {
-  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
+  constexpr auto base_alignment_bytes = ImageData<ImageDataStorage::Modifiable>::default_base_alignment_;
+  constexpr bool shrink_to_fit = true;
+  constexpr bool force_allocation = false;
+  constexpr bool allow_view_reallocation = true;
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, base_alignment_bytes, pixel_format,
+           sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
+}
+
+/** \brief Constructs image data (owned memory) with the specified parameters.
+ *
+ * The row stride (in bytes) is chosen to be the smallest value that satisfies the row alignment requirements.
+ *
+ * @param width Desired image width.
+ * @param height Desired image height.
+ * @param nr_channels The number of channels per pixel element.
+ * @param nr_bytes_per_channel The number of bytes stored per channel.
+ * @param row_alignment_bytes The row alignment in bytes.
+ * @param pixel_format The pixel format (semantic tag).
+ * @param sample_format The sample format (semantic tag).
+ */
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(PixelLength width,
+                                                          PixelLength height,
+                                                          std::uint16_t nr_channels,
+                                                          std::uint16_t nr_bytes_per_channel,
+                                                          ImageRowAlignment row_alignment_bytes,
+                                                          PixelFormat pixel_format,
+                                                          SampleFormat sample_format)
+{
+  const auto row_bytes = nr_bytes_per_channel * nr_channels * width;
+  const auto stride_bytes = detail::compute_stride_bytes(row_bytes, row_alignment_bytes);
+  constexpr bool shrink_to_fit = true;
+  constexpr bool force_allocation = false;
+  constexpr bool allow_view_reallocation = true;
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, row_alignment_bytes, pixel_format,
+           sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
 }
 
 /** \brief Constructs image data (a view onto non-owned memory) with the specified parameters.
@@ -287,7 +355,7 @@ inline ImageData<ImageDataStorage::Modifiable>::ImageData(std::uint8_t* data,
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline ImageData<ImageDataStorage::Modifiable>::ImageData(MemoryBlock<NewAllocator>&& data,
+inline ImageData<ImageDataStorage::Modifiable>::ImageData(MemoryBlock<AlignedNewAllocator>&& data,
                                                           PixelLength width,
                                                           PixelLength height,
                                                           std::uint16_t nr_channels,
@@ -327,7 +395,8 @@ inline ImageData<ImageDataStorage::Modifiable>::ImageData(const ImageData<ImageD
   if (other.owns_memory_)
   {
     const auto nr_bytes = stride_bytes_ * height_;
-    allocate_bytes(nr_bytes);
+    allocate_bytes(nr_bytes, detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+                                                         other.stride_bytes()));
   }
 }
 
@@ -360,7 +429,8 @@ inline ImageData<ImageDataStorage::Modifiable>& ImageData<ImageDataStorage::Modi
   if (other.owns_memory_)
   {
     const auto nr_bytes = stride_bytes_ * height_;
-    allocate_bytes(nr_bytes);
+    allocate_bytes(nr_bytes, detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+                                                         other.stride_bytes()));
   }
 
   return *this;
@@ -463,38 +533,46 @@ inline void ImageData<ImageDataStorage::Modifiable>::allocate(PixelLength width,
                                                               bool force_allocation,
                                                               bool allow_view_reallocation)
 {
-  stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
-  const auto nr_bytes_to_allocate = stride_bytes * height;
-  const auto nr_currently_allocated_bytes = total_bytes();
+  constexpr auto base_alignment_bytes = ImageData<ImageDataStorage::Modifiable>::default_base_alignment_;
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, base_alignment_bytes, pixel_format,
+           sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
+}
 
-  auto commit_new_geometry = [=]() {
-    width_ = width;
-    height_ = height;
-    stride_bytes_ = stride_bytes;
-    nr_channels_ = nr_channels;
-    nr_bytes_per_channel_ = nr_bytes_per_channel;
-    pixel_format_ = pixel_format;
-    sample_format_ = sample_format;
-  };
-
-  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
-                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
-  if (!force_allocation && bytes_match && owns_memory_)
-  {
-    commit_new_geometry();
-    return;
-  }
-
-  if (!owns_memory_ && !allow_view_reallocation && !force_allocation)
-  {
-    throw std::runtime_error("Cannot allocate from image that is a view to external memory.");
-  }
-
-  commit_new_geometry();
-
-  deallocate_bytes_if_owned();
-  owns_memory_ = true;
-  allocate_bytes(nr_bytes_to_allocate);
+/** \brief Allocates memory for an image with the specified parameters.
+ *
+ * Allocates memory to represent an image with the respective width, height, and number of channels per pixel element,
+ * while satisfying the specified row alignment.
+ *
+ * Postconditions: `!is_view() && (stride_bytes() >= nr_bytes_per_channel * nr_channels * width)`.
+ *
+ * @param width Desired image width.
+ * @param height Desired image height.
+ * @param nr_channels The number of channels per pixel element.
+ * @param nr_bytes_per_channel The number of bytes stored per channel.
+ * @param row_alignment_bytes The desired row alignment in bytes.
+ * @param pixel_format The pixel format (semantic tag).
+ * @param sample_format The sample format (semantic tag).
+ * @param shrink_to_fit If true, reallocate if it results in less memory usage; otherwise allow excess memory to stay
+ * allocated
+ * @param force_allocation If true, always force a reallocation. Overrides `allow_view_reallocation == false`.
+ * @param allow_view_reallocation If true, allow allocation from `is_view() == true`. If false, and the existing image
+ * is a view, a `std::runtime_error` exception will be thrown (respecting the strong exception guarantee).
+ */
+inline void ImageData<ImageDataStorage::Modifiable>::allocate(PixelLength width,
+                                                              PixelLength height,
+                                                              std::uint16_t nr_channels,
+                                                              std::uint16_t nr_bytes_per_channel,
+                                                              ImageRowAlignment row_alignment_bytes,
+                                                              PixelFormat pixel_format,
+                                                              SampleFormat sample_format,
+                                                              bool shrink_to_fit,
+                                                              bool force_allocation,
+                                                              bool allow_view_reallocation)
+{
+  const auto row_bytes = nr_bytes_per_channel * nr_channels * width;
+  const auto stride_bytes = detail::compute_stride_bytes(row_bytes, row_alignment_bytes);
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, row_alignment_bytes, pixel_format,
+           sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
 }
 
 /** \brief Sets the image data to be a view onto non-owned external memory.
@@ -554,7 +632,7 @@ inline void ImageData<ImageDataStorage::Modifiable>::set_view(std::uint8_t* data
  * @param pixel_format The pixel format (semantic tag).
  * @param sample_format The sample format (semantic tag).
  */
-inline void ImageData<ImageDataStorage::Modifiable>::set_data(MemoryBlock<NewAllocator>&& data,
+inline void ImageData<ImageDataStorage::Modifiable>::set_data(MemoryBlock<AlignedNewAllocator>&& data,
                                                               PixelLength width,
                                                               PixelLength height,
                                                               std::uint16_t nr_channels,
@@ -639,10 +717,56 @@ inline const std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr(Pix
   return data_ + compute_data_offset(x, y);
 }
 
-inline void ImageData<ImageDataStorage::Modifiable>::allocate_bytes(std::size_t nr_bytes)
+inline void ImageData<ImageDataStorage::Modifiable>::allocate(PixelLength width,
+                                                              PixelLength height,
+                                                              std::uint16_t nr_channels,
+                                                              std::uint16_t nr_bytes_per_channel,
+                                                              Stride stride_bytes,
+                                                              std::size_t base_alignment_bytes,
+                                                              PixelFormat pixel_format,
+                                                              SampleFormat sample_format,
+                                                              bool shrink_to_fit,
+                                                              bool force_allocation,
+                                                              bool allow_view_reallocation)
+{
+  stride_bytes = std::max(stride_bytes, Stride(nr_bytes_per_channel * nr_channels * width));
+  const auto nr_bytes_to_allocate = stride_bytes * height;
+  const auto nr_currently_allocated_bytes = total_bytes();
+
+  auto commit_new_geometry = [=]() {
+    width_ = width;
+    height_ = height;
+    stride_bytes_ = stride_bytes;
+    nr_channels_ = nr_channels;
+    nr_bytes_per_channel_ = nr_bytes_per_channel;
+    pixel_format_ = pixel_format;
+    sample_format_ = sample_format;
+  };
+
+  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
+                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
+  if (!force_allocation && bytes_match && owns_memory_)
+  {
+    commit_new_geometry();
+    return;
+  }
+
+  if (!owns_memory_ && !allow_view_reallocation && !force_allocation)
+  {
+    throw std::runtime_error("Cannot allocate from image that is a view to external memory.");
+  }
+
+  commit_new_geometry();
+
+  deallocate_bytes_if_owned();
+  owns_memory_ = true;
+  allocate_bytes(nr_bytes_to_allocate, base_alignment_bytes);
+}
+
+inline void ImageData<ImageDataStorage::Modifiable>::allocate_bytes(std::size_t nr_bytes, std::size_t alignment)
 {
   SELENE_ASSERT(owns_memory_);
-  auto memory = NewAllocator::allocate(nr_bytes);
+  auto memory = AlignedNewAllocator::allocate(nr_bytes, alignment);
   SELENE_ASSERT(memory.size() == nr_bytes);
   data_ = memory.transfer_data();
 }
@@ -650,7 +774,7 @@ inline void ImageData<ImageDataStorage::Modifiable>::allocate_bytes(std::size_t 
 inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes()
 {
   SELENE_ASSERT(owns_memory_);
-  NewAllocator::deallocate(data_);
+  AlignedNewAllocator::deallocate(data_);
 }
 
 inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes_if_owned()
@@ -667,7 +791,7 @@ inline void ImageData<ImageDataStorage::Modifiable>::reset()
   owns_memory_ = false;
 }
 
-inline MemoryBlock<NewAllocator> ImageData<ImageDataStorage::Modifiable>::relinquish_data_ownership()
+inline MemoryBlock<AlignedNewAllocator> ImageData<ImageDataStorage::Modifiable>::relinquish_data_ownership()
 {
   SELENE_FORCED_ASSERT(owns_memory_);
   const auto ptr = data_;
@@ -675,7 +799,7 @@ inline MemoryBlock<NewAllocator> ImageData<ImageDataStorage::Modifiable>::relinq
 
   owns_memory_ = false;
   clear();
-  return construct_memory_block_from_existing_memory<NewAllocator>(ptr, len);
+  return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, len);
 }
 
 }  // namespace sln

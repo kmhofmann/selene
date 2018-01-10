@@ -65,7 +65,7 @@ protected:
   DataStoragePtr data_ = nullptr;
   PixelLength width_ = 0_px;
   PixelLength height_ = 0_px;
-  Stride stride_bytes_ = 0_b;
+  Stride stride_bytes_ = Stride{0};
   std::uint16_t nr_channels_ = 0;
   std::uint16_t nr_bytes_per_channel_ = 0;
   PixelFormat pixel_format_ = PixelFormat::Unknown;

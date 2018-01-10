@@ -99,6 +99,14 @@ void write_data_contents(const std::string& path, const std::int8_t* data_ptr, s
   write_data_contents(path, static_cast<const std::uint8_t*>(static_cast<const void*>(data_ptr)), data_len);
 }
 
+/** \brief Writes the contents of `data` to a file.
+ *
+ * If the file can not be opened or writing fails, the function will throw a `std::runtime_error` exception.
+ *
+ * @param path A string representing the path to the file to be written.
+ * @param data_ptr A pointer to the beginning of the data to be written.
+ * @param data_len The length of the data in bytes.
+ */
 void write_data_contents(const std::string& path, const char* data_ptr, std::size_t data_len)
 {
   write_data_contents(path, static_cast<const std::uint8_t*>(static_cast<const void*>(data_ptr)), data_len);

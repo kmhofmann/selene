@@ -70,8 +70,9 @@ public:
 
   Image();
   Image(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
+  Image(PixelLength width, PixelLength height, ImageRowAlignment row_alignment_bytes);
   Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
-  Image(MemoryBlock<NewAllocator>&& data,
+  Image(MemoryBlock<AlignedNewAllocator>&& data,
         PixelLength width,
         PixelLength height,
         Stride stride_bytes = Stride{0}) noexcept;
@@ -102,9 +103,15 @@ public:
                 bool shrink_to_fit = true,
                 bool force_allocation = false,
                 bool allow_view_reallocation = true);
+  void allocate(PixelLength width,
+                PixelLength height,
+                ImageRowAlignment row_alignment_bytes,
+                bool shrink_to_fit = true,
+                bool force_allocation = false,
+                bool allow_view_reallocation = true);
   void maybe_allocate(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
   void set_view(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
-  void set_data(MemoryBlock<NewAllocator>&& data,
+  void set_data(MemoryBlock<AlignedNewAllocator>&& data,
                 PixelLength width,
                 PixelLength height,
                 Stride stride_bytes = Stride{0});
@@ -149,7 +156,16 @@ private:
   PixelLength height_;
   bool owns_memory_;
 
-  void allocate_bytes(std::size_t nr_bytes);
+  constexpr static std::size_t default_base_alignment_ = 16;
+
+  void allocate(PixelLength width,
+                PixelLength height,
+                Stride stride_bytes,
+                std::size_t base_alignment_bytes,
+                bool shrink_to_fit,
+                bool force_allocation,
+                bool allow_view_reallocation);
+  void allocate_bytes(std::size_t nr_bytes, std::size_t alignment);
   void deallocate_bytes();
   void deallocate_bytes_if_owned();
   void reset();
@@ -157,7 +173,7 @@ private:
   Bytes compute_data_offset(PixelIndex y) const noexcept;
   Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
-  MemoryBlock<NewAllocator> relinquish_data_ownership();
+  MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
   friend void clone<PixelType>(const Image<PixelType>&, Image<PixelType>&);
   friend Image<PixelType> view<PixelType>(const Image<PixelType>&);
@@ -659,6 +675,8 @@ Image<PixelType>::Image() : data_(nullptr), stride_bytes_(0), width_(0), height_
  *
  * The row stride (in bytes) is chosen to be at least `width * PixelTraits::nr_bytes`, or the supplied value.
  *
+ * The image (row) data is not guaranteed to be aligned in any way.
+ *
  * @tparam PixelType The pixel type.
  * @param width Desired image width.
  * @param height Desired image height.
@@ -672,7 +690,31 @@ Image<PixelType>::Image(PixelLength width, PixelLength height, Stride stride_byt
     , height_(height)
     , owns_memory_(true)
 {
-  allocate_bytes(stride_bytes_ * height_);
+  constexpr auto base_alignment_bytes = Image<PixelType>::default_base_alignment_;
+  allocate_bytes(stride_bytes_ * height_, base_alignment_bytes);
+}
+
+/** \brief Constructs an image of the specified width, height, and with the specified row alignment.
+ *
+ * Image content will be undefined.
+ * The image data will be owned, i.e. `is_view() == false`.
+ *
+ * The row stride (in bytes) is chosen to be the smallest value that satisfies the row alignment requirements.
+ *
+ * @tparam PixelType The pixel type.
+ * @param width Desired image width.
+ * @param height Desired image height.
+ * @param row_alignment_bytes The row alignment in bytes.
+ */
+template <typename PixelType>
+Image<PixelType>::Image(PixelLength width, PixelLength height, ImageRowAlignment row_alignment_bytes)
+    : data_(nullptr)
+    , stride_bytes_(detail::compute_stride_bytes(PixelTraits<PixelType>::nr_bytes * width, row_alignment_bytes))
+    , width_(width)
+    , height_(height)
+    , owns_memory_(true)
+{
+  allocate_bytes(stride_bytes_ * height_, row_alignment_bytes);
 }
 
 /** \brief Constructs an image view (non-owned data) from supplied memory.
@@ -707,7 +749,7 @@ Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength heigh
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(MemoryBlock<NewAllocator>&& data,
+Image<PixelType>::Image(MemoryBlock<AlignedNewAllocator>&& data,
                         PixelLength width,
                         PixelLength height,
                         Stride stride_bytes) noexcept
@@ -746,7 +788,8 @@ inline Image<PixelType>::Image(const Image<PixelType>& other)
   }
 
   // Allocate memory to copy data from other image
-  allocate_bytes(height_ * stride_bytes_);
+  allocate_bytes(height_ * stride_bytes_, detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
+                                                                      other.stride_bytes()));
   // Copy the image data
   copy_rows_from(other);
 }
@@ -792,7 +835,9 @@ inline Image<PixelType>& Image<PixelType>::operator=(const Image<PixelType>& oth
     // Allocate if we deallocated
     if (!equal_size)
     {
-      allocate_bytes(stride_bytes_ * height_);
+      allocate_bytes(stride_bytes_ * height_,
+                     detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
+                                                 other.stride_bytes()));
     }
 
     // Copy the image data
@@ -1035,35 +1080,41 @@ void Image<PixelType>::allocate(PixelLength width,
                                 bool force_allocation,
                                 bool allow_view_reallocation)
 {
-  stride_bytes = std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width));
-  const auto nr_bytes_to_allocate = stride_bytes * height;
-  const auto nr_currently_allocated_bytes = total_bytes();
+  constexpr auto base_alignment_bytes = Image<PixelType>::default_base_alignment_;
+  allocate(width, height, stride_bytes, base_alignment_bytes, shrink_to_fit, force_allocation, allow_view_reallocation);
+}
 
-  auto commit_new_geometry = [=]() {
-    width_ = width;
-    height_ = height;
-    stride_bytes_ = stride_bytes;
-  };
-
-  // No need to act, if size parameters match
-  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
-                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
-  if (!force_allocation && bytes_match && owns_memory_)
-  {
-    commit_new_geometry();
-    return;
-  }
-
-  if (!owns_memory_ && !allow_view_reallocation && !force_allocation)
-  {
-    throw std::runtime_error("Cannot allocate from image that is a view to external memory.");
-  }
-
-  commit_new_geometry();
-
-  deallocate_bytes_if_owned();
-  owns_memory_ = true;
-  allocate_bytes(nr_bytes_to_allocate);
+/** \brief Resizes the allocated image data to exactly fit an image of size (width x height), with user-defined row
+ * alignment.
+ *
+ * No memory (re)allocation will happen, if the needed allocation size already matches the existing allocation size.
+ * See also the `shrink_to_fit` parameter.
+ *
+ * The row stride (in bytes) is chosen to be the smallest stride that satisfied the row alignment.
+ *
+ * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits::nr_bytes)`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param width The new image width.
+ * @param height The new image height.
+ * @param row_alignment_bytes The desired row alignment in bytes.
+ * @param shrink_to_fit If true, reallocate if it results in less memory usage; otherwise allow excess memory to stay
+ * allocated
+ * @param force_allocation If true, always force a reallocation. Overrides `allow_view_reallocation == false`.
+ * @param allow_view_reallocation If true, allow allocation from `is_view() == true`. If false, and the existing image
+ * is a view, a `std::runtime_error` exception will be thrown (respecting the strong exception guarantee).
+ */
+template <typename PixelType>
+void Image<PixelType>::allocate(PixelLength width,
+                                PixelLength height,
+                                ImageRowAlignment row_alignment_bytes,
+                                bool shrink_to_fit,
+                                bool force_allocation,
+                                bool allow_view_reallocation)
+{
+  const auto row_bytes = width * PixelTraits<PixelType>::nr_bytes;
+  const auto stride_bytes = detail::compute_stride_bytes(row_bytes, row_alignment_bytes);
+  allocate(width, height, stride_bytes, row_alignment_bytes, shrink_to_fit, force_allocation, allow_view_reallocation);
 }
 
 /** \brief Resizes the allocated image data to exactly fit an image of size (width x height), with user-defined row
@@ -1094,10 +1145,11 @@ void Image<PixelType>::maybe_allocate(PixelLength width, PixelLength height, Str
     return;
   }
 
+  constexpr auto base_alignment_bytes = Image<PixelType>::default_base_alignment_;
   constexpr auto shrink_to_fit = true;
   constexpr auto force_allocation = false;
   constexpr auto allow_view_reallocation = false;
-  allocate(width, height, stride_bytes, shrink_to_fit, force_allocation, allow_view_reallocation);
+  allocate(width, height, stride_bytes, base_alignment_bytes, shrink_to_fit, force_allocation, allow_view_reallocation);
 }
 
 /** \brief Sets the image data to be a view onto non-owned external memory.
@@ -1143,7 +1195,7 @@ inline void Image<PixelType>::set_view(std::uint8_t* data, PixelLength width, Pi
  * @param stride_bytes The row stride in bytes.
  */
 template <typename PixelType>
-inline void Image<PixelType>::set_data(MemoryBlock<NewAllocator>&& data,
+inline void Image<PixelType>::set_data(MemoryBlock<AlignedNewAllocator>&& data,
                                        PixelLength width,
                                        PixelLength height,
                                        Stride stride_bytes)
@@ -1425,11 +1477,51 @@ inline const PixelType& Image<PixelType>::operator()(PixelIndex x, PixelIndex y)
 }
 
 template <typename PixelType>
-void Image<PixelType>::allocate_bytes(std::size_t nr_bytes)
+void Image<PixelType>::allocate(PixelLength width,
+                                PixelLength height,
+                                Stride stride_bytes,
+                                std::size_t base_alignment_bytes,
+                                bool shrink_to_fit,
+                                bool force_allocation,
+                                bool allow_view_reallocation)
+{
+  stride_bytes = std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width));
+  const auto nr_bytes_to_allocate = stride_bytes * height;
+  const auto nr_currently_allocated_bytes = total_bytes();
+
+  auto commit_new_geometry = [=]() {
+    width_ = width;
+    height_ = height;
+    stride_bytes_ = stride_bytes;
+  };
+
+  // No need to act, if size parameters match
+  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
+                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
+  if (!force_allocation && bytes_match && owns_memory_)
+  {
+    commit_new_geometry();
+    return;
+  }
+
+  if (!owns_memory_ && !allow_view_reallocation && !force_allocation)
+  {
+    throw std::runtime_error("Cannot allocate from image that is a view to external memory.");
+  }
+
+  commit_new_geometry();
+
+  deallocate_bytes_if_owned();
+  owns_memory_ = true;
+  allocate_bytes(nr_bytes_to_allocate, base_alignment_bytes);
+}
+
+template <typename PixelType>
+void Image<PixelType>::allocate_bytes(std::size_t nr_bytes, std::size_t alignment)
 {
   SELENE_ASSERT(owns_memory_);
 
-  auto memory = NewAllocator::allocate(nr_bytes);
+  auto memory = AlignedNewAllocator::allocate(nr_bytes, alignment);
   SELENE_ASSERT(memory.size() == nr_bytes);
   data_ = memory.transfer_data();
 }
@@ -1441,7 +1533,7 @@ void Image<PixelType>::deallocate_bytes()
 
   if (data_)
   {
-    NewAllocator::deallocate(data_);
+    AlignedNewAllocator::deallocate(data_);
     SELENE_ASSERT(data_ == nullptr);
   }
 }
@@ -1491,7 +1583,7 @@ inline Bytes Image<PixelType>::compute_data_offset(PixelIndex x, PixelIndex y) c
 }
 
 template <typename PixelType>
-inline MemoryBlock<NewAllocator> Image<PixelType>::relinquish_data_ownership()
+inline MemoryBlock<AlignedNewAllocator> Image<PixelType>::relinquish_data_ownership()
 {
   SELENE_FORCED_ASSERT(owns_memory_);
   const auto ptr = data_;
@@ -1499,7 +1591,7 @@ inline MemoryBlock<NewAllocator> Image<PixelType>::relinquish_data_ownership()
 
   owns_memory_ = false;
   clear();
-  return construct_memory_block_from_existing_memory<NewAllocator>(ptr, len);
+  return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, len);
 }
 
 // ----------

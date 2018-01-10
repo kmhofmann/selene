@@ -41,7 +41,7 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 {
   // Packed image, single-channel
   {
-    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 16_b, sln::PixelFormat::Y,
+    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, sln::Stride{16}, sln::PixelFormat::Y,
                                            sln::SampleFormat::UnsignedInteger);
 
     auto img_view = sln::to_image_view<sln::Pixel_8u1>(img_data);
@@ -77,7 +77,7 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 
   // Non-packed image, single-channel
   {
-    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, 19_b, sln::PixelFormat::Y,
+    auto img_data = create_test_image_data(16_px, 20_px, 1, 1, sln::Stride{19}, sln::PixelFormat::Y,
                                            sln::SampleFormat::UnsignedInteger);
 
     auto img_view = sln::to_image_view<sln::Pixel_8u1>(img_data);
@@ -113,7 +113,7 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
 
   // Non-packed image, multi-channel
   {
-    auto img_data = create_test_image_data(16_px, 20_px, 3, 1, 52_b, sln::PixelFormat::RGB,
+    auto img_data = create_test_image_data(16_px, 20_px, 3, 1, sln::Stride{52}, sln::PixelFormat::RGB,
                                            sln::SampleFormat::UnsignedInteger);
 
     auto img_view = sln::to_image_view<sln::Pixel_8u3>(img_data);
