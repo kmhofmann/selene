@@ -183,7 +183,8 @@ template <typename T, std::size_t nr_channels_>
 template <typename... Args, typename>
 inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) noexcept : data_{{static_cast<T>(args)...}}
 {
-  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
+  static_assert(std::is_trivial<Pixel<T, nr_channels_>>::value, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout<Pixel<T, nr_channels_>>::value, "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 }
 
@@ -198,7 +199,8 @@ inline constexpr Pixel<T, nr_channels_>::Pixel(Args... args) noexcept : data_{{s
 template <typename T, std::size_t nr_channels_>
 inline constexpr Pixel<T, nr_channels_>::Pixel(const std::array<T, nr_channels>& arr) noexcept : data_(arr)
 {
-  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
+  static_assert(std::is_trivial<Pixel<T, nr_channels_>>::value, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout<Pixel<T, nr_channels_>>::value, "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 }
 
@@ -213,7 +215,8 @@ template <typename T, std::size_t nr_channels_>
 template <typename U>
 inline constexpr Pixel<T, nr_channels_>::Pixel(const Pixel<U, nr_channels_>& other)
 {
-  static_assert(std::is_pod<Pixel<T, nr_channels_>>::value, "Pixel class is not POD");
+  static_assert(std::is_trivial<Pixel<T, nr_channels_>>::value, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout<Pixel<T, nr_channels_>>::value, "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 
   for (std::size_t i = 0; i < nr_channels; ++i)

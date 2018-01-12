@@ -148,7 +148,8 @@ public:
   const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept;
 
 private:
-  static_assert(std::is_pod<PixelType>::value, "Pixel type is not POD");
+  static_assert(std::is_trivial<PixelType>::value, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout<PixelType>::value, "Pixel type is not standard layout");
 
   std::uint8_t* data_;
   Stride stride_bytes_;
