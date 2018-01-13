@@ -1,5 +1,7 @@
 # Selene
 
+[![Build Status](https://travis-ci.org/kmhofmann/selene.svg?branch=master)](https://travis-ci.org/kmhofmann/selene)
+
 **Selene** is a C++14 image representation, processing, and I/O library, focusing on ease of use and a clean, modern,
 type-safe API.
 
