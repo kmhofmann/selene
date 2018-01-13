@@ -64,8 +64,8 @@ target_include_directories(selene_base
 #------------------------------------------------------------------------------
 
 add_library(selene_img
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/Accessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/BorderAccessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/ImageAccess.hpp
@@ -94,6 +94,7 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/PNGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/RelativeAccessor.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Transformations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/Types.hpp

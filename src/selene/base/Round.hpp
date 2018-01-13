@@ -7,6 +7,7 @@
 
 /// @file
 
+#include <cmath>
 #include <cstdint>
 #include <type_traits>
 
@@ -58,7 +59,8 @@ inline constexpr Result round_half_down(Value val) noexcept
 template <typename Result, typename Value>
 inline constexpr Result round(Value val) noexcept
 {
-  return round_half_up<Result>(val);
+  // TODO: Would calling std::lrint() be faster than introducing a conditional branch? (It would change behavior...)
+  return (val >= 0) ? round_half_up<Result>(val) : round_half_down<Result>(val);
 }
 
 /// \cond INTERNAL

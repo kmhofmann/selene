@@ -9,7 +9,7 @@
 
 #include <selene/base/Types.hpp>
 
-#include <selene/img/Accessors.hpp>
+#include <selene/img/BorderAccessors.hpp>
 #include <selene/img/Image.hpp>
 #include <selene/img/Interpolators.hpp>
 
@@ -91,7 +91,7 @@ inline auto get(const ImageType& img,
 {
   const auto si_x = static_cast<SignedPixelIndex>(x);
   const auto si_y = static_cast<SignedPixelIndex>(y);
-  return ImageAccessor<AccessMode>::access(img, si_x, si_y);
+  return ImageBorderAccessor<AccessMode>::access(img, si_x, si_y);
 }
 
 }  // namespace sln

@@ -2,14 +2,15 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_ACCESSORS_HPP
-#define SELENE_IMG_ACCESSORS_HPP
+#ifndef SELENE_IMG_BORDER_ACCESSORS_HPP
+#define SELENE_IMG_BORDER_ACCESSORS_HPP
 
 /// @file
 
 #include <selene/img/Image.hpp>
 #include <selene/img/Pixel.hpp>
 #include <selene/img/PixelTraits.hpp>
+#include <selene/img/RelativeAccessor.hpp>
 
 namespace sln {
 
@@ -25,39 +26,48 @@ enum class BorderAccessMode
                ///< returned.
 };
 
-/** \brief Image accessor structure; provides a static `access` function to access image pixels according to the
+/** \brief Image border accessor structure; provides a static `access` function to access image pixels according to the
  * specified border access mode.
  *
  * @tparam BorderAccessMode The border access mode to use.
  */
 template <BorderAccessMode>
-struct ImageAccessor;
+struct ImageBorderAccessor;
 
-/** \brief `ImageAccessor` specialization for `BorderAccessMode::Unchecked`.
+/** \brief `ImageBorderAccessor` specialization for `BorderAccessMode::Unchecked`.
  */
 template <>
-struct ImageAccessor<BorderAccessMode::Unchecked>
+struct ImageBorderAccessor<BorderAccessMode::Unchecked>
 {
   template <typename PixelType>
   static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y) noexcept;
+
+  template <typename PixelType>
+  static auto access(const RelativeAccessor<PixelType>& img, SignedPixelIndex rx, SignedPixelIndex ry) noexcept;
 };
 
-/** \brief `ImageAccessor` specialization for `BorderAccessMode::ZeroPadding`.
+/** \brief `ImageBorderAccessor` specialization for `BorderAccessMode::ZeroPadding`.
  */
 template <>
-struct ImageAccessor<BorderAccessMode::ZeroPadding>
+struct ImageBorderAccessor<BorderAccessMode::ZeroPadding>
 {
   template <typename PixelType>
   static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y) noexcept;
+
+  template <typename PixelType>
+  static auto access(const RelativeAccessor<PixelType>& img, SignedPixelIndex rx, SignedPixelIndex ry) noexcept;
 };
 
-/** \brief `ImageAccessor` specialization for `BorderAccessMode::Replicated`.
+/** \brief `ImageBorderAccessor` specialization for `BorderAccessMode::Replicated`.
  */
 template <>
-struct ImageAccessor<BorderAccessMode::Replicated>
+struct ImageBorderAccessor<BorderAccessMode::Replicated>
 {
   template <typename PixelType>
   static auto access(const Image<PixelType>& img, SignedPixelIndex x, SignedPixelIndex y) noexcept;
+
+  template <typename PixelType>
+  static auto access(const RelativeAccessor<PixelType>& img, SignedPixelIndex rx, SignedPixelIndex ry) noexcept;
 };
 
 
@@ -74,11 +84,20 @@ struct ImageAccessor<BorderAccessMode::Replicated>
  * @return The pixel value at (x, y), using `BorderAccessMode::Unchecked`.
  */
 template <typename PixelType>
-inline auto ImageAccessor<BorderAccessMode::Unchecked>::access(const Image<PixelType>& img,
+inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Image<PixelType>& img,
                                                                SignedPixelIndex x,
                                                                SignedPixelIndex y) noexcept
 {
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
+}
+
+template <typename PixelType>
+inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const RelativeAccessor<PixelType>& img,
+                                                                     SignedPixelIndex rx,
+                                                                     SignedPixelIndex ry) noexcept
+{
+  const auto abs_xy = img.absolute_coordinates(rx, ry);
+  return ImageBorderAccessor<BorderAccessMode::Unchecked>::access(img.image(), abs_xy.x, abs_xy.y);
 }
 
 /** \brief Accesses the pixel value of `img` at location (x, y) using the border access mode
@@ -91,7 +110,7 @@ inline auto ImageAccessor<BorderAccessMode::Unchecked>::access(const Image<Pixel
  * @return The pixel value at (x, y), using `BorderAccessMode::ZeroPadding`.
  */
 template <typename PixelType>
-inline auto ImageAccessor<BorderAccessMode::ZeroPadding>::access(const Image<PixelType>& img,
+inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Image<PixelType>& img,
                                                                  SignedPixelIndex x,
                                                                  SignedPixelIndex y) noexcept
 {
@@ -104,6 +123,15 @@ inline auto ImageAccessor<BorderAccessMode::ZeroPadding>::access(const Image<Pix
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
 }
 
+template <typename PixelType>
+inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const RelativeAccessor<PixelType>& img,
+                                                                       SignedPixelIndex rx,
+                                                                       SignedPixelIndex ry) noexcept
+{
+  const auto abs_xy = img.absolute_coordinates(rx, ry);
+  return ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(img.image(), abs_xy.x, abs_xy.y);
+}
+
 /** \brief Accesses the pixel value of `img` at location (x, y) using the border access mode
  * `BorderAccessMode::Replicated`.
  *
@@ -114,7 +142,7 @@ inline auto ImageAccessor<BorderAccessMode::ZeroPadding>::access(const Image<Pix
  * @return The pixel value at (x, y), using `BorderAccessMode::Replicated`.
  */
 template <typename PixelType>
-inline auto ImageAccessor<BorderAccessMode::Replicated>::access(const Image<PixelType>& img,
+inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Image<PixelType>& img,
                                                                 SignedPixelIndex x,
                                                                 SignedPixelIndex y) noexcept
 {
@@ -139,6 +167,15 @@ inline auto ImageAccessor<BorderAccessMode::Replicated>::access(const Image<Pixe
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
 }
 
+template <typename PixelType>
+inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const RelativeAccessor<PixelType>& img,
+                                                                      SignedPixelIndex rx,
+                                                                      SignedPixelIndex ry) noexcept
+{
+  const auto abs_xy = img.absolute_coordinates(rx, ry);
+  return ImageBorderAccessor<BorderAccessMode::Replicated>::access(img.image(), abs_xy.x, abs_xy.y);
+}
+
 }  // namespace sln
 
-#endif  // SELENE_IMG_ACCESSORS_HPP
+#endif  // SELENE_IMG_BORDER_ACCESSORS_HPP

@@ -10,7 +10,7 @@
 #include <selene/base/Round.hpp>
 #include <selene/base/Types.hpp>
 
-#include <selene/img/Accessors.hpp>
+#include <selene/img/BorderAccessors.hpp>
 #include <selene/img/Image.hpp>
 #include <selene/img/Pixel.hpp>
 
@@ -45,8 +45,11 @@ struct ImageInterpolator;
 template <BorderAccessMode AccessMode>
 struct ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>
 {
+  template <typename ImageType, typename ScalarAccess = default_float_t>
+  static auto interpolate(const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept;
+
   template <typename PixelType, typename ScalarAccess = default_float_t>
-  static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept;
+  static auto interpolate(const RelativeAccessor<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept;
 };
 
 /** \brief Partial `ImageInterpolator` specialization for `ImageInterpolationMode::Bilinear`.
@@ -56,8 +59,8 @@ struct ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>
 template <BorderAccessMode AccessMode>
 struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
 {
-  template <typename PixelType, typename ScalarAccess = default_float_t, typename ScalarOutputElement = default_float_t>
-  static auto interpolate(const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept;
+  template <typename ImageType, typename ScalarAccess = default_float_t, typename ScalarOutputElement = default_float_t>
+  static auto interpolate(const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept;
 
   template <typename T,
             std::size_t nr_channels,
@@ -82,12 +85,40 @@ struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
  * @return The pixel value at (x, y), using `ImageInterpolationMode::NearestNeighbor`.
  */
 template <BorderAccessMode AccessMode>
-template <typename PixelType, typename ScalarAccess>
+template <typename ImageType, typename ScalarAccess>
 inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>::interpolate(
-    const Image<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept
+    const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
-  return ImageAccessor<AccessMode>::access(img, round<SignedPixelIndex>(x), round<SignedPixelIndex>(y));
+  return ImageBorderAccessor<AccessMode>::access(img, round<SignedPixelIndex>(x), round<SignedPixelIndex>(y));
+}
+
+/** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
+ * `ImageInterpolationMode::NearestNeighbor` and the specified `BorderAccessMode`.
+ *
+ * (This explicit overload is necessary for the `RelativeAccessor<>` as given input, to apply any rounding after
+ * conversion to absolute image coordinates.)
+ *
+ * @tparam AccessMode The border access mode (`BorderAccessMode`) to use.
+ * @tparam PixelType The pixel type.
+ * @tparam ScalarAccess The floating point type for specifying the location (x, y).
+ * @param img The image to access, in form of a RelativeAccessor<> wrapper.
+ * @param x The x-coordinate.
+ * @param y The y-coordinate.
+ * @return The pixel value at (x, y), using `ImageInterpolationMode::NearestNeighbor`.
+ */
+template <BorderAccessMode AccessMode>
+template <typename PixelType, typename ScalarAccess>
+inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>::interpolate(
+    const RelativeAccessor<PixelType>& img, ScalarAccess x, ScalarAccess y) noexcept
+{
+  static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
+
+  const auto abs_xy = img.absolute_coordinates(x, y);
+  static_assert(std::is_same<decltype(abs_xy.x), ScalarAccess>::value, "Type mismatch");
+  static_assert(std::is_same<decltype(abs_xy.y), ScalarAccess>::value, "Type mismatch");
+
+  return ImageBorderAccessor<AccessMode>::access(img.image(), round<SignedPixelIndex>(abs_xy.x), round<SignedPixelIndex>(abs_xy.y));
 }
 
 /** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
@@ -105,8 +136,8 @@ inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMod
  * @return The pixel value at (x, y), using `ImageInterpolationMode::NearestNeighbor`. Will be of type `PixelType`.
  */
 template <BorderAccessMode AccessMode>
-template <typename PixelType, typename ScalarAccess, typename ScalarOutputElement>
-inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(const Image<PixelType>& img,
+template <typename ImageType, typename ScalarAccess, typename ScalarOutputElement>
+inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(const ImageType& img,
                                                                                          ScalarAccess x,
                                                                                          ScalarAccess y) noexcept
 {
@@ -120,10 +151,10 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto dx = ScalarOutputElement{x - xf};
   const auto dy = ScalarOutputElement{y - yf};
 
-  const auto& a = ImageAccessor<AccessMode>::access(img, xf + 0, yf + 0);
-  const auto& b = ImageAccessor<AccessMode>::access(img, xf + 1, yf + 0);
-  const auto& c = ImageAccessor<AccessMode>::access(img, xf + 0, yf + 1);
-  const auto& d = ImageAccessor<AccessMode>::access(img, xf + 1, yf + 1);
+  const auto& a = ImageBorderAccessor<AccessMode>::access(img, xf + 0, yf + 0);
+  const auto& b = ImageBorderAccessor<AccessMode>::access(img, xf + 1, yf + 0);
+  const auto& c = ImageBorderAccessor<AccessMode>::access(img, xf + 0, yf + 1);
+  const auto& d = ImageBorderAccessor<AccessMode>::access(img, xf + 1, yf + 1);
 
   const auto result = a + ((b - a) * dx) + ((c - a) * dy) + ((a - b - c + d) * dx * dy);
   return result;
@@ -160,10 +191,10 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto dx = ScalarOutputElement{x - xf};
   const auto dy = ScalarOutputElement{y - yf};
 
-  const auto& a = ImageAccessor<AccessMode>::access(img, xf + 0, yf + 0);
-  const auto& b = ImageAccessor<AccessMode>::access(img, xf + 1, yf + 0);
-  const auto& c = ImageAccessor<AccessMode>::access(img, xf + 0, yf + 1);
-  const auto& d = ImageAccessor<AccessMode>::access(img, xf + 1, yf + 1);
+  const auto& a = ImageBorderAccessor<AccessMode>::access(img, xf + 0, yf + 0);
+  const auto& b = ImageBorderAccessor<AccessMode>::access(img, xf + 1, yf + 0);
+  const auto& c = ImageBorderAccessor<AccessMode>::access(img, xf + 0, yf + 1);
+  const auto& d = ImageBorderAccessor<AccessMode>::access(img, xf + 1, yf + 1);
 
   Pixel<ScalarOutputElement, nr_channels> dst;
   for (std::size_t i = 0; i < nr_channels; ++i)  // nr_channels is known at compile-time
