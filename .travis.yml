@@ -1,0 +1,74 @@
+language: cpp
+sudo: true
+dist: trusty
+
+env:
+  global:
+    - MAKEFLAGS="-j2"
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - george-edison55-precise-backports
+          packages:
+            - g++-5
+            - cmake-data
+            - cmake
+            - libjpeg-turbo8-dev
+            - libboost-filesystem-dev
+            - libopencv-dev
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - cmake-data
+            - cmake
+            - libjpeg-turbo8-dev
+            - libboost-filesystem-dev
+            - libopencv-dev
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - george-edison55-precise-backports
+          packages:
+            - g++-7
+            - cmake-data
+            - cmake
+            - libjpeg-turbo8-dev
+            - libboost-filesystem-dev
+            - libopencv-dev
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - cmake --version;
+  - ${CC} --version;
+  - ${CXX} --version;
+  - cd ${TRAVIS_BUILD_DIR}/..
+  - git clone git://git.code.sf.net/p/libpng/code libpng && cd libpng && git checkout v1.6.34
+  - mkdir -p build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local .. && make && sudo make install
+  - cd ${TRAVIS_BUILD_DIR}
+
+before_script:
+  - mkdir build && cd build && cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ${TRAVIS_BUILD_DIR}
+
+script:
+  - make
+  - SELENE_DATA_PATH=${TRAVIS_BUILD_DIR}/data ./test/selene_tests -d yes
+

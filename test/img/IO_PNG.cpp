@@ -280,8 +280,12 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
   const auto test_suite_path = test_suite_dir();
-  for (boost::filesystem::directory_entry& e : boost::filesystem::directory_iterator(test_suite_path))
+
+  using boost::filesystem::directory_iterator;
+  for (directory_iterator itr(test_suite_path), itr_end = directory_iterator(); itr != itr_end; ++itr)
   {
+    boost::filesystem::directory_entry& e = *itr;
+
     if (e.path().extension() == ".png")
     {
       sln::FileReader source(e.path().string());
