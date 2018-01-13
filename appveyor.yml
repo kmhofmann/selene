@@ -25,14 +25,14 @@ before_build:
   # Install the 32-bit dependencies
   - ps: vcpkg install libjpeg-turbo
   - ps: vcpkg install libpng
-  # - ps: vcpkg install opencv
+  - ps: vcpkg install opencv
   - ps: vcpkg install boost
 
   # Install the 64-bit dependencies
   - ps: $env:VCPKG_DEFAULT_TRIPLET="x64-windows"
   - ps: vcpkg install libjpeg-turbo
   - ps: vcpkg install libpng
-  # - ps: vcpkg install opencv
+  - ps: vcpkg install opencv
   - ps: vcpkg install boost
 
   - cmd: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Community\VC\Auxiliary\Build\vcvars%ARCHITECTURE%.bat

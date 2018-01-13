@@ -2,6 +2,10 @@ language: cpp
 sudo: true
 dist: trusty
 
+branches:
+  except:
+  - appveyor-test
+
 env:
   global:
     - MAKEFLAGS="-j2"
