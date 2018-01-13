@@ -130,7 +130,7 @@ TEST_CASE("Next power of 2", "[base]")
 {
   // Returns the position of the highest bit set;
   // from http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious
-  auto log_base_2 = [](auto x){
+  auto log_base_2 = [](auto x) {
     std::size_t r = 0;
     while (x >>= 1)
     {
@@ -148,17 +148,17 @@ TEST_CASE("Next power of 2", "[base]")
   for (std::size_t i = 0; i < 100000; ++i)
   {
     {
-    const auto x = dist32(rng);
-    const auto next_power = sln::next_power_of_two(x);
-    REQUIRE(sln::bit_count(next_power) == 1);
-    REQUIRE(log_base_2(next_power) == log_base_2(x) + (sln::bit_count(x) == 1 ? 0 : 1));
+      const auto x = dist32(rng);
+      const auto next_power = sln::next_power_of_two(x);
+      REQUIRE(sln::bit_count(next_power) == 1);
+      REQUIRE(log_base_2(next_power) == log_base_2(x) + (sln::bit_count(x) == 1 ? 0 : 1));
     }
 
     {
-    const auto x = dist64(rng);
-    const auto next_power = sln::next_power_of_two(x);
-    REQUIRE(sln::bit_count(next_power) == 1);
-    REQUIRE(log_base_2(next_power) == log_base_2(x) + (sln::bit_count(x) == 1 ? 0 : 1));
+      const auto x = dist64(rng);
+      const auto next_power = sln::next_power_of_two(x);
+      REQUIRE(sln::bit_count(next_power) == 1);
+      REQUIRE(log_base_2(next_power) == log_base_2(x) + (sln::bit_count(x) == 1 ? 0 : 1));
     }
   }
 

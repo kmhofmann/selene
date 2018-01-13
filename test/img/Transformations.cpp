@@ -108,6 +108,4 @@ TEST_CASE("Image transformations", "[img]")
     REQUIRE(sln::rotate<sln::RotationDirection::Clockwise270>(img)
             == sln::rotate<sln::RotationDirection::Counterclockwise90>(img));
   }
-
-
 }

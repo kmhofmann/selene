@@ -94,13 +94,13 @@ TEST_CASE("Image access convenience function", "[img]")
       REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 0.0) == Approx(30.0));
       REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 0.5) == Approx(50.0));
       REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 1.5) == Approx(80.0));
-      
+
       SECTION("Relative accessor")
       {
         const auto rx = 1;
         const auto ry = 1;
         const auto r_img = sln::relative_accessor(img, rx, ry);
-        
+
         //   - bilinear
         REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(r_img, 0.0 - rx, 0.0 - ry) == Approx(10.0));
         REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear>(r_img, 1.0 - rx, 0.0 - ry) == Approx(20.0));
@@ -194,7 +194,7 @@ TEST_CASE("Image access convenience function", "[img]")
         const auto rx = 1;
         const auto ry = 1;
         const auto r_img = sln::relative_accessor(img, rx, ry);
-        
+
         //   - replication
         REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx, 0.0 - ry) == Approx(10.0));
         REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx, 0.0 - ry) == Approx(20.0));
@@ -248,15 +248,24 @@ TEST_CASE("Image access convenience function", "[img]")
     SECTION("With custom interpolation and border access mode")
     {
       // Checks not exhaustive
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 0.0, 0.0) == Approx(10.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 1.0, 0.0) == Approx(20.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 2.0, 0.0) == Approx(30.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 0.0, 1.0) == Approx(40.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 1.0, 1.0) == Approx(50.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 2.0, 1.0) == Approx(60.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 0.0, 2.0) == Approx(70.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 1.0, 2.0) == Approx(80.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 2.0, 2.0) == Approx(90.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 0.0, 0.0)
+              == Approx(10.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 1.0, 0.0)
+              == Approx(20.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 2.0, 0.0)
+              == Approx(30.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 0.0, 1.0)
+              == Approx(40.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 1.0, 1.0)
+              == Approx(50.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 2.0, 1.0)
+              == Approx(60.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 0.0, 2.0)
+              == Approx(70.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 1.0, 2.0)
+              == Approx(80.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(img, 2.0, 2.0)
+              == Approx(90.0));
 
       SECTION("Relative accessor")
       {
@@ -265,15 +274,33 @@ TEST_CASE("Image access convenience function", "[img]")
         const auto r_img = sln::relative_accessor(img, rx, ry);
 
         // Checks not exhaustive
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx, 0.0 - ry) == Approx(10.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx, 0.0 - ry) == Approx(20.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 2.0 - rx, 0.0 - ry) == Approx(30.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx, 1.0 - ry) == Approx(40.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx, 1.0 - ry) == Approx(50.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 2.0 - rx, 1.0 - ry) == Approx(60.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx, 2.0 - ry) == Approx(70.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx, 2.0 - ry) == Approx(80.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 2.0 - rx, 2.0 - ry) == Approx(90.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx,
+                                                                                                   0.0 - ry)
+                == Approx(10.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx,
+                                                                                                   0.0 - ry)
+                == Approx(20.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 2.0 - rx,
+                                                                                                   0.0 - ry)
+                == Approx(30.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx,
+                                                                                                   1.0 - ry)
+                == Approx(40.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx,
+                                                                                                   1.0 - ry)
+                == Approx(50.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 2.0 - rx,
+                                                                                                   1.0 - ry)
+                == Approx(60.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 0.0 - rx,
+                                                                                                   2.0 - ry)
+                == Approx(70.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 1.0 - rx,
+                                                                                                   2.0 - ry)
+                == Approx(80.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::Bilinear, sln::BorderAccessMode::Replicated>(r_img, 2.0 - rx,
+                                                                                                   2.0 - ry)
+                == Approx(90.0));
       }
     }
   }

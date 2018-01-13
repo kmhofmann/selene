@@ -50,7 +50,8 @@ void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t nr_bytes, std::size_t alignment) noexcept
+MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t nr_bytes,
+                                                                     std::size_t alignment) noexcept
 {
   if (nr_bytes == 0)
   {

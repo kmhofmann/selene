@@ -17,7 +17,7 @@ namespace sln {
  * Usually not explicitly created, but returned by the convenience function `relative_accesor`.
  *
  * An instance of `RelativeAccessor<>` is accepted in place of an `Image<>` instance in calls to
- * `ImageBorderAccessor<>::access`, `ImageInterpolator<>::Access`, and the various forms of `get()` for pixel access.
+ * `ImageBorderAccessor<>::access`, `ImageInterpolator<>::access`, and the various forms of `get()` for pixel access.
  *
  * @tparam ImageType_ The image type.
  */
@@ -25,23 +25,23 @@ template <typename ImageType_>
 class RelativeAccessor
 {
 public:
-  using ImageType = ImageType_;
-  using PixelType = typename ImageType::PixelType;
+  using ImageType = ImageType_;  ///< The image type of the underlying image.
+  using PixelType = typename ImageType::PixelType;  ///< The pixel type of the underlying image.
 
   template <typename T = SignedPixelIndex>
   struct XY
   {
-    T x;
-    T y;
+    T x;  ///< X-coordinate.
+    T y;  ///< Y-coordinate.
   };
 
   RelativeAccessor(ImageType& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y);
 
-  RelativeAccessor(const RelativeAccessor<ImageType_>&) noexcept = default;
-  RelativeAccessor<ImageType_>& operator=(const RelativeAccessor<ImageType_>&) noexcept = default;
+  RelativeAccessor(const RelativeAccessor<ImageType_>&) noexcept = default;  ///< Copy constructor.
+  RelativeAccessor<ImageType_>& operator=(const RelativeAccessor<ImageType_>&) noexcept = default;  ///< Copy assignment operator.
 
-  RelativeAccessor(RelativeAccessor<ImageType_>&&) noexcept = default;
-  RelativeAccessor<ImageType_>& operator=(RelativeAccessor<ImageType_>&&) noexcept = default;
+  RelativeAccessor(RelativeAccessor<ImageType_>&&) noexcept = default;  ///< Move constructor.
+  RelativeAccessor<ImageType_>& operator=(RelativeAccessor<ImageType_>&&) noexcept = default;  ///< Move assignment operator.
 
   const ImageType& image() const noexcept;
   ImageType& image() noexcept;

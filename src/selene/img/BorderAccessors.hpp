@@ -91,6 +91,15 @@ inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Image
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
 }
 
+/** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
+ * `BorderAccessMode::Unchecked`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param img The image to access.
+ * @param rx The relative x-coordinate.
+ * @param ry The relative y-coordinate.
+ * @return The pixel value at relative location (x, y), using `BorderAccessMode::Unchecked`.
+ */
 template <typename PixelType>
 inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const RelativeAccessor<PixelType>& img,
                                                                      SignedPixelIndex rx,
@@ -123,6 +132,15 @@ inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Ima
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
 }
 
+/** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
+ * `BorderAccessMode::ZeroPadding`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param img The image to access.
+ * @param rx The relative x-coordinate.
+ * @param ry The relative y-coordinate.
+ * @return The pixel value at relative location (x, y), using `BorderAccessMode::ZeroPadding`.
+ */
 template <typename PixelType>
 inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const RelativeAccessor<PixelType>& img,
                                                                        SignedPixelIndex rx,
@@ -167,6 +185,15 @@ inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Imag
   return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
 }
 
+/** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
+ * `BorderAccessMode::Replicated`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param img The image to access.
+ * @param rx The relative x-coordinate.
+ * @param ry The relative y-coordinate.
+ * @return The pixel value at relative location (x, y), using `BorderAccessMode::Replicated`.
+ */
 template <typename PixelType>
 inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const RelativeAccessor<PixelType>& img,
                                                                       SignedPixelIndex rx,

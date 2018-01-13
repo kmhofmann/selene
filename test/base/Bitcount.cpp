@@ -15,7 +15,7 @@ std::size_t simple_bitcount(T x)
 {
   std::size_t count = 0;
 
-  for (; x; x >>=1)
+  for (; x; x >>= 1)
   {
     count += x & T{1};
   };
@@ -37,7 +37,7 @@ void test_bitcount(std::mt19937& rng)
   }
 }
 
-}  // namespace _
+}  // namespace
 
 TEST_CASE("Bitcount", "[base]")
 {
