@@ -59,7 +59,7 @@ MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t
   }
 
   // Ensure that the alignment is a power of two
-  alignment = sln::next_power_of_two(std::max(alignment, std::size_t{2}));
+  alignment = static_cast<std::size_t>(sln::next_power_of_two(std::max(alignment, std::size_t{2})));
 
   // TODO: C++17's aligned_alloc (http://en.cppreference.com/w/cpp/memory/c/aligned_alloc) would make life easier...
 
@@ -151,7 +151,7 @@ MemoryBlock<AlignedNewAllocator> AlignedNewAllocator::allocate(std::size_t nr_by
   }
 
   // Ensure that the alignment is a power of two
-  alignment = sln::next_power_of_two(std::max(alignment, std::size_t{2}));
+  alignment = static_cast<std::size_t>(sln::next_power_of_two(std::max(alignment, std::size_t{2})));
 
   // Allocate extra space for storing the alignment offset, and to fit the alignment itself
   const auto offset_ptr_storage = std::size_t{sizeof(void*)};

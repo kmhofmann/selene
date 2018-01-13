@@ -23,12 +23,13 @@ sln::Image_8u3 make_3x3_test_image_8u3();
 template <typename PixelType, typename Distribution>
 PixelType make_random_pixel(std::mt19937& rng, Distribution& dist)
 {
+  using ElementType = typename sln::PixelTraits<PixelType>::Element;
   constexpr auto nr_channels = sln::PixelTraits<PixelType>::nr_channels;
 
   PixelType px;
   for (std::size_t i = 0; i < nr_channels; ++i)
   {
-    px[i] = dist(rng);
+    px[i] = static_cast<ElementType>(dist(rng));
   }
   return px;
 }

@@ -11,6 +11,10 @@
 #include <cstddef>
 #include <cstdint>
 
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif  // defined(_MSC_VER)
+
 namespace sln {
 
 /** \brief Performs a bit count on the supplied value.
@@ -84,6 +88,8 @@ inline std::size_t bit_count(unsigned int x)
   return __popcnt(x);
 }
 
+#if _WIN64
+
 /** \brief Performs a bit count on the supplied value.
  *
  * @param x The input value.
@@ -93,6 +99,8 @@ inline std::size_t bit_count(unsigned __int64 x)
 {
   return __popcnt64(x);
 }
+
+#endif  // _WIN64
 
 #else
 

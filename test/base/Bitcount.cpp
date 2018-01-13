@@ -8,6 +8,8 @@
 
 #include <random>
 
+#include "Utils.hpp"
+
 namespace {
 
 template <typename T>
@@ -26,7 +28,7 @@ std::size_t simple_bitcount(T x)
 template <typename T>
 void test_bitcount(std::mt19937& rng)
 {
-  std::uniform_int_distribution<T> dist;
+  const auto dist = sln_test::uniform_distribution<T>(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
 
   for (std::size_t i = 0; i < 100000; ++i)
   {
