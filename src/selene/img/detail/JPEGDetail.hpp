@@ -42,6 +42,6 @@ void output_message(j_common_ptr cinfo);
 }  // namespace detail
 }  // namespace sln
 
-#endif  // defined(SELENE_WITH_LIBJPEG)SELENE_WITH_LIBJPEG_TURBO
+#endif  // defined(SELENE_WITH_LIBJPEG)
 
 #endif  // SELENE_IMG_DETAIL_JPEG_DETAIL_HPP

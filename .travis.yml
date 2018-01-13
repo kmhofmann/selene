@@ -6,6 +6,10 @@ env:
   global:
     - MAKEFLAGS="-j2"
 
+branches:
+  except:
+  - appveyor-test
+
 matrix:
   include:
     - os: linux
@@ -71,4 +75,3 @@ before_script:
 script:
   - make
   - SELENE_DATA_PATH=${TRAVIS_BUILD_DIR}/data ./test/selene_tests -d yes
-

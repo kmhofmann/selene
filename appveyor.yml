@@ -1,0 +1,50 @@
+image: Visual Studio 2017
+
+cache:
+  - c:\tools\vcpkg\installed\
+
+platform:
+  - x86
+  - amd64_x64
+
+configuration:
+  - Debug
+  - Release
+
+init:
+  - ps: |
+      If ($env:Platform -Match "x86") {
+        $env:ARCHITECTURE="32"
+      } Else {
+        $env:ARCHITECTURE="64"
+      }
+
+  - ps: cmake --version
+
+before_build:
+  # Install the 32-bit dependencies
+  - ps: vcpkg install libjpeg-turbo
+  - ps: vcpkg install libpng
+  # - ps: vcpkg install opencv
+  - ps: vcpkg install boost
+
+  # Install the 64-bit dependencies
+  - ps: $env:VCPKG_DEFAULT_TRIPLET="x64-windows"
+  - ps: vcpkg install libjpeg-turbo
+  - ps: vcpkg install libpng
+  # - ps: vcpkg install opencv
+  - ps: vcpkg install boost
+
+  - cmd: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Community\VC\Auxiliary\Build\vcvars%ARCHITECTURE%.bat
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+            -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+            -DSELENE_BUILD_TESTS=ON
+            -DSELENE_BUILD_EXAMPLES=ON
+            %APPVEYOR_BUILD_FOLDER%
+
+build_script:
+  - cmd: nmake
+  - cmd: set SELENE_DATA_PATH=%APPVEYOR_BUILD_FOLDER%\data
+  - cmd: .\test\selene_tests

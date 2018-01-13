@@ -2,6 +2,8 @@
 // Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#if defined(SELENE_WITH_LIBPNG)
+
 #include <selene/img/detail/PNGDetail.hpp>
 
 #include <stdexcept>
@@ -25,3 +27,5 @@ void warning_handler(png_structp png_ptr, const char* msg)
 
 }  // namespace detail
 }  // namespace sln
+
+#endif   // defined(SELENE_WITH_LIBPNG)

@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_DETAIL_PNG_DETAIL_HPP
 #define SELENE_IMG_DETAIL_PNG_DETAIL_HPP
 
+#if defined(SELENE_WITH_LIBPNG)
+
 #include <selene/base/MessageLog.hpp>
 
 #include <png.h>
@@ -30,5 +32,7 @@ void warning_handler(png_structp png_ptr, const char* msg);
 
 }  // namespace detail
 }  // namespace sln
+
+#endif   // defined(SELENE_WITH_LIBPNG)
 
 #endif  // SELENE_IMG_DETAIL_PNG_DETAIL_HPP
