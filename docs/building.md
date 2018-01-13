@@ -25,6 +25,13 @@ Or, alternatively, using [ninja](https://ninja-build.org/):
     cmake -G Ninja -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release ..
     ninja
 
+On Windows, the CMake command might look similar to the following, in order to generate Visual Studio 2017 project
+files for a 64-bit build (see below for more info on [vcpkg](https://github.com/Microsoft/vcpkg)):
+
+    cmake -G "Visual Studio 15 2017 Win64" -T "host=x64" \
+        -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>\scripts\buildsystems\vcpkg.cmake \
+        -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ..
+
 Preferably use the library "at head", e.g. as submodule, instead of invoking the `install` target.
 
 Integrating the library into own CMake projects can be as easy as:
@@ -111,3 +118,6 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
     .\vcpkg.exe install libpng
     .\vcpkg.exe install opencv
     .\vcpkg.exe install boost
+
+Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
+the 64-bit compiled versions instead of the 32-bit ones.

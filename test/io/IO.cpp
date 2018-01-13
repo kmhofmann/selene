@@ -204,7 +204,8 @@ TEST_CASE("Test binary data I/O", "[io]")
       const auto len = i * 1024;
 
       std::vector<std::int8_t> data_vec_i(len);
-      std::generate(std::begin(data_vec_i), std::end(data_vec_i), [&]() { return dist_i8(rng); });
+      std::generate(std::begin(data_vec_i), std::end(data_vec_i),
+                    [&]() { return static_cast<std::int8_t>(dist_i8(rng)); });
 
       sln::write_data_contents(filename.string(), data_vec_i.data(), data_vec_i.size());
       const std::vector<std::uint8_t> data_read_i = sln::read_file_contents(filename.string());
@@ -213,7 +214,8 @@ TEST_CASE("Test binary data I/O", "[io]")
       REQUIRE(std::memcmp(data_vec_i.data(), data_read_i.data(), data_read_i.size()) == 0);
 
       std::vector<std::uint8_t> data_vec_u(len);
-      std::generate(std::begin(data_vec_u), std::end(data_vec_u), [&]() { return dist_u8(rng); });
+      std::generate(std::begin(data_vec_u), std::end(data_vec_u),
+                    [&]() { return static_cast<std::uint8_t>(dist_u8(rng)); });
 
       sln::write_data_contents(filename.string(), data_vec_u.data(), data_vec_u.size());
       const std::vector<std::uint8_t> data_read_u = sln::read_file_contents(filename.string());
