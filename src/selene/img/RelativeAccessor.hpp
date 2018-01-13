@@ -76,7 +76,8 @@ auto relative_accessor(ImageType& img, SignedPixelIndex anchor_x, SignedPixelInd
  * @param anchor_y The y-coordinate of the relative access coordinate origin.
  */
 template <typename ImageType_>
-inline RelativeAccessor<ImageType_>::RelativeAccessor(ImageType_& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y)
+inline
+RelativeAccessor<ImageType_>::RelativeAccessor(ImageType_& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y)
 : img_(img), anchor_x_(anchor_x), anchor_y_(anchor_y)
 {
 }
@@ -135,7 +136,8 @@ inline SignedPixelIndex RelativeAccessor<ImageType_>::anchor_y() const noexcept
  */
 template <typename ImageType_>
 template <typename T>
-inline RelativeAccessor<ImageType_>::XY<T> RelativeAccessor<ImageType_>::absolute_coordinates(T x, T y) const noexcept
+inline typename RelativeAccessor<ImageType_>::template XY<T>
+RelativeAccessor<ImageType_>::absolute_coordinates(T x, T y) const noexcept
 {
   const auto abs_x = T{anchor_x_ + x};
   const auto abs_y = T{anchor_y_ + y};
@@ -154,7 +156,8 @@ inline RelativeAccessor<ImageType_>::XY<T> RelativeAccessor<ImageType_>::absolut
  * @return The underlying image pixel.
  */
 template <typename ImageType_>
-inline const typename RelativeAccessor<ImageType_>::PixelType& RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) const noexcept
+inline const typename RelativeAccessor<ImageType_>::PixelType&
+RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) const noexcept
 {
 const auto abs_x = SignedPixelIndex{anchor_x_ + x};
 const auto abs_y = SignedPixelIndex{anchor_y_ + y};
@@ -172,7 +175,8 @@ return img_(PixelIndex{static_cast<PixelIndex::value_type>(abs_x)},
  * @return The underlying image pixel.
  */
 template <typename ImageType_>
-inline typename RelativeAccessor<ImageType_>::PixelType& RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) noexcept
+inline typename RelativeAccessor<ImageType_>::PixelType&
+RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) noexcept
 {
   const auto abs_x = SignedPixelIndex{anchor_x_ + x};
   const auto abs_y = SignedPixelIndex{anchor_y_ + y};
