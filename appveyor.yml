@@ -49,4 +49,4 @@ before_build:
 build_script:
   - cmd: nmake
   - cmd: set SELENE_DATA_PATH=%APPVEYOR_BUILD_FOLDER%\data
-  - cmd: .\test\selene_tests
+  - cmd: .\test\selene_tests -d yes
