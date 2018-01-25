@@ -39,6 +39,18 @@ using Stride = ExplicitType<std::size_t, detail::StrideTag>;  ///< Type represen
 using ImageRowAlignment = ExplicitType<std::size_t, detail::ImageRowAlignmentTag>;  ///< Type representing an image row
                                                                                     ///< alignment.
 
+template <typename T>
+constexpr inline PixelIndex to_pixel_index(T value)
+{
+  return PixelIndex{static_cast<PixelIndex::value_type>(value)};
+}
+
+template <typename T>
+constexpr inline PixelLength to_pixel_length(T value)
+{
+  return PixelIndex{static_cast<PixelIndex::value_type>(value)};
+}
+
 inline namespace literals {
 
 /** \brief User-defined literal representing a pixel index
@@ -48,7 +60,7 @@ inline namespace literals {
  */
 constexpr inline PixelIndex operator"" _px(unsigned long long index)
 {
-  return PixelIndex(static_cast<PixelIndex::value_type>(index));
+  return to_pixel_index(index);
 }
 
 }  // namespace literals

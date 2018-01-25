@@ -88,7 +88,7 @@ inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Image
                                                                SignedPixelIndex x,
                                                                SignedPixelIndex y) noexcept
 {
-  return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
+  return img(to_pixel_index(x), to_pixel_index(y));
 }
 
 /** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
@@ -129,7 +129,7 @@ inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Ima
     return PixelTraits<PixelType>::zero_element;
   }
 
-  return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
+  return img(to_pixel_index(x), to_pixel_index(y));
 }
 
 /** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
@@ -182,7 +182,7 @@ inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Imag
     y = static_cast<SignedPixelIndex>(img.height() - 1);
   }
 
-  return img(PixelIndex{static_cast<PixelIndex::value_type>(x)}, PixelIndex{static_cast<PixelIndex::value_type>(y)});
+  return img(to_pixel_index(x), to_pixel_index(y));
 }
 
 /** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode

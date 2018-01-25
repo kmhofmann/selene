@@ -29,6 +29,7 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/Resample.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Transformations.cpp
         ${CMAKE_CURRENT_LIST_DIR}/io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.cpp

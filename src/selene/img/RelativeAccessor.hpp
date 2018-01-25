@@ -165,8 +165,7 @@ RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) const 
 {
 const auto abs_x = SignedPixelIndex{anchor_x_ + x};
 const auto abs_y = SignedPixelIndex{anchor_y_ + y};
-return img_(PixelIndex{static_cast<PixelIndex::value_type>(abs_x)},
-    PixelIndex{static_cast<PixelIndex::value_type>(abs_y)});
+return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
 }
 
 /** \brief Accesses an image pixel with relative coordinates.
@@ -184,8 +183,7 @@ RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) noexce
 {
   const auto abs_x = SignedPixelIndex{anchor_x_ + x};
   const auto abs_y = SignedPixelIndex{anchor_y_ + y};
-  return img_(PixelIndex{static_cast<PixelIndex::value_type>(abs_x)},
-              PixelIndex{static_cast<PixelIndex::value_type>(abs_y)});
+  return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
 }
 
 

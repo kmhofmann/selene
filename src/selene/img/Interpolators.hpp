@@ -45,6 +45,11 @@ struct ImageInterpolator;
 template <BorderAccessMode AccessMode>
 struct ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>
 {
+  constexpr static PixelLength::value_type index_to_left = 0;
+  constexpr static PixelLength::value_type index_to_right = 1;
+  constexpr static PixelLength::value_type index_to_up = 0;
+  constexpr static PixelLength::value_type index_to_down = 1;
+
   template <typename ImageType, typename ScalarAccess = default_float_t>
   static auto interpolate(const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept;
 
@@ -59,6 +64,11 @@ struct ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMode>
 template <BorderAccessMode AccessMode>
 struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
 {
+  constexpr static PixelLength::value_type index_to_left = 0;
+  constexpr static PixelLength::value_type index_to_right = 1;
+  constexpr static PixelLength::value_type index_to_up = 0;
+  constexpr static PixelLength::value_type index_to_down = 1;
+
   template <typename ImageType, typename ScalarAccess = default_float_t, typename ScalarOutputElement = default_float_t>
   static auto interpolate(const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept;
 
