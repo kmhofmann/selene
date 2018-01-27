@@ -148,7 +148,7 @@ template <typename PT, typename Coeff, PT shift>
 inline constexpr PT rounded_linear_combination_coeff_func(std::size_t i)
 {
   using UT = std::make_unsigned_t<PT>;
-  return round_half_up<PT>(Coeff::values[i] * PT(power(UT{2}, UT{shift})));
+  return constexpr_round_half_up<PT>(Coeff::values[i] * PT(power(UT{2}, UT{shift})));
 }
 
 }  // namespace detail

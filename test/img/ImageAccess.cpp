@@ -86,14 +86,14 @@ TEST_CASE("Image access convenience function", "[img]")
       REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 2.0) == Approx(80.0));
       REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 2.0, 2.0) == Approx(90.0));
 
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 0.5, 0.5) == Approx(50.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 0.5) == Approx(60.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 0.5, 1.5) == Approx(80.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 1.5) == Approx(90.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 0.5, 0.0) == Approx(20.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 0.0) == Approx(30.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 0.5) == Approx(50.0));
-      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 1.5) == Approx(80.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 0.5, 0.5) == Approx(10.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 0.5) == Approx(20.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 0.5, 1.5) == Approx(40.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 1.5) == Approx(50.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 0.5, 0.0) == Approx(10.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.5, 0.0) == Approx(20.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 0.5) == Approx(20.0));
+      REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(img, 1.0, 1.5) == Approx(50.0));
 
       SECTION("Relative accessor")
       {
@@ -128,14 +128,14 @@ TEST_CASE("Image access convenience function", "[img]")
         REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.0 - rx, 2.0 - ry) == Approx(80.0));
         REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 2.0 - rx, 2.0 - ry) == Approx(90.0));
 
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 0.5 - rx, 0.5 - ry) == Approx(50.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.5 - rx, 0.5 - ry) == Approx(60.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 0.5 - rx, 1.5 - ry) == Approx(80.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.5 - rx, 1.5 - ry) == Approx(90.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 0.5 - rx, 0.0 - ry) == Approx(20.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.5 - rx, 0.0 - ry) == Approx(30.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.0 - rx, 0.5 - ry) == Approx(50.0));
-        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.0 - rx, 1.5 - ry) == Approx(80.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 0.5 - rx, 0.5 - ry) == Approx(10.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.5 - rx, 0.5 - ry) == Approx(20.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 0.5 - rx, 1.5 - ry) == Approx(40.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.5 - rx, 1.5 - ry) == Approx(50.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 0.5 - rx, 0.0 - ry) == Approx(10.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.5 - rx, 0.0 - ry) == Approx(20.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.0 - rx, 0.5 - ry) == Approx(20.0));
+        REQUIRE(sln::get<sln::ImageInterpolationMode::NearestNeighbor>(r_img, 1.0 - rx, 1.5 - ry) == Approx(50.0));
       }
     }
 

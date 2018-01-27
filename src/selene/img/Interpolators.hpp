@@ -100,7 +100,9 @@ inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMod
     const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
-  return ImageBorderAccessor<AccessMode>::access(img, round<SignedPixelIndex>(x), round<SignedPixelIndex>(y));
+  const auto ix = round_half_down<SignedPixelIndex>(x);
+  const auto iy = round_half_down<SignedPixelIndex>(y);
+  return ImageBorderAccessor<AccessMode>::access(img, ix, iy);
 }
 
 /** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
@@ -128,7 +130,9 @@ inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMod
   static_assert(std::is_same<decltype(abs_xy.x), ScalarAccess>::value, "Type mismatch");
   static_assert(std::is_same<decltype(abs_xy.y), ScalarAccess>::value, "Type mismatch");
 
-  return ImageBorderAccessor<AccessMode>::access(img.image(), round<SignedPixelIndex>(abs_xy.x), round<SignedPixelIndex>(abs_xy.y));
+  const auto ix = round_half_down<SignedPixelIndex>(abs_xy.x);
+  const auto iy = round_half_down<SignedPixelIndex>(abs_xy.y);
+  return ImageBorderAccessor<AccessMode>::access(img.image(), ix, iy);
 }
 
 /** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
