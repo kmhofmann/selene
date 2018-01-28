@@ -87,7 +87,8 @@ template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename Im
 inline auto get(const ImageType& img,
                 Index x,
                 Index y,
-                typename std::enable_if_t<std::is_integral<Index>::value>* = nullptr) noexcept
+                typename std::enable_if_t<std::is_integral<Index>::value
+                                          || std::is_same<Index, PixelIndex>::value>* = nullptr) noexcept
 {
   const auto si_x = static_cast<SignedPixelIndex>(x);
   const auto si_y = static_cast<SignedPixelIndex>(y);
