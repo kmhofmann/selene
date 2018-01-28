@@ -3,6 +3,7 @@ project(selene CXX)
 
 option(SELENE_BUILD_TESTS "Build selene tests" OFF)
 option(SELENE_BUILD_EXAMPLES "Build selene examples" OFF)
+option(SELENE_BUILD_BENCHMARKS "Build selene benchmarks" OFF)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 14)
@@ -44,4 +45,8 @@ endif()
 
 if (SELENE_BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+if (SELENE_BUILD_BENCHMARKS)
+    add_subdirectory(benchmark)
 endif()

@@ -15,14 +15,15 @@ First, clone the project and create a `build` directory (or use another name).
     cd selene
     mkdir build && cd build
 
-Then call `cmake` and build the project. Using [GNU Make](https://www.gnu.org/software/make/):
+Then call `cmake` and build the project. Using [GNU Make](https://www.gnu.org/software/make/), and with all optional
+parts enabled (see below for required dependencies):
 
-    cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release ..
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     make
 
-Or, alternatively, using [ninja](https://ninja-build.org/):
+Alternatively, using [ninja](https://ninja-build.org/):
 
-    cmake -G Ninja -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release ..
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
     ninja
 
 On Windows, the CMake command might look similar to the following, in order to generate Visual Studio 2017 project
@@ -30,7 +31,7 @@ files for a 64-bit build (see below for more info on [vcpkg](https://github.com/
 
     cmake -G "Visual Studio 15 2017 Win64" -T "host=x64" \
         -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>\scripts\buildsystems\vcpkg.cmake \
-        -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ..
+        ..
 
 Preferably use the library "at head", e.g. as submodule, instead of invoking the `install` target.
 
@@ -68,7 +69,11 @@ by the API.
 [OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if
 so desired.
 
-### Building and running the tests and examples
+### Building and running tests, examples, and benchmarks
+
+#### Tests
+
+    -DSELENE_BUILD_TESTS=ON
 
 Building the tests is disabled by default, and can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake`
 command.
@@ -82,9 +87,23 @@ The test suite can be run by executing `./test/selene_tests` from the `build` di
 available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
 for more information.
 
+#### Examples
+
+    -DSELENE_BUILD_EXAMPLES=ON
+
 The repository also contains commented examples which can be optionally compiled.
-This can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake` command; the examples can then be found in the
-`./examples/` folder in the build directory.
+This can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake` command.
+The examples can then be found in the `./examples/` folder in the build directory.
+
+#### Benchmarks
+
+    -DSELENE_BUILD_BENCHMARKS=ON
+
+A few micro-benchmarks can be optionally compiled by adding `-DSELENE_BUILD_BENCHMARKS=ON` to the `cmake` command line.
+The code for these can be found in the `./benchmark/` folder, and depends on Google's
+[benchmark](https://github.com/google/benchmark) library to be installed.
+
+#### Specifying the data path
 
 In case some tests or examples are failing because auxiliary data files can not be found automatically, specify the path
 to the `data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or
@@ -102,7 +121,7 @@ On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as fol
 
     apt-get install libjpeg-turbo8-dev libpng16-dev libopencv-dev libboost-filesystem-dev
 
-However, OpenCV might need to be built from source and installed manually.
+On some systems, OpenCV might need to be built from source and installed manually.
 
 #### MacOS
 
