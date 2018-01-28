@@ -123,6 +123,15 @@ public:
   const_iterator end() const noexcept;
   const_iterator cend() const noexcept;
 
+  std::uint8_t* byte_ptr() noexcept;
+  const std::uint8_t* byte_ptr() const noexcept;
+
+  std::uint8_t* byte_ptr(PixelIndex y) noexcept;
+  const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
+
+  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) noexcept;
+  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
+
   PixelType* data() noexcept;
   const PixelType* data() const noexcept;
 
@@ -134,15 +143,6 @@ public:
 
   PixelType* data(PixelIndex x, PixelIndex y) noexcept;
   const PixelType* data(PixelIndex x, PixelIndex y) const noexcept;
-
-  std::uint8_t* byte_ptr() noexcept;
-  const std::uint8_t* byte_ptr() const noexcept;
-
-  std::uint8_t* byte_ptr(PixelIndex y) noexcept;
-  const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
-
-  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) noexcept;
-  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
 
   PixelType& operator()(PixelIndex x, PixelIndex y) noexcept;
   const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept;
@@ -1281,6 +1281,79 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const 
   return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
 }
 
+/** \brief Returns a pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam PixelType The pixel type.
+ * @return Pointer to the first image data byte.
+ */
+template <typename PixelType>
+inline std::uint8_t* Image<PixelType>::byte_ptr() noexcept
+{
+  return data_;
+}
+
+/** \brief Returns a constant pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant pointer to the first image data byte.
+ */
+template <typename PixelType>
+inline const std::uint8_t* Image<PixelType>::byte_ptr() const noexcept
+{
+  return data_;
+}
+
+/** \brief Returns a pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first image data byte of row `y`.
+ */
+template <typename PixelType>
+inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) noexcept
+{
+  return data_ + compute_data_offset(y);
+}
+
+/** \brief Returns a constant pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first image data byte of row `y`.
+ */
+template <typename PixelType>
+inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const noexcept
+{
+  return data_ + compute_data_offset(y);
+}
+
+/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the first byte of the pixel element at location `(x, y)`.
+ */
+template <typename PixelType>
+inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) noexcept
+{
+  return data_ + compute_data_offset(x, y);
+}
+
+/** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column
+ * `x`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
+ */
+template <typename PixelType>
+inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+{
+  return data_ + compute_data_offset(x, y);
+}
+
 /** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
  *
  * @tparam PixelType The pixel type.
@@ -1376,79 +1449,6 @@ template <typename PixelType>
 inline const PixelType* Image<PixelType>::data(PixelIndex x, PixelIndex y) const noexcept
 {
   return reinterpret_cast<const PixelType*>(byte_ptr(x, y));
-}
-
-/** \brief Returns a pointer to the first byte storing image data (in row 0).
- *
- * @tparam PixelType The pixel type.
- * @return Pointer to the first image data byte.
- */
-template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr() noexcept
-{
-  return data_;
-}
-
-/** \brief Returns a constant pointer to the first byte storing image data (in row 0).
- *
- * @tparam PixelType The pixel type.
- * @return Constant pointer to the first image data byte.
- */
-template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr() const noexcept
-{
-  return data_;
-}
-
-/** \brief Returns a pointer to the first byte storing image data in row `y`.
- *
- * @tparam PixelType The pixel type.
- * @param y Row index.
- * @return Pointer to the first image data byte of row `y`.
- */
-template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) noexcept
-{
-  return data_ + compute_data_offset(y);
-}
-
-/** \brief Returns a constant pointer to the first byte storing image data in row `y`.
- *
- * @tparam PixelType The pixel type.
- * @param y Row index.
- * @return Constant pointer to the first image data byte of row `y`.
- */
-template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const noexcept
-{
-  return data_ + compute_data_offset(y);
-}
-
-/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
- *
- * @tparam PixelType The pixel type.
- * @param x Column index.
- * @param y Row index.
- * @return Pointer to the first byte of the pixel element at location `(x, y)`.
- */
-template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) noexcept
-{
-  return data_ + compute_data_offset(x, y);
-}
-
-/** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column
- * `x`.
- *
- * @tparam PixelType The pixel type.
- * @param x Column index.
- * @param y Row index.
- * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
- */
-template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
-{
-  return data_ + compute_data_offset(x, y);
 }
 
 /** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.

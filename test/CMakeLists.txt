@@ -19,8 +19,9 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Algorithms.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Image.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageAccess.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/ImageConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/ImageData.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.cpp

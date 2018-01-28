@@ -13,6 +13,7 @@
 
 #include <selene/img/ImageDataStorage.hpp>
 #include <selene/img/PixelFormat.hpp>
+#include <selene/img/PixelTraits.hpp>
 #include <selene/img/Types.hpp>
 
 #include <algorithm>
@@ -59,6 +60,21 @@ public:
   const std::uint8_t* byte_ptr() const noexcept;
   const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
   const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
+
+  template <typename PixelType>
+  const PixelType* data() const noexcept;
+
+  template <typename PixelType>
+  const PixelType* data(PixelIndex y) const noexcept;
+
+  template <typename PixelType>
+  const PixelType* data_row_end(PixelIndex y) const noexcept;
+
+  template <typename PixelType>
+  const PixelType* data(PixelIndex x, PixelIndex y) const noexcept;
+
+  template <typename PixelType>
+  const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept;
 
 protected:
   /// \cond INTERNAL
@@ -310,6 +326,57 @@ template <typename DataStoragePtr>
 inline const std::uint8_t* ImageDataBase<DataStoragePtr>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(x, y);
+}
+
+template <typename DataStoragePtr>
+template <typename PixelType>
+const PixelType* ImageDataBase<DataStoragePtr>::data() const noexcept
+{
+  SELENE_ASSERT(nr_channels_ == PixelTraits<PixelType>::nr_channels);
+  SELENE_ASSERT(nr_bytes_per_channel_ == PixelTraits<PixelType>::nr_bytes_per_channel);
+  SELENE_ASSERT(sample_format_ == SampleFormat::Unknown || sample_format_ == PixelTraits<PixelType>::sample_format);
+
+  return reinterpret_cast<const PixelType*>(byte_ptr());
+}
+
+template <typename DataStoragePtr>
+template <typename PixelType>
+const PixelType* ImageDataBase<DataStoragePtr>::data(PixelIndex y) const noexcept
+{
+  SELENE_ASSERT(nr_channels_ == PixelTraits<PixelType>::nr_channels);
+  SELENE_ASSERT(nr_bytes_per_channel_ == PixelTraits<PixelType>::nr_bytes_per_channel);
+  SELENE_ASSERT(sample_format_ == SampleFormat::Unknown || sample_format_ == PixelTraits<PixelType>::sample_format);
+
+  return reinterpret_cast<const PixelType*>(byte_ptr(y));
+}
+
+template <typename DataStoragePtr>
+template <typename PixelType>
+const PixelType* ImageDataBase<DataStoragePtr>::data_row_end(PixelIndex y) const noexcept
+{
+  SELENE_ASSERT(nr_channels_ == PixelTraits<PixelType>::nr_channels);
+  SELENE_ASSERT(nr_bytes_per_channel_ == PixelTraits<PixelType>::nr_bytes_per_channel);
+  SELENE_ASSERT(sample_format_ == SampleFormat::Unknown || sample_format_ == PixelTraits<PixelType>::sample_format);
+
+  return reinterpret_cast<const PixelType*>(byte_ptr(y) + nr_bytes_per_channel_ * nr_channels_ * width_);
+}
+
+template <typename DataStoragePtr>
+template <typename PixelType>
+const PixelType* ImageDataBase<DataStoragePtr>::data(PixelIndex x, PixelIndex y) const noexcept
+{
+  SELENE_ASSERT(nr_channels_ == PixelTraits<PixelType>::nr_channels);
+  SELENE_ASSERT(nr_bytes_per_channel_ == PixelTraits<PixelType>::nr_bytes_per_channel);
+  SELENE_ASSERT(sample_format_ == SampleFormat::Unknown || sample_format_ == PixelTraits<PixelType>::sample_format);
+
+  return reinterpret_cast<const PixelType*>(byte_ptr(x, y));
+}
+
+template <typename DataStoragePtr>
+template <typename PixelType>
+inline const PixelType& ImageDataBase<DataStoragePtr>::pixel(PixelIndex x, PixelIndex y) const noexcept
+{
+  return *data<PixelType>(x, y);
 }
 
 template <typename DataStoragePtr>
