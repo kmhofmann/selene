@@ -56,13 +56,13 @@ struct PNGCompressionOptions
   /** \brief Constructor, setting the respective JPEG compression options.
    *
    * @param compression_level_ Compression level; may take values from 0 (no compression) to 9 ("maximal" compression).
-   * Defaults to the default zlib compression level.
+   * Defaults to value 6.
    * @param interlaced_ If true, write PNG image as interlaced.
    * @param set_bgr_ If true, convert BGR (supplied) to RGB (written).
    * @param invert_alpha_channel_ If true, invert values in alpha channel (e.g. 0 -> 255).
    * @param invert_monochrome_ If true, invert grayscale or grayscale_alpha image values.
    */
-  explicit PNGCompressionOptions(int compression_level_ = -1,
+  explicit PNGCompressionOptions(int compression_level_ = 6,
                                  bool interlaced_ = false,
                                  bool set_bgr_ = false,
                                  bool invert_alpha_channel_ = false,
