@@ -57,6 +57,9 @@ public:
                 PixelFormat pixel_format = PixelFormat::Unknown,
                 SampleFormat sample_format = SampleFormat::Unknown);
 
+  void set_pixel_format(PixelFormat pixel_format);
+  void set_sample_format(SampleFormat sample_format);
+
   const std::uint8_t* byte_ptr() const noexcept;
   const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
   const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
@@ -291,6 +294,26 @@ inline void ImageDataBase<DataStoragePtr>::set_view(DataStoragePtr data,
   nr_channels_ = nr_channels;
   nr_bytes_per_channel_ = nr_bytes_per_channel;
   pixel_format_ = pixel_format;
+  sample_format_ = sample_format;
+}
+
+/** \brief Sets the pixel format.
+ *
+ * @param pixel_format The pixel format to be set.
+ */
+template <typename DataStoragePtr>
+inline void ImageDataBase<DataStoragePtr>::set_pixel_format(PixelFormat pixel_format)
+{
+  pixel_format_ = pixel_format;
+}
+
+/** \brief Sets the sample format.
+ *
+ * @param pixel_format The sample format to be set.
+ */
+template <typename DataStoragePtr>
+inline void ImageDataBase<DataStoragePtr>::set_sample_format(SampleFormat sample_format)
+{
   sample_format_ = sample_format;
 }
 
