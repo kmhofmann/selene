@@ -28,6 +28,10 @@ public:
   using ImageType = ImageType_;  ///< The image type of the underlying image.
   using PixelType = typename ImageType::PixelType;  ///< The pixel type of the underlying image.
 
+  /** \brief x/y coordinate.
+   *
+   * @tparam T The coordinate element type.
+   */
   template <typename T = SignedPixelIndex>
   struct XY
   {

@@ -121,10 +121,10 @@ Image<PixelType> resample(const Image<PixelType>& img, PixelLength new_width, Pi
  *
  * @tparam interpolation_mode The interpolation mode to use.
  * @tparam PixelType The pixel type.
- * @param img The input image to be resampled
+ * @param img_src The input image to be resampled.
+ * @param img_dst The sampled target image.
  * @param new_width The width of the target image.
  * @param new_height The height of the target image
- * @param img_dst The sampled target image.
  */
 template <ImageInterpolationMode interpolation_mode, typename PixelType>
 void resample(const Image<PixelType>& img_src, PixelLength new_width, PixelLength new_height, Image<PixelType>& img_dst)

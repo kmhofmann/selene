@@ -747,6 +747,14 @@ inline const std::uint8_t* ImageData<ImageDataStorage::Modifiable>::byte_ptr(Pix
   return data_ + compute_data_offset(x, y);
 }
 
+/** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Pointer to the first pixel element.
+ */
 template <typename PixelType>
 PixelType* ImageData<ImageDataStorage::Modifiable>::data() noexcept
 {
@@ -757,6 +765,14 @@ PixelType* ImageData<ImageDataStorage::Modifiable>::data() noexcept
   return reinterpret_cast<PixelType*>(byte_ptr());
 }
 
+/** \brief Returns a constant pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant pointer to the first pixel element.
+ */
 template <typename PixelType>
 const PixelType* ImageData<ImageDataStorage::Modifiable>::data() const noexcept
 {
@@ -767,6 +783,15 @@ const PixelType* ImageData<ImageDataStorage::Modifiable>::data() const noexcept
   return reinterpret_cast<const PixelType*>(byte_ptr());
 }
 
+/** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType>
 PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex y) noexcept
 {
@@ -777,6 +802,15 @@ PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex y) noexcept
   return reinterpret_cast<PixelType*>(byte_ptr(y));
 }
 
+/** \brief Returns a constant pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType>
 const PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex y) const noexcept
 {
@@ -787,6 +821,15 @@ const PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex y) con
   return reinterpret_cast<const PixelType*>(byte_ptr(y));
 }
 
+/** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType>
 PixelType* ImageData<ImageDataStorage::Modifiable>::data_row_end(PixelIndex y) noexcept
 {
@@ -797,6 +840,16 @@ PixelType* ImageData<ImageDataStorage::Modifiable>::data_row_end(PixelIndex y) n
   return reinterpret_cast<PixelType*>(byte_ptr(y) + nr_bytes_per_channel_ * nr_channels_ * width_);
 }
 
+/** \brief Returns a constant pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y,
+ * column `width()`).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType>
 const PixelType* ImageData<ImageDataStorage::Modifiable>::data_row_end(PixelIndex y) const noexcept
 {
@@ -807,6 +860,16 @@ const PixelType* ImageData<ImageDataStorage::Modifiable>::data_row_end(PixelInde
   return reinterpret_cast<const PixelType*>(byte_ptr(y) + nr_bytes_per_channel_ * nr_channels_ * width_);
 }
 
+/** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType>
 PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex x, PixelIndex y) noexcept
 {
@@ -817,6 +880,16 @@ PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex x, PixelInde
   return reinterpret_cast<PixelType*>(byte_ptr(x, y));
 }
 
+/** \brief Returns a constant pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType>
 const PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex x, PixelIndex y) const noexcept
 {
@@ -827,12 +900,32 @@ const PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex x, Pix
   return reinterpret_cast<PixelType*>(byte_ptr(x, y));
 }
 
+/** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType>
 inline const PixelType& ImageData<ImageDataStorage::Modifiable>::pixel(PixelIndex x, PixelIndex y) const noexcept
 {
   return *data<PixelType>(x, y);
 }
 
+/** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * Due to the "dynamically" typed image data, the pixel type has to be determined at function call granularity.
+ * Compatibility with the data is checked only via debug-mode assertions.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType>
 inline  PixelType& ImageData<ImageDataStorage::Modifiable>::pixel(PixelIndex x, PixelIndex y) noexcept
 {

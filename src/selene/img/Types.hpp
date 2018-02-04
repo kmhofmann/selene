@@ -39,12 +39,28 @@ using Stride = ExplicitType<std::size_t, detail::StrideTag>;  ///< Type represen
 using ImageRowAlignment = ExplicitType<std::size_t, detail::ImageRowAlignmentTag>;  ///< Type representing an image row
                                                                                     ///< alignment.
 
+/** \brief Explicitly converts the provided value to `PixelIndex` type.
+ *
+ * This operation should usually be optimized away, but provides stronger type safety.
+ *
+ * @tparam T The value type.
+ * @param value The value.
+ * @return The value as `PixelIndex`.
+ */
 template <typename T>
 constexpr inline PixelIndex to_pixel_index(T value)
 {
   return PixelIndex{static_cast<PixelIndex::value_type>(value)};
 }
 
+/** \brief Explicitly converts the provided value to `PixelLength` type.
+ *
+ * This operation should usually be optimized away, but provides stronger type safety.
+ *
+ * @tparam T The value type.
+ * @param value The value.
+ * @return The value as `PixelLength`.
+ */
 template <typename T>
 constexpr inline PixelLength to_pixel_length(T value)
 {
