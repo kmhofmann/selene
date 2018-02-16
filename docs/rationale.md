@@ -9,6 +9,8 @@
 Why implement a library for image representation, I/O and basic processing?
 It seems that popular existing solutions are somewhat lacking.
 
+##### OpenCV's shortcomings
+
 Many C++ developers who quickly want to read or write image data for processing purposes, in particular in research,
 fall back to using [OpenCV](https://opencv.org/).
 
@@ -26,6 +28,8 @@ each point of access and is not trivial to determine from a read image. Making a
 These are actually the same type, masking an abstraction with a `void*` somewhere at the end of it.
 Good-bye type safety!
 
+##### libjpeg's/libpng's non-typesafe interfaces
+
 Another option for C++ developers to read or write image data is to use the reference implementations for common formats
 directly; e.g. [libjpeg](http://www.ijg.org/) or [libpng](http://www.libpng.org/pub/png/libpng.html).
 
@@ -35,6 +39,25 @@ Error handling even needs to be implemented using `setjmp` and `longjmp`!
 
 And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
 image representation class.
+
+##### GIL - unmaintained
+
+Other C++ image representation libraries include GIL, available either
+[from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
+
+GIL is quite well designed and shares many of its design goals with **Selene**.
+It distinguishes between images and views as separate types.
+This requires a lot of templated code, if a function should be agnostic to whether an image representation is a
+view or owns its data. **Selene**, on the other hand, has one (statically typed) image type that can be either (at the
+expense of one byte per instantiation).
+
+GIL offers image I/O routines only as an extension; overall, the reading and writing routines are quite rudimentary
+and do not allow for any finer control of parameters.
+Reading and writing from/to memory also does not seem to be supported.
+
+Most problematically, the last update to GIL was [made in 2007]](https://stlab.adobe.com/gil/). It is quite fair to
+assume that the code base in not maintained anymore. This means that no new features or bug fixes are likely to be
+developed.
 
 #### What does Selene aim to provide?
 
