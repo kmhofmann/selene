@@ -53,7 +53,8 @@ bool JPEGCompressionObject::valid() const
   return impl_->valid;
 }
 
-bool JPEGCompressionObject::set_image_info(int width, int height, int nr_channels, JPEGColorSpace in_color_space)
+bool JPEGCompressionObject::set_image_info(int width, int height, int nr_channels, int nr_bytes_per_channel,
+                                           JPEGColorSpace in_color_space)
 {
   if (setjmp(impl_->error_manager.setjmp_buffer))
   {
@@ -61,6 +62,12 @@ bool JPEGCompressionObject::set_image_info(int width, int height, int nr_channel
   }
 
   SELENE_ASSERT(in_color_space != JPEGColorSpace::Auto);
+
+  if (nr_bytes_per_channel != 1)
+  {
+    impl_->error_manager.message_log.add_message("Cannot create JPEG image where bit depth != 8 bits/channel");
+    return false;
+  }
 
   if (in_color_space == JPEGColorSpace::Unknown)
   {

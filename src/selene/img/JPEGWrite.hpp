@@ -83,7 +83,7 @@ public:
   bool error_state() const;
   const MessageLog& message_log() const;
 
-  bool set_image_info(int width, int height, int nr_channels, JPEGColorSpace in_color_space);
+  bool set_image_info(int width, int height, int nr_channels, int nr_bytes_per_channel, JPEGColorSpace in_color_space);
   bool set_compression_parameters(int quality,
                                   JPEGColorSpace color_space = JPEGColorSpace::Auto,
                                   bool optimize_coding = false);
@@ -182,12 +182,14 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
   }
 
   const auto nr_channels = img_data.nr_channels();
+  const auto nr_bytes_per_channel = img_data.nr_bytes_per_channel();
   const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto)
                                   ? detail::pixel_format_to_color_space(img_data.pixel_format())
                                   : options.in_color_space;
 
   const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()), static_cast<int>(img_data.height()),
-                                               static_cast<int>(nr_channels), in_color_space);
+                                               static_cast<int>(nr_channels), static_cast<int>(nr_bytes_per_channel),
+                                               in_color_space);
 
   if (!img_info_set)
   {
