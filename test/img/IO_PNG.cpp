@@ -286,6 +286,7 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
   const auto test_suite_path = test_suite_dir();
 
   using boost::filesystem::directory_iterator;
+
   for (directory_iterator itr(test_suite_path), itr_end = directory_iterator(); itr != itr_end; ++itr)
   {
     boost::filesystem::directory_entry& e = *itr;
@@ -325,5 +326,49 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
     }
   }
 }
+
+TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
+{
+  const auto tmp_path = sln_test::get_tmp_path();
+  sln::FileReader source(in_filename().string());
+  REQUIRE(source.is_open());
+
+  sln::PNGReader<sln::FileReader> png_reader(source, sln::PNGDecompressionOptions());
+
+  const auto header = png_reader.read_header();
+  REQUIRE(header.is_valid());
+  REQUIRE(header.width == ref_width);
+  REQUIRE(header.height == ref_height);
+  REQUIRE(header.nr_channels == 3);
+  REQUIRE(header.bit_depth == 8);
+
+  png_reader.set_decompression_options(sln::PNGDecompressionOptions());
+  const auto info = png_reader.get_output_image_info();
+  REQUIRE(info.is_valid());
+  REQUIRE(info.width == ref_width);
+  REQUIRE(info.height == ref_height);
+  REQUIRE(info.nr_channels == 3);
+  REQUIRE(info.bit_depth == 8);
+
+  auto memory_block = sln::AlignedNewAllocator::allocate(info.required_bytes(), 16);
+  sln::ImageData<> img_data(memory_block.data(), info.width, info.height, info.nr_channels, info.nr_bytes_per_channel());
+  auto res = png_reader.read_image_data(img_data);
+  REQUIRE(res);
+  source.close();
+  REQUIRE(!source.is_open());
+
+  REQUIRE(png_reader.message_log().messages().empty());
+  REQUIRE(img_data.width() == ref_width);
+  REQUIRE(img_data.height() == ref_height);
+  REQUIRE(img_data.stride_bytes() == ref_width * 3);
+  REQUIRE(img_data.nr_channels() == 3);
+  REQUIRE(img_data.nr_bytes_per_channel() == 1);
+  REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
+  REQUIRE(img_data.is_packed());
+  REQUIRE(img_data.is_view());
+  REQUIRE(!img_data.is_empty());
+  REQUIRE(img_data.is_valid());
+}
+
 
 #endif  // defined(SELENE_WITH_LIBPNG)

@@ -40,22 +40,25 @@ void set_source(JPEGDecompressionObject&, MemoryReader&);
 JPEGImageInfo read_header(JPEGDecompressionObject&);
 }  // namespace detail
 
-/** \brief JPEG header information, containing the image size, the number of channels, and the color space.
+/** \brief JPEG image information, containing the image size, the number of channels, and the color space.
  *
  */
 struct JPEGImageInfo
 {
   const PixelIndex width;  ///< Image width.
   const PixelIndex height;  ///< Image height.
-  const int nr_channels;  ///< Number of image channels.
+  const std::uint16_t nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
   explicit JPEGImageInfo(PixelIndex width_ = 0_px,
-                          PixelIndex height_ = 0_px,
-                          int nr_channels_ = 0,
-                          JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
+                         PixelIndex height_ = 0_px,
+                         std::uint16_t nr_channels_ = 0,
+                         JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
   bool is_valid() const;
+  std::uint16_t nr_bytes_per_channel() const { return 1; }
+
+  std::size_t required_bytes() const { return (width * nr_channels) * height; }
 };
 
 /** \brief JPEG decompression options.
@@ -183,6 +186,34 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
                       MessageLog* messages = nullptr,
                       const JPEGImageInfo* provided_header_info = nullptr);
 
+// TODO: DOCUMENT
+template <typename SourceType>
+class JPEGReader
+{
+public:
+  explicit JPEGReader(SourceType& source, JPEGDecompressionOptions options = JPEGDecompressionOptions());
+
+  void attach_source(SourceType& source);
+
+  JPEGImageInfo read_header();
+  void set_decompression_options(JPEGDecompressionOptions options);
+
+  JPEGImageInfo get_output_image_info();
+  ImageData<> read_image_data();
+  bool read_image_data(ImageData<>& img_data);
+
+  const MessageLog& message_log() const;
+
+private:
+  JPEGDecompressionOptions options_;
+  mutable JPEGDecompressionObject obj_;
+  mutable std::unique_ptr<detail::JPEGDecompressionCycle> cycle_;
+  bool header_read_ = false;
+  bool valid_header_read_ = false;
+
+  void reset();
+};
+
 // ----------
 // Implementation:
 
@@ -282,8 +313,8 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
 
   const auto output_info = cycle.get_output_info();
   const auto output_width = output_info.width;
-  const auto output_height = options.region.empty() ? output_info.height : options.region.height();
-  const auto output_nr_channels = static_cast<std::uint16_t>(output_info.nr_channels);
+  const auto output_height = output_info.height;
+  const auto output_nr_channels = output_info.nr_channels;
   const auto output_nr_bytes_per_channel = 1;
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
   const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
@@ -301,6 +332,125 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
 
   detail::assign_message_log(obj, messages);
   return img;
+}
+
+
+template <typename SourceType>
+JPEGReader<SourceType>::JPEGReader(SourceType& source, JPEGDecompressionOptions options)
+    : options_(options)
+{
+  detail::set_source(obj_, source);
+}
+
+template <typename SourceType>
+void JPEGReader<SourceType>::attach_source(SourceType& source)
+{
+  reset();
+  detail::set_source(obj_, source);
+}
+
+template <typename SourceType>
+JPEGImageInfo JPEGReader<SourceType>::read_header()
+{
+  const JPEGImageInfo header_info = detail::read_header(obj_);
+  header_read_ = true;
+  valid_header_read_ = header_info.is_valid();
+  return header_info;
+}
+
+template <typename SourceType>
+void JPEGReader<SourceType>::set_decompression_options(JPEGDecompressionOptions options)
+{
+  options_ = options;
+}
+
+template <typename SourceType>
+JPEGImageInfo JPEGReader<SourceType>::get_output_image_info()
+{
+  if (!header_read_)
+  {
+    read_header();
+  }
+
+  if (!valid_header_read_)
+  {
+    return JPEGImageInfo();
+  }
+
+  if (!cycle_)
+  {
+    obj_.set_decompression_parameters(options_.out_color_space);
+    cycle_ = std::make_unique<detail::JPEGDecompressionCycle>(obj_, options_.region);
+  }
+
+  return cycle_->get_output_info();
+}
+
+template <typename SourceType>
+ImageData<> JPEGReader<SourceType>::read_image_data()
+{
+  ImageData<> img_data;
+  read_image_data(img_data);
+  return img_data;
+}
+
+template <typename SourceType>
+bool JPEGReader<SourceType>::read_image_data(ImageData<>& img_data)
+{
+  if (!header_read_)
+  {
+    read_header();
+  }
+
+  if (!valid_header_read_)
+  {
+    img_data.clear();
+    return false;
+  }
+
+  const auto output_info = get_output_image_info();
+
+  if (!output_info.is_valid())
+  {
+    img_data.clear();
+    return false;
+  }
+
+  const auto output_width = output_info.width;
+  const auto output_height = output_info.height;
+  const auto output_nr_channels = output_info.nr_channels;
+  const auto output_nr_bytes_per_channel = 1;
+  const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
+  const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
+  const auto output_sample_format = SampleFormat::UnsignedInteger;
+
+  img_data.maybe_allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                          output_stride_bytes, output_pixel_format, output_sample_format);
+  auto row_pointers = get_row_pointers(img_data);
+  const auto dec_success = cycle_->decompress(row_pointers);
+
+  if (!dec_success)
+  {
+    img_data.clear();  // invalidates image data
+    return false;
+  }
+
+  reset();
+  return true;
+}
+
+template <typename SourceType>
+const MessageLog& JPEGReader<SourceType>::message_log() const
+{
+  return obj_.message_log();
+}
+
+template <typename SourceType>
+void JPEGReader<SourceType>::reset()
+{
+  cycle_.reset();
+  header_read_ = false;
+  valid_header_read_ = false;
 }
 
 }  // namespace sln

@@ -338,4 +338,47 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(compressed_data.size() > 80000);  // conservative lower bound estimate; should be around 118000
 }
 
+TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
+{
+  const auto tmp_path = sln_test::get_tmp_path();
+
+  sln::FileReader source(in_filename().string());
+  REQUIRE(source.is_open());
+  sln::JPEGReader<sln::FileReader> jpeg_reader(source, sln::JPEGDecompressionOptions());
+
+  const auto header = jpeg_reader.read_header();
+  REQUIRE(header.is_valid());
+  REQUIRE(header.width == ref_width);
+  REQUIRE(header.height == ref_height);
+  REQUIRE(header.nr_channels == 3);
+  REQUIRE(header.color_space == sln::JPEGColorSpace::YCbCr);
+
+  jpeg_reader.set_decompression_options(sln::JPEGDecompressionOptions());
+  const auto info = jpeg_reader.get_output_image_info();
+  REQUIRE(info.is_valid());
+  REQUIRE(info.width == ref_width);
+  REQUIRE(info.height == ref_height);
+  REQUIRE(info.nr_channels == 3);
+  REQUIRE(info.color_space == sln::JPEGColorSpace::RGB);
+
+  auto memory_block = sln::AlignedNewAllocator::allocate(info.required_bytes(), 16);
+  sln::ImageData<> img_data(memory_block.data(), info.width, info.height, info.nr_channels, info.nr_bytes_per_channel());
+  auto res = jpeg_reader.read_image_data(img_data);
+  REQUIRE(res);
+  source.close();
+  REQUIRE(!source.is_open());
+
+  REQUIRE(jpeg_reader.message_log().messages().empty());
+  REQUIRE(img_data.width() == ref_width);
+  REQUIRE(img_data.height() == ref_height);
+  REQUIRE(img_data.stride_bytes() == ref_width * 3);
+  REQUIRE(img_data.nr_channels() == 3);
+  REQUIRE(img_data.nr_bytes_per_channel() == 1);
+  REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
+  REQUIRE(img_data.is_packed());
+  REQUIRE(img_data.is_view());
+  REQUIRE(!img_data.is_empty());
+  REQUIRE(img_data.is_valid());
+}
+
 #endif  // defined(SELENE_WITH_LIBJPEG)

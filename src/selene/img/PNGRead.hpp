@@ -42,7 +42,7 @@ PNGImageInfo read_header(FileReader&, PNGDecompressionObject&);
 PNGImageInfo read_header(MemoryReader&, PNGDecompressionObject&);
 }  // namespace detail
 
-/** \brief JPEG header information, containing the image size, the number of channels, and the bit depth.
+/** \brief PNG image information, containing the image size, the number of channels, and the bit depth.
  *
  */
 class PNGImageInfo
@@ -50,15 +50,18 @@ class PNGImageInfo
 public:
   const PixelLength width;  ///< Image width.
   const PixelLength height;  ///< Image height.
-  const int nr_channels;  ///< Number of image channels.
-  const int bit_depth;  ///< Image bit depth (8 or 16).
+  const std::uint16_t nr_channels;  ///< Number of image channels.
+  const std::uint16_t bit_depth;  ///< Image bit depth (8 or 16).
 
   explicit PNGImageInfo(PixelLength width_ = 0_px,
-                         PixelLength height_ = 0_px,
-                         int nr_channels_ = 0,
-                         int bit_depth_ = 0);
+                        PixelLength height_ = 0_px,
+                        std::uint16_t nr_channels_ = 0,
+                        std::uint16_t bit_depth_ = 0);
 
   bool is_valid() const;
+  std::uint16_t nr_bytes_per_channel() const { return bit_depth / uint16_t{8}; }
+
+  std::size_t required_bytes() const { return (width * nr_channels * nr_bytes_per_channel()) * height; }
 };
 
 /** \brief PNG decompression options.
@@ -209,6 +212,36 @@ ImageData<> read_png(PNGDecompressionObject& obj,
                      MessageLog* messages = nullptr,
                      const PNGImageInfo* provided_header_info = nullptr);
 
+// TODO: DOCUMENT
+template <typename SourceType>
+class PNGReader
+{
+public:
+  explicit PNGReader(SourceType& source, PNGDecompressionOptions options = PNGDecompressionOptions());
+
+  void attach_source(SourceType& source);
+
+  PNGImageInfo read_header();
+  void set_decompression_options(PNGDecompressionOptions options);
+
+  PNGImageInfo get_output_image_info();
+  ImageData<> read_image_data();
+  bool read_image_data(ImageData<>& img_data);
+
+  const MessageLog& message_log() const;
+
+private:
+  SourceType* source_;
+  PNGDecompressionOptions options_;
+  mutable PNGDecompressionObject obj_;
+  mutable std::unique_ptr<detail::PNGDecompressionCycle> cycle_;
+  bool header_read_ = false;
+  bool valid_header_read_ = false;
+
+  void reset();
+};
+
+
 // ----------
 // Implementation:
 
@@ -343,6 +376,139 @@ ImageData<> read_png(PNGDecompressionObject& obj,
 
   detail::assign_message_log(obj, messages);
   return img;
+}
+
+
+
+
+
+
+template <typename SourceType>
+PNGReader<SourceType>::PNGReader(SourceType& source, PNGDecompressionOptions options)
+    : source_(&source), options_(options)
+{
+  detail::set_source(obj_, source);
+}
+
+template <typename SourceType>
+void PNGReader<SourceType>::attach_source(SourceType& source)
+{
+  reset();
+  source_ = &source;
+  detail::set_source(obj_, source);
+}
+
+template <typename SourceType>
+PNGImageInfo PNGReader<SourceType>::read_header()
+{
+  const PNGImageInfo header_info = detail::read_header(*source_, obj_);
+  header_read_ = true;
+  valid_header_read_ = header_info.is_valid();
+  return header_info;
+}
+
+template <typename SourceType>
+void PNGReader<SourceType>::set_decompression_options(PNGDecompressionOptions options)
+{
+  options_ = options;
+}
+
+template <typename SourceType>
+PNGImageInfo PNGReader<SourceType>::get_output_image_info()
+{
+  if (!header_read_)
+  {
+    read_header();
+  }
+
+  if (!valid_header_read_)
+  {
+    return PNGImageInfo();
+  }
+
+  if (!cycle_)
+  {
+    const bool pars_set = obj_.set_decompression_parameters(
+        options_.force_bit_depth_8, options_.set_background, options_.strip_alpha_channel, options_.swap_alpha_channel,
+        options_.set_bgr, options_.invert_alpha_channel, options_.invert_monochrome, options_.convert_gray_to_rgb,
+        options_.convert_rgb_to_gray);
+
+    if (!pars_set)
+    {
+      return PNGImageInfo();
+    }
+
+    cycle_ = std::make_unique<detail::PNGDecompressionCycle>(obj_);
+  }
+
+  return cycle_->get_output_info();
+}
+
+template <typename SourceType>
+ImageData<> PNGReader<SourceType>::read_image_data()
+{
+  ImageData<> img_data;
+  read_image_data(img_data);
+  return img_data;
+}
+
+template <typename SourceType>
+bool PNGReader<SourceType>::read_image_data(ImageData<>& img_data)
+{
+  if (!header_read_)
+  {
+    read_header();
+  }
+
+  if (!valid_header_read_)
+  {
+    img_data.clear();
+    return false;
+  }
+
+  const auto output_info = get_output_image_info();
+
+  if (!output_info.is_valid())
+  {
+    img_data.clear();
+    return false;
+  }
+
+  const auto output_width = output_info.width;
+  const auto output_height = output_info.height;
+  const auto output_nr_channels = output_info.nr_channels;
+  const auto output_nr_bytes_per_channel = output_info.nr_bytes_per_channel();
+  const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
+  const auto output_pixel_format = obj_.get_pixel_format();
+  const auto output_sample_format = SampleFormat::UnsignedInteger;
+
+  img_data.maybe_allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                          output_stride_bytes, output_pixel_format, output_sample_format);
+  auto row_pointers = get_row_pointers(img_data);
+  const auto dec_success = cycle_->decompress(row_pointers);
+
+  if (!dec_success)
+  {
+    img_data.clear();  // invalidates image data
+    return false;
+  }
+
+  reset();
+  return true;
+}
+
+template <typename SourceType>
+const MessageLog& PNGReader<SourceType>::message_log() const
+{
+  return obj_.message_log();
+}
+
+template <typename SourceType>
+void PNGReader<SourceType>::reset()
+{
+  cycle_.reset();
+  header_read_ = false;
+  valid_header_read_ = false;
 }
 
 }  // namespace sln

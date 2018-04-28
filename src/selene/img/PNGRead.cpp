@@ -27,7 +27,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param bit_depth_ The image bit depth (8 or 16).
  */
-PNGImageInfo::PNGImageInfo(PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_)
+PNGImageInfo::PNGImageInfo(PixelLength width_, PixelLength height_, std::uint16_t nr_channels_, std::uint16_t bit_depth_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_)
 {
 }
@@ -388,10 +388,10 @@ PNGImageInfo PNGDecompressionCycle::get_output_info() const
   const auto nr_channels = png_get_channels(png_ptr, info_ptr);
   const auto bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
-  SELENE_FORCED_ASSERT(png_get_rowbytes(png_ptr, info_ptr) == width * nr_channels * (bit_depth >> 3));
+  SELENE_FORCED_ASSERT(png_get_rowbytes(png_ptr, info_ptr) == width * nr_channels * (bit_depth / 8));
 
-  return PNGImageInfo{static_cast<PixelLength>(width), static_cast<PixelLength>(height), static_cast<int>(nr_channels),
-                      static_cast<int>(bit_depth)};
+  return PNGImageInfo{static_cast<PixelLength>(width), static_cast<PixelLength>(height),
+                      static_cast<std::uint16_t>(nr_channels), static_cast<std::uint16_t>(bit_depth)};
 }
 
 bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)

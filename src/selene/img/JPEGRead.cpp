@@ -21,7 +21,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
-JPEGImageInfo::JPEGImageInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
+JPEGImageInfo::JPEGImageInfo(PixelIndex width_, PixelIndex height_, std::uint16_t nr_channels_, JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }
@@ -131,7 +131,7 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
   const auto width = PixelIndex(cinfo.output_width);
   const auto height = region_.empty() ? PixelIndex(cinfo.output_height) : PixelIndex(region_.height());
   const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
-  return JPEGImageInfo{width, height, cinfo.out_color_components, out_color_space};
+  return JPEGImageInfo{width, height, static_cast<std::uint16_t>(cinfo.out_color_components), out_color_space};
 }
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)

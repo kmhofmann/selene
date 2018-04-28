@@ -152,6 +152,14 @@ public:
                 bool force_allocation = false,
                 bool allow_view_reallocation = true);
 
+  void maybe_allocate(PixelLength width,
+                      PixelLength height,
+                      std::uint16_t nr_channels,
+                      std::uint16_t nr_bytes_per_channel,
+                      Stride stride_bytes = Stride{0},
+                      PixelFormat pixel_format = PixelFormat::Unknown,
+                      SampleFormat sample_format = SampleFormat::Unknown);
+
   void set_view(std::uint8_t* data,
                 PixelLength width,
                 PixelLength height,
@@ -210,7 +218,7 @@ public:
   PixelType& pixel(PixelIndex x, PixelIndex y) noexcept;
 
 private:
-  bool owns_memory_ = false;
+  bool owns_memory_ = true;
 
   constexpr static std::size_t default_base_alignment_ = 16;
 
@@ -605,6 +613,52 @@ inline void ImageData<ImageDataStorage::Modifiable>::allocate(PixelLength width,
            sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
 }
 
+/** \brief Resizes the allocated image data to exactly fit an image of size (width x height), with user-defined row
+ * stride, if (and only if) the existing width, height, nr of channels, or nr of bytes per channel differ
+ * (disregarding the existing stride).
+ *
+ * No memory (re)allocation will happen, if the specified `width`, `height`, `nr_channels`, `nr_bytes_per_channel`
+ * parameters already match the internal state.
+ *
+ * If an allocation takes place, the row stride (in bytes) is chosen to be at least
+ * `width * nr_channels * nr_bytes_per_channel`, or the supplied value.
+ *
+ * If the existing ImageData instance is a view (`is_view()`), and the pointed-to memory region would need to be
+ * changed in size to conform to the desired parameters, a `std::runtime_error` exception will be thrown (respecting
+ * the strong exception guarantee).
+ *
+ * Postconditions: `!is_view() && (stride_bytes() >= width() * nr_channels * nr_bytes_per_channel)`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param width The desired image width.
+ * @param height The desired image height.
+ * @param nr_channels The desired number of channels per pixel element.
+ * @param nr_bytes_per_channel The desired number of bytes stored per channel.
+ * @param stride_bytes The desired row stride in bytes, if (and only if) an allocation takes place.
+ * @param pixel_format The pixel format (semantic tag).
+ * @param sample_format The sample format (semantic tag).
+ */
+inline void ImageData<ImageDataStorage::Modifiable>::maybe_allocate(PixelLength width,
+                                                                    PixelLength height,
+                                                                    std::uint16_t nr_channels,
+                                                                    std::uint16_t nr_bytes_per_channel,
+                                                                    Stride stride_bytes,
+                                                                    PixelFormat pixel_format,
+                                                                    SampleFormat sample_format)
+{
+  if (width_ == width && height_ == height && nr_channels_ == nr_channels
+      && nr_bytes_per_channel_ == nr_bytes_per_channel)
+  {
+    return;
+  }
+
+  constexpr auto base_alignment_bytes = ImageData<ImageDataStorage::Modifiable>::default_base_alignment_;
+  constexpr auto shrink_to_fit = true;
+  constexpr auto force_allocation = false;
+  constexpr auto allow_view_reallocation = false;
+  allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, base_alignment_bytes, pixel_format, sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
+}
+
 /** \brief Sets the image data to be a view onto non-owned external memory.
  *
  * The row stride (in bytes) is chosen to be at least `nr_bytes_per_channel * nr_channels * width`, or the supplied
@@ -989,7 +1043,12 @@ inline void ImageData<ImageDataStorage::Modifiable>::allocate_bytes(std::size_t 
 inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes()
 {
   SELENE_ASSERT(owns_memory_);
-  AlignedNewAllocator::deallocate(data_);
+
+  if (data_)
+  {
+    AlignedNewAllocator::deallocate(data_);
+    SELENE_ASSERT(data_ == nullptr);
+  }
 }
 
 inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes_if_owned()
@@ -1003,7 +1062,7 @@ inline void ImageData<ImageDataStorage::Modifiable>::deallocate_bytes_if_owned()
 inline void ImageData<ImageDataStorage::Modifiable>::reset()
 {
   ImageDataBase<std::uint8_t*>::reset();
-  owns_memory_ = false;
+  owns_memory_ = true;
 }
 
 inline MemoryBlock<AlignedNewAllocator> ImageData<ImageDataStorage::Modifiable>::relinquish_data_ownership()

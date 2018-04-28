@@ -1128,14 +1128,14 @@ void Image<PixelType>::allocate(PixelLength width,
  * or the supplied value.
  *
  * If the existing image is a view (`is_view()`), and the pointed-to memory region would need to be changed in size to
- * conform to the desires `width` and `height` parameters, a `std::runtime_error` exception will be thrown (respecting
+ * conform to the desired `width` and `height` parameters, a `std::runtime_error` exception will be thrown (respecting
  * the strong exception guarantee).
  *
  * Postconditions: `!is_view() && (stride_bytes() >= width() * PixelTraits::nr_bytes)`.
  *
  * @tparam PixelType The pixel type.
- * @param width The new image width.
- * @param height The new image height.
+ * @param width The desired image width.
+ * @param height The desired image height.
  * @param stride_bytes The desired row stride in bytes, if (and only if) an allocation takes place.
  */
 template <typename PixelType>
