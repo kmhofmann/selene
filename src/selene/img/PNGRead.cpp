@@ -4,15 +4,19 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
+#include <png.h>
+
 #include <selene/img/PNGRead.hpp>
 #include <selene/img/detail/PNGDetail.hpp>
-
-#include <png.h>
 
 #include <array>
 #include <cstdint>
 #include <cstdio>
 #include <stdexcept>
+
+#if (PNG_LIBPNG_VER_MAJOR > 1) || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 6)
+#define LIBPNG16_AND_UP
+#endif
 
 namespace sln {
 
@@ -121,7 +125,11 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
   // png_size_t rowbytes = 0;
   // png_const_bytep signature = 0;
 
+#if (defined LIBPNG16_AND_UP)
   double screen_gamma = PNG_DEFAULT_sRGB;  // TODO: Or supply user-defined value.
+#else
+  double screen_gamma = 2.2;
+#endif
 
   // Unfortunately, no more variable initializations after this line:
   if (setjmp(png_jmpbuf(png_ptr)))
@@ -141,8 +149,13 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
 
   if (force_bit_depth_8 && bit_depth == 16)
   {
+#if (defined PNG_READ_SCALE_16_TO_8_SUPPORTED)
     png_set_scale_16(png_ptr);
+#else
+    png_error(png_ptr, "Conversion from 16 to 8 bit not supported in this libpng version");
+#endif
   }
+
 
   switch (color_type)
   {
@@ -217,7 +230,11 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
 
   if (png_get_sRGB(png_ptr, info_ptr, &intent) != 0)
   {
+#if (defined LIBPNG16_AND_UP)
     png_set_gamma(png_ptr, screen_gamma, PNG_DEFAULT_sRGB);
+#else
+    png_set_gamma(png_ptr, screen_gamma, 2.2);
+#endif
   }
   else
   {
@@ -282,8 +299,15 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
 
   if (convert_rgb_to_gray && (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA))
   {
+#if (defined LIBPNG16_AND_UP)
     constexpr int error_action = PNG_ERROR_ACTION_NONE;  // silently do the conversion
     png_set_rgb_to_gray(png_ptr, error_action, PNG_RGB_TO_GRAY_DEFAULT, PNG_RGB_TO_GRAY_DEFAULT);
+#else
+    // libpng 1.2 did not define the above constants yet.
+    // The resulting grayscale conversion may differ from later implementations.
+    constexpr int error_action = 1;  // silently do the conversion
+    png_set_rgb_to_gray(png_ptr, error_action, -1, -1);
+#endif
 
     if (impl_->pixel_format_ == PixelFormat::RGB)
     {
@@ -446,7 +470,12 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
   auto info_ptr = obj.impl_->info_ptr;
   auto& message_log = obj.impl_->error_manager.message_log;
 
+#if (defined LIBPNG16_AND_UP)
   auto signature_correct = png_sig_cmp(header_bytes.data(), 0, 8);
+#else
+  // libpng 1.2 (and possibly above) is not const correct
+  auto signature_correct = png_sig_cmp(const_cast<unsigned char*>(header_bytes.data()), 0, 8);
+#endif
   bool error = eof || (signature_correct != 0);
   png_set_sig_bytes(png_ptr, 8);
 

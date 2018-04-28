@@ -4,6 +4,8 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
+#include <png.h> // to check PNG_LIBPNG_VER_MAJOR and PNG_LIBPNG_VER_MINOR below
+
 #include <catch.hpp>
 
 #include <cstdlib>
@@ -168,7 +170,9 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   {
     const auto x = sln::PixelIndex(pix[i][0]);
     const auto y = sln::PixelIndex(pix[i][1]);
+#if (PNG_LIBPNG_VER_MAJOR > 1) || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 6)
     REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(pix[i][5])));
+#endif
   }
 
   sln::FileWriter sink((tmp_path / "test_duck_gray.png").string());

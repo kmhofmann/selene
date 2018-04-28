@@ -4,11 +4,11 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
+#include <png.h>
+
 #include <selene/base/Utils.hpp>
 #include <selene/img/PNGWrite.hpp>
 #include <selene/img/detail/PNGDetail.hpp>
-
-#include <png.h>
 
 #include <array>
 #include <cstdint>

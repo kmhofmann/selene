@@ -24,7 +24,6 @@
 #include <selene/io/MemoryReader.hpp>
 
 #include <array>
-#include <csetjmp>
 #include <cstdio>
 #include <memory>
 

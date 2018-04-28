@@ -17,7 +17,7 @@ else()
     message(WARNING "Building without libjpeg support.")
 endif()
 
-find_package(PNG 1.6)
+find_package(PNG)
 if (PNG_FOUND)
     message("Building with libpng support.")
 else()
