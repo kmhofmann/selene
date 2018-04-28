@@ -21,7 +21,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
-JPEGHeaderInfo::JPEGHeaderInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
+JPEGImageInfo::JPEGImageInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }
@@ -30,7 +30,7 @@ JPEGHeaderInfo::JPEGHeaderInfo(PixelIndex width_, PixelIndex height_, int nr_cha
  *
  * @return True, if the header information is valid; false otherwise.
  */
-bool JPEGHeaderInfo::is_valid() const
+bool JPEGImageInfo::is_valid() const
 {
   return width > 0 && height > 0 && nr_channels > 0;
 }
@@ -63,11 +63,11 @@ bool JPEGDecompressionObject::valid() const
   return impl_->valid;
 }
 
-JPEGHeaderInfo JPEGDecompressionObject::get_header_info() const
+JPEGImageInfo JPEGDecompressionObject::get_header_info() const
 {
   const auto color_space = detail::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
-  return JPEGHeaderInfo(PixelIndex(impl_->cinfo.image_width), PixelIndex(impl_->cinfo.image_height),
-                        impl_->cinfo.num_components, color_space);
+  return JPEGImageInfo(PixelIndex(impl_->cinfo.image_width), PixelIndex(impl_->cinfo.image_height),
+                       impl_->cinfo.num_components, color_space);
 }
 
 void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)
@@ -96,32 +96,42 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
 {
   auto& cinfo = obj_.impl_->cinfo;
 
+  if (!region_.empty())
+  {
+    region_.sanitize(PixelLength{cinfo.output_width}, PixelLength{cinfo.output_height});
+  }
+
   jpeg_start_decompress(&cinfo);
 
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
-  if (!region_.empty() && region_.width() < cinfo.output_width)
+  if (!region_.empty())
   {
     // Enable partial decompression of each scanline
     JDIMENSION xoffset = region_.x0();
     JDIMENSION width = region_.width();
     jpeg_crop_scanline(&cinfo, &xoffset, &width);
-    region_ = BoundingBox(PixelIndex(xoffset), region_.y0(), PixelIndex(width), region_.height());
   }
 #endif
 }
 
 JPEGDecompressionCycle::~JPEGDecompressionCycle()
 {
-  jpeg_finish_decompress(&obj_.impl_->cinfo);
+  if (!finished_or_aborted_)
+  {
+    auto& cinfo = obj_.impl_->cinfo;
+    jpeg_abort_decompress(&cinfo);
+  }
 }
 
-JPEGOutputInfo JPEGDecompressionCycle::get_output_info() const
+JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
 {
   auto& cinfo = obj_.impl_->cinfo;
   SELENE_FORCED_ASSERT(cinfo.out_color_components == cinfo.output_components);
+
+  const auto width = PixelIndex(cinfo.output_width);
+  const auto height = region_.empty() ? PixelIndex(cinfo.output_height) : PixelIndex(region_.height());
   const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
-  return JPEGOutputInfo(PixelIndex(cinfo.output_width), PixelIndex(cinfo.output_height), cinfo.out_color_components,
-                        out_color_space);
+  return JPEGImageInfo{width, height, cinfo.out_color_components, out_color_space};
 }
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
@@ -150,10 +160,13 @@ bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
   jpeg_skip_scanlines(&cinfo, static_cast<JDIMENSION>(skip_lines_bottom));
 #endif
 
+  jpeg_finish_decompress(&obj_.impl_->cinfo);
+  finished_or_aborted_ = true;
   return true;
 
 failure_state:
   jpeg_abort_decompress(&cinfo);
+  finished_or_aborted_ = true;
   return false;
 }
 
@@ -190,7 +203,7 @@ failure_state:;
 }
 
 
-JPEGHeaderInfo read_header(JPEGDecompressionObject& obj)
+JPEGImageInfo read_header(JPEGDecompressionObject& obj)
 {
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
@@ -201,7 +214,7 @@ JPEGHeaderInfo read_header(JPEGDecompressionObject& obj)
   return obj.get_header_info();
 
 failure_state:
-  return JPEGHeaderInfo();  // invalid header info
+  return JPEGImageInfo();  // invalid header info
 }
 
 }  // namespace detail

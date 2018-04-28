@@ -23,7 +23,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param bit_depth_ The image bit depth (8 or 16).
  */
-PNGHeaderInfo::PNGHeaderInfo(PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_)
+PNGImageInfo::PNGImageInfo(PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_)
 {
 }
@@ -32,7 +32,7 @@ PNGHeaderInfo::PNGHeaderInfo(PixelLength width_, PixelLength height_, int nr_cha
  *
  * @return True, if the header information is valid; false otherwise.
  */
-bool PNGHeaderInfo::is_valid() const
+bool PNGImageInfo::is_valid() const
 {
   return width > 0 && height > 0 && nr_channels > 0 && bit_depth > 0;
 }
@@ -323,18 +323,7 @@ const MessageLog& PNGDecompressionObject::message_log() const
   return impl_->error_manager.message_log;
 }
 
-
 namespace detail {
-
-PNGOutputInfo::PNGOutputInfo() : width(0), height(0), nr_channels(0), bit_depth(0), row_bytes(0)
-{
-}
-
-PNGOutputInfo::PNGOutputInfo(
-    PixelLength width_, PixelLength height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_)
-    : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_), row_bytes(row_bytes_)
-{
-}
 
 PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_(obj), error_state_(false)
 {
@@ -348,16 +337,8 @@ PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_
 
   png_read_update_info(png_ptr, info_ptr);
 
-  output_info_ = PNGOutputInfo(static_cast<PixelLength>(png_get_image_width(png_ptr, info_ptr)),
-                               static_cast<PixelLength>(png_get_image_height(png_ptr, info_ptr)),
-                               static_cast<int>(png_get_channels(png_ptr, info_ptr)),
-                               static_cast<int>(png_get_bit_depth(png_ptr, info_ptr)),
-                               static_cast<std::size_t>(png_get_rowbytes(png_ptr, info_ptr)));
-
-  // color_type = png_get_color_type(png_ptr, info_ptr);
-
-  if (output_info_.bit_depth != 8
-      && output_info_.bit_depth != 16)  // bit depths 1, 2, 4 should be converted using above transformation
+  if (png_get_bit_depth(png_ptr, info_ptr) != 8
+      && png_get_bit_depth(png_ptr, info_ptr) != 16)  // bit depths 1, 2, 4 should be already converted
   {
     error_state_ = true;
   }
@@ -373,9 +354,20 @@ bool PNGDecompressionCycle::error_state() const
   return error_state_;
 }
 
-PNGOutputInfo PNGDecompressionCycle::get_output_info() const
+PNGImageInfo PNGDecompressionCycle::get_output_info() const
 {
-  return output_info_;
+  auto png_ptr = obj_.impl_->png_ptr;
+  auto info_ptr = obj_.impl_->info_ptr;
+
+  const auto width = png_get_image_width(png_ptr, info_ptr);
+  const auto height = png_get_image_height(png_ptr, info_ptr);
+  const auto nr_channels = png_get_channels(png_ptr, info_ptr);
+  const auto bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+
+  SELENE_FORCED_ASSERT(png_get_rowbytes(png_ptr, info_ptr) == width * nr_channels * (bit_depth >> 3));
+
+  return PNGImageInfo{static_cast<PixelLength>(width), static_cast<PixelLength>(height), static_cast<int>(nr_channels),
+                      static_cast<int>(bit_depth)};
 }
 
 bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)
@@ -448,7 +440,7 @@ void set_source(PNGDecompressionObject& obj, MemoryReader& source)
 failure_state:;
 }
 
-PNGHeaderInfo read_header_info(PNGDecompressionObject& obj, const std::array<std::uint8_t, 8>& header_bytes, bool eof)
+PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std::uint8_t, 8>& header_bytes, bool eof)
 {
   auto png_ptr = obj.impl_->png_ptr;
   auto info_ptr = obj.impl_->info_ptr;
@@ -461,7 +453,7 @@ PNGHeaderInfo read_header_info(PNGDecompressionObject& obj, const std::array<std
   if (error)
   {
     message_log.add_message("Source is not a PNG file.");
-    return PNGHeaderInfo();
+    return PNGImageInfo();
   }
 
   PixelIndex width = 0_px;
@@ -481,13 +473,13 @@ PNGHeaderInfo read_header_info(PNGDecompressionObject& obj, const std::array<std
   bit_depth = static_cast<int>(png_get_bit_depth(png_ptr, info_ptr));
   nr_channels = static_cast<int>(png_get_channels(png_ptr, info_ptr));
 
-  return PNGHeaderInfo(width, height, nr_channels, bit_depth);
+  return PNGImageInfo(width, height, nr_channels, bit_depth);
 
 failure_state:
-  return PNGHeaderInfo();
+  return PNGImageInfo();
 }
 
-PNGHeaderInfo read_header(FileReader& source, PNGDecompressionObject& obj)
+PNGImageInfo read_header(FileReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
   std::array<std::uint8_t, 8> header_bytes;
@@ -496,7 +488,7 @@ PNGHeaderInfo read_header(FileReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
-PNGHeaderInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
+PNGImageInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
   std::array<std::uint8_t, 8> header_bytes;

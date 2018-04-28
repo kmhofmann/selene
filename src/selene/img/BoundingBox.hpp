@@ -11,7 +11,7 @@
 
 namespace sln {
 
-/** \brief Represents an axis-aligned, rectangular bounding box.
+/** \brief Represents an axis-aligned, rectangular bounding box, to describe a sub-part of an image.
  *
  * Represents a bounding box by its top-left corner and its width and height parameters.
  */
@@ -32,6 +32,7 @@ public:
   PixelIndex y_end() const noexcept;
 
   bool empty() const noexcept;
+  void sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept;
 
 private:
   PixelIndex x0_;
@@ -95,15 +96,6 @@ inline PixelLength BoundingBox::height() const noexcept
   return height_;
 }
 
-/** Returns true, if the bounding box has 0 width or height; false otherwise.
- *
- * \return True, if box is empty, false otherwise.
- */
-inline bool BoundingBox::empty() const noexcept
-{
-  return width_ * height_ == 0;
-}
-
 /** Returns the x-coordinate of the bottom-right corner, i.e. the x-coordinate of the right box side.
  *
  * \return x-coordinate of the bottom-right corner.
@@ -138,6 +130,29 @@ inline PixelIndex BoundingBox::x_end() const noexcept
 inline PixelIndex BoundingBox::y_end() const noexcept
 {
   return PixelIndex(y0_ + height_);
+}
+
+/** Returns true, if the bounding box has 0 width or height; false otherwise.
+ *
+ * \return True, if box is empty, false otherwise.
+ */
+inline bool BoundingBox::empty() const noexcept
+{
+  return width_ * height_ == 0;
+}
+
+/** Sanitizes bounding box w.r.t. given maximum image extents.
+ *
+ * Modifies bounding box width and height such that the resulting bounding box does not go outside of the maximum
+ * image bounds.
+ *
+ * @param max_img_width Maximum image width.
+ * @param max_img_height Maximum image height.
+ */
+inline void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept
+{
+  width_ = std::min(width_, PixelLength{max_img_width - x0_});
+  height_ = std::min(height_, PixelLength{max_img_height - y0_});
 }
 
 }  // namespace sln

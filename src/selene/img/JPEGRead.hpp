@@ -30,27 +30,27 @@
 
 namespace sln {
 
-struct JPEGHeaderInfo;
+struct JPEGImageInfo;
 class JPEGDecompressionObject;
 
 namespace detail {
 class JPEGDecompressionCycle;
 void set_source(JPEGDecompressionObject&, FileReader&);
 void set_source(JPEGDecompressionObject&, MemoryReader&);
-JPEGHeaderInfo read_header(JPEGDecompressionObject&);
+JPEGImageInfo read_header(JPEGDecompressionObject&);
 }  // namespace detail
 
 /** \brief JPEG header information, containing the image size, the number of channels, and the color space.
  *
  */
-struct JPEGHeaderInfo
+struct JPEGImageInfo
 {
   const PixelIndex width;  ///< Image width.
   const PixelIndex height;  ///< Image height.
   const int nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
-  explicit JPEGHeaderInfo(PixelIndex width_ = 0_px,
+  explicit JPEGImageInfo(PixelIndex width_ = 0_px,
                           PixelIndex height_ = 0_px,
                           int nr_channels_ = 0,
                           JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
@@ -99,7 +99,7 @@ public:
   bool error_state() const;
   const MessageLog& message_log() const;
 
-  JPEGHeaderInfo get_header_info() const;
+  JPEGImageInfo get_header_info() const;
   void set_decompression_parameters(JPEGColorSpace out_color_space = JPEGColorSpace::Auto);
   /// \endcond
 
@@ -110,7 +110,7 @@ private:
   friend class detail::JPEGDecompressionCycle;
   friend void detail::set_source(JPEGDecompressionObject&, FileReader&);
   friend void detail::set_source(JPEGDecompressionObject&, MemoryReader&);
-  friend JPEGHeaderInfo detail::read_header(JPEGDecompressionObject&);
+  friend JPEGImageInfo detail::read_header(JPEGDecompressionObject&);
 };
 
 
@@ -123,7 +123,7 @@ private:
  * @return A JPEG header info object.
  */
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind = false, MessageLog* messages = nullptr);
+JPEGImageInfo read_jpeg_header(SourceType&& source, bool rewind = false, MessageLog* messages = nullptr);
 
 /** \brief Reads header of JPEG image data stream.
  *
@@ -137,7 +137,7 @@ JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind = false, Messag
  * @return A JPEG header info object.
  */
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj,
+JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj,
                                 SourceType&& source,
                                 bool rewind = false,
                                 MessageLog* messages = nullptr);
@@ -181,25 +181,12 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
                       SourceType&& source,
                       JPEGDecompressionOptions options = JPEGDecompressionOptions(),
                       MessageLog* messages = nullptr,
-                      const JPEGHeaderInfo* provided_header_info = nullptr);
+                      const JPEGImageInfo* provided_header_info = nullptr);
 
 // ----------
 // Implementation:
 
 namespace detail {
-
-struct JPEGOutputInfo
-{
-  const PixelIndex width;
-  const PixelIndex height;
-  const int nr_channels;
-  const JPEGColorSpace color_space;
-
-  JPEGOutputInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, JPEGColorSpace color_space_)
-      : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
-  {
-  }
-};
 
 class JPEGDecompressionCycle
 {
@@ -208,19 +195,20 @@ public:
 
   ~JPEGDecompressionCycle();
 
-  JPEGOutputInfo get_output_info() const;
+  JPEGImageInfo get_output_info() const;
   bool decompress(RowPointers& row_pointers);
 
 private:
   JPEGDecompressionObject& obj_;
   BoundingBox region_;
+  bool finished_or_aborted_ = false;
 };
 
 }  // namespace detail
 
 
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind, MessageLog* messages)
+JPEGImageInfo read_jpeg_header(SourceType&& source, bool rewind, MessageLog* messages)
 {
   JPEGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
@@ -228,7 +216,7 @@ JPEGHeaderInfo read_jpeg_header(SourceType&& source, bool rewind, MessageLog* me
 }
 
 template <typename SourceType>
-JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
+JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
 {
   const auto src_pos = source.position();
 
@@ -246,7 +234,7 @@ JPEGHeaderInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& sourc
   if (obj.error_state())
   {
     scope_exit();
-    return JPEGHeaderInfo();
+    return JPEGImageInfo();
   }
 
   const auto header_info = detail::read_header(obj);
@@ -267,7 +255,7 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
                       SourceType&& source,
                       JPEGDecompressionOptions options,
                       MessageLog* messages,
-                      const JPEGHeaderInfo* provided_header_info)
+                      const JPEGImageInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -280,7 +268,7 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
     }
   }
 
-  const auto header_info = provided_header_info ? *provided_header_info : detail::read_header(obj);
+  const JPEGImageInfo header_info = provided_header_info ? *provided_header_info : detail::read_header(obj);
 
   if (!header_info.is_valid())
   {

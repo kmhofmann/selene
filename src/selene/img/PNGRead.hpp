@@ -30,7 +30,7 @@
 
 namespace sln {
 
-class PNGHeaderInfo;
+class PNGImageInfo;
 struct PNGDecompressionOptions;
 class PNGDecompressionObject;
 
@@ -38,15 +38,15 @@ namespace detail {
 class PNGDecompressionCycle;
 void set_source(PNGDecompressionObject&, FileReader&);
 void set_source(PNGDecompressionObject&, MemoryReader&);
-PNGHeaderInfo read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
-PNGHeaderInfo read_header(FileReader&, PNGDecompressionObject&);
-PNGHeaderInfo read_header(MemoryReader&, PNGDecompressionObject&);
+PNGImageInfo read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
+PNGImageInfo read_header(FileReader&, PNGDecompressionObject&);
+PNGImageInfo read_header(MemoryReader&, PNGDecompressionObject&);
 }  // namespace detail
 
 /** \brief JPEG header information, containing the image size, the number of channels, and the bit depth.
  *
  */
-class PNGHeaderInfo
+class PNGImageInfo
 {
 public:
   const PixelLength width;  ///< Image width.
@@ -54,7 +54,7 @@ public:
   const int nr_channels;  ///< Number of image channels.
   const int bit_depth;  ///< Image bit depth (8 or 16).
 
-  explicit PNGHeaderInfo(PixelLength width_ = 0_px,
+  explicit PNGImageInfo(PixelLength width_ = 0_px,
                          PixelLength height_ = 0_px,
                          int nr_channels_ = 0,
                          int bit_depth_ = 0);
@@ -138,7 +138,7 @@ private:
   friend class detail::PNGDecompressionCycle;
   friend void detail::set_source(PNGDecompressionObject&, FileReader&);
   friend void detail::set_source(PNGDecompressionObject&, MemoryReader&);
-  friend PNGHeaderInfo detail::read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
+  friend PNGImageInfo detail::read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
 };
 
 /** \brief Reads header of PNG image data stream.
@@ -150,7 +150,7 @@ private:
  * @return A PNG header info object.
  */
 template <typename SourceType>
-PNGHeaderInfo read_png_header(SourceType&& source, bool rewind = false, MessageLog* messages = nullptr);
+PNGImageInfo read_png_header(SourceType&& source, bool rewind = false, MessageLog* messages = nullptr);
 
 /** \brief Reads header of PNG image data stream.
  *
@@ -164,7 +164,7 @@ PNGHeaderInfo read_png_header(SourceType&& source, bool rewind = false, MessageL
  * @return A PNG header info object.
  */
 template <typename SourceType>
-PNGHeaderInfo read_png_header(PNGDecompressionObject& obj,
+PNGImageInfo read_png_header(PNGDecompressionObject& obj,
                               SourceType&& source,
                               bool rewind = false,
                               MessageLog* messages = nullptr);
@@ -208,24 +208,12 @@ ImageData<> read_png(PNGDecompressionObject& obj,
                      SourceType&& source,
                      PNGDecompressionOptions options = PNGDecompressionOptions(),
                      MessageLog* messages = nullptr,
-                     const PNGHeaderInfo* provided_header_info = nullptr);
+                     const PNGImageInfo* provided_header_info = nullptr);
 
 // ----------
 // Implementation:
 
 namespace detail {
-
-struct PNGOutputInfo
-{
-  PixelIndex width;
-  PixelIndex height;
-  int nr_channels;
-  int bit_depth;
-  std::size_t row_bytes;
-
-  PNGOutputInfo();
-  PNGOutputInfo(PixelIndex width_, PixelIndex height_, int nr_channels_, int bit_depth_, std::size_t row_bytes_);
-};
 
 class PNGDecompressionCycle
 {
@@ -234,12 +222,11 @@ public:
   ~PNGDecompressionCycle() = default;
 
   bool error_state() const;
-  PNGOutputInfo get_output_info() const;
+  PNGImageInfo get_output_info() const;
   bool decompress(RowPointers& row_pointers);
 
 private:
   PNGDecompressionObject& obj_;
-  PNGOutputInfo output_info_;
   bool error_state_;
 };
 
@@ -247,7 +234,7 @@ private:
 
 
 template <typename SourceType>
-PNGHeaderInfo read_png_header(SourceType&& source, bool rewind, MessageLog* messages)
+PNGImageInfo read_png_header(SourceType&& source, bool rewind, MessageLog* messages)
 {
   PNGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
@@ -255,7 +242,7 @@ PNGHeaderInfo read_png_header(SourceType&& source, bool rewind, MessageLog* mess
 }
 
 template <typename SourceType>
-PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
+PNGImageInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, bool rewind, MessageLog* messages)
 {
   const auto src_pos = source.position();
 
@@ -273,7 +260,7 @@ PNGHeaderInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, 
   if (obj.error_state())
   {
     scope_exit();
-    return PNGHeaderInfo();
+    return PNGImageInfo();
   }
 
   const auto header_info = detail::read_header(source, obj);
@@ -294,7 +281,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
                      SourceType&& source,
                      PNGDecompressionOptions options,
                      MessageLog* messages,
-                     const PNGHeaderInfo* provided_header_info)
+                     const PNGImageInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -307,7 +294,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
     }
   }
 
-  const auto header_info = provided_header_info ? *provided_header_info : detail::read_header(source, obj);
+  const PNGImageInfo header_info = provided_header_info ? *provided_header_info : detail::read_header(source, obj);
 
   if (!header_info.is_valid())
   {
@@ -340,8 +327,6 @@ ImageData<> read_png(PNGDecompressionObject& obj,
   const auto output_nr_channels = output_info.nr_channels;
   const auto output_bit_depth = output_info.bit_depth;
   const auto output_nr_bytes_per_channel = output_bit_depth >> 3;
-  const auto output_row_bytes = output_info.row_bytes;
-  SELENE_FORCED_ASSERT(output_row_bytes == output_width * output_nr_channels * output_nr_bytes_per_channel);
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
   const auto output_pixel_format = obj.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;

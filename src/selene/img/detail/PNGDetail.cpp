@@ -28,4 +28,4 @@ void warning_handler(png_structp png_ptr, const char* msg)
 }  // namespace detail
 }  // namespace sln
 
-#endif   // defined(SELENE_WITH_LIBPNG)
+#endif  // defined(SELENE_WITH_LIBPNG)
