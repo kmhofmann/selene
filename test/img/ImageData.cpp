@@ -37,7 +37,7 @@ void test_image_data_construction(std::mt19937& rng)
   constexpr auto nr_bytes_per_channel = sln::PixelTraits<PixelType>::nr_bytes_per_channel;
 
   std::uniform_int_distribution<sln::PixelIndex::value_type> dist_wh(0, 100);  // width/height
-  std::uniform_int_distribution<std::size_t> dist_algn(0, 6);  // log2(alignment_bytes)
+  std::uniform_int_distribution<std::size_t> dist_algn(4, 6);  // log2(alignment_bytes)
 
   for (std::size_t i = 0; i < 50; ++i)
   {
