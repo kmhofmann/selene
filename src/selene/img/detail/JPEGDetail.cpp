@@ -1,5 +1,5 @@
 // This file is part of the `Selene` library.
-// Copyright 2017 Michael Hofmann (https://github.com/kmhofmann).
+// Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
 #if defined(SELENE_WITH_LIBJPEG)
