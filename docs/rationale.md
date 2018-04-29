@@ -1,7 +1,5 @@
 # Selene
 
-[Main page](https://github.com/kmhofmann/selene)
-
 ## Rationale
 
 #### Why a new library?

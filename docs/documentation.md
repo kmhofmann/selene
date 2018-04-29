@@ -1,7 +1,5 @@
 # Selene
 
-[Main page](https://github.com/kmhofmann/selene)
-
 ## Documentation
 
 **Selene** is fully documented using the [_Doxygen_](http://www.stack.nl/~dimitri/doxygen/) format.

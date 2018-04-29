@@ -1,7 +1,5 @@
 # Selene
 
-[Main page](https://github.com/kmhofmann/selene)
-
 ## Building the library
 
 ### General
@@ -33,17 +31,39 @@ files for a 64-bit build (see below for more info on [vcpkg](https://github.com/
         -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>\scripts\buildsystems\vcpkg.cmake \
         ..
 
-Preferably use the library "at head", e.g. as submodule, instead of invoking the `install` target.
-
-Integrating the library into own CMake projects can be as easy as:
-
-    # ...
-    add_subdirectory(selene)
-    target_link_libraries(target_name selene::selene)
-    # ...
+#### Static vs. shared libraries
 
 The default settings will build a set of static libraries.
-If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command. 
+
+If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command.
+
+### Installation
+
+The easiest option is to use the library as a submodule within your project.
+No actual installation is needed then, and Selene will be built from source together with your project.
+Integrating the library into own CMake projects can be as easy as:
+
+    add_subdirectory(selene)  # assuming the library is cloned as submodule in a directory named 'selene'
+    # ...
+    target_link_libraries(<target_name> selene::selene)
+
+Advantages of this approach are greatly decreased risk of inconsistent dependencies (in case you upgrade libraries),
+and IDEs more easily picking up the Selene source code.
+This can be particularly useful when developing on Selene itself.
+
+Alternatively, you can install Selene (e.g. using `make install`) and then declare as dependency in a CMake project
+as follows:
+
+    find_package(selene)
+    # ...
+    target_link_libraries(<target_name> selene::selene)
+
+To provide a custom installation location, add `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the CMake invocation;
+the default is an intrusive, system-wide `/usr/local` on UNIX-like systems.
+
+The CMake invocation also adds a reference to the build tree location to the user-level CMake cache.
+This means that the `find_package()` call can also work without installation, and will find then find the build tree
+itself. 
 
 ### Dependencies
 
@@ -68,6 +88,9 @@ by the API.
 
 [OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if
 so desired.
+
+To point CMake to custom library installation locations, set the `CMAKE_PREFIX_PATH` environment variable accordingly.
+For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/libpng`. 
 
 ### Building and running tests, examples, and benchmarks
 
@@ -119,9 +142,7 @@ CMake `find_package` command.
 
 On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as follows:
 
-    apt-get install libjpeg-turbo8-dev libpng16-dev libopencv-dev libboost-filesystem-dev
-
-On some systems, OpenCV might need to be built from source and installed manually.
+    apt-get install libjpeg-turbo8-dev libpng-dev libopencv-dev libboost-filesystem-dev
 
 #### MacOS
 

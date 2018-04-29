@@ -1,7 +1,5 @@
 # Selene
 
-[Main page](https://github.com/kmhofmann/selene)
-
 ## Overview
 
 **Selene** is a C++14 image representation, processing and I/O library.
