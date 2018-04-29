@@ -126,7 +126,6 @@ sln::Image<T> construct_random_image(sln::PixelLength width, sln::PixelLength he
   using Element = typename sln::PixelTraits<T>::Element;
 
   constexpr auto is_int = sln::PixelTraits<T>::is_integral;
-  constexpr auto is_fp = sln::PixelTraits<T>::is_floating_point;
   auto die = sln_test::uniform_distribution<Element>(Element{0},
                                                      is_int ? std::numeric_limits<Element>::max() : Element{1});
 

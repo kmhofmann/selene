@@ -105,7 +105,6 @@ void compare_images(const sln::Image<PixelType>& img, const cv::Mat& img_cv)
 {
   using Element = typename sln::PixelTraits<PixelType>::Element;
   constexpr auto nr_channels = sln::PixelTraits<PixelType>::nr_channels;
-  constexpr auto nr_bytes = sln::PixelTraits<PixelType>::nr_bytes;
   constexpr auto nr_bytes_per_channel = sln::PixelTraits<PixelType>::nr_bytes_per_channel;
 
   REQUIRE(img_cv.channels() == nr_channels);
