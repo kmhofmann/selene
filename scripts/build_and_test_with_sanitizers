@@ -58,6 +58,7 @@ cd ${REPO_DIR}/_build_with_tsan
 SAN_FLAGS="-fsanitize=thread -g -O1"
 export CXXFLAGS=${SAN_FLAGS}
 export LDFLAGS=${SAN_FLAGS}
+export TSAN_OPTIONS="second_deadlock_stack=1"
 
 build_everything
 run_all_binaries

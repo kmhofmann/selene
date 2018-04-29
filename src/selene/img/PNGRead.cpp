@@ -53,10 +53,25 @@ struct PNGDecompressionObject::Impl
   detail::PNGErrorManager error_manager;
   PixelFormat pixel_format_ = PixelFormat::Unknown;
   bool valid = false;
+  bool needs_reset = false;
 };
 
 PNGDecompressionObject::PNGDecompressionObject() : impl_(std::make_unique<PNGDecompressionObject::Impl>())
 {
+  allocate();
+}
+
+PNGDecompressionObject::~PNGDecompressionObject()
+{
+  deallocate();
+}
+
+void PNGDecompressionObject::allocate()
+{
+  SELENE_FORCED_ASSERT(!impl_->png_ptr);
+  SELENE_FORCED_ASSERT(!impl_->info_ptr);
+  SELENE_FORCED_ASSERT(!impl_->end_info);
+
   auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
   png_error_ptr user_error_fn = detail::error_handler;
   png_error_ptr user_warning_fn = detail::warning_handler;
@@ -89,10 +104,31 @@ PNGDecompressionObject::PNGDecompressionObject() : impl_(std::make_unique<PNGDec
   impl_->valid = true;
 }
 
-PNGDecompressionObject::~PNGDecompressionObject()
+void PNGDecompressionObject::deallocate()
 {
+  SELENE_FORCED_ASSERT(impl_->png_ptr);
+  SELENE_FORCED_ASSERT(impl_->info_ptr);
+  SELENE_FORCED_ASSERT(impl_->end_info);
+
   // Deallocate the memory allocated for the png_struct and png_info objects
   png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, &impl_->end_info);
+
+  impl_->png_ptr = nullptr;
+  impl_->info_ptr = nullptr;
+  impl_->end_info = nullptr;
+  impl_->error_manager = detail::PNGErrorManager();
+  impl_->pixel_format_ = PixelFormat::Unknown;
+  impl_->valid = false;
+}
+
+void PNGDecompressionObject::reset_if_needed()
+{
+  if (impl_->needs_reset)
+  {
+    deallocate();
+    allocate();
+    impl_->needs_reset = false;
+  }
 }
 
 bool PNGDecompressionObject::valid() const
@@ -155,7 +191,6 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
     png_error(png_ptr, "Conversion from 16 to 8 bit not supported in this libpng version");
 #endif
   }
-
 
   switch (color_type)
   {
@@ -332,14 +367,14 @@ failure_state:
   return false;
 }
 
-PixelFormat PNGDecompressionObject::get_pixel_format() const
-{
-  return impl_->pixel_format_;
-}
-
 bool PNGDecompressionObject::error_state() const
 {
   return impl_->error_manager.error_state;
+}
+
+MessageLog& PNGDecompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
 }
 
 const MessageLog& PNGDecompressionObject::message_log() const
@@ -347,10 +382,18 @@ const MessageLog& PNGDecompressionObject::message_log() const
   return impl_->error_manager.message_log;
 }
 
+PixelFormat PNGDecompressionObject::get_pixel_format() const
+{
+  return impl_->pixel_format_;
+}
+
+
 namespace detail {
 
 PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_(obj), error_state_(false)
 {
+  obj.reset_if_needed();
+
   auto png_ptr = obj_.impl_->png_ptr;
   auto info_ptr = obj_.impl_->info_ptr;
 
@@ -371,6 +414,11 @@ PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_
 
 failure_state:
   error_state_ = true;
+}
+
+PNGDecompressionCycle::~PNGDecompressionCycle()
+{
+  obj_.impl_->needs_reset = true;
 }
 
 bool PNGDecompressionCycle::error_state() const
@@ -410,6 +458,7 @@ bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)
   // TODO: Make use of these
 
   png_read_end(png_ptr, end_info);
+
   return true;
 
 failure_state:
@@ -442,6 +491,8 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 
 void set_source(PNGDecompressionObject& obj, FileReader& source)
 {
+  obj.reset_if_needed();
+
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
     goto failure_state;
@@ -454,6 +505,8 @@ failure_state:;
 
 void set_source(PNGDecompressionObject& obj, MemoryReader& source)
 {
+  obj.reset_if_needed();
+
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
     goto failure_state;
@@ -466,6 +519,8 @@ failure_state:;
 
 PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std::uint8_t, 8>& header_bytes, bool eof)
 {
+  obj.reset_if_needed();
+
   auto png_ptr = obj.impl_->png_ptr;
   auto info_ptr = obj.impl_->info_ptr;
   auto& message_log = obj.impl_->error_manager.message_log;
@@ -479,16 +534,16 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
   bool error = eof || (signature_correct != 0);
   png_set_sig_bytes(png_ptr, 8);
 
-  if (error)
-  {
-    message_log.add_message("Source is not a PNG file.");
-    return PNGImageInfo();
-  }
-
   PixelIndex width = 0_px;
   PixelIndex height = 0_px;
   int bit_depth = 0;
   int nr_channels = 0;
+
+  if (error)
+  {
+    message_log.add_message("Source is not a PNG file.");
+    goto failure_state;
+  }
 
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
@@ -505,6 +560,7 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
   return PNGImageInfo(width, height, nr_channels, bit_depth);
 
 failure_state:
+  obj.impl_->needs_reset = true;
   return PNGImageInfo();
 }
 

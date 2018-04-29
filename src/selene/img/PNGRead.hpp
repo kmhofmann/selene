@@ -127,6 +127,7 @@ public:
 
   bool valid() const;
   bool error_state() const;
+  MessageLog& message_log();
   const MessageLog& message_log() const;
 
   bool set_decompression_parameters(bool, bool, bool, bool, bool, bool, bool, bool, bool);
@@ -136,6 +137,10 @@ public:
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;
+
+  void allocate();
+  void deallocate();
+  void reset_if_needed();
 
   friend class detail::PNGDecompressionCycle;
   friend void detail::set_source(PNGDecompressionObject&, FileReader&);
@@ -147,7 +152,7 @@ private:
  *
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
- * @param rewind If true, the source position will be re-set to the position before reading the header.
+ * @param rewind If true, the source position will be re-set to the original position after reading the header.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return A PNG header info object.
  */
@@ -161,7 +166,7 @@ PNGImageInfo read_png_header(SourceType&& source, bool rewind = false, MessageLo
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param obj A PNGDecompressionObject instance.
  * @param source Input source instance.
- * @param rewind If true, the source position will be re-set to the position before reading the header.
+ * @param rewind If true, the source position will be re-set to the original position after reading the header.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return A PNG header info object.
  */
@@ -212,14 +217,33 @@ ImageData<> read_png(PNGDecompressionObject& obj,
                      MessageLog* messages = nullptr,
                      const PNGImageInfo* provided_header_info = nullptr);
 
-// TODO: DOCUMENT
+/** Class with functionality to read header and data of a PNG image data stream.
+ *
+ * Generally, the free functions read_png() or read_png_header() should be preferred, due to ease of use.
+ *
+ * read_png(), however, does not allow reading of the decompressed image data into pre-allocated memory.
+ * This is enabled by calling `get_output_image_info()` on an instance of this class, then allocating the respective
+ * `ImageData<>` instance (which can be itself a view to pre-allocated memory), and finally calling
+ * `read_image_data(ImageData<>&)`.
+ *
+ * A PNGReader<> instance is stateful:
+ * Calling of `read_header()`, `set_decompression_options()`, or `get_output_image_info()` is optional.
+ * The only required function to be called in order to read the image data is `read_image_data()`.
+ *
+ * Multiple images can be read in sequence using the same PNGReader<> (on the same thread).
+ * The source may optionally be re-set using `set_source()`; this is required if the previous image has not been read
+ * completely or successfully.
+ *
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
+ */
 template <typename SourceType>
 class PNGReader
 {
 public:
+  PNGReader();
   explicit PNGReader(SourceType& source, PNGDecompressionOptions options = PNGDecompressionOptions());
 
-  void attach_source(SourceType& source);
+  void set_source(SourceType& source);
 
   PNGImageInfo read_header();
   void set_decompression_options(PNGDecompressionOptions options);
@@ -228,7 +252,7 @@ public:
   ImageData<> read_image_data();
   bool read_image_data(ImageData<>& img_data);
 
-  const MessageLog& message_log() const;
+  MessageLog& message_log();
 
 private:
   SourceType* source_;
@@ -251,7 +275,7 @@ class PNGDecompressionCycle
 {
 public:
   explicit PNGDecompressionCycle(PNGDecompressionObject& obj);
-  ~PNGDecompressionCycle() = default;
+  ~PNGDecompressionCycle();
 
   bool error_state() const;
   PNGImageInfo get_output_info() const;
@@ -380,8 +404,11 @@ ImageData<> read_png(PNGDecompressionObject& obj,
 
 
 
-
-
+template <typename SourceType>
+PNGReader<SourceType>::PNGReader()
+    : source_(nullptr), options_(PNGDecompressionOptions())
+{
+}
 
 template <typename SourceType>
 PNGReader<SourceType>::PNGReader(SourceType& source, PNGDecompressionOptions options)
@@ -391,7 +418,7 @@ PNGReader<SourceType>::PNGReader(SourceType& source, PNGDecompressionOptions opt
 }
 
 template <typename SourceType>
-void PNGReader<SourceType>::attach_source(SourceType& source)
+void PNGReader<SourceType>::set_source(SourceType& source)
 {
   reset();
   source_ = &source;
@@ -401,6 +428,16 @@ void PNGReader<SourceType>::attach_source(SourceType& source)
 template <typename SourceType>
 PNGImageInfo PNGReader<SourceType>::read_header()
 {
+  if (source_ == nullptr)
+  {
+    return PNGImageInfo();
+  }
+
+  if (cycle_)
+  {
+    throw std::runtime_error("PNGReader: Cannot call read_header() after call to get_output_image_info() or read_image_data().");
+  }
+
   const PNGImageInfo header_info = detail::read_header(*source_, obj_);
   header_read_ = true;
   valid_header_read_ = header_info.is_valid();
@@ -410,6 +447,11 @@ PNGImageInfo PNGReader<SourceType>::read_header()
 template <typename SourceType>
 void PNGReader<SourceType>::set_decompression_options(PNGDecompressionOptions options)
 {
+  if (cycle_)
+  {
+    throw std::runtime_error("PNGReader: Cannot call set_decompression_options() after call to get_output_image_info() or read_image_data().");
+  }
+
   options_ = options;
 }
 
@@ -462,7 +504,6 @@ bool PNGReader<SourceType>::read_image_data(ImageData<>& img_data)
 
   if (!valid_header_read_)
   {
-    img_data.clear();
     return false;
   }
 
@@ -470,7 +511,6 @@ bool PNGReader<SourceType>::read_image_data(ImageData<>& img_data)
 
   if (!output_info.is_valid())
   {
-    img_data.clear();
     return false;
   }
 
@@ -487,18 +527,18 @@ bool PNGReader<SourceType>::read_image_data(ImageData<>& img_data)
   auto row_pointers = get_row_pointers(img_data);
   const auto dec_success = cycle_->decompress(row_pointers);
 
+  reset();
+
   if (!dec_success)
   {
-    img_data.clear();  // invalidates image data
     return false;
   }
 
-  reset();
   return true;
 }
 
 template <typename SourceType>
-const MessageLog& PNGReader<SourceType>::message_log() const
+MessageLog& PNGReader<SourceType>::message_log()
 {
   return obj_.message_log();
 }
@@ -506,7 +546,8 @@ const MessageLog& PNGReader<SourceType>::message_log() const
 template <typename SourceType>
 void PNGReader<SourceType>::reset()
 {
-  cycle_.reset();
+  // reset internal state
+  cycle_ = nullptr;
   header_read_ = false;
   valid_header_read_ = false;
 }

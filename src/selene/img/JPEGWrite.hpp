@@ -81,6 +81,7 @@ public:
 
   bool valid() const;
   bool error_state() const;
+  MessageLog& message_log();
   const MessageLog& message_log() const;
 
   bool set_image_info(int width, int height, int nr_channels, int nr_bytes_per_channel, JPEGColorSpace in_color_space);
@@ -92,6 +93,8 @@ public:
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;
+
+  void reset_if_needed();
 
   friend class detail::JPEGCompressionCycle;
   friend void detail::set_destination(JPEGCompressionObject&, FileWriter&);

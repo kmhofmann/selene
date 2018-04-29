@@ -42,6 +42,7 @@ struct JPEGDecompressionObject::Impl
   jpeg_decompress_struct cinfo;
   detail::JPEGErrorManager error_manager;
   bool valid = false;
+  bool needs_reset = false;
 };
 
 JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
@@ -56,6 +57,16 @@ JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEG
 JPEGDecompressionObject::~JPEGDecompressionObject()
 {
   jpeg_destroy_decompress(&impl_->cinfo);
+}
+
+void JPEGDecompressionObject::reset_if_needed()
+{
+  if (impl_->needs_reset)
+  {
+    impl_->error_manager.error_state = false;
+    impl_->error_manager.message_log.clear();
+    impl_->needs_reset = false;
+  }
 }
 
 bool JPEGDecompressionObject::valid() const
@@ -83,6 +94,11 @@ bool JPEGDecompressionObject::error_state() const
   return impl_->error_manager.error_state;
 }
 
+MessageLog& JPEGDecompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
+}
+
 const MessageLog& JPEGDecompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
@@ -94,6 +110,8 @@ namespace detail {
 JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region)
     : obj_(obj), region_(region)
 {
+  obj_.reset_if_needed();
+
   auto& cinfo = obj_.impl_->cinfo;
 
   if (!region_.empty())
@@ -121,6 +139,8 @@ JPEGDecompressionCycle::~JPEGDecompressionCycle()
     auto& cinfo = obj_.impl_->cinfo;
     jpeg_abort_decompress(&cinfo);
   }
+
+  obj_.impl_->needs_reset = true;
 }
 
 JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
@@ -176,6 +196,8 @@ failure_state:
 
 void set_source(JPEGDecompressionObject& obj, FileReader& source)
 {
+  obj.reset_if_needed();
+
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
     goto failure_state;
@@ -189,6 +211,8 @@ failure_state:;
 
 void set_source(JPEGDecompressionObject& obj, MemoryReader& source)
 {
+  obj.reset_if_needed();
+
   // Unfortunately, the libjpeg API is not const-correct before version 9b (or before libjpeg-turbo 1.5.0).
   auto handle = const_cast<unsigned char*>(source.handle());
 
@@ -205,6 +229,8 @@ failure_state:;
 
 JPEGImageInfo read_header(JPEGDecompressionObject& obj)
 {
+  obj.reset_if_needed();
+
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
     goto failure_state;

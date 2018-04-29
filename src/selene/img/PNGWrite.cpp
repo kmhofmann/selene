@@ -49,6 +49,7 @@ struct PNGCompressionObject::Impl
   png_infop info_ptr = nullptr;
   detail::PNGErrorManager error_manager;
   bool valid = false;
+  bool needs_reset = false;
 };
 
 PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompressionObject::Impl>())
@@ -79,6 +80,17 @@ PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompres
 PNGCompressionObject::~PNGCompressionObject()
 {
   png_destroy_write_struct(&impl_->png_ptr, &impl_->info_ptr);
+}
+
+void PNGCompressionObject::reset_if_needed()
+{
+  if (impl_->needs_reset)
+  {
+    // TODO: do we also need to deallocate and reallocate the png structs here, as in the decompression object?
+    impl_->error_manager.error_state = false;
+    impl_->error_manager.message_log.clear();
+    impl_->needs_reset = false;
+  }
 }
 
 bool PNGCompressionObject::valid() const
@@ -158,6 +170,11 @@ bool PNGCompressionObject::error_state() const
   return impl_->error_manager.error_state;
 }
 
+MessageLog& PNGCompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
+}
+
 const MessageLog& PNGCompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
@@ -172,6 +189,8 @@ namespace detail {
 PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr, bool invert_monochrome)
     : obj_(obj), error_state_(false)
 {
+  obj_.reset_if_needed();
+
   auto png_ptr = obj_.impl_->png_ptr;
   auto info_ptr = obj_.impl_->info_ptr;
 
@@ -196,6 +215,11 @@ PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr
 
 failure_state:
   error_state_ = true;
+}
+
+PNGCompressionCycle::~PNGCompressionCycle()
+{
+  obj_.impl_->needs_reset = true;
 }
 
 bool PNGCompressionCycle::error_state() const
@@ -238,6 +262,8 @@ void user_flush_data(png_structp /*png_ptr*/)
 
 void set_destination(PNGCompressionObject& obj, FileWriter& sink)
 {
+  obj.reset_if_needed();
+
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
     goto failure_state;
@@ -250,6 +276,8 @@ failure_state:;
 
 void set_destination(PNGCompressionObject& obj, VectorWriter& sink)
 {
+  obj.reset_if_needed();
+
   if (setjmp(png_jmpbuf(obj.impl_->png_ptr)))
   {
     goto failure_state;

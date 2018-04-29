@@ -28,6 +28,8 @@ public:
   void add_message(const char* message);
   void add_message(const std::string& message);
 
+  void clear();
+
 private:
   std::vector<std::string> messages_;
 };
@@ -60,6 +62,13 @@ inline void MessageLog::add_message(const char* message)
 inline void MessageLog::add_message(const std::string& message)
 {
   messages_.push_back(message);
+}
+
+/** \brief Clears the message log.
+ */
+inline void MessageLog::clear()
+{
+  messages_.clear();
 }
 
 }  // namespace sln

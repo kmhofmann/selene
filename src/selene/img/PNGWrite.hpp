@@ -88,6 +88,7 @@ public:
 
   bool valid() const;
   bool error_state() const;
+  MessageLog& message_log();
   const MessageLog& message_log() const;
 
   bool set_image_info(int width, int height, int nr_channels, int bit_depth, bool interlaced, PixelFormat pixel_format);
@@ -97,6 +98,8 @@ public:
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;
+
+  void reset_if_needed();
 
   friend class detail::PNGCompressionCycle;
   friend void detail::set_destination(PNGCompressionObject&, FileWriter&);
@@ -147,7 +150,7 @@ class PNGCompressionCycle
 {
 public:
   explicit PNGCompressionCycle(PNGCompressionObject& obj, bool, bool);
-  ~PNGCompressionCycle() = default;
+  ~PNGCompressionCycle();
 
   bool error_state() const;
   void compress(const ConstRowPointers& row_pointers);

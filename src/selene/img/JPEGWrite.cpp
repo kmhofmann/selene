@@ -26,6 +26,7 @@ struct JPEGCompressionObject::Impl
   unsigned long output_size = 0;  // size of in-memory buffer
 
   bool valid = false;
+  bool needs_reset = false;
 };
 
 JPEGCompressionObject::JPEGCompressionObject() : impl_(std::make_unique<JPEGCompressionObject::Impl>())
@@ -45,6 +46,16 @@ JPEGCompressionObject::~JPEGCompressionObject()
   {
     std::free(impl_->output_buffer);
     impl_->output_buffer = nullptr;
+  }
+}
+
+void JPEGCompressionObject::reset_if_needed()
+{
+  if (impl_->needs_reset)
+  {
+    impl_->error_manager.error_state = false;
+    impl_->error_manager.message_log.clear();
+    impl_->needs_reset = false;
   }
 }
 
@@ -117,6 +128,11 @@ bool JPEGCompressionObject::error_state() const
   return impl_->error_manager.error_state;
 }
 
+MessageLog& JPEGCompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
+}
+
 const MessageLog& JPEGCompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
@@ -127,12 +143,14 @@ namespace detail {
 
 JPEGCompressionCycle::JPEGCompressionCycle(JPEGCompressionObject& obj) : obj_(obj)
 {
+  obj_.reset_if_needed();
   jpeg_start_compress(&obj_.impl_->cinfo, TRUE);
 }
 
 JPEGCompressionCycle::~JPEGCompressionCycle()
 {
   jpeg_finish_compress(&obj_.impl_->cinfo);
+  obj_.impl_->needs_reset = true;
 }
 
 void JPEGCompressionCycle::compress(const ConstRowPointers& row_pointers)
@@ -165,6 +183,8 @@ failure_state:
 
 void set_destination(JPEGCompressionObject& obj, FileWriter& sink)
 {
+  obj.reset_if_needed();
+
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
     goto failure_state;
@@ -177,6 +197,8 @@ failure_state:;
 
 void set_destination(JPEGCompressionObject& obj, VectorWriter& /*sink*/)
 {
+  obj.reset_if_needed();
+
   if (setjmp(obj.impl_->error_manager.setjmp_buffer))
   {
     goto failure_state;
