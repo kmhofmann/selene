@@ -37,29 +37,29 @@ The default settings will build a set of static libraries.
 
 If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command.
 
-### Installation
+### Usage/Installation
 
-The easiest option is to use the library as a submodule within your project.
-No actual installation is needed then, and Selene will be built from source together with your project.
-Integrating the library into own CMake projects can be as easy as:
+* The easiest option is to use the library as a submodule within your project.
+  No actual installation is needed then, and Selene will be built from source together with your project.
+  Integrating the library into own CMake projects can be as easy as:
 
-    add_subdirectory(selene)  # assuming the library is cloned as submodule in a directory named 'selene'
-    # ...
-    target_link_libraries(<target_name> selene::selene)
+      add_subdirectory(selene)  # assuming the library is cloned as submodule in a directory named 'selene'
+      # ...
+      target_link_libraries(<target_name> selene::selene)
 
-Advantages of this approach are greatly decreased risk of inconsistent dependencies (in case you upgrade libraries),
-and IDEs more easily picking up the Selene source code.
-This can be particularly useful when developing on Selene itself.
+  Advantages of this approach are greatly decreased risk of inconsistent dependencies (in case you upgrade libraries),
+  and IDEs more easily picking up the Selene source code (as opposed to, say, just the installed headers).
+  This can be particularly useful when developing on Selene itself.
 
-Alternatively, you can install Selene (e.g. using `make install`) and then declare as dependency in a CMake project
-as follows:
+* Alternatively, you can install Selene (e.g. using `make install`) and then declare as dependency in a CMake project
+  as follows:
 
-    find_package(selene)
-    # ...
-    target_link_libraries(<target_name> selene::selene)
+      find_package(selene)
+      # ...
+      target_link_libraries(<target_name> selene::selene)
 
-To provide a custom installation location, add `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the CMake invocation;
-the default is an intrusive, system-wide `/usr/local` on UNIX-like systems.
+  To provide a custom installation location, add `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the CMake invocation;
+  the default is an intrusive, system-wide `/usr/local` on UNIX-like systems.
 
 The CMake invocation also adds a reference to the build tree location to the user-level CMake cache.
 This means that the `find_package()` call can also work without installation, and will find then find the build tree

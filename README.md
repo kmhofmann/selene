@@ -12,6 +12,7 @@ type-safe API.
   * [Rationale](docs/rationale.md): Why implement a new library for image representation, processing, and I/O?
   * [Building the library](docs/building.md): How to build from source, and description of dependencies
   * [Documentation and status](docs/documentation.md): API documentation, examples, supported compilers
+  * [Known issues](docs/known_issues.md): Known issues and possible workarounds
   * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library
 
 ### Quick summary
