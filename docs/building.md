@@ -172,9 +172,11 @@ See the full [Conan documentation](https://docs.conan.io/) for more information 
 Currently, `libjpeg-turbo`, `libpng` and `Boost.Filesystem` (for the tests) can be built using Conan.
 There are no stable, cross-platform Conan recipes available yet for `OpenCV` or Google's `benchmark` library.
 
-To use Conan, first install it:
+To use Conan, first install it, e.g. with `pip`:
 
     pip install --user --upgrade conan
+
+(On MacOS, you might prefer an installation with `brew` instead.)
 
 Verify that the required remotes are present; if not, add them:
 
@@ -183,8 +185,12 @@ Verify that the required remotes are present; if not, add them:
 From your (clean) build directory, call Conan before the CMake invocation (as follows, or similar):
 
     conan install .. --build missing
-
+    
 This will build the supported dependencies.
 This step can take a while during its first call, but for future builds, all outputs should be cached.
 
-Now you can invoke CMake as usual, and it should find the respective Conan builds of the supported dependencies.
+By default, Conan builds static libraries.
+If you want Conan to build shared libraries instead, add `-o *:shared=True` to the above Conan call.
+
+Now you can invoke CMake as usual (see above), and it should find the respective Conan builds of the supported
+dependencies.
