@@ -192,7 +192,7 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
 
   sln::PNGDecompressionObject decompression_object;
 
-  for (int i = 0; i < 5; ++i)
+  for (int j = 0; j < 5; ++j)
   {
     sln::FileReader source(in_filename().string());
     REQUIRE(source.is_open());

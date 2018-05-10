@@ -557,7 +557,7 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
   bit_depth = static_cast<int>(png_get_bit_depth(png_ptr, info_ptr));
   nr_channels = static_cast<int>(png_get_channels(png_ptr, info_ptr));
 
-  return PNGImageInfo(width, height, nr_channels, bit_depth);
+  return PNGImageInfo(width, height, static_cast<std::uint16_t>(nr_channels), static_cast<std::uint16_t>(bit_depth));
 
 failure_state:
   obj.impl_->needs_reset = true;

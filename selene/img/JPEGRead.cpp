@@ -78,7 +78,7 @@ JPEGImageInfo JPEGDecompressionObject::get_header_info() const
 {
   const auto color_space = detail::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
   return JPEGImageInfo(PixelIndex(impl_->cinfo.image_width), PixelIndex(impl_->cinfo.image_height),
-                       impl_->cinfo.num_components, color_space);
+                       static_cast<std::uint16_t>(impl_->cinfo.num_components), color_space);
 }
 
 void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)

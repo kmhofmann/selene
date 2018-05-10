@@ -172,7 +172,7 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
 
   sln::JPEGDecompressionObject decompression_object;
 
-  for (int i = 0; i < 5; ++i)
+  for (int j = 0; j < 5; ++j)
   {
     sln::FileReader source(in_filename().string());
     REQUIRE(source.is_open());

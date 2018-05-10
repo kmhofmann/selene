@@ -160,12 +160,8 @@ bool write_image(const ImageData<storage_type>& img_data,
     throw std::runtime_error("ERROR: PNG writing unsupported; recompile with the respective external dependency.");
 #endif  // defined(SELENE_WITH_LIBPNG)
   }
-  else
-  {
-    throw std::runtime_error("ERROR: Unknown image format.");
-  }
 
-  return false;
+  throw std::runtime_error("ERROR: Unknown image format.");
 }
 
 }  // namespace sln
