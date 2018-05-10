@@ -1,19 +1,5 @@
 # Centralized dependency handling
 
-# Conan support
-
-if (EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    set(SELENE_HAVE_CONAN TRUE)
-    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    conan_basic_setup(TARGETS KEEP_RPATHS)
-
-    if (APPLE)
-        set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
-    else()
-        set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-    endif()
-endif()
-
 # libjpeg-turbo (or libjpeg)
 
 find_package(JPEG)

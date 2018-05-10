@@ -161,6 +161,7 @@ target_link_libraries(selene INTERFACE selene_base selene_img selene_io selene_t
 
 # Installation
 
+include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 set(SELENE_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/selene)

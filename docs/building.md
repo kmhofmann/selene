@@ -67,7 +67,7 @@ itself.
 
 ### Dependencies
 
-**selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
+**Selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
 
   - [libjpeg](http://www.ijg.org/) or [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) (preferred):
     - Optional, but recommended
@@ -91,6 +91,8 @@ so desired.
 
 To point CMake to custom library installation locations, set the `CMAKE_PREFIX_PATH` environment variable accordingly.
 For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/libpng`. 
+
+The use of [Conan](https://conan.io/) as a dependency manager is also supported; see below.
 
 ### Building and running tests, examples, and benchmarks
 
@@ -161,3 +163,28 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
 
 Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
 the 64-bit compiled versions instead of the 32-bit ones.
+
+#### Using Conan
+
+**Selene** also supports optional use of [Conan](https://conan.io/) as a dependency manager.
+See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
+
+Currently, `libjpeg-turbo`, `libpng` and `Boost.Filesystem` (for the tests) can be built using Conan.
+There are no stable, cross-platform Conan recipes available yet for `OpenCV` or Google's `benchmark` library.
+
+To use Conan, first install it:
+
+    pip install --user --upgrade conan
+
+Verify that the required remotes are present; if not, add them:
+
+    conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
+From your (clean) build directory, call Conan before the CMake invocation (as follows, or similar):
+
+    conan install .. --build missing
+
+This will build the supported dependencies.
+This step can take a while during its first call, but for future builds, all outputs should be cached.
+
+Now you can invoke CMake as usual, and it should find the respective Conan builds of the supported dependencies.

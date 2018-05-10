@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(GNUInstallDirs)
 include(external/external.cmake)
+include(cmake/conan_support.cmake)
 include(cmake/find_dependencies.cmake)
 
 # Generate compilation database (e.g. for cquery or YouCompleteMe)
