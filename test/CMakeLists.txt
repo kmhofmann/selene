@@ -37,29 +37,18 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.cpp
         )
 
-target_compile_options(selene_tests
-        PRIVATE
+target_compile_options(selene_tests PRIVATE
         ${SELENE_COMPILER_OPTIONS}
         ${SELENE_TEST_COMPILER_OPTIONS})
 
-target_compile_definitions(selene_tests
-        PRIVATE
+target_compile_definitions(selene_tests PRIVATE
         ${SELENE_COMPILER_DEFINITIONS})
 
-target_include_directories(selene_tests
-        PRIVATE
-        ${Boost_INCLUDE_DIR}
+target_include_directories(selene_tests PRIVATE
         ${SELENE_DIR}/test
         ${SELENE_DIR}/external/Catch2/single_include)
 
 target_link_libraries(selene_tests
         selene
-        ${Boost_LIBRARIES})
-
-if(THREADS_HAVE_PTHREAD_ARG)
-    target_compile_options(my_app PUBLIC "-pthread")
-endif()
-
-if(CMAKE_THREAD_LIBS_INIT)
-    target_link_libraries(selene_tests "${CMAKE_THREAD_LIBS_INIT}")
-endif()
+        Boost::filesystem
+        Threads::Threads)
