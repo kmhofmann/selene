@@ -33,7 +33,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(SELENE_COMPILER_DEFINITIONS _CRT_SECURE_NO_WARNINGS _SCL_SECURE_NO_WARNINGS BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE)
 endif()
 
-add_subdirectory(src)
+add_subdirectory(selene)
 
 if (SELENE_BUILD_TESTS)
     add_subdirectory(test)
