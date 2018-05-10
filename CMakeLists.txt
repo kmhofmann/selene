@@ -22,6 +22,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     set(SELENE_COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(SELENE_IMG_COMPILER_OPTIONS -Wno-clobbered)
+        set(SELENE_TEST_COMPILER_OPTIONS -Wno-unused-but-set-variable)
     endif()
 	set(SELENE_COMPILER_DEFINITIONS "")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

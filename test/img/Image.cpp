@@ -125,11 +125,7 @@ sln::Image<T> construct_random_image(sln::PixelLength width, sln::PixelLength he
 
   using Element = typename sln::PixelTraits<T>::Element;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunknown-warning-option" // silence Clang for the next line
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable" // GCC 8.1.0 warns; seems like a false positive here
   constexpr auto is_int = sln::PixelTraits<T>::is_integral;
-#pragma GCC diagnostic pop
   auto die = sln_test::uniform_distribution<Element>(Element{0},
                                                      is_int ? std::numeric_limits<Element>::max() : Element{1});
 
