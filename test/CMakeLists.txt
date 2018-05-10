@@ -4,9 +4,6 @@ endif()
 
 #------------------------------------------------------------------------------
 
-find_package(Boost REQUIRED filesystem system)
-find_package(Threads REQUIRED)
-
 add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp
@@ -50,5 +47,5 @@ target_include_directories(selene_tests PRIVATE
 
 target_link_libraries(selene_tests
         selene
-        Boost::filesystem
+        ${SELENE_BOOST_TARGET_NAME}
         Threads::Threads)

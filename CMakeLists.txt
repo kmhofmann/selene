@@ -12,6 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(GNUInstallDirs)
 include(external/external.cmake)
+include(cmake/find_dependencies.cmake)
 
 # Generate compilation database (e.g. for cquery or YouCompleteMe)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

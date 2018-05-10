@@ -4,12 +4,9 @@ endif()
 
 #------------------------------------------------------------------------------
 
-find_package(Boost REQUIRED filesystem system)
-find_package(benchmark REQUIRED)
-
 add_executable(benchmark_image_access
         ${CMAKE_CURRENT_LIST_DIR}/image_access.cpp)
 target_compile_options(benchmark_image_access PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(benchmark_image_access PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(benchmark_image_access PRIVATE ${SELENE_DIR}/examples ${Boost_INCLUDE_DIR})
-target_link_libraries(benchmark_image_access selene ${Boost_LIBRARIES} benchmark::benchmark)
+target_link_libraries(benchmark_image_access selene ${SELENE_BOOST_TARGET_NAME} benchmark::benchmark)

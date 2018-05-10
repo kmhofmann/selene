@@ -1,0 +1,15 @@
+[requires]
+libjpeg-turbo/1.5.2@bincrafters/stable
+libpng/1.6.34@bincrafters/stable
+boost_filesystem/1.66.0@bincrafters/stable
+
+# There does not seem to be a working, cross-platform package for Google Benchmark yet.
+# There does not seem to be a working, cross-platform package for OpenCV yet.
+
+[generators]
+cmake
+
+[imports]
+bin, *.dll -> ./bin # Copies all dll files from packages bin folder to my "bin" folder
+lib, *.dylib* -> ./lib # Copies all dylib files from packages lib folder to my "lib" folder
+lib, *.so* -> ./lib # Copies all so files from packages lib folder to my "lib" folder
