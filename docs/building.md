@@ -160,6 +160,7 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
     .\vcpkg.exe install libpng
     .\vcpkg.exe install opencv
     .\vcpkg.exe install boost
+    .\vcpkg.exe install benchmark
 
 Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
 the 64-bit compiled versions instead of the 32-bit ones.
