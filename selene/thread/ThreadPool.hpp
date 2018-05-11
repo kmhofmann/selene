@@ -18,6 +18,7 @@
 #include <thread>
 #include <vector>
 
+#include <selene/base/Assert.hpp>
 #include <selene/thread/detail/TaskQueue.hpp>
 
 namespace sln {
@@ -86,7 +87,7 @@ inline ThreadPool::ThreadPool(std::size_t num_threads) : index_(0), num_threads_
 {
   std::lock_guard<std::mutex> lock(mutex_);
 
-  assert(num_threads > 0);
+  SELENE_ASSERT(num_threads > 0);
   queues_.resize(num_threads);
   threads_.reserve(num_threads);
 

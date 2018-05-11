@@ -151,11 +151,11 @@ private:
   static_assert(std::is_trivial<PixelType>::value, "Pixel type is not trivial");
   static_assert(std::is_standard_layout<PixelType>::value, "Pixel type is not standard layout");
 
-  std::uint8_t* data_;
+  std::uint8_t* data_ = nullptr;
   Stride stride_bytes_;
   PixelLength width_;
   PixelLength height_;
-  bool owns_memory_;
+  bool owns_memory_ = true;
 
   constexpr static std::size_t default_base_alignment_ = 16;
 
@@ -284,6 +284,8 @@ public:
   ~ImageRow() = default;  ///< Destructor.
   ImageRow(const ImageRow&) = default;  ///< Copy constructor.
   ImageRow& operator=(const ImageRow&) = default;  ///< Copy assigment operator.
+  ImageRow(ImageRow&&) noexcept = default;  ///< Copy constructor.
+  ImageRow& operator=(ImageRow&&) noexcept = default;  ///< Copy assigment operator.
 
   /** \brief Returns an iterator to the first element of the image row.
    *
@@ -391,6 +393,8 @@ public:
   ~ImageRowIterator() = default;  ///< Destructor.
   ImageRowIterator(const ImageRowIterator&) = default;  ///< Copy constructor.
   ImageRowIterator& operator=(const ImageRowIterator&) = default;  ///< Copy assignment operator.
+  ImageRowIterator(ImageRowIterator&&) noexcept = default;  ///< Move constructor.
+  ImageRowIterator& operator=(ImageRowIterator&&) noexcept = default;  ///< Move assignment operator.
 
   /** \brief Iterator pre-decrement.
    *
@@ -485,6 +489,8 @@ public:
   ~ConstImageRow() = default;  ///< Destructor.
   ConstImageRow(const ConstImageRow&) = default;  ///< Copy constructor.
   ConstImageRow& operator=(const ConstImageRow&) = default;  ///< Copy assigment operator.
+  ConstImageRow(ConstImageRow&&) noexcept = default;  ///< Copy constructor.
+  ConstImageRow& operator=(ConstImageRow&&) noexcept = default;  ///< Copy assigment operator.
 
   /** \brief Returns a const iterator to the first element of the image row.
    *
@@ -574,6 +580,8 @@ public:
   ~ConstImageRowIterator() = default;  ///< Destructor.
   ConstImageRowIterator(const ConstImageRowIterator&) = default;  ///< Copy constructor.
   ConstImageRowIterator& operator=(const ConstImageRowIterator&) = default;  ///< Copy assignment operator.
+  ConstImageRowIterator(ConstImageRowIterator&&) noexcept = default;  ///< Copy constructor.
+  ConstImageRowIterator& operator=(ConstImageRowIterator&&) noexcept = default;  ///< Copy assignment operator.
 
   /** \brief Iterator pre-decrement.
    *
@@ -665,7 +673,7 @@ private:
  * @tparam PixelType The pixel type.
  */
 template <typename PixelType>
-Image<PixelType>::Image() : data_(nullptr), stride_bytes_(0), width_(0), height_(0), owns_memory_(true)
+Image<PixelType>::Image() : stride_bytes_(0), width_(0), height_(0)
 {
 }
 
@@ -685,11 +693,9 @@ Image<PixelType>::Image() : data_(nullptr), stride_bytes_(0), width_(0), height_
  */
 template <typename PixelType>
 Image<PixelType>::Image(PixelLength width, PixelLength height, Stride stride_bytes)
-    : data_(nullptr)
-    , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
+    : stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
     , height_(height)
-    , owns_memory_(true)
 {
   constexpr auto base_alignment_bytes = Image<PixelType>::default_base_alignment_;
   allocate_bytes(stride_bytes_ * height_, base_alignment_bytes);
@@ -709,11 +715,9 @@ Image<PixelType>::Image(PixelLength width, PixelLength height, Stride stride_byt
  */
 template <typename PixelType>
 Image<PixelType>::Image(PixelLength width, PixelLength height, ImageRowAlignment row_alignment_bytes)
-    : data_(nullptr)
-    , stride_bytes_(detail::compute_stride_bytes(PixelTraits<PixelType>::nr_bytes * width, row_alignment_bytes))
+    : stride_bytes_(detail::compute_stride_bytes(PixelTraits<PixelType>::nr_bytes * width, row_alignment_bytes))
     , width_(width)
     , height_(height)
-    , owns_memory_(true)
 {
   allocate_bytes(stride_bytes_ * height_, row_alignment_bytes);
 }
@@ -758,7 +762,6 @@ Image<PixelType>::Image(MemoryBlock<AlignedNewAllocator>&& data,
     , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
     , height_(height)
-    , owns_memory_(true)
 {
   SELENE_ASSERT(width_ > 0 && height_ > 0 && stride_bytes_ > 0);
 }

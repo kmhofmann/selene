@@ -259,7 +259,7 @@ inline std::size_t VectorWriter::write(const T* values, std::size_t nr_values) n
 {
   SELENE_ASSERT(data_);
 
-  const std::uint8_t* ptr = reinterpret_cast<const std::uint8_t*>(values);
+  const auto ptr = reinterpret_cast<const std::uint8_t*>(values);
   const std::size_t len = nr_values * sizeof(T);
   write_bytes(ptr, len);
   return len;
