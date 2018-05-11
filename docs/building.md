@@ -145,12 +145,13 @@ CMake `find_package` command.
 On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as follows:
 
     apt-get install libjpeg-turbo8-dev libpng-dev libopencv-dev libboost-filesystem-dev
+    # Note: there is no pre-built google-benchmark package; install from source instead.
 
 #### MacOS
 
 Install [Homebrew](https://brew.sh/) to build and install the dependencies as follows:
 
-    brew install libjpeg-turbo libpng opencv3 boost
+    brew install libjpeg-turbo libpng opencv3 boost google-benchmark
 
 #### Windows
 
