@@ -20,8 +20,8 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/ImageDataToImage.hpp>
 #include <selene/img/ImageToImageData.hpp>
-#include <selene/img/JPEGRead.hpp>
-#include <selene/img/JPEGWrite.hpp>
+#include <selene/img_io/JPEGRead.hpp>
+#include <selene/img_io/JPEGWrite.hpp>
 
 #include <Utils.hpp>
 

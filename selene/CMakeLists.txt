@@ -42,13 +42,6 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/IO.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/JPEGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/JPEGRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/JPEGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/JPEGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelConversions.cpp
@@ -56,21 +49,28 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelTraits.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PNGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PNGRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PNGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PNGWrite.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RelativeAccessor.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Resample.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Transformations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/detail/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/detail/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/detail/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/detail/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/detail/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/detail/Util.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGRead.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/JPEGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/PNGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/Util.hpp
         )
 add_library(selene::selene_img ALIAS selene_img)
 

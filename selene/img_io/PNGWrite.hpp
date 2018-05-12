@@ -17,7 +17,7 @@
 #include <selene/img/BoundingBox.hpp>
 #include <selene/img/ImageData.hpp>
 #include <selene/img/RowPointers.hpp>
-#include <selene/img/detail/Util.hpp>
+#include <selene/img_io/detail/Util.hpp>
 
 #include <selene/io/FileWriter.hpp>
 #include <selene/io/VectorWriter.hpp>

@@ -9,8 +9,8 @@
 
 #include <selene/base/MessageLog.hpp>
 
-#include <selene/img/JPEGCommon.hpp>
 #include <selene/img/PixelFormat.hpp>
+#include <selene/img_io/JPEGCommon.hpp>
 
 namespace sln {
 namespace detail {

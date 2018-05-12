@@ -18,7 +18,7 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/PixelFormat.hpp>
 #include <selene/img/RowPointers.hpp>
-#include <selene/img/detail/Util.hpp>
+#include <selene/img_io/detail/Util.hpp>
 
 #include <selene/io/FileReader.hpp>
 #include <selene/io/MemoryReader.hpp>

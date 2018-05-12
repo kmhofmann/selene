@@ -8,7 +8,7 @@
 
 #include <selene/base/MessageLog.hpp>
 
-#include <selene/img/IO.hpp>
+#include <selene/img_io/IO.hpp>
 
 #include <selene/io/FileReader.hpp>
 #include <selene/io/FileWriter.hpp>

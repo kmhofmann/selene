@@ -3,7 +3,7 @@
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
 #include <selene/img/ImageToImageData.hpp>
-#include <selene/img/IO.hpp>
+#include <selene/img_io/IO.hpp>
 
 #include <selene/io/FileReader.hpp>
 #include <selene/io/FileWriter.hpp>

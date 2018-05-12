@@ -11,10 +11,10 @@
 #include <selene/base/MessageLog.hpp>
 
 #include <selene/img/ImageData.hpp>
-#include <selene/img/JPEGRead.hpp>
-#include <selene/img/JPEGWrite.hpp>
-#include <selene/img/PNGRead.hpp>
-#include <selene/img/PNGWrite.hpp>
+#include <selene/img_io/JPEGRead.hpp>
+#include <selene/img_io/JPEGWrite.hpp>
+#include <selene/img_io/PNGRead.hpp>
+#include <selene/img_io/PNGWrite.hpp>
 
 #include <stdexcept>
 

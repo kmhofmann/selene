@@ -4,6 +4,7 @@
 
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img/Transformations.hpp>
+#include <selene/img_io/IO.hpp>
 
 #include <selene/io/FileWriter.hpp>
 

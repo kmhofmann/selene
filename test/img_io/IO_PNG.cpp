@@ -23,8 +23,8 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/ImageDataToImage.hpp>
 #include <selene/img/ImageToImageData.hpp>
-#include <selene/img/PNGRead.hpp>
-#include <selene/img/PNGWrite.hpp>
+#include <selene/img_io/PNGRead.hpp>
+#include <selene/img_io/PNGWrite.hpp>
 
 #include <Utils.hpp>
 

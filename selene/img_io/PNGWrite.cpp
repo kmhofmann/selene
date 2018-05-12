@@ -7,8 +7,8 @@
 #include <png.h>
 
 #include <selene/base/Utils.hpp>
-#include <selene/img/PNGWrite.hpp>
-#include <selene/img/detail/PNGDetail.hpp>
+#include <selene/img_io/PNGWrite.hpp>
+#include <selene/img_io/detail/PNGDetail.hpp>
 
 #include <array>
 #include <cstdint>

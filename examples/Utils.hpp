@@ -6,7 +6,7 @@
 #define SELENE_EXAMPLES_UTILS_HPP
 
 #include <selene/img/ImageDataToImage.hpp>
-#include <selene/img/IO.hpp>
+#include <selene/img_io/IO.hpp>
 
 #include <selene/io/FileReader.hpp>
 
