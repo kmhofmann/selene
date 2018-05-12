@@ -3,8 +3,8 @@
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
 #include <selene/img/ImageToImageData.hpp>
-#include <selene/img/Transformations.hpp>
 #include <selene/img_io/IO.hpp>
+#include <selene/img_ops/Transformations.hpp>
 
 #include <selene/io/FileWriter.hpp>
 

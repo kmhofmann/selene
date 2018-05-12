@@ -6,15 +6,15 @@
 
 #include <selene/base/Utils.hpp>
 
-#include <selene/img/Algorithms.hpp>
-#include <selene/img/PixelConversions.hpp>
+#include <selene/img_ops/Algorithms.hpp>
+#include <selene/img_ops/PixelConversions.hpp>
 
 #include <limits>
 #include <random>
 #include <type_traits>
 
-#include "Utils.hpp"
-#include "_TestImages.hpp"
+#include <test/Utils.hpp>
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

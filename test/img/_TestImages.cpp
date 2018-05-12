@@ -2,7 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include "_TestImages.hpp"
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

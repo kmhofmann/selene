@@ -4,8 +4,8 @@
 
 #include <catch.hpp>
 
-#include <selene/img/Algorithms.hpp>
 #include <selene/img/Image.hpp>
+#include <selene/img_ops/Algorithms.hpp>
 
 #include <random>
 

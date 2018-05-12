@@ -2,9 +2,9 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <selene/img/ImageConversions.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
+#include <selene/img_ops/ImageConversions.hpp>
 
 #include <selene/io/FileWriter.hpp>
 

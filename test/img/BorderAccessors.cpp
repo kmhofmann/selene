@@ -7,7 +7,7 @@
 #include <selene/img/BorderAccessors.hpp>
 #include <selene/img/Image.hpp>
 
-#include "_TestImages.hpp"
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

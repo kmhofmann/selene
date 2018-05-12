@@ -5,9 +5,9 @@
 #include <catch.hpp>
 
 #include <selene/img/Interpolators.hpp>
-#include <selene/img/Resample.hpp>
+#include <selene/img_ops/Resample.hpp>
 
-#include "_TestImages.hpp"
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

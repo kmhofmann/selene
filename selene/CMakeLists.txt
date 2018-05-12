@@ -30,12 +30,10 @@ target_include_directories(selene_base PUBLIC
 #------------------------------------------------------------------------------
 
 add_library(selene_img
-        ${CMAKE_CURRENT_LIST_DIR}/img/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageAccess.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageData.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataBase.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataStorage.hpp
@@ -44,15 +42,11 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PixelConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PixelConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelTraits.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RelativeAccessor.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Resample.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Transformations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
@@ -71,6 +65,12 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/PNGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/Util.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
         )
 add_library(selene::selene_img ALIAS selene_img)
 

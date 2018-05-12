@@ -7,10 +7,10 @@
 
 /// @file
 
-#include <selene/img/Algorithms.hpp>
 #include <selene/img/Image.hpp>
-#include <selene/img/PixelConversions.hpp>
 #include <selene/img/PixelTraits.hpp>
+#include <selene/img_ops/Algorithms.hpp>
+#include <selene/img_ops/PixelConversions.hpp>
 
 namespace sln {
 

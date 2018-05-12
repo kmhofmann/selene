@@ -26,7 +26,7 @@
 #include <selene/img_io/PNGRead.hpp>
 #include <selene/img_io/PNGWrite.hpp>
 
-#include <Utils.hpp>
+#include <test/Utils.hpp>
 
 namespace fs = boost::filesystem;
 using namespace sln::literals;

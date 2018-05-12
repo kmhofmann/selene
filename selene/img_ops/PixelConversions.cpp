@@ -2,7 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <selene/img/PixelConversions.hpp>
+#include <selene/img_ops/PixelConversions.hpp>
 
 namespace sln {
 

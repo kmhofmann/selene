@@ -14,7 +14,7 @@
 #include <selene/io/FileWriter.hpp>
 #include <selene/io/VectorWriter.hpp>
 
-#include <Utils.hpp>
+#include <test/Utils.hpp>
 
 namespace fs = boost::filesystem;
 

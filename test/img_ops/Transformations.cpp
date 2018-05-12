@@ -4,11 +4,11 @@
 
 #include <catch.hpp>
 
-#include <selene/img/Transformations.hpp>
+#include <selene/img_ops/Transformations.hpp>
 
 #include <random>
 
-#include "_TestImages.hpp"
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

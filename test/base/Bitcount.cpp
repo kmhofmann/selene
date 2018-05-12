@@ -8,7 +8,7 @@
 
 #include <random>
 
-#include "Utils.hpp"
+#include <test/Utils.hpp>
 
 namespace {
 

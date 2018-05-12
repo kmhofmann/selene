@@ -13,7 +13,7 @@
 #include <memory>
 #include <random>
 
-#include "_TestImages.hpp"
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

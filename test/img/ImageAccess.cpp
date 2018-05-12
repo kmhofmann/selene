@@ -6,7 +6,7 @@
 
 #include <selene/img/ImageAccess.hpp>
 
-#include "_TestImages.hpp"
+#include <test/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

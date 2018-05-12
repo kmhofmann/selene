@@ -23,7 +23,7 @@
 #include <selene/img_io/JPEGRead.hpp>
 #include <selene/img_io/JPEGWrite.hpp>
 
-#include <Utils.hpp>
+#include <test/Utils.hpp>
 
 namespace fs = boost::filesystem;
 using namespace sln::literals;

@@ -5,14 +5,14 @@
 #ifndef SELENE_TEST_IMG_TEST_IMAGES_HPP
 #define SELENE_TEST_IMG_TEST_IMAGES_HPP
 
-#include <selene/img/Algorithms.hpp>
 #include <selene/img/Image.hpp>
 #include <selene/img/PixelTraits.hpp>
 #include <selene/img/Types.hpp>
+#include <selene/img_ops/Algorithms.hpp>
 
 #include <limits>
 
-#include "Utils.hpp"
+#include <test/Utils.hpp>
 
 namespace sln_test {
 
