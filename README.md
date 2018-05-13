@@ -36,7 +36,7 @@ Image<Pixel_8u3> img_rgb = to_image<Pixel_8u3>(std::move(img_data));
 assert(img_rgb.width() > 400_px && img_rgb.height() > 350_px);
 
 // Create non-owning view on part of the image
-Image<Pixel_8u3> img_part = view(img_rgb, 100_px, 100_px, 300_px, 250_px);
+Image<Pixel_8u3> img_part = view(img_rgb, 100_idx, 100_idx, 300_px, 250_px);
 
 // Darken this part
 for_each_pixel(img_part, [](auto& px){ px /= 4; });

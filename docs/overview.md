@@ -43,7 +43,7 @@ It currently contains, among other things
     [boundary handling strategies](https://github.com/kmhofmann/selene/blob/master/src/selene/img/Accessors.hpp) (no
     check, replicate boundary, zero padding).
       * Example: `const auto u = get<ImageInterpolationMode::Bilinear>(img, 8.5, 10.2);`
-      * Example: `const auto v = get<BorderAccessMode::Replicated>(img, -5, 10);`
+      * Example: `const auto v = get<BorderAccessMode::Replicated>(img, -5_idx, 10_idx);`
       * Example: `const auto w = get<ImageInterpolationMode::Bilinear, BorderAccessMode::ZeroPadding>(img, x, y)`
     * [Algorithms](https://github.com/kmhofmann/selene/blob/master/src/selene/img/Algorithms.hpp) to apply point-wise
     operations to images/views.
