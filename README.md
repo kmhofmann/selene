@@ -3,8 +3,6 @@
 [![Build Status](https://travis-ci.org/kmhofmann/selene.svg?branch=master)](https://travis-ci.org/kmhofmann/selene)
 [![Build status](https://ci.appveyor.com/api/projects/status/7usv92g9ot12v656?svg=true)](https://ci.appveyor.com/project/kmhofmann/selene)
 
-
-
 **Selene** is a C++14 image representation, processing, and I/O library, focusing on ease of use and a clean, modern,
 type-safe API.
 
@@ -56,3 +54,17 @@ write_image(to_image_data_view(img_rgba, PixelFormat::RGBA), ImageFormat::PNG,
 // Write encoded binary data to disk (or do something else with it...)
 write_data_contents("example_out.png", encoded_png_data);
 ```
+
+### Package managed
+
+While building from source "at head" using *CMake* is the recommended way to use
+**Selene** (see [Building the library](docs/building.md)), the library is also available as a
+
+  * [Conan package](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) on Bintray.
+
+**Selene**'s own dependencies can be installed using
+
+  * [Conan](https://conan.io/) (some)
+  * [vcpkg](https://github.com/Microsoft/vcpkg) (all)
+
+besides OS level package managers.

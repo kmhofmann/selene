@@ -29,5 +29,8 @@ class SeleneConan(ConanFile):
         cmake.build()
         cmake.install()
 
+    def package(self):
+        self.copy("license*", dst="licenses",  ignore_case=True, keep_path=False)
+
     def package_info(self):
         self.cpp_info.libs = ["selene_base", "selene_img", "selene_io"]
