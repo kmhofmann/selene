@@ -71,7 +71,7 @@ inline constexpr T power(T base, U exponent) noexcept
 {
   static_assert(std::is_integral<U>::value, "Exponent needs to be integral");
   static_assert(std::is_unsigned<U>::value, "Exponent needs to be unsigned");
-  return (exponent == 0) ? T{1} : base * power(base, U(exponent - 1));
+  return (exponent == 0) ? T{1} : T(base * power(base, U(exponent - 1)));
 }
 
 /** Computes the next largest power of two given an unsigned integer value.

@@ -61,7 +61,7 @@ inline constexpr Result constexpr_floor(Value val) noexcept
     return ival;
   }
 
-  return ival - (val < 0 ? 1 : 0);
+  return static_cast<Result>(ival - (val < 0 ? 1 : 0));
 }
 
 /** \brief Ceil operation, i.e. computes the smalles integer value not less than `val`.
@@ -84,7 +84,7 @@ inline constexpr Result constexpr_ceil(Value val) noexcept
     return ival;
   }
 
-  return ival + (val > 0 ? 1 : 0);
+  return static_cast<Result>(ival + (val > 0 ? 1 : 0));
 }
 
 /** \brief Rounds the given floating point value to the nearest integer value.

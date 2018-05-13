@@ -7,6 +7,7 @@
 #include <selene/base/Bitcount.hpp>
 
 #include <random>
+#include <type_traits>
 
 #include <test/Utils.hpp>
 
@@ -15,11 +16,13 @@ namespace {
 template <typename T>
 std::size_t simple_bitcount(T x)
 {
+  static_assert(std::is_unsigned<T>::value, "type not unsigned");
   std::size_t count = 0;
 
-  for (; x; x >>= 1)
+  while (x > 0)
   {
     count += x & T{1};
+    x = T(x >> 1);
   };
 
   return count;
@@ -32,7 +35,7 @@ void test_bitcount(std::mt19937& rng)
 
   for (std::size_t i = 0; i < 100000; ++i)
   {
-    const auto x = dist(rng);
+    const auto x = static_cast<T>(dist(rng));
     const auto bc = sln::bit_count(x);
     const auto sbc = simple_bitcount(x);
     REQUIRE(bc == sbc);
