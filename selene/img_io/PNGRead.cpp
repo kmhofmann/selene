@@ -534,8 +534,8 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
   bool error = eof || (signature_correct != 0);
   png_set_sig_bytes(png_ptr, 8);
 
-  PixelIndex width = 0_px;
-  PixelIndex height = 0_px;
+  PixelLength width = 0_px;
+  PixelLength height = 0_px;
   int bit_depth = 0;
   int nr_channels = 0;
 

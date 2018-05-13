@@ -19,6 +19,7 @@ namespace sln {
 namespace detail {
 
 class PixelIndexTag;
+class PixelLengthTag;
 class StrideTag;
 class ImageRowAlignmentTag;
 
@@ -28,7 +29,8 @@ using PixelIndex = ExplicitType<std::int32_t, detail::PixelIndexTag>;  ///< Type
                                                                        ///< scalar as part of an image coordinate
                                                                        ///< (x or y).
 
-using PixelLength = PixelIndex;  ///< Type representing a length in x or y-direction.
+using PixelLength = ExplicitType<std::int32_t, detail::PixelLengthTag>;  ///< Type representing a length in
+                                                                         ///< x or y-direction.
 
 using Stride = ExplicitType<std::size_t, detail::StrideTag>;  ///< Type representing an image stride
                                                               ///< (nr of bytes per row).
@@ -61,19 +63,29 @@ constexpr inline PixelIndex to_pixel_index(T value)
 template <typename T>
 constexpr inline PixelLength to_pixel_length(T value)
 {
-  return PixelIndex{static_cast<PixelIndex::value_type>(value)};
+  return PixelLength{static_cast<PixelLength::value_type>(value)};
 }
 
 inline namespace literals {
 
-/** \brief User-defined literal representing a pixel index
+ /** \brief User-defined literal representing a pixel index
  *
  * @param index Pixel index.
  * @return A `PixelIndex` instance.
  */
-constexpr inline PixelIndex operator"" _px(unsigned long long index)
+constexpr inline PixelIndex operator"" _idx(unsigned long long index)
 {
   return to_pixel_index(index);
+}
+
+/** \brief User-defined literal representing a pixel length
+ *
+ * @param length Pixel length.
+ * @return A `PixelLength` instance.
+ */
+constexpr inline PixelLength operator"" _px(unsigned long long length)
+{
+  return to_pixel_length(length);
 }
 
 }  // namespace literals

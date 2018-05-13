@@ -28,8 +28,8 @@ int main(int argc, char** argv)
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
   auto img = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
-  assert(img.width() == 1024);
-  assert(img.height() == 684);
+  assert(img.width() == 1024_px);
+  assert(img.height() == 684_px);
 
   // Resample the image to a much smaller size. This results in plenty of aliasing.
   const auto img_resampled_0 = resample(img, 256_px, 171_px);

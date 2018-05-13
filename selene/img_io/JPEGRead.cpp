@@ -21,7 +21,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
-JPEGImageInfo::JPEGImageInfo(PixelIndex width_, PixelIndex height_, std::uint16_t nr_channels_, JPEGColorSpace color_space_)
+JPEGImageInfo::JPEGImageInfo(PixelLength width_, PixelLength height_, std::uint16_t nr_channels_, JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }
@@ -77,7 +77,7 @@ bool JPEGDecompressionObject::valid() const
 JPEGImageInfo JPEGDecompressionObject::get_header_info() const
 {
   const auto color_space = detail::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
-  return JPEGImageInfo(PixelIndex(impl_->cinfo.image_width), PixelIndex(impl_->cinfo.image_height),
+  return JPEGImageInfo(PixelLength(impl_->cinfo.image_width), PixelLength(impl_->cinfo.image_height),
                        static_cast<std::uint16_t>(impl_->cinfo.num_components), color_space);
 }
 
@@ -148,8 +148,8 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
   auto& cinfo = obj_.impl_->cinfo;
   SELENE_FORCED_ASSERT(cinfo.out_color_components == cinfo.output_components);
 
-  const auto width = PixelIndex(cinfo.output_width);
-  const auto height = region_.empty() ? PixelIndex(cinfo.output_height) : PixelIndex(region_.height());
+  const auto width = PixelLength(cinfo.output_width);
+  const auto height = region_.empty() ? PixelLength(cinfo.output_height) : PixelLength(region_.height());
   const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
   return JPEGImageInfo{width, height, static_cast<std::uint16_t>(cinfo.out_color_components), out_color_space};
 }

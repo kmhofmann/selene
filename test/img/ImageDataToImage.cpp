@@ -25,7 +25,7 @@ sln::ImageData<> create_test_image_data(sln::PixelLength width,
   sln::ImageData<> img_data(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
                             sample_format);
 
-  for (auto y = 0_px; y < img_data.height(); ++y)
+  for (auto y = 0_idx; y < img_data.height(); ++y)
   {
     std::uint8_t* begin = img_data.byte_ptr(y);
     std::uint8_t* end = begin + img_data.row_bytes();
@@ -51,9 +51,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(img_view.is_packed());
     REQUIRE(img_view.is_view());
     REQUIRE(img_view.is_valid());
-    for (auto y = 0_px; y < img_view.height(); ++y)
+    for (auto y = 0_idx; y < img_view.height(); ++y)
     {
-      for (auto x = 0_px; x < img_view.width(); ++x)
+      for (auto x = 0_idx; x < img_view.width(); ++x)
       {
         REQUIRE(img_view(x, y) == x + y);
       }
@@ -66,9 +66,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(img.is_packed());
     REQUIRE(!img.is_view());
     REQUIRE(img.is_valid());
-    for (auto y = 0_px; y < img.height(); ++y)
+    for (auto y = 0_idx; y < img.height(); ++y)
     {
-      for (auto x = 0_px; x < img.width(); ++x)
+      for (auto x = 0_idx; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == x + y);
       }
@@ -87,9 +87,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img_view.is_packed());
     REQUIRE(img_view.is_view());
     REQUIRE(img_view.is_valid());
-    for (auto y = 0_px; y < img_view.height(); ++y)
+    for (auto y = 0_idx; y < img_view.height(); ++y)
     {
-      for (auto x = 0_px; x < img_view.width(); ++x)
+      for (auto x = 0_idx; x < img_view.width(); ++x)
       {
         REQUIRE(img_view(x, y) == x + y);
       }
@@ -102,9 +102,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img.is_packed());
     REQUIRE(!img.is_view());
     REQUIRE(img.is_valid());
-    for (auto y = 0_px; y < img.height(); ++y)
+    for (auto y = 0_idx; y < img.height(); ++y)
     {
-      for (auto x = 0_px; x < img.width(); ++x)
+      for (auto x = 0_idx; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == x + y);
       }
@@ -123,9 +123,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img_view.is_packed());
     REQUIRE(img_view.is_view());
     REQUIRE(img_view.is_valid());
-    for (auto y = 0_px; y < img_view.height(); ++y)
+    for (auto y = 0_idx; y < img_view.height(); ++y)
     {
-      for (auto x = 0_px; x < img_view.width(); ++x)
+      for (auto x = 0_idx; x < img_view.width(); ++x)
       {
         REQUIRE(img_view(x, y) == sln::Pixel_8u3(3 * x + 0 + y, 3 * x + 1 + y, 3 * x + 2 + y));
       }
@@ -138,9 +138,9 @@ TEST_CASE("Converting ImageData to Image<>", "[img]")
     REQUIRE(!img.is_packed());
     REQUIRE(!img.is_view());
     REQUIRE(img.is_valid());
-    for (auto y = 0_px; y < img.height(); ++y)
+    for (auto y = 0_idx; y < img.height(); ++y)
     {
-      for (auto x = 0_px; x < img.width(); ++x)
+      for (auto x = 0_idx; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == sln::Pixel_8u3(3 * x + 0 + y, 3 * x + 1 + y, 3 * x + 2 + y));
       }

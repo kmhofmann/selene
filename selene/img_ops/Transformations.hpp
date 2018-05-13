@@ -82,7 +82,7 @@ void flip(const Image<PixelType>& img_src, Image<PixelType>& img_dst)
   {
     case FlipDirection::Horizontal:
     {
-      for (auto y_src = 0_px; y_src < img_src.height(); ++y_src)
+      for (auto y_src = 0_idx; y_src < img_src.height(); ++y_src)
       {
         std::reverse_copy(img_src.data(y_src), img_src.data_row_end(y_src), img_dst.data(y_src));
       }
@@ -90,7 +90,7 @@ void flip(const Image<PixelType>& img_src, Image<PixelType>& img_dst)
     }
     case FlipDirection::Vertical:
     {
-      for (auto y_src = 0_px; y_src < img_src.height(); ++y_src)
+      for (auto y_src = 0_idx; y_src < img_src.height(); ++y_src)
       {
         const auto y_dst = PixelIndex{img_src.height() - y_src - 1};
         std::copy(img_src.data(y_src), img_src.data_row_end(y_src), img_dst.data(y_dst));
@@ -99,7 +99,7 @@ void flip(const Image<PixelType>& img_src, Image<PixelType>& img_dst)
     }
     case FlipDirection::Both:
     {
-      for (auto y_src = 0_px; y_src < img_src.height(); ++y_src)
+      for (auto y_src = 0_idx; y_src < img_src.height(); ++y_src)
       {
         const auto y_dst = PixelIndex{img_src.height() - y_src - 1};
         std::reverse_copy(img_src.data(y_src), img_src.data_row_end(y_src), img_dst.data(y_dst));
@@ -134,11 +134,11 @@ void flip_horizontally_in_place(Image<PixelType>& img)
 {
   const auto half_width = img.width() / 2;
 
-  for (auto y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_idx; y < img.height(); ++y)
   {
     auto row_ptr = img.data(y);
 
-    for (auto x_left = 0_px; x_left < half_width; ++x_left)
+    for (auto x_left = 0_idx; x_left < half_width; ++x_left)
     {
       const auto x_right = img.width() - x_left - 1;
       std::swap(row_ptr[x_left], row_ptr[x_right]);
@@ -156,7 +156,7 @@ void flip_vertically_in_place(Image<PixelType>& img)
 {
   const auto half_height = img.height() / 2;
 
-  for (auto y_top = 0_px; y_top < half_height; ++y_top)
+  for (auto y_top = 0_idx; y_top < half_height; ++y_top)
   {
     const auto y_bottom = PixelIndex{img.height() - y_top - 1};
 
@@ -201,9 +201,9 @@ void transpose(const Image<PixelType>& img_src, Image<PixelType>& img_dst)
   SELENE_ASSERT(&img_src != &img_dst);
   img_dst.maybe_allocate(img_src.height(), img_src.width());
 
-  for (auto dst_y = 0_px; dst_y < img_dst.height(); ++dst_y)
+  for (auto dst_y = 0_idx; dst_y < img_dst.height(); ++dst_y)
   {
-    for (auto dst_x = 0_px; dst_x < img_dst.width(); ++dst_x)
+    for (auto dst_x = 0_idx; dst_x < img_dst.width(); ++dst_x)
     {
       const auto src_x = flip_v ? PixelIndex{img_src.width() - 1 - dst_y} : dst_y;  // branch determined at
       const auto src_y = flip_h ? PixelIndex{img_src.height() - 1 - dst_x} : dst_x;  // compile time

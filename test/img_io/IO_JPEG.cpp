@@ -253,7 +253,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   // Test reading of partial image
   const auto expected_width = 404_px;
   const auto targeted_height = 350_px;
-  sln::BoundingBox region(100_px, 100_px, 400_px, targeted_height);
+  sln::BoundingBox region(100_idx, 100_idx, 400_px, targeted_height);
 
   sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());

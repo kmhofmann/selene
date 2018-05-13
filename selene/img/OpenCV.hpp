@@ -171,7 +171,7 @@ Image<T> copy_opencv_mat(const cv::Mat& img_cv)
   const auto nr_bytes_per_row = width * PixelTraits<T>::nr_bytes;
 
   Image<T> img(width, height, stride_bytes);
-  for (PixelIndex y = 0_px; y < height; ++y)
+  for (PixelIndex y = 0_idx; y < height; ++y)
   {
     const auto begin = img_cv.ptr(y);
     const auto end = img_cv.ptr(y) + nr_bytes_per_row;

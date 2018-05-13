@@ -16,10 +16,10 @@ void image_access_member_fn(benchmark::State& state)
 
   for (auto _ : state)
   {
-    for (auto x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_idx; x < img.width(); ++x)
     {
       benchmark::DoNotOptimize(
-          img(x, 0_px)
+          img(x, 0_idx)
       );
     }
   }
@@ -31,10 +31,10 @@ void image_access_get_fn(benchmark::State& state)
 
   for (auto _ : state)
   {
-    for (auto x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_idx; x < img.width(); ++x)
     {
       benchmark::DoNotOptimize(
-          get(img, x, 0_px)
+          get(img, x, 0_idx)
       );
     }
   }
@@ -44,14 +44,14 @@ void image_access_relative(benchmark::State& state)
 {
   sln::Image_8u3 img(100_px, 10_px);
 
-  auto rel = sln::relative_accessor(img, 50_px, 5_px);
+  auto rel = sln::relative_accessor(img, 50_idx, 5_idx);
 
   for (auto _ : state)
   {
     for (sln::PixelIndex::value_type dx = -50; dx < sln::PixelIndex::value_type(img.width() - 50); ++dx)
     {
       benchmark::DoNotOptimize(
-          rel.get(sln::PixelIndex{dx}, 0_px)
+          rel.get(sln::PixelIndex{dx}, 0_idx)
       );
     }
   }

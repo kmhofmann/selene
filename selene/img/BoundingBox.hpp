@@ -155,8 +155,8 @@ inline bool BoundingBox::empty() const noexcept
  */
 inline void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept
 {
-  x0_ = std::max(x0_, PixelLength{0});
-  y0_ = std::max(y0_, PixelLength{0});
+  x0_ = std::max(x0_, PixelIndex{0});
+  y0_ = std::max(y0_, PixelIndex{0});
   width_ = std::min(width_, PixelLength{max_img_width - x0_});
   height_ = std::min(height_, PixelLength{max_img_height - y0_});
 }

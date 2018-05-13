@@ -23,7 +23,7 @@ namespace sln {
 template <typename PixelType, typename UnaryFunction>
 UnaryFunction for_each_pixel(Image<PixelType>& img, UnaryFunction f)
 {
-  for (auto y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_idx; y < img.height(); ++y)
   {
     for (auto ptr = img.data(y), end = img.data_row_end(y); ptr != end; ++ptr)
     {
@@ -51,7 +51,7 @@ void transform_pixels(const Image<PixelTypeSrc>& img_src, Image<PixelTypeDst>& i
 {
   img_dst.maybe_allocate(img_src.width(), img_src.height());
 
-  for (auto y = 0_px; y < img_dst.height(); ++y)
+  for (auto y = 0_idx; y < img_dst.height(); ++y)
   {
     auto ptr_src = img_src.data(y);
     for (auto ptr_dst = img_dst.data(y), ptr_dst_end = img_dst.data_row_end(y); ptr_dst != ptr_dst_end;)

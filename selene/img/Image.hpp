@@ -1050,7 +1050,7 @@ void Image<PixelType>::clear() noexcept
 template <typename PixelType>
 void Image<PixelType>::fill(PixelType value) noexcept
 {
-  for (PixelIndex y = 0_px; y < height_; ++y)
+  for (PixelIndex y = 0_idx; y < height_; ++y)
   {
     std::fill(data(y), data_row_end(y), value);
   }
@@ -1226,7 +1226,7 @@ inline void Image<PixelType>::set_data(MemoryBlock<AlignedNewAllocator>&& data,
 template <typename PixelType>
 inline typename Image<PixelType>::iterator Image<PixelType>::begin() noexcept
 {
-  return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, 0_px));
+  return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, 0_idx));
 }
 
 /** \brief Returns a const iterator to the first row of the image.
@@ -1237,7 +1237,7 @@ inline typename Image<PixelType>::iterator Image<PixelType>::begin() noexcept
 template <typename PixelType>
 inline typename Image<PixelType>::const_iterator Image<PixelType>::begin() const noexcept
 {
-  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_px));
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_idx));
 }
 
 /** \brief Returns a const iterator to the first row of the image.
@@ -1248,7 +1248,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::begin() const
 template <typename PixelType>
 inline typename Image<PixelType>::const_iterator Image<PixelType>::cbegin() const noexcept
 {
-  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_px));
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, 0_idx));
 }
 
 /** \brief Returns an iterator to the row after the last row of the image.
@@ -1259,7 +1259,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::cbegin() cons
 template <typename PixelType>
 inline typename Image<PixelType>::iterator Image<PixelType>::end() noexcept
 {
-  return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, height_));
+  return ImageRowIterator<PixelType>(ImageRow<PixelType>(this, PixelIndex{height_}));
 }
 
 /** \brief Returns a const iterator to the row after the last row of the image.
@@ -1270,7 +1270,7 @@ inline typename Image<PixelType>::iterator Image<PixelType>::end() noexcept
 template <typename PixelType>
 inline typename Image<PixelType>::const_iterator Image<PixelType>::end() const noexcept
 {
-  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, PixelIndex{height_}));
 }
 
 /** \brief Returns a const iterator to the row after the last row of the image.
@@ -1281,7 +1281,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::end() const n
 template <typename PixelType>
 inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const noexcept
 {
-  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, height_));
+  return ConstImageRowIterator<PixelType>(ConstImageRow<PixelType>(this, PixelIndex{height_}));
 }
 
 /** \brief Returns a pointer to the first byte storing image data (in row 0).
@@ -1568,7 +1568,7 @@ void Image<PixelType>::copy_rows_from(const Image<PixelType>& src)
   SELENE_ASSERT(data_ && src.data_);
   SELENE_ASSERT(width_ == src.width_ && height_ == src.height_);
 
-  for (PixelIndex y = 0_px; y < height_; ++y)
+  for (PixelIndex y = 0_idx; y < height_; ++y)
   {
     std::copy(src.data(y), src.data_row_end(y), data(y));
   }
@@ -1621,7 +1621,7 @@ bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
     return false;
   }
 
-  for (auto y = 0_px; y < img0.height(); ++y)
+  for (auto y = 0_idx; y < img0.height(); ++y)
   {
     const auto end0 = img0.data_row_end(y);
     const auto begin0 = img0.data(y);

@@ -39,11 +39,16 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
   const auto dst_width = img_dst.width();
   const auto dst_height = img_dst.height();
 
-  for (auto y_dst = 0_px; y_dst < safe_boundary_top; ++y_dst)
+  const auto bound_left = PixelIndex{safe_boundary_left};
+  const auto bound_right = PixelIndex{safe_boundary_right};
+  const auto bound_top = PixelIndex{safe_boundary_top};
+  const auto bound_bottom = PixelIndex{safe_boundary_bottom};
+
+  for (auto y_dst = 0_idx; y_dst < bound_top; ++y_dst)
   {
     const auto y_src = y_dst * dst_to_src_factor_y;
 
-    for (auto x_dst = 0_px; x_dst < dst_width; ++x_dst)
+    for (auto x_dst = 0_idx; x_dst < dst_width; ++x_dst)
     {
       const auto x_src = x_dst * dst_to_src_factor_x;
       const auto value = func_safe(x_src, y_src);
@@ -51,25 +56,25 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
     }
   }
 
-  for (auto y_dst = safe_boundary_top; y_dst < safe_boundary_bottom; ++y_dst)
+  for (auto y_dst = bound_top; y_dst < bound_bottom; ++y_dst)
   {
     const auto y_src = y_dst * dst_to_src_factor_y;
 
-    for (auto x_dst = 0_px; x_dst < safe_boundary_left; ++x_dst)
+    for (auto x_dst = 0_idx; x_dst < bound_left; ++x_dst)
     {
       const auto x_src = x_dst * dst_to_src_factor_x;
       const auto value = func_safe(x_src, y_src);
       img_dst(x_dst, y_dst) = value;
     }
 
-    for (auto x_dst = safe_boundary_left; x_dst < safe_boundary_right; ++x_dst)
+    for (auto x_dst = bound_left; x_dst < bound_right; ++x_dst)
     {
       const auto x_src = x_dst * dst_to_src_factor_x;
       const auto value = func(x_src, y_src);
       img_dst(x_dst, y_dst) = value;
     }
 
-    for (auto x_dst = safe_boundary_right; x_dst < dst_width; ++x_dst)
+    for (auto x_dst = bound_right; x_dst < dst_width; ++x_dst)
     {
       const auto x_src = x_dst * dst_to_src_factor_x;
       const auto value = func_safe(x_src, y_src);
@@ -77,11 +82,11 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
     }
   }
 
-  for (auto y_dst = safe_boundary_bottom; y_dst < dst_height; ++y_dst)
+  for (auto y_dst = bound_bottom; y_dst < dst_height; ++y_dst)
   {
     const auto y_src = y_dst * dst_to_src_factor_y;
 
-    for (auto x_dst = 0_px; x_dst < dst_width; ++x_dst)
+    for (auto x_dst = 0_idx; x_dst < dst_width; ++x_dst)
     {
       const auto x_src = x_dst * dst_to_src_factor_x;
       const auto value = func_safe(x_src, y_src);

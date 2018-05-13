@@ -21,9 +21,9 @@ TEST_CASE("Image resampling", "[img]")
     REQUIRE(img_r.width() == 6);
     REQUIRE(img_r.height() == 6);
 
-    for (auto y = 0_px; y < img_r.height(); ++y)
+    for (auto y = 0_idx; y < img_r.height(); ++y)
     {
-      for (auto x = 0_px; x < img_r.width(); ++x)
+      for (auto x = 0_idx; x < img_r.width(); ++x)
       {
         REQUIRE(img_r(x, y) == img(sln::PixelIndex{x / 2}, sln::PixelIndex{y / 2}));
       }
@@ -44,9 +44,9 @@ TEST_CASE("Image resampling", "[img]")
         70, 75, 80, 85, 90, 90,
         70, 75, 80, 85, 90, 90}};
 
-    for (auto y = 0_px; y < img_r.height(); ++y)
+    for (auto y = 0_idx; y < img_r.height(); ++y)
     {
-      for (auto x = 0_px; x < img_r.width(); ++x)
+      for (auto x = 0_idx; x < img_r.width(); ++x)
       {
         const auto i = y * img_r.width() + x;
         REQUIRE(img_r(x, y) == values[i]);

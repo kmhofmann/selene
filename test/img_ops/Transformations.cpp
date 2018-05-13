@@ -19,8 +19,8 @@ TEST_CASE("Image transformations", "[img]")
 
   for (std::size_t count = 0; count < 32; ++count)
   {
-    const auto width = sln::PixelIndex{dist_size(rng)};
-    const auto height = sln::PixelIndex{dist_size(rng)};
+    const auto width = sln::PixelLength{dist_size(rng)};
+    const auto height = sln::PixelLength{dist_size(rng)};
     const auto img = sln_test::make_random_image<sln::Pixel_8u3>(width, height, rng);
     REQUIRE(img.width() == width);
     REQUIRE(img.height() == height);
@@ -32,9 +32,9 @@ TEST_CASE("Image transformations", "[img]")
     REQUIRE(img_transp.width() == img.height());
     REQUIRE(img_transp.height() == img.width());
 
-    for (auto y = 0_px; y < img_transp.height(); ++y)
+    for (auto y = 0_idx; y < img_transp.height(); ++y)
     {
-      for (auto x = 0_px; x < img_transp.width(); ++x)
+      for (auto x = 0_idx; x < img_transp.width(); ++x)
       {
         REQUIRE(img_transp(x, y) == img(y, x));
       }
@@ -47,9 +47,9 @@ TEST_CASE("Image transformations", "[img]")
     REQUIRE(img_flip_h.width() == img.width());
     REQUIRE(img_flip_h.height() == img.height());
 
-    for (auto y = 0_px; y < img_flip_h.height(); ++y)
+    for (auto y = 0_idx; y < img_flip_h.height(); ++y)
     {
-      for (auto x = 0_px; x < img_flip_h.width(); ++x)
+      for (auto x = 0_idx; x < img_flip_h.width(); ++x)
       {
         const auto px = sln::PixelIndex{img.width() - x - 1};
         REQUIRE(img_flip_h(x, y) == img(px, y));
@@ -67,9 +67,9 @@ TEST_CASE("Image transformations", "[img]")
     REQUIRE(img_flip_v.width() == img.width());
     REQUIRE(img_flip_v.height() == img.height());
 
-    for (auto y = 0_px; y < img_flip_v.height(); ++y)
+    for (auto y = 0_idx; y < img_flip_v.height(); ++y)
     {
-      for (auto x = 0_px; x < img_flip_v.width(); ++x)
+      for (auto x = 0_idx; x < img_flip_v.width(); ++x)
       {
         const auto py = sln::PixelIndex{img.height() - y - 1};
         REQUIRE(img_flip_v(x, y) == img(x, py));
@@ -87,9 +87,9 @@ TEST_CASE("Image transformations", "[img]")
     REQUIRE(img_flip_b.width() == img.width());
     REQUIRE(img_flip_b.height() == img.height());
 
-    for (auto y = 0_px; y < img_flip_b.height(); ++y)
+    for (auto y = 0_idx; y < img_flip_b.height(); ++y)
     {
-      for (auto x = 0_px; x < img_flip_b.width(); ++x)
+      for (auto x = 0_idx; x < img_flip_b.width(); ++x)
       {
         const auto px = sln::PixelIndex{img.width() - x - 1};
         const auto py = sln::PixelIndex{img.height() - y - 1};

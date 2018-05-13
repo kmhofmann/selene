@@ -84,7 +84,7 @@ void check_write_read(sln::ImageData<>& img_data, const boost::filesystem::path&
   REQUIRE(img_data_2.total_bytes() == img_data.total_bytes());
 
   const auto nr_bytes_per_row = img_data_2.width() * img_data_2.nr_channels() * img_data_2.nr_bytes_per_channel();
-  for (auto y = 0_px; y < img_data_2.height(); ++y)
+  for (auto y = 0_idx; y < img_data_2.height(); ++y)
   {
     REQUIRE(std::memcmp(img_data_2.byte_ptr(y), img_data.byte_ptr(y), nr_bytes_per_row) == 0);
   }

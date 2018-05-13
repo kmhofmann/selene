@@ -88,8 +88,8 @@ void test_image_data_construction(std::mt19937& rng)
     // Check pixel access
     for (std::size_t j = 0; j < 100; ++j)
     {
-      const auto x = sln::PixelLength{std::min(width - 1, dist_wh(rng))};
-      const auto y = sln::PixelLength{std::min(height - 1, dist_wh(rng))};
+      const auto x = sln::PixelIndex{std::min(width - 1, dist_wh(rng))};
+      const auto y = sln::PixelIndex{std::min(height - 1, dist_wh(rng))};
       const auto& px0 = img_data.pixel<PixelType>(x, y);
       const auto& px1 = cimg_data.pixel<PixelType>(x, y);
       REQUIRE(px0 == px1);

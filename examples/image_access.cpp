@@ -28,8 +28,8 @@ int main(int argc, char** argv)
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
   auto img = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
-  assert(img.width() == 1024);
-  assert(img.height() == 684);
+  assert(img.width() == 1024_px);
+  assert(img.height() == 684_px);
 
   const auto target_width = 300_px;
   const auto target_height = 150_px;
@@ -44,9 +44,9 @@ int main(int argc, char** argv)
 
   Image<Pixel_8u3> img_interpolation(target_width, target_height);
 
-  for (auto y = 0_px; y < target_height; ++y)
+  for (auto y = 0_idx; y < target_height; ++y)
   {
-    for (auto x = 0_px; x < target_width; ++x)
+    for (auto x = 0_idx; x < target_width; ++x)
     {
       const double fx = 130.0 + 0.83 * x;
       const double fy = 100.0 + 1.46 * y;
@@ -63,9 +63,9 @@ int main(int argc, char** argv)
 
   Image<Pixel_8u3> img_border_access(img.width(), img.height());
 
-  for (auto y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_idx; y < img.height(); ++y)
   {
-    for (auto x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_idx; x < img.width(); ++x)
     {
       img_border_access(x, y) = get<BorderAccessMode::Replicated>(img, PixelIndex{x + 100}, PixelIndex{y - 200});
     }

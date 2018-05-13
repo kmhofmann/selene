@@ -35,7 +35,7 @@ PixelType make_random_pixel(std::mt19937& rng, Distribution& dist)
 }
 
 template <typename PixelType>
-sln::Image<PixelType> make_random_image(sln::PixelIndex width, sln::PixelIndex height, std::mt19937& rng)
+sln::Image<PixelType> make_random_image(sln::PixelLength width, sln::PixelLength height, std::mt19937& rng)
 {
   using Element = typename sln::PixelTraits<PixelType>::Element;
 

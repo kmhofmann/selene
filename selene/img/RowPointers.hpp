@@ -44,7 +44,7 @@ RowPointers get_row_pointers(Image<T>& img)
 {
   RowPointers row_pointers(img.height());
 
-  for (PixelIndex y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -63,7 +63,7 @@ ConstRowPointers get_row_pointers(const Image<T>& img)
 {
   ConstRowPointers row_pointers(img.height());
 
-  for (PixelIndex y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -80,7 +80,7 @@ inline RowPointers get_row_pointers(ImageData<>& img)
 {
   RowPointers row_pointers(img.height());
 
-  for (PixelIndex y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }
@@ -98,7 +98,7 @@ inline ConstRowPointers get_row_pointers(const ImageData<storage_type>& img)
 {
   ConstRowPointers row_pointers(img.height());
 
-  for (PixelIndex y = 0_px; y < img.height(); ++y)
+  for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
     row_pointers[y] = img.byte_ptr(y);
   }

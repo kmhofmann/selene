@@ -18,47 +18,47 @@ TEST_CASE("Image accessors", "[img]")
 
   SECTION("Within bounds")
   {
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(img, 0_px, 0_px) == 10);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 0_px, 0_px) == 10);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 0_px, 0_px) == 10);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(img, 0_idx, 0_idx) == 10);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 0_idx, 0_idx) == 10);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 0_idx, 0_idx) == 10);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(img, 2_px, 1_px) == 60);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 2_px, 1_px) == 60);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 2_px, 1_px) == 60);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(img, 2_idx, 1_idx) == 60);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 2_idx, 1_idx) == 60);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 2_idx, 1_idx) == 60);
   }
 
   SECTION("Out of bounds")
   {
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, -1_px, 0_px) == 0);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, -1_px, 0_px) == 10);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, -1_idx, 0_idx) == 0);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, -1_idx, 0_idx) == 10);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 3_px, 0_px) == 0);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 3_px, 0_px) == 30);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 3_idx, 0_idx) == 0);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 3_idx, 0_idx) == 30);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, -1_px, 1_px) == 0);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, -1_px, 1_px) == 40);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, -1_idx, 1_idx) == 0);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, -1_idx, 1_idx) == 40);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, -2_px, 1_px) == 0);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, -2_px, 1_px) == 40);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, -2_idx, 1_idx) == 0);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, -2_idx, 1_idx) == 40);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 1_px, 3_px) == 0);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 1_px, 3_px) == 80);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::ZeroPadding>::access(img, 1_idx, 3_idx) == 0);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Replicated>::access(img, 1_idx, 3_idx) == 80);
   }
 
   SECTION("Relative access")
   {
-    const auto r_img = sln::relative_accessor(img, 1_px, 1_px);
+    const auto r_img = sln::relative_accessor(img, 1_idx, 1_idx);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, -1_px, -1_px) == 10);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 0_px, -1_px) == 20);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 1_px, -1_px) == 30);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, -1_idx, -1_idx) == 10);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 0_idx, -1_idx) == 20);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 1_idx, -1_idx) == 30);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, -1_px, 0_px) == 40);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 0_px, 0_px) == 50);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 1_px, 0_px) == 60);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, -1_idx, 0_idx) == 40);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 0_idx, 0_idx) == 50);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 1_idx, 0_idx) == 60);
 
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, -1_px, 1_px) == 70);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 0_px, 1_px) == 80);
-    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 1_px, 1_px) == 90);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, -1_idx, 1_idx) == 70);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 0_idx, 1_idx) == 80);
+    REQUIRE(sln::ImageBorderAccessor<sln::BorderAccessMode::Unchecked>::access(r_img, 1_idx, 1_idx) == 90);
   }
 }

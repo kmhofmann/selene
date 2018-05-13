@@ -166,7 +166,7 @@ inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Imag
 {
   if (x < 0)
   {
-    x = 0_px;
+    x = 0_idx;
   }
   else if (x >= static_cast<PixelIndex>(img.width()))
   {
@@ -175,7 +175,7 @@ inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Imag
 
   if (y < 0)
   {
-    y = 0_px;
+    y = 0_idx;
   }
   else if (y >= static_cast<PixelIndex>(img.height()))
   {

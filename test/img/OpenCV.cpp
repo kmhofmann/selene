@@ -58,9 +58,9 @@ sln::Image<PixelType> create_test_image(sln::PixelLength width, sln::PixelLength
 {
   sln::Image<PixelType> img(width, height);
 
-  for (auto y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_idx; y < img.height(); ++y)
   {
-    for (auto x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_idx; x < img.width(); ++x)
     {
       img(x, y) = PixelProducer<PixelType>::get(x, y);
     }

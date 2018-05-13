@@ -28,10 +28,10 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   REQUIRE(!img.is_empty());
 
   img.fill(fill_value);
-  for (auto y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_idx; y < img.height(); ++y)
   {
     auto ptr = img.data(y);
-    for (auto x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_idx; x < img.width(); ++x)
     {
       REQUIRE(img(x, y) == fill_value);
       REQUIRE(*(ptr + x) == fill_value);
@@ -99,7 +99,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
     REQUIRE(img4.stride_bytes() % alignment == 0);
     REQUIRE(!img4.is_view());
     REQUIRE(!img4.is_empty());
-    for (auto y = 0_px; y < img4.height(); ++y)
+    for (auto y = 0_idx; y < img4.height(); ++y)
     {
       REQUIRE(reinterpret_cast<std::uintptr_t>(img4.data(y)) % alignment == 0);
     }
@@ -111,7 +111,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
     REQUIRE((alignment2 == 0 || img4.stride_bytes() % alignment2 == 0));
     REQUIRE(!img4.is_view());
     REQUIRE(!img4.is_empty());
-    for (auto y = 0_px; y < img4.height(); ++y)
+    for (auto y = 0_idx; y < img4.height(); ++y)
     {
       REQUIRE((alignment2 == 0 || reinterpret_cast<std::uintptr_t>(img4.data(y)) % alignment2 == 0));
     }
@@ -134,10 +134,10 @@ sln::Image<T> construct_random_image(sln::PixelLength width, sln::PixelLength he
   const auto stride_bytes = sln::Stride(width * sln::PixelTraits<T>::nr_bytes + extra_stride_bytes);
   sln::Image<T> img(width, height, stride_bytes);
 
-  for (auto y = 0_px; y < img.height(); ++y)
+  for (auto y = 0_idx; y < img.height(); ++y)
   {
     auto ptr = img.data(y);
-    for (auto x = 0_px; x < img.width(); ++x)
+    for (auto x = 0_idx; x < img.width(); ++x)
     {
       *ptr++ = T(die(rng));
     }
@@ -155,9 +155,9 @@ void compare_iteration(sln::Image<T>& img)
     const auto& img2 = img;
 
     std::vector<T> elements_0;
-    for (auto y = 0_px; y < img2.height(); ++y)
+    for (auto y = 0_idx; y < img2.height(); ++y)
     {
-      for (auto x = 0_px; x < img2.width(); ++x)
+      for (auto x = 0_idx; x < img2.width(); ++x)
       {
         elements_0.emplace_back(img2(x, y));
       }
@@ -194,9 +194,9 @@ void compare_iteration(sln::Image<T>& img)
 
   {
     std::vector<T> elements_0;
-    for (auto y = 0_px; y < img.height(); ++y)
+    for (auto y = 0_idx; y < img.height(); ++y)
     {
-      for (auto x = 0_px; x < img.width(); ++x)
+      for (auto x = 0_idx; x < img.width(); ++x)
       {
         elements_0.emplace_back(img(x, y));
       }
@@ -227,9 +227,9 @@ void compare_iteration(sln::Image<T>& img)
     }
 
     // check that elements have all been overwritten
-    for (auto y = 0_px; y < img.height(); ++y)
+    for (auto y = 0_idx; y < img.height(); ++y)
     {
-      for (auto x = 0_px; x < img.width(); ++x)
+      for (auto x = 0_idx; x < img.width(); ++x)
       {
         REQUIRE(img(x, y) == T{17});
       }
@@ -241,7 +241,7 @@ void compare_iteration(sln::Image<T>& img)
 }
 
 template <typename ElementType, typename RNG>
-void random_iteration(sln::PixelIndex w, sln::PixelIndex h, RNG& rng)
+void random_iteration(sln::PixelLength w, sln::PixelLength h, RNG& rng)
 {
   auto img = construct_random_image<sln::Pixel<ElementType, 1>>(w, h, rng);
   compare_iteration(img);

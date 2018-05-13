@@ -28,8 +28,8 @@ int main(int argc, char** argv)
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
   auto img = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
-  assert(img.width() == 1024);
-  assert(img.height() == 684);
+  assert(img.width() == 1024_px);
+  assert(img.height() == 684_px);
 
   std::cout << "Cloning and creating views...\n";
 
@@ -45,14 +45,14 @@ int main(int argc, char** argv)
 
   // Cloning a sub-region is as easy as this:
 
-  auto img_clone_crop = clone(img, 130_px, 100_px, 250_px, 220_px);
+  auto img_clone_crop = clone(img, 130_idx, 100_idx, 250_px, 220_px);
   assert(!img_clone_crop.is_view());
   assert(img_clone_crop.width() == 250_px);
   assert(img_clone_crop.height() == 220_px);
 
   // Similarly for a view onto a sub-region:
 
-  const auto img_view_crop = view(img, 130_px, 100_px, 250_px, 220_px);
+  const auto img_view_crop = view(img, 130_idx, 100_idx, 250_px, 220_px);
   assert(img_view_crop.is_view());
   assert(img_view_crop.width() == 250_px);
   assert(img_view_crop.height() == 220_px);

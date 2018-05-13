@@ -45,13 +45,13 @@ JPEGImageInfo read_header(JPEGDecompressionObject&);
  */
 struct JPEGImageInfo
 {
-  const PixelIndex width;  ///< Image width.
-  const PixelIndex height;  ///< Image height.
+  const PixelLength width;  ///< Image width.
+  const PixelLength height;  ///< Image height.
   const std::uint16_t nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
-  explicit JPEGImageInfo(PixelIndex width_ = 0_px,
-                         PixelIndex height_ = 0_px,
+  explicit JPEGImageInfo(PixelLength width_ = 0_px,
+                         PixelLength height_ = 0_px,
                          std::uint16_t nr_channels_ = 0,
                          JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
