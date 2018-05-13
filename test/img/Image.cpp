@@ -163,7 +163,7 @@ void compare_iteration(sln::Image<T>& img)
       }
     }
 
-    std::uint64_t y_count{0};
+    sln::PixelIndex y_count{0};
     std::vector<T> elements_1;
     for (const auto& row : img2)
     {
@@ -202,7 +202,7 @@ void compare_iteration(sln::Image<T>& img)
       }
     }
 
-    std::uint64_t y_count{0};
+    sln::PixelIndex y_count{0};
     std::vector<T> elements_1;
     for (auto& row : img)
     {

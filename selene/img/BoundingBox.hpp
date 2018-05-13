@@ -9,6 +9,8 @@
 
 #include <selene/img/Types.hpp>
 
+#include <algorithm>
+
 namespace sln {
 
 /** \brief Represents an axis-aligned, rectangular bounding box, to describe a sub-part of an image.
@@ -58,6 +60,8 @@ inline BoundingBox::BoundingBox() noexcept
 inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept
     : x0_(x0), y0_(y0), width_(width), height_(height)
 {
+  SELENE_ASSERT(width_ > 0);
+  SELENE_ASSERT(height_ > 0);
 }
 
 /** Returns the x-coordinate of the top-left corner, i.e. the x-coordinate of the left box side.
@@ -151,6 +155,8 @@ inline bool BoundingBox::empty() const noexcept
  */
 inline void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept
 {
+  x0_ = std::max(x0_, PixelLength{0});
+  y0_ = std::max(y0_, PixelLength{0});
   width_ = std::min(width_, PixelLength{max_img_width - x0_});
   height_ = std::min(height_, PixelLength{max_img_height - y0_});
 }

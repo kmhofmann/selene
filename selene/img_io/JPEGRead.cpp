@@ -114,19 +114,19 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
 
   auto& cinfo = obj_.impl_->cinfo;
 
+  jpeg_start_decompress(&cinfo);
+
   if (!region_.empty())
   {
-    region_.sanitize(PixelLength{cinfo.output_width}, PixelLength{cinfo.output_height});
+    region_.sanitize(PixelLength(cinfo.output_width), PixelLength(cinfo.output_height));
   }
-
-  jpeg_start_decompress(&cinfo);
 
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
   if (!region_.empty())
   {
     // Enable partial decompression of each scanline
-    JDIMENSION xoffset = region_.x0();
-    JDIMENSION width = region_.width();
+    JDIMENSION xoffset = static_cast<JDIMENSION>(region_.x0());
+    JDIMENSION width = static_cast<JDIMENSION>(region_.width());
     jpeg_crop_scanline(&cinfo, &xoffset, &width);
   }
 #endif

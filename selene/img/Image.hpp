@@ -985,7 +985,7 @@ inline std::size_t Image<PixelType>::total_bytes() const noexcept
 template <typename PixelType>
 inline bool Image<PixelType>::is_packed() const noexcept
 {
-  return stride_bytes_ == PixelTraits<PixelType>::nr_bytes * width_;
+  return stride_bytes_ == static_cast<Stride::value_type>(PixelTraits<PixelType>::nr_bytes * width_);
 }
 
 /** \brief Returns whether the image is a view onto (non-owned) memory.

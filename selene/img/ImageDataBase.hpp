@@ -207,7 +207,7 @@ inline SampleFormat ImageDataBase<DataStoragePtr>::sample_format() const noexcep
 template <typename DataStoragePtr>
 inline bool ImageDataBase<DataStoragePtr>::is_packed() const noexcept
 {
-  return stride_bytes_ == nr_bytes_per_channel_ * nr_channels_ * width_;
+  return stride_bytes_ == static_cast<Stride::value_type>(nr_bytes_per_channel_ * nr_channels_ * width_);
 }
 
 /** \brief Returns whether the image is a view onto (non-owned) memory.
