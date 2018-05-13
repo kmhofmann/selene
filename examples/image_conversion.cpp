@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
   const auto img_rgb = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
 
-  // We will now perform three conversions:
+  // We will now perform three color format conversions:
   // - From RGB to Y (grayscale)
   std::cout << "Converting the image from RGB to Y (grayscale)...\n";
   const auto img_y = convert_image<PixelFormat::RGB, PixelFormat::Y>(img_rgb);

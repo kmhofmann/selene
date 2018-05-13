@@ -47,6 +47,13 @@ target_compile_definitions(image_rotate PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_rotate PRIVATE ${SELENE_DIR}/examples ${Boost_INCLUDE_DIR})
 target_link_libraries(image_rotate selene ${SELENE_BOOST_TARGET_NAME})
 
+add_executable(image_transform
+        ${CMAKE_CURRENT_LIST_DIR}/image_transform.cpp)
+target_compile_options(image_transform PRIVATE ${SELENE_COMPILER_OPTIONS})
+target_compile_definitions(image_transform PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_include_directories(image_transform PRIVATE ${SELENE_DIR}/examples ${Boost_INCLUDE_DIR})
+target_link_libraries(image_transform selene ${SELENE_BOOST_TARGET_NAME})
+
 add_executable(readme_example
         ${CMAKE_CURRENT_LIST_DIR}/readme_example.cpp)
 target_compile_options(readme_example PRIVATE ${SELENE_COMPILER_OPTIONS})
