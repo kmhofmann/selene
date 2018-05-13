@@ -125,8 +125,8 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
   if (!region_.empty())
   {
     // Enable partial decompression of each scanline
-    JDIMENSION xoffset = static_cast<JDIMENSION>(region_.x0());
-    JDIMENSION width = static_cast<JDIMENSION>(region_.width());
+    auto xoffset = static_cast<JDIMENSION>(region_.x0());
+    auto width = static_cast<JDIMENSION>(region_.width());
     jpeg_crop_scanline(&cinfo, &xoffset, &width);
   }
 #endif

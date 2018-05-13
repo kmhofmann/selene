@@ -48,10 +48,10 @@ void image_access_relative(benchmark::State& state)
 
   for (auto _ : state)
   {
-    for (sln::SignedPixelIndex dx = -50; dx < sln::SignedPixelIndex(img.width() - 50); ++dx)
+    for (sln::PixelIndex::value_type dx = -50; dx < sln::PixelIndex::value_type(img.width() - 50); ++dx)
     {
       benchmark::DoNotOptimize(
-          rel.get(dx, 0)
+          rel.get(sln::PixelIndex{dx}, 0_px)
       );
     }
   }

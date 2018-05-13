@@ -42,7 +42,7 @@ TEST_CASE("Image interpolators, 8u1", "[img]")
 
   SECTION("Bilinear, relative access")
   {
-    auto r_img = sln::relative_accessor(img, 1, 1);
+    auto r_img = sln::relative_accessor(img, 1_px, 1_px);
 
     REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, -1.0, -1.0)
             == Approx(10.0));
@@ -109,7 +109,7 @@ TEST_CASE("Image interpolators, 8u3", "[img]")
   SECTION("Bilinear, relative access")
   {
     // relative access
-    const auto r_img = sln::relative_accessor(img, 1, 1);
+    const auto r_img = sln::relative_accessor(img, 1_px, 1_px);
 
     const auto px_interp_0 = sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, -1.0,
                                                                                                         -1.0);

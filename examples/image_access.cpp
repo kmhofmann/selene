@@ -67,7 +67,7 @@ int main(int argc, char** argv)
   {
     for (auto x = 0_px; x < img.width(); ++x)
     {
-      img_border_access(x, y) = get<BorderAccessMode::Replicated>(img, x + 100, y - 200);
+      img_border_access(x, y) = get<BorderAccessMode::Replicated>(img, PixelIndex{x + 100}, PixelIndex{y - 200});
     }
   }
 

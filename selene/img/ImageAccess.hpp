@@ -83,16 +83,12 @@ inline auto get(const ImageType& img,
  * @param y The floating point y-coordinate.
  * @return Pixel value at the specified (x, y) location.
  */
-template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType, typename Index>
+template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType>
 inline auto get(const ImageType& img,
-                Index x,
-                Index y,
-                typename std::enable_if_t<std::is_integral<Index>::value
-                                          || std::is_same<Index, PixelIndex>::value>* = nullptr) noexcept
+                PixelIndex x,
+                PixelIndex y) noexcept
 {
-  const auto si_x = static_cast<SignedPixelIndex>(x);
-  const auto si_y = static_cast<SignedPixelIndex>(y);
-  return ImageBorderAccessor<AccessMode>::access(img, si_x, si_y);
+  return ImageBorderAccessor<AccessMode>::access(img, x, y);
 }
 
 }  // namespace sln

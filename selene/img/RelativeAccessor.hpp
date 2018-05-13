@@ -32,14 +32,14 @@ public:
    *
    * @tparam T The coordinate element type.
    */
-  template <typename T = SignedPixelIndex>
+  template <typename T = PixelIndex>
   struct XY
   {
     T x;  ///< X-coordinate.
     T y;  ///< Y-coordinate.
   };
 
-  RelativeAccessor(ImageType& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y);
+  RelativeAccessor(ImageType& img, PixelIndex anchor_x, PixelIndex anchor_y);
 
   RelativeAccessor(const RelativeAccessor<ImageType_>&) noexcept = default;  ///< Copy constructor.
   RelativeAccessor<ImageType_>& operator=(const RelativeAccessor<ImageType_>&) noexcept = default;  ///< Copy assignment operator.
@@ -50,23 +50,23 @@ public:
   const ImageType& image() const noexcept;
   ImageType& image() noexcept;
 
-  SignedPixelIndex anchor_x() const noexcept;
-  SignedPixelIndex anchor_y() const noexcept;
+  PixelIndex anchor_x() const noexcept;
+  PixelIndex anchor_y() const noexcept;
 
   template <typename T>
   XY<T> absolute_coordinates(T x, T y) const noexcept;
 
-  const PixelType& get(SignedPixelIndex x, SignedPixelIndex y) const noexcept;
-  PixelType& get(SignedPixelIndex x, SignedPixelIndex y) noexcept;
+  const PixelType& get(PixelIndex x, PixelIndex y) const noexcept;
+  PixelType& get(PixelIndex x, PixelIndex y) noexcept;
 
 private:
   ImageType_& img_;
-  SignedPixelIndex anchor_x_;
-  SignedPixelIndex anchor_y_;
+  PixelIndex anchor_x_;
+  PixelIndex anchor_y_;
 };
 
 template <typename ImageType>
-auto relative_accessor(ImageType& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y);
+auto relative_accessor(ImageType& img, PixelIndex anchor_x, PixelIndex anchor_y);
 
 
 // ----------
@@ -81,7 +81,7 @@ auto relative_accessor(ImageType& img, SignedPixelIndex anchor_x, SignedPixelInd
  */
 template <typename ImageType_>
 inline
-RelativeAccessor<ImageType_>::RelativeAccessor(ImageType_& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y)
+RelativeAccessor<ImageType_>::RelativeAccessor(ImageType_& img, PixelIndex anchor_x, PixelIndex anchor_y)
 : img_(img), anchor_x_(anchor_x), anchor_y_(anchor_y)
 {
 }
@@ -114,7 +114,7 @@ inline ImageType_& RelativeAccessor<ImageType_>::image() noexcept
  * @return X-coordinate of the relative coordinate origin.
  */
 template <typename ImageType_>
-inline SignedPixelIndex RelativeAccessor<ImageType_>::anchor_x() const noexcept
+inline PixelIndex RelativeAccessor<ImageType_>::anchor_x() const noexcept
 {
   return anchor_x_;
 }
@@ -125,7 +125,7 @@ inline SignedPixelIndex RelativeAccessor<ImageType_>::anchor_x() const noexcept
  * @return X-coordinate of the relative coordinate origin.
  */
 template <typename ImageType_>
-inline SignedPixelIndex RelativeAccessor<ImageType_>::anchor_y() const noexcept
+inline PixelIndex RelativeAccessor<ImageType_>::anchor_y() const noexcept
 {
   return anchor_y_;
 }
@@ -165,10 +165,10 @@ RelativeAccessor<ImageType_>::absolute_coordinates(T x, T y) const noexcept
  */
 template <typename ImageType_>
 inline const typename RelativeAccessor<ImageType_>::PixelType&
-RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) const noexcept
+RelativeAccessor<ImageType_>::get(PixelIndex x, PixelIndex y) const noexcept
 {
-const auto abs_x = SignedPixelIndex{anchor_x_ + x};
-const auto abs_y = SignedPixelIndex{anchor_y_ + y};
+const auto abs_x = PixelIndex{anchor_x_ + x};
+const auto abs_y = PixelIndex{anchor_y_ + y};
 return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
 }
 
@@ -183,10 +183,10 @@ return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
  */
 template <typename ImageType_>
 inline typename RelativeAccessor<ImageType_>::PixelType&
-RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) noexcept
+RelativeAccessor<ImageType_>::get(PixelIndex x, PixelIndex y) noexcept
 {
-  const auto abs_x = SignedPixelIndex{anchor_x_ + x};
-  const auto abs_y = SignedPixelIndex{anchor_y_ + y};
+  const auto abs_x = PixelIndex{anchor_x_ + x};
+  const auto abs_y = PixelIndex{anchor_y_ + y};
   return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
 }
 
@@ -200,7 +200,7 @@ RelativeAccessor<ImageType_>::get(SignedPixelIndex x, SignedPixelIndex y) noexce
  * @return A `RelativeAccessor<PixelType>` instance.
  */
 template <typename ImageType>
-inline auto relative_accessor(ImageType& img, SignedPixelIndex anchor_x, SignedPixelIndex anchor_y)
+inline auto relative_accessor(ImageType& img, PixelIndex anchor_x, PixelIndex anchor_y)
 {
   return RelativeAccessor<ImageType>(img, anchor_x, anchor_y);
 }

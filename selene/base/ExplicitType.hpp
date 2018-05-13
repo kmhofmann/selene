@@ -49,6 +49,11 @@ public:
     return value_;
   }
 
+  constexpr ExplicitType<ValueType_, TagType_> operator-()
+  {
+    return ExplicitType<ValueType_, TagType_>(-value_);
+  }
+
   friend void swap(ExplicitType& a, ExplicitType& b) noexcept
   {
     using std::swap;

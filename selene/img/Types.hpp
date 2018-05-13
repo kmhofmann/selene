@@ -24,18 +24,15 @@ class ImageRowAlignmentTag;
 
 }  // namespace detail
 
-// Use 32-bit values as indices for data access, for now.
-using PixelIndex = ExplicitType<std::uint32_t, detail::PixelIndexTag>;  ///< Type representing an unsigned integral
-                                                                        ///< scalar as part of an image coordinate
-                                                                        ///< (x or y).
-
-// This is the data access type for one of the accessors.
-using SignedPixelIndex = std::int32_t;  ///< Type representing a signed integral scalar as part of an image coordinate
-                                        ///< (x or y), when accessing image pixels via `ImageAccessor` functions.
+using PixelIndex = ExplicitType<std::int32_t, detail::PixelIndexTag>;  ///< Type representing a signed integral
+                                                                       ///< scalar as part of an image coordinate
+                                                                       ///< (x or y).
 
 using PixelLength = PixelIndex;  ///< Type representing a length in x or y-direction.
+
 using Stride = ExplicitType<std::size_t, detail::StrideTag>;  ///< Type representing an image stride
                                                               ///< (nr of bytes per row).
+
 using ImageRowAlignment = ExplicitType<std::size_t, detail::ImageRowAlignmentTag>;  ///< Type representing an image row
                                                                                     ///< alignment.
 
