@@ -4,6 +4,13 @@ project(selene VERSION 0.1.0 LANGUAGES CXX)
 option(SELENE_BUILD_TESTS "Build Selene tests" OFF)
 option(SELENE_BUILD_EXAMPLES "Build Selene examples" OFF)
 option(SELENE_BUILD_BENCHMARKS "Build Selene benchmarks" OFF)
+option(SELENE_BUILD_ALL "Build Selene tests, examples, and benchmarks (even with other SELENE_BUILD_* variables OFF)" OFF)
+
+if (SELENE_BUILD_ALL)
+    set(SELENE_BUILD_TESTS ON)
+    set(SELENE_BUILD_EXAMPLES ON)
+    set(SELENE_BUILD_BENCHMARKS ON)
+endif()
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 14)

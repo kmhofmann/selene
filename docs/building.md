@@ -13,23 +13,24 @@ First, clone the project and create a `build` directory (or use another name).
     cd selene
     mkdir build && cd build
 
-Then call `cmake` and build the project. Using [GNU Make](https://www.gnu.org/software/make/), and with all optional
-parts enabled (see below for required dependencies):
+Then call `cmake` and build the project.
 
-    cmake -DCMAKE_BUILD_TYPE=Release ..
-    make
+    cmake -DCMAKE_BUILD_TYPE=Release -DSELENE_BUILD_ALL=ON ..
+    cmake --build .      # or just 'make', if GNU Make is the generator
 
-Alternatively, using [ninja](https://ninja-build.org/):
-
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
-    ninja
+Additional options may be passed to the respective build tool, e.g. `cmake --build . -- -j8`.
 
 On Windows, the CMake command might look similar to the following, in order to generate Visual Studio 2017 project
 files for a 64-bit build (see below for more info on [vcpkg](https://github.com/Microsoft/vcpkg)):
 
     cmake -G "Visual Studio 15 2017 Win64" -T "host=x64" \
         -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>\scripts\buildsystems\vcpkg.cmake \
+        -DSELENE_BUILD_ALL=ON \
         ..
+
+The setting `-DSELENE_BUILD_ALL=ON` enables building the tests, examples, and benchmarks.
+Omit this parameter if this is not desired, and see below for the individual CMake variables that can be set for
+more fine-grained control.
 
 #### Static vs. shared libraries
 
@@ -95,6 +96,13 @@ For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/lib
 The use of [Conan](https://conan.io/) as a dependency manager is also supported; see below.
 
 ### Building and running tests, examples, and benchmarks
+
+#### Everything
+
+    -DSELENE_BUILD_ALL=ON
+    
+This is a convenience option to enable building tests, examples, and benchmarks.
+More fine-grained control can be achieved by the options right below.
 
 #### Tests
 
@@ -168,7 +176,8 @@ the 64-bit compiled versions instead of the 32-bit ones.
 
 #### Using Conan
 
-**Selene** also supports optional use of [Conan](https://conan.io/) as a dependency manager.
+**Selene** also supports optional use of [Conan](https://conan.io/) as a dependency manager (besides installing
+[a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) using Conan).
 See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
 
 Currently, `libjpeg-turbo`, `libpng` and `Boost.Filesystem` (for the tests) can be built using Conan.
