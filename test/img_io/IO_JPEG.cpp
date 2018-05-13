@@ -29,8 +29,8 @@ namespace fs = boost::filesystem;
 using namespace sln::literals;
 
 // clang-format off
-constexpr auto ref_width = 1024u;
-constexpr auto ref_height = 684u;
+constexpr auto ref_width = 1024;
+constexpr auto ref_height = 684;
 constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
     {std::array<unsigned int, 6>{{226, 180, 244, 198, 0, 189}},
      std::array<unsigned int, 6>{{582, 415, 228, 227, 232, 228}},

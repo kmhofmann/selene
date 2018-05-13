@@ -79,7 +79,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   constexpr auto test_width = sln::PixelLength{16};
   constexpr auto test_height = sln::PixelLength{20};
   constexpr auto test_stride_offset = 8;
-  constexpr auto test_stride_bytes = sln::Stride{test_width * sln::PixelTraits<T>::nr_bytes + test_stride_offset};
+  constexpr auto test_stride_bytes = sln::Stride(test_width * sln::PixelTraits<T>::nr_bytes + test_stride_offset);
   const auto nr_bytes_to_allocate = test_stride_bytes * test_height;
   auto memory_block = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, 16);
   img.set_data(std::move(memory_block), test_width, test_height, test_stride_bytes);
