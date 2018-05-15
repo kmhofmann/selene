@@ -174,7 +174,7 @@ write_basic_package_version_file(
 
 # Create selene-config.cmake
 configure_package_config_file(
-        ${CMAKE_SOURCE_DIR}/cmake/selene-config.cmake.in
+        ${SELENE_DIR}/cmake/selene-config.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
