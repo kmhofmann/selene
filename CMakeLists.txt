@@ -30,7 +30,7 @@ include(cmake/compiler_options.cmake)
 add_subdirectory(selene)
 
 if (SELENE_BUILD_TESTS)
-    add_subdirectory(test)
+    add_subdirectory(test/selene)
 endif()
 
 if (SELENE_BUILD_EXAMPLES)

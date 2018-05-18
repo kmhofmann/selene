@@ -13,7 +13,7 @@
 #include <selene/io/VectorReader.hpp>
 #include <selene/io/VectorWriter.hpp>
 
-#include <test/Utils.hpp>
+#include <test/selene/Utils.hpp>
 
 #include <algorithm>
 #include <cstring>

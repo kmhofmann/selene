@@ -10,7 +10,7 @@
 
 #include <random>
 
-#include <test/img/_TestImages.hpp>
+#include <test/selene/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

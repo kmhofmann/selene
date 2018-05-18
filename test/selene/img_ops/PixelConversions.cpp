@@ -13,8 +13,8 @@
 #include <random>
 #include <type_traits>
 
-#include <test/Utils.hpp>
-#include <test/img/_TestImages.hpp>
+#include <test/selene/Utils.hpp>
+#include <test/selene/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

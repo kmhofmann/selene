@@ -2,7 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <test/img/_TestImages.hpp>
+#include <test/selene/img/_TestImages.hpp>
 
 using namespace sln::literals;
 

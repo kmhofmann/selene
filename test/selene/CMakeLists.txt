@@ -49,3 +49,7 @@ target_link_libraries(selene_tests
         selene
         ${SELENE_BOOST_TARGET_NAME}
         Threads::Threads)
+
+if (OPENCV_CORE_FOUND)
+    target_link_libraries(selene_tests opencv_core)
+endif()

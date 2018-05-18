@@ -103,7 +103,7 @@ endif()
 
 if (OPENCV_CORE_FOUND)
     target_compile_definitions(selene_img PUBLIC SELENE_WITH_OPENCV)
-    target_link_libraries(selene_img PUBLIC opencv_core)
+    # no need to link against it, as it's only used in a header
 endif()
 
 target_link_libraries(selene_img PUBLIC selene_base)
@@ -183,7 +183,8 @@ install(TARGETS selene_base selene_img selene_io selene_thread selene
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install headers
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}

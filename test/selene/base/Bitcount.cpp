@@ -9,7 +9,8 @@
 #include <random>
 #include <type_traits>
 
-#include <test/Utils.hpp>
+#include <test/selene/Utils.hpp>
+
 
 namespace {
 

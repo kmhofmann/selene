@@ -1,6 +1,7 @@
 import os
 from conans import ConanFile, CMake
 
+
 class SeleneConan(ConanFile):
     name = "selene"
     version = "0.1.0"
@@ -17,11 +18,11 @@ class SeleneConan(ConanFile):
     requires = ("libjpeg-turbo/[>1.5.0]@bincrafters/stable",
                 "libpng/[>1.2.0]@bincrafters/stable")
 
-    exports_sources = ("../selene*",
-                       "../cmake*",
-                       "../CMakeLists.txt",
-                       "../conanfile.txt",
-                       "../LICENSE")
+    exports_sources = ("../../selene*",
+                       "../../cmake*",
+                       "../../CMakeLists.txt",
+                       "../../conanfile.txt",
+                       "../../LICENSE")
 
     def build(self):
         cmake = CMake(self)

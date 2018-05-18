@@ -12,7 +12,7 @@
 
 #include <limits>
 
-#include <test/Utils.hpp>
+#include <test/selene/Utils.hpp>
 
 namespace sln_test {
 
