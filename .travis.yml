@@ -78,4 +78,4 @@ before_script:
 
 script:
   - make
-  - SELENE_DATA_PATH=${TRAVIS_BUILD_DIR}/data ./test/selene_tests -d yes
+  - SELENE_DATA_PATH=${TRAVIS_BUILD_DIR}/data ./test/selene/selene_tests -d yes
