@@ -951,7 +951,7 @@ const PixelType* ImageData<ImageDataStorage::Modifiable>::data(PixelIndex x, Pix
   SELENE_ASSERT(nr_bytes_per_channel_ == PixelTraits<PixelType>::nr_bytes_per_channel);
   SELENE_ASSERT(sample_format_ == SampleFormat::Unknown || sample_format_ == PixelTraits<PixelType>::sample_format);
 
-  return reinterpret_cast<PixelType*>(byte_ptr(x, y));
+  return reinterpret_cast<const PixelType*>(byte_ptr(x, y));
 }
 
 /** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
