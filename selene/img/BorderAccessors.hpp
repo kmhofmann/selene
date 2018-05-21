@@ -40,10 +40,10 @@ template <>
 struct ImageBorderAccessor<BorderAccessMode::Unchecked>
 {
   template <typename PixelType>
-  static auto access(const Image<PixelType>& img, PixelIndex x, PixelIndex y) noexcept;
+  static decltype(auto) access(const Image<PixelType>& img, PixelIndex x, PixelIndex y) noexcept;
 
   template <typename PixelType>
-  static auto access(const RelativeAccessor<PixelType>& img, PixelIndex rx, PixelIndex ry) noexcept;
+  static decltype(auto) access(const RelativeAccessor<PixelType>& img, PixelIndex rx, PixelIndex ry) noexcept;
 };
 
 /** \brief `ImageBorderAccessor` specialization for `BorderAccessMode::ZeroPadding`.
@@ -64,10 +64,10 @@ template <>
 struct ImageBorderAccessor<BorderAccessMode::Replicated>
 {
   template <typename PixelType>
-  static auto access(const Image<PixelType>& img, PixelIndex x, PixelIndex y) noexcept;
+  static decltype(auto) access(const Image<PixelType>& img, PixelIndex x, PixelIndex y) noexcept;
 
   template <typename PixelType>
-  static auto access(const RelativeAccessor<PixelType>& img, PixelIndex rx, PixelIndex ry) noexcept;
+  static decltype(auto) access(const RelativeAccessor<PixelType>& img, PixelIndex rx, PixelIndex ry) noexcept;
 };
 
 
@@ -84,9 +84,10 @@ struct ImageBorderAccessor<BorderAccessMode::Replicated>
  * @return The pixel value at (x, y), using `BorderAccessMode::Unchecked`.
  */
 template <typename PixelType>
-inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Image<PixelType>& img,
-                                                                     PixelIndex x,
-                                                                     PixelIndex y) noexcept
+inline decltype(auto)
+ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Image<PixelType>& img,
+                                                         PixelIndex x,
+                                                         PixelIndex y) noexcept
 {
   return img(to_pixel_index(x), to_pixel_index(y));
 }
@@ -101,9 +102,10 @@ inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Image
  * @return The pixel value at relative location (x, y), using `BorderAccessMode::Unchecked`.
  */
 template <typename PixelType>
-inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const RelativeAccessor<PixelType>& img,
-                                                                     PixelIndex rx,
-                                                                     PixelIndex ry) noexcept
+inline decltype(auto)
+ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const RelativeAccessor<PixelType>& img,
+                                                         PixelIndex rx,
+                                                         PixelIndex ry) noexcept
 {
   const auto abs_xy = img.absolute_coordinates(rx, ry);
   return ImageBorderAccessor<BorderAccessMode::Unchecked>::access(img.image(), abs_xy.x, abs_xy.y);
@@ -119,9 +121,10 @@ inline auto ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const Relat
  * @return The pixel value at (x, y), using `BorderAccessMode::ZeroPadding`.
  */
 template <typename PixelType>
-inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Image<PixelType>& img,
-                                                                       PixelIndex x,
-                                                                       PixelIndex y) noexcept
+inline auto
+ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Image<PixelType>& img,
+                                                           PixelIndex x,
+                                                           PixelIndex y) noexcept
 {
   if (x < 0 || x >= static_cast<PixelIndex>(img.width()) || y < 0
       || y >= static_cast<PixelIndex>(img.height()))
@@ -142,9 +145,10 @@ inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Ima
  * @return The pixel value at relative location (x, y), using `BorderAccessMode::ZeroPadding`.
  */
 template <typename PixelType>
-inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const RelativeAccessor<PixelType>& img,
-                                                                       PixelIndex rx,
-                                                                       PixelIndex ry) noexcept
+inline auto
+ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const RelativeAccessor<PixelType>& img,
+                                                           PixelIndex rx,
+                                                           PixelIndex ry) noexcept
 {
   const auto abs_xy = img.absolute_coordinates(rx, ry);
   return ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(img.image(), abs_xy.x, abs_xy.y);
@@ -160,9 +164,10 @@ inline auto ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const Rel
  * @return The pixel value at (x, y), using `BorderAccessMode::Replicated`.
  */
 template <typename PixelType>
-inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Image<PixelType>& img,
-                                                                      PixelIndex x,
-                                                                      PixelIndex y) noexcept
+inline decltype(auto)
+ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Image<PixelType>& img,
+                                                          PixelIndex x,
+                                                          PixelIndex y) noexcept
 {
   if (x < 0)
   {
@@ -195,9 +200,10 @@ inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const Imag
  * @return The pixel value at relative location (x, y), using `BorderAccessMode::Replicated`.
  */
 template <typename PixelType>
-inline auto ImageBorderAccessor<BorderAccessMode::Replicated>::access(const RelativeAccessor<PixelType>& img,
-                                                                      PixelIndex rx,
-                                                                      PixelIndex ry) noexcept
+inline decltype(auto)
+ImageBorderAccessor<BorderAccessMode::Replicated>::access(const RelativeAccessor<PixelType>& img,
+                                                          PixelIndex rx,
+                                                          PixelIndex ry) noexcept
 {
   const auto abs_xy = img.absolute_coordinates(rx, ry);
   return ImageBorderAccessor<BorderAccessMode::Replicated>::access(img.image(), abs_xy.x, abs_xy.y);

@@ -38,10 +38,10 @@ template <ImageInterpolationMode InterpolationMode = ImageInterpolationMode::Bil
           typename ImageType,
           typename Index,
           typename = std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img,
-                Index x,
-                Index y,
-                std::integral_constant<ImageInterpolationMode, InterpolationMode> = {}) noexcept
+inline decltype(auto) get(const ImageType& img,
+                          Index x,
+                          Index y,
+                          std::integral_constant<ImageInterpolationMode, InterpolationMode> = {}) noexcept
 {
   return ImageInterpolator<InterpolationMode, AccessMode>::interpolate(img, x, y);
 }
@@ -64,10 +64,10 @@ template <BorderAccessMode AccessMode,
           typename ImageType,
           typename Index,
           typename = std::enable_if_t<std::is_floating_point<Index>::value>>
-inline auto get(const ImageType& img,
-                Index x,
-                Index y,
-                std::integral_constant<BorderAccessMode, AccessMode> = {}) noexcept
+inline decltype(auto) get(const ImageType& img,
+                          Index x,
+                          Index y,
+                          std::integral_constant<BorderAccessMode, AccessMode> = {}) noexcept
 {
   return get<ImageInterpolationMode::Bilinear, AccessMode>(img, x, y);
 }
@@ -84,9 +84,9 @@ inline auto get(const ImageType& img,
  * @return Pixel value at the specified (x, y) location.
  */
 template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType>
-inline auto get(const ImageType& img,
-                PixelIndex x,
-                PixelIndex y) noexcept
+inline decltype(auto) get(const ImageType& img,
+                          PixelIndex x,
+                          PixelIndex y) noexcept
 {
   return ImageBorderAccessor<AccessMode>::access(img, x, y);
 }
