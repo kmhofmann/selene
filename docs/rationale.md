@@ -54,7 +54,7 @@ and do not allow for any finer control of parameters.
 Reading and writing from/to memory also does not seem to be supported.
 
 Most problematically, the last update to GIL was [made in 2007](https://stlab.adobe.com/gil/). It is quite fair to
-assume that the code base in not maintained anymore. This means that no new features or bug fixes are likely to be
+assume that the code base is not maintained anymore. This means that no new features or bug fixes are likely to be
 developed.
 
 #### What does Selene aim to provide?
