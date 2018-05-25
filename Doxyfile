@@ -44,7 +44,7 @@ PROJECT_NUMBER         =
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "C++14 utility library for image representation and IO "
+PROJECT_BRIEF          = "A C++14 image representation, processing and I/O library."
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -790,7 +790,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = "src"
+INPUT                  = "selene"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1087,7 +1087,7 @@ CLANG_ASSISTED_PARSING = YES
 # specified with INPUT and INCLUDE_PATH.
 # This tag requires that the tag CLANG_ASSISTED_PARSING is set to YES.
 
-CLANG_OPTIONS          = "-std=c++14" "-DSELENE_WITH_LIBJPEG" "-DSELENE_LIBJPEG_PARTIAL_DECODING" "-DSELENE_LIBJPEG_EXTENDED_COLORSPACES" "-DSELENE_WITH_LIBPNG" "-DSELENE_WITH_OPENCV"
+CLANG_OPTIONS          = "-std=c++14" "-I." "-DSELENE_WITH_LIBJPEG" "-DSELENE_LIBJPEG_PARTIAL_DECODING" "-DSELENE_LIBJPEG_EXTENDED_COLORSPACES" "-DSELENE_WITH_LIBPNG" "-DSELENE_WITH_OPENCV"
 
 #---------------------------------------------------------------------------
 # Configuration options related to the alphabetical class index

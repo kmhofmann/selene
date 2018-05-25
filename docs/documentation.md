@@ -6,7 +6,7 @@
 _Doxygen_ documentation can be built using the provided `Doxyfile`.
 Simply run `doxygen` in the main library directory.
 
-A regularly updated version of the API documentation [is hosted here](https://michael-hofmann.info/selene/).
+A regularly updated version of the API documentation [is hosted here](https://selene-lib.org/docs/).
 
 Commented example code for select functionality (which can serve as a tutorial) can be found in the
 [`examples` folder of the repository](../examples). (To be extended)
