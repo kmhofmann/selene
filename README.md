@@ -70,3 +70,11 @@ While building from source "at head" using *CMake* is the recommended way to use
   * [vcpkg](https://github.com/Microsoft/vcpkg) (all)
 
 besides OS level package managers, or from source.
+
+### Introductory presentation
+
+Here is a [PDF format presentation](https://selene-lib.org/selene_presentation_20180524.pdf) that introduces Selene
+(~v.0.1.0) and some of its features, given at a meetup of the
+[Dutch C++ Group](https://www.meetup.com/The-Dutch-Cpp-Group/).
+
+[![Selene: Image representation and I/O in C++14](docs/selene_presentation_preview_small.png)](https://selene-lib.org/selene_presentation_20180524.pdf)
