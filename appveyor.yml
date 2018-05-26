@@ -11,6 +11,11 @@ configuration:
   - Debug
   - Release
 
+branches:
+  except:
+    - appveyor-test
+    - /.*no-ci.*/
+
 init:
   - ps: |
       If ($env:Platform -Match "x86") {

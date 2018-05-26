@@ -7,7 +7,7 @@ class SeleneConan(ConanFile):
     version = "0.1.0"
     license = "MIT"
     url = "https://github.com/kmhofmann/selene"
-    description = "A C++14 image representation, processing and I/O library. "
+    description = "A C++14 image representation, processing and I/O library."
 
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}

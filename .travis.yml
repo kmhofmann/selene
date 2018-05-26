@@ -13,6 +13,7 @@ env:
 branches:
   except:
   - appveyor-test
+  - /.*no-ci.*/
 
 matrix:
   include:

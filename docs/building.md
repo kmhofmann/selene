@@ -34,7 +34,7 @@ more fine-grained control.
 
 #### Static vs. shared libraries
 
-The default settings will build a set of static libraries.
+The default CMake settings will build a set of static libraries.
 
 If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command.
 
@@ -59,8 +59,8 @@ If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to t
       # ...
       target_link_libraries(<target_name> selene::selene)
 
-  To provide a custom installation location, add `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the CMake invocation;
-  the default is an intrusive, system-wide `/usr/local` on UNIX-like systems.
+  To provide a custom installation location, add `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the CMake invocation.
+  The default is an intrusive, system-wide `/usr/local` on UNIX-like systems; it is recommended to change this.
 
 The CMake invocation also adds a reference to the build tree location to the user-level CMake cache.
 This means that the `find_package()` call can also work without installation, and will find then find the build tree
@@ -70,30 +70,33 @@ itself.
 
 **Selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
 
-  - [libjpeg](http://www.ijg.org/) or [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) (preferred):
-    - Optional, but recommended
-    - Required for the JPEG reading and writing API
-    - `libjpeg-turbo` is the preferred version of the library
+  - [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) or [libjpeg](http://www.ijg.org/):
+    - Optional, but recommended.
+    - Required for the JPEG reading and writing API.
+    - `libjpeg-turbo` is the preferred version of the library.
   - [libpng](http://www.libpng.org/pub/png/libpng.html):
-    - Optional, but recommended
-    - Required for the PNG reading and writing API
+    - Optional, but recommended.
+    - Required for the PNG reading and writing API.
   - [OpenCV](https://opencv.org/):
-    - Optional, if needed
-    - For OpenCV interoperability (e.g. copying or wrapping image data)
+    - Optional, if needed.
+    - For OpenCV interoperability (e.g. copying or wrapping image data).
+    - **Not required** for building the library, since OpenCV interoperability is implemented in a header file only.
 
 The presence (or lack of) these dependencies should be detected automatically by CMake.
 
-If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system, some of its additional
-capabilities (such as partial JPEG image decoding and extended color spaces) will be taken into account and are enabled
-by the API.
+If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system (as opposed to IJG *libjpeg*),
+some of its additional capabilities (such as partial JPEG image decoding and extended color spaces) will be taken into
+account and are enabled by the API.
 
 [OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if
 so desired.
+It is by no means a requirement for using **Selene**.
 
 To point CMake to custom library installation locations, set the `CMAKE_PREFIX_PATH` environment variable accordingly.
 For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/libpng`. 
 
-The use of [Conan](https://conan.io/) as a dependency manager is also supported; see below.
+The use of [Conan](https://conan.io/) or [vcpkg](https://github.com/Microsoft/vcpkg) as dependency package managers is
+also supported; see below.
 
 ### Building and running tests, examples, and benchmarks
 
@@ -152,14 +155,24 @@ CMake `find_package` command.
 
 On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as follows:
 
-    apt-get install libjpeg-turbo8-dev libpng-dev libopencv-dev libboost-filesystem-dev
-    # Note: there is no pre-built google-benchmark package; install from source instead, or use vcpkg.
+    # Dependencies for building the library
+    apt-get install libjpeg-turbo8-dev libpng-dev
+    
+    # Dependencies for building tests & examples
+    apt-get install libopencv-dev libboost-filesystem-dev
+    
+    # Note: There is no pre-built google-benchmark package in e.g. Ubuntu.
+    #       Install from source instead, or use vcpkg.
 
 #### MacOS
 
 Install [Homebrew](https://brew.sh/) to build and install the dependencies as follows:
 
-    brew install libjpeg-turbo libpng opencv3 boost google-benchmark
+    # Dependencies for building the library
+    brew install libjpeg-turbo libpng
+    
+    # Dependencies for building tests, examples, benchmarks
+    brew install opencv3 boost google-benchmark
 
 #### Windows
 
@@ -167,9 +180,10 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
 
     .\vcpkg.exe install libjpeg-turbo
     .\vcpkg.exe install libpng
-    .\vcpkg.exe install opencv
-    .\vcpkg.exe install boost
-    .\vcpkg.exe install benchmark
+    
+    .\vcpkg.exe install opencv     # only for tests
+    .\vcpkg.exe install boost      # only for tests
+    .\vcpkg.exe install benchmark  # only for benchmarks
 
 Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
 the 64-bit compiled versions instead of the 32-bit ones.

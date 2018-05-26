@@ -9,14 +9,14 @@ Simply run `doxygen` in the main library directory.
 A regularly updated version of the API documentation [is hosted here](https://selene-lib.org/docs/).
 
 Commented example code for select functionality (which can serve as a tutorial) can be found in the
-[`examples` folder of the repository](../examples). (To be extended)
+[`examples` folder of the repository](../examples). (To be extended.)
 
-## Status
+## Compiler support
 
 **Selene** requires a compiler supporting C++14 and a respective conforming standard library implementation.
 
 The library is mainly developed on 
-- Ubuntu Linux using the latest GCC and Clang versions (currently: GCC 7.2.0 and Clang 6.0.0)
+- Ubuntu Linux using the latest GCC and Clang versions (currently: GCC 8.1.0, GCC 7.3.0 and Clang 6.0.0)
 - MacOS using the latest AppleClang version (currently: 9.0.0).
 
 Continuous integration tests are currently being run on:
@@ -27,6 +27,11 @@ Continuous integration tests using Clang (and with sanitizers enabled) are on th
 these up with [Travis CI](https://travis-ci.org/)'s hopelessly outdated Ubuntu images is exceedingly difficult, so it might not happen for a
 while.
 (The main difficulty is in using a recent version of `libc++` or `libstdc++` with Clang.)
+
+There are no obvious reasons why **Selene** could not be compiled on other platforms, such as Android or iOS.
+However, these platforms are not within the testing scope.
+
+## Work in progress
 
 The library is work-in-progress and released as an early preview, and shall be considerably extended and modified in
 the future; in particular by providing further image processing capabilities.

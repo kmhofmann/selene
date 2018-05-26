@@ -8,19 +8,20 @@ type-safe API.
 
   * [Overview](docs/overview.md): Brief summary of the current feature set
   * [Rationale](docs/rationale.md): Why implement a new library for image representation, processing, and I/O?
+  * [Installation](docs/installation.md): Installation using package managers
   * [Building the library](docs/building.md): How to build from source, and description of dependencies
-  * [Documentation and status](docs/documentation.md): API documentation, examples, supported compilers
+  * [API documentation and status](docs/documentation.md): API documentation, examples, supported compilers
   * [Known issues](docs/known_issues.md): Known issues and possible workarounds
   * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library
 
-### Quick summary
+### Summary
 
-  * Offers flexible classes for image and multi-channel pixel representations, and functions for image data access.
-  * Provides easy-to-use APIs to read and write images in JPEG and PNG formats (leveraging *libjpeg* and *libpng*).
-  * Offers basic image processing algorithms such as color conversions, pixel-wise operations, rotation, flipping, etc.
+  * Strongly typed image and multi-channel pixel representations, and functions for image data access.
+  * Easy-to-use APIs to read and write images in JPEG and PNG formats (leveraging *libjpeg* and *libpng*).
+  * Basic image processing algorithms such as color conversions, pixel-wise operations, rotation, flipping, etc.
   * Lightweight and easy to build using *CMake* on Linux, MacOS, Windows.
 
-### Example code
+### Example
 
 A first impression of the API:
 
@@ -55,10 +56,19 @@ write_image(to_image_data_view(img_rgba, PixelFormat::RGBA), ImageFormat::PNG,
 write_data_contents("example_out.png", encoded_png_data);
 ```
 
+### Introductory presentation
+
+Here is a [PDF format presentation](https://selene-lib.org/selene_presentation_20180524.pdf) that introduces Selene
+(~v.0.1.0) and some of its features, given at a meetup of the
+[Dutch C++ Group](https://www.meetup.com/The-Dutch-Cpp-Group/).
+
+[![Selene: Image representation and I/O in C++14](docs/selene_presentation_preview_small.png)](https://selene-lib.org/selene_presentation_20180524.pdf)
+
 ### Package managed
 
-While building from source "at head" using *CMake* is the recommended way to use
-**Selene** (see [Building the library](docs/building.md)), the library is also available as a
+Building from source "at head" using *CMake* is the recommended way to use **Selene**
+(see [Building the library](docs/building.md)).
+But the library is also available as a
 
   * [Conan package](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) on Bintray
   * [vcpkg](https://github.com/Microsoft/vcpkg) port
@@ -69,11 +79,3 @@ While building from source "at head" using *CMake* is the recommended way to use
   * [vcpkg](https://github.com/Microsoft/vcpkg) (all)
 
 besides OS level package managers or from source.
-
-### Introductory presentation
-
-Here is a [PDF format presentation](https://selene-lib.org/selene_presentation_20180524.pdf) that introduces Selene
-(~v.0.1.0) and some of its features, given at a meetup of the
-[Dutch C++ Group](https://www.meetup.com/The-Dutch-Cpp-Group/).
-
-[![Selene: Image representation and I/O in C++14](docs/selene_presentation_preview_small.png)](https://selene-lib.org/selene_presentation_20180524.pdf)
