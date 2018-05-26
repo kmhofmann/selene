@@ -153,7 +153,7 @@ CMake `find_package` command.
 On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as follows:
 
     apt-get install libjpeg-turbo8-dev libpng-dev libopencv-dev libboost-filesystem-dev
-    # Note: there is no pre-built google-benchmark package; install from source instead.
+    # Note: there is no pre-built google-benchmark package; install from source instead, or use vcpkg.
 
 #### MacOS
 
@@ -176,8 +176,8 @@ the 64-bit compiled versions instead of the 32-bit ones.
 
 #### Using Conan
 
-**Selene** also supports optional use of [Conan](https://conan.io/) as a dependency manager (besides installing
-[a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) using Conan).
+**Selene** supports optional use of [Conan](https://conan.io/) as a dependency manager on all supported platforms.
+(It is also possible to install [a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) using Conan).
 See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
 
 Currently, `libjpeg-turbo`, `libpng` and `Boost.Filesystem` (for the tests) can be built using Conan.
@@ -189,7 +189,7 @@ To use Conan, first install it, e.g. with `pip`:
 
 (On MacOS, you might prefer an installation with `brew` instead.)
 
-Verify that the required remotes are present; if not, add them:
+Add the required Bincrafters remote, if not present yet:
 
     conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 

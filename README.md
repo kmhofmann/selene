@@ -60,16 +60,15 @@ write_data_contents("example_out.png", encoded_png_data);
 While building from source "at head" using *CMake* is the recommended way to use
 **Selene** (see [Building the library](docs/building.md)), the library is also available as a
 
-  * [Conan package](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) on Bintray.
-  * A [pull request](https://github.com/Microsoft/vcpkg/pull/3534) for inclusion in
-    [vcpkg](https://github.com/Microsoft/vcpkg) is pending.
+  * [Conan package](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) on Bintray
+  * [vcpkg](https://github.com/Microsoft/vcpkg) port
 
 **Selene**'s own dependencies can be installed using
 
   * [Conan](https://conan.io/) (some)
   * [vcpkg](https://github.com/Microsoft/vcpkg) (all)
 
-besides OS level package managers, or from source.
+besides OS level package managers or from source.
 
 ### Introductory presentation
 
