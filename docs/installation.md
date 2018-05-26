@@ -19,11 +19,11 @@ used to host the **Selene** package:
 
 This has to be done once per Conan installation.
 
-Then install the actual package; the current library version provided is `0.1.0`.
+Then install the actual package; the current library version provided is `0.1.1`.
 
-    conan install selene/0.1.0@selene/testing -r kmhofmann
+    conan install selene/0.1.1@selene/testing -r kmhofmann
 
-Alternatively, just specify `selene/0.1.0@selene/testing` in a project's `conanfile.txt`.
+Alternatively, just specify `selene/0.1.1@selene/testing` in a project's `conanfile.txt`.
 
 Please refer to the [Conan documentation](http://docs.conan.io/) on how to make use of the installed package. 
 
