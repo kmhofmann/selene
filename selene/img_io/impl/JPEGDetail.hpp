@@ -2,13 +2,13 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
-#define SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
+#ifndef SELENE_IMG_IMPL_JPEG_DETAIL_HPP
+#define SELENE_IMG_IMPL_JPEG_DETAIL_HPP
 
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/MessageLog.hpp>
-#include <selene/img_io/detail/JPEGCommon.hpp>
+#include <selene/img_io/impl/JPEGCommon.hpp>
 
 #include <jpeglib.h>
 
@@ -16,7 +16,7 @@
 #include <cstdio>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 /// \cond INTERNAL
 
@@ -39,9 +39,9 @@ void output_message(j_common_ptr cinfo);
 
 /// \endcond
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 
-#endif  // SELENE_IMG_DETAIL_JPEG_DETAIL_HPP
+#endif  // SELENE_IMG_IMPL_JPEG_DETAIL_HPP

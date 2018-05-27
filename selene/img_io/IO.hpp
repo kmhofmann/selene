@@ -41,11 +41,11 @@ bool write_image(const ImageData<storage_type>& img_data,
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 void add_messages(const MessageLog& messages_src, MessageLog* messages_dst);
 
-}  // namespace detail
+}  // namespace impl
 
 /** \brief Reads an image stream, trying all supported formats.
  *
@@ -76,7 +76,7 @@ ImageData<> read_image(SourceType&& source, MessageLog* messages)
       img_data = read_jpeg(obj, std::forward<SourceType>(source), JPEGDecompressionOptions(), &messages_jpeg,
                            &header_info);
 
-      detail::add_messages(messages_jpeg, messages);
+      impl::add_messages(messages_jpeg, messages);
       return img_data;
     }
   }
@@ -98,7 +98,7 @@ ImageData<> read_image(SourceType&& source, MessageLog* messages)
       img_data = read_png(obj, std::forward<SourceType>(source), PNGDecompressionOptions(), &messages_png,
                           &header_info);
 
-      detail::add_messages(messages_png, messages);
+      impl::add_messages(messages_png, messages);
       return img_data;
     }
   }
@@ -142,7 +142,7 @@ bool write_image(const ImageData<storage_type>& img_data,
     bool success = write_jpeg(img_data, std::forward<SinkType>(sink), JPEGCompressionOptions(jpeg_quality),
                               &messages_jpeg);
 
-    detail::add_messages(messages_jpeg, messages);
+    impl::add_messages(messages_jpeg, messages);
     return success;
 #else  // defined(SELENE_WITH_LIBJPEG)
     throw std::runtime_error("ERROR: JPEG writing unsupported; recompile with the respective external dependency.");
@@ -154,7 +154,7 @@ bool write_image(const ImageData<storage_type>& img_data,
     MessageLog messages_png;
     bool success = write_png(img_data, std::forward<SinkType>(sink), PNGCompressionOptions(), &messages_png);
 
-    detail::add_messages(messages_png, messages);
+    impl::add_messages(messages_png, messages);
     return success;
 #else  // defined(SELENE_WITH_LIBPNG)
     throw std::runtime_error("ERROR: PNG writing unsupported; recompile with the respective external dependency.");

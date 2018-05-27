@@ -4,12 +4,12 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
-#include <selene/img_io/detail/PNGDetail.hpp>
+#include <selene/img_io/impl/PNGDetail.hpp>
 
 #include <stdexcept>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 void error_handler(png_structp png_ptr, const char* msg)
 {
@@ -25,7 +25,7 @@ void warning_handler(png_structp png_ptr, const char* msg)
   err_man.message_log.add_message(std::string("Warning: ") + std::string(msg));
 }
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBPNG)

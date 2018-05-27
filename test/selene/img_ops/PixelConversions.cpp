@@ -86,9 +86,9 @@ void floating_point_conversions(const sln::Pixel<T, 3>&, const sln::Pixel<T, 4>&
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
 void floating_point_conversions(const sln::Pixel<T, 3>& src_xxx, const sln::Pixel<T, 4>& src_xxxx)
 {
-  constexpr auto f_r = sln::detail::RGBToYCoefficients::values[0];
-  constexpr auto f_g = sln::detail::RGBToYCoefficients::values[1];
-  constexpr auto f_b = sln::detail::RGBToYCoefficients::values[2];
+  constexpr auto f_r = sln::impl::RGBToYCoefficients::values[0];
+  constexpr auto f_g = sln::impl::RGBToYCoefficients::values[1];
+  constexpr auto f_b = sln::impl::RGBToYCoefficients::values[2];
 
   const auto dst_rgb_to_y = sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::Y>(src_xxx);
   REQUIRE(static_cast<float>(dst_rgb_to_y)

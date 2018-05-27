@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
-#define SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
+#ifndef SELENE_THREAD_IMPL_TASK_QUEUE_HPP
+#define SELENE_THREAD_IMPL_TASK_QUEUE_HPP
 
 #include <atomic>
 #include <condition_variable>
@@ -11,10 +11,10 @@
 #include <limits>
 #include <mutex>
 
-#include <selene/thread/detail/Callable.hpp>
+#include <selene/thread/impl/Callable.hpp>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 /// \cond INTERNAL
 
@@ -155,7 +155,7 @@ inline void TaskQueue::set_finished()
 
 /// \endcond
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
-#endif  // SELENE_THREAD_DETAIL_TASK_QUEUE_HPP
+#endif  // SELENE_THREAD_IMPL_TASK_QUEUE_HPP

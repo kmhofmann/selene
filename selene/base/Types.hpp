@@ -25,13 +25,13 @@ using default_float_t = float64_t;  ///< Default floating point type: double pre
 static_assert(sizeof(float32_t) == 4, "type size mismatch");
 static_assert(sizeof(float64_t) == 8, "type size mismatch");
 
-namespace detail {
+namespace impl {
 
 class BytesTag;
 
-}  // namespace detail
+}  // namespace impl
 
-using Bytes = ExplicitType<std::size_t, detail::BytesTag>;  ///< Type representing a number of bytes.
+using Bytes = ExplicitType<std::size_t, impl::BytesTag>;  ///< Type representing a number of bytes.
 
 inline namespace literals {
 

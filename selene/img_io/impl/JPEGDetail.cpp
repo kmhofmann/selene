@@ -4,12 +4,12 @@
 
 #if defined(SELENE_WITH_LIBJPEG)
 
-#include <selene/img_io/detail/JPEGDetail.hpp>
+#include <selene/img_io/impl/JPEGDetail.hpp>
 
 #include <stdexcept>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space)
 {
@@ -79,7 +79,7 @@ void output_message(j_common_ptr cinfo)
   err_man.message_log.add_message(std::string("Error: ") + std::string(buffer));
 }
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)

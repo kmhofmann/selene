@@ -5,7 +5,7 @@
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img_io/JPEGRead.hpp>
-#include <selene/img_io/detail/JPEGDetail.hpp>
+#include <selene/img_io/impl/JPEGDetail.hpp>
 
 #include <jpeglib.h>
 
@@ -40,7 +40,7 @@ bool JPEGImageInfo::is_valid() const
 struct JPEGDecompressionObject::Impl
 {
   jpeg_decompress_struct cinfo;
-  detail::JPEGErrorManager error_manager;
+  impl::JPEGErrorManager error_manager;
   bool valid = false;
   bool needs_reset = false;
 };
@@ -48,8 +48,8 @@ struct JPEGDecompressionObject::Impl
 JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
 {
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
-  impl_->cinfo.err->error_exit = detail::error_exit;
-  impl_->cinfo.err->output_message = detail::output_message;
+  impl_->cinfo.err->error_exit = impl::error_exit;
+  impl_->cinfo.err->output_message = impl::output_message;
   jpeg_create_decompress(&impl_->cinfo);
   impl_->valid = true;
 }
@@ -76,7 +76,7 @@ bool JPEGDecompressionObject::valid() const
 
 JPEGImageInfo JPEGDecompressionObject::get_header_info() const
 {
-  const auto color_space = detail::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
+  const auto color_space = impl::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
   return JPEGImageInfo(PixelLength(impl_->cinfo.image_width), PixelLength(impl_->cinfo.image_height),
                        static_cast<std::uint16_t>(impl_->cinfo.num_components), color_space);
 }
@@ -85,7 +85,7 @@ void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_co
 {
   if (out_color_space != JPEGColorSpace::Auto)
   {
-    impl_->cinfo.out_color_space = detail::color_space_pub_to_lib(out_color_space);
+    impl_->cinfo.out_color_space = impl::color_space_pub_to_lib(out_color_space);
   }
 }
 
@@ -105,7 +105,7 @@ const MessageLog& JPEGDecompressionObject::message_log() const
 }
 
 
-namespace detail {
+namespace impl {
 
 JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region)
     : obj_(obj), region_(region)
@@ -150,7 +150,7 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
 
   const auto width = PixelLength(cinfo.output_width);
   const auto height = region_.empty() ? PixelLength(cinfo.output_height) : PixelLength(region_.height());
-  const auto out_color_space = detail::color_space_lib_to_pub(cinfo.out_color_space);
+  const auto out_color_space = impl::color_space_lib_to_pub(cinfo.out_color_space);
   return JPEGImageInfo{width, height, static_cast<std::uint16_t>(cinfo.out_color_components), out_color_space};
 }
 
@@ -243,7 +243,7 @@ failure_state:
   return JPEGImageInfo();  // invalid header info
 }
 
-}  // namespace detail
+}  // namespace impl
 
 /// \endcond
 

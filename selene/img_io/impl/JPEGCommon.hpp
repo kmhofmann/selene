@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_DETAIL_JPEG_COMMON_HPP
-#define SELENE_IMG_DETAIL_JPEG_COMMON_HPP
+#ifndef SELENE_IMG_IMPL_JPEG_COMMON_HPP
+#define SELENE_IMG_IMPL_JPEG_COMMON_HPP
 
 #if defined(SELENE_WITH_LIBJPEG)
 
@@ -13,7 +13,7 @@
 #include <selene/img_io/JPEGCommon.hpp>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 inline JPEGColorSpace pixel_format_to_color_space(PixelFormat pixel_format)
 {
@@ -60,9 +60,9 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
   }
 }
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 
-#endif  // SELENE_IMG_DETAIL_JPEG_COMMON_HPP
+#endif  // SELENE_IMG_IMPL_JPEG_COMMON_HPP

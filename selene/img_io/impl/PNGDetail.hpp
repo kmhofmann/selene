@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_DETAIL_PNG_DETAIL_HPP
-#define SELENE_IMG_DETAIL_PNG_DETAIL_HPP
+#ifndef SELENE_IMG_IMPL_PNG_DETAIL_HPP
+#define SELENE_IMG_IMPL_PNG_DETAIL_HPP
 
 #if defined(SELENE_WITH_LIBPNG)
 
@@ -15,7 +15,7 @@
 #include <cstdio>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 /// \cond INTERNAL
 
@@ -30,9 +30,9 @@ void warning_handler(png_structp png_ptr, const char* msg);
 
 /// \endcond
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
 #endif   // defined(SELENE_WITH_LIBPNG)
 
-#endif  // SELENE_IMG_DETAIL_PNG_DETAIL_HPP
+#endif  // SELENE_IMG_IMPL_PNG_DETAIL_HPP

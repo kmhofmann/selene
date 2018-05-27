@@ -45,7 +45,7 @@ auto convert_image(const Image<PixelSrc>& img_src, ElementType alpha_value);
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 template <PixelFormat pixel_format_dst, typename PixelSrc>
 struct TargetPixelType
@@ -74,7 +74,7 @@ struct ImageConversion<pixel_format_src,
   template <typename PixelSrc>
   static auto apply(const Image<PixelSrc>& img_src)
   {
-    using PixelDst = typename detail::TargetPixelType<pixel_format_dst, PixelSrc>::type;
+    using PixelDst = typename impl::TargetPixelType<pixel_format_dst, PixelSrc>::type;
 
     auto transform_func = [](const PixelSrc& px) {
       return PixelConversion<pixel_format_src, pixel_format_dst>::apply(px);
@@ -104,7 +104,7 @@ struct ImageConversion<pixel_format_src,
   template <typename PixelSrc, typename ElementType>
   static auto apply(const Image<PixelSrc>& img_src, ElementType alpha_value)
   {
-    using PixelDst = typename detail::TargetPixelType<pixel_format_dst, PixelSrc>::type;
+    using PixelDst = typename impl::TargetPixelType<pixel_format_dst, PixelSrc>::type;
 
     auto transform_func = [alpha_value](const PixelSrc& px) -> PixelDst {
       return PixelConversion<pixel_format_src, pixel_format_dst>::apply(px, alpha_value);
@@ -116,7 +116,7 @@ struct ImageConversion<pixel_format_src,
   }
 };
 
-}  // namespace detail
+}  // namespace impl
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
  *
@@ -143,7 +143,7 @@ inline void convert_image(const Image<PixelSrc>& img_src, Image<PixelDst>& img_d
                 "Incorrect source pixel format.");
   static_assert(get_nr_channels(pixel_format_dst) == PixelTraits<PixelDst>::nr_channels,
                 "Incorrect target pixel format.");
-  detail::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst);
+  impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst);
 }
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
@@ -170,7 +170,7 @@ inline auto convert_image(const Image<PixelSrc>& img_src)
 {
   static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
                 "Incorrect source pixel format.");
-  return detail::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
+  return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
 }
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
@@ -208,7 +208,7 @@ inline void convert_image(const Image<PixelSrc>& img_src, Image<PixelDst>& img_d
                 "Incorrect source pixel format.");
   static_assert(get_nr_channels(pixel_format_dst) == PixelTraits<PixelDst>::nr_channels,
                 "Incorrect target pixel format.");
-  detail::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst, alpha_value);
+  impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst, alpha_value);
 }
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
@@ -240,7 +240,7 @@ inline auto convert_image(const Image<PixelSrc>& img_src, ElementType alpha_valu
 {
   static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
                 "Incorrect source pixel format.");
-  return detail::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
+  return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
 }  // namespace sln

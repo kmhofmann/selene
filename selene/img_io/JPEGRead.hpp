@@ -18,8 +18,8 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/RowPointers.hpp>
 #include <selene/img_io/JPEGCommon.hpp>
-#include <selene/img_io/detail/JPEGCommon.hpp>
-#include <selene/img_io/detail/Util.hpp>
+#include <selene/img_io/impl/JPEGCommon.hpp>
+#include <selene/img_io/impl/Util.hpp>
 
 #include <selene/io/FileReader.hpp>
 #include <selene/io/MemoryReader.hpp>
@@ -33,12 +33,12 @@ namespace sln {
 struct JPEGImageInfo;
 class JPEGDecompressionObject;
 
-namespace detail {
+namespace impl {
 class JPEGDecompressionCycle;
 void set_source(JPEGDecompressionObject&, FileReader&);
 void set_source(JPEGDecompressionObject&, MemoryReader&);
 JPEGImageInfo read_header(JPEGDecompressionObject&);
-}  // namespace detail
+}  // namespace impl
 
 /** \brief JPEG image information, containing the image size, the number of channels, and the color space.
  *
@@ -113,10 +113,10 @@ private:
 
   void reset_if_needed();
 
-  friend class detail::JPEGDecompressionCycle;
-  friend void detail::set_source(JPEGDecompressionObject&, FileReader&);
-  friend void detail::set_source(JPEGDecompressionObject&, MemoryReader&);
-  friend JPEGImageInfo detail::read_header(JPEGDecompressionObject&);
+  friend class impl::JPEGDecompressionCycle;
+  friend void impl::set_source(JPEGDecompressionObject&, FileReader&);
+  friend void impl::set_source(JPEGDecompressionObject&, MemoryReader&);
+  friend JPEGImageInfo impl::read_header(JPEGDecompressionObject&);
 };
 
 
@@ -230,7 +230,7 @@ private:
   SourceType* source_;
   JPEGDecompressionOptions options_;
   mutable JPEGDecompressionObject obj_;
-  mutable std::unique_ptr<detail::JPEGDecompressionCycle> cycle_;
+  mutable std::unique_ptr<impl::JPEGDecompressionCycle> cycle_;
   bool header_read_ = false;
   bool valid_header_read_ = false;
 
@@ -240,7 +240,7 @@ private:
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 class JPEGDecompressionCycle
 {
@@ -257,7 +257,7 @@ private:
   bool finished_or_aborted_ = false;
 };
 
-}  // namespace detail
+}  // namespace impl
 
 
 template <typename SourceType>
@@ -279,10 +279,10 @@ JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source
       source.seek_abs(src_pos);
     }
 
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
   };
 
-  detail::set_source(obj, source);
+  impl::set_source(obj, source);
 
   if (obj.error_state())
   {
@@ -290,7 +290,7 @@ JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source
     return JPEGImageInfo();
   }
 
-  const auto header_info = detail::read_header(obj);
+  const auto header_info = impl::read_header(obj);
   scope_exit();
   return header_info;
 }
@@ -312,26 +312,26 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
 {
   if (!provided_header_info)
   {
-    detail::set_source(obj, source);
+    impl::set_source(obj, source);
 
     if (obj.error_state())
     {
-      detail::assign_message_log(obj, messages);
+      impl::assign_message_log(obj, messages);
       return ImageData<>();
     }
   }
 
-  const JPEGImageInfo header_info = provided_header_info ? *provided_header_info : detail::read_header(obj);
+  const JPEGImageInfo header_info = provided_header_info ? *provided_header_info : impl::read_header(obj);
 
   if (!header_info.is_valid())
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return ImageData<>();
   }
 
   obj.set_decompression_parameters(options.out_color_space);
 
-  detail::JPEGDecompressionCycle cycle(obj, options.region);
+  impl::JPEGDecompressionCycle cycle(obj, options.region);
 
   const auto output_info = cycle.get_output_info();
   const auto output_width = output_info.width;
@@ -339,7 +339,7 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
   const auto output_nr_channels = output_info.nr_channels;
   const auto output_nr_bytes_per_channel = 1;
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
-  const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
+  const auto output_pixel_format = impl::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
   ImageData<> img(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_stride_bytes,
@@ -352,7 +352,7 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
     img.clear();  // invalidates image data
   }
 
-  detail::assign_message_log(obj, messages);
+  impl::assign_message_log(obj, messages);
   return img;
 }
 
@@ -368,7 +368,7 @@ template <typename SourceType>
 JPEGReader<SourceType>::JPEGReader(SourceType& source, JPEGDecompressionOptions options)
     : source_(&source), options_(options)
 {
-  detail::set_source(obj_, source);
+  impl::set_source(obj_, source);
 }
 
 template <typename SourceType>
@@ -376,7 +376,7 @@ void JPEGReader<SourceType>::set_source(SourceType& source)
 {
   reset();
   source_ = &source;
-  detail::set_source(obj_, source);
+  impl::set_source(obj_, source);
 }
 
 template <typename SourceType>
@@ -392,7 +392,7 @@ JPEGImageInfo JPEGReader<SourceType>::read_header()
     throw std::runtime_error("JPEGReader: Cannot call read_header() after call to get_output_image_info() or read_image_data().");
   }
 
-  const JPEGImageInfo header_info = detail::read_header(obj_);
+  const JPEGImageInfo header_info = impl::read_header(obj_);
   header_read_ = true;
   valid_header_read_ = header_info.is_valid();
   return header_info;
@@ -425,7 +425,7 @@ JPEGImageInfo JPEGReader<SourceType>::get_output_image_info()
   if (!cycle_)
   {
     obj_.set_decompression_parameters(options_.out_color_space);
-    cycle_ = std::make_unique<detail::JPEGDecompressionCycle>(obj_, options_.region);
+    cycle_ = std::make_unique<impl::JPEGDecompressionCycle>(obj_, options_.region);
   }
 
   return cycle_->get_output_info();
@@ -470,7 +470,7 @@ bool JPEGReader<SourceType>::read_image_data(ImageData<>& img_data)
   const auto output_nr_channels = output_info.nr_channels;
   const auto output_nr_bytes_per_channel = 1;
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
-  const auto output_pixel_format = detail::color_space_to_pixel_format(output_info.color_space);
+  const auto output_pixel_format = impl::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
   img_data.maybe_allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,

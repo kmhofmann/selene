@@ -17,7 +17,7 @@
 #include <selene/img/BoundingBox.hpp>
 #include <selene/img/ImageData.hpp>
 #include <selene/img/RowPointers.hpp>
-#include <selene/img_io/detail/Util.hpp>
+#include <selene/img_io/impl/Util.hpp>
 
 #include <selene/io/FileWriter.hpp>
 #include <selene/io/VectorWriter.hpp>
@@ -34,11 +34,11 @@ namespace sln {
 struct PNGCompressionOptions;
 class PNGCompressionObject;
 
-namespace detail {
+namespace impl {
 class PNGCompressionCycle;
 void set_destination(PNGCompressionObject&, FileWriter&);
 void set_destination(PNGCompressionObject&, VectorWriter&);
-}  // namespace detail
+}  // namespace impl
 
 /** \brief PNG compression options.
  *
@@ -101,9 +101,9 @@ private:
 
   void reset_if_needed();
 
-  friend class detail::PNGCompressionCycle;
-  friend void detail::set_destination(PNGCompressionObject&, FileWriter&);
-  friend void detail::set_destination(PNGCompressionObject&, VectorWriter&);
+  friend class impl::PNGCompressionCycle;
+  friend void impl::set_destination(PNGCompressionObject&, FileWriter&);
+  friend void impl::set_destination(PNGCompressionObject&, VectorWriter&);
 };
 
 
@@ -144,7 +144,7 @@ bool write_png(const ImageData<storage_type>& img_data,
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 class PNGCompressionCycle
 {
@@ -160,7 +160,7 @@ private:
   bool error_state_;
 };
 
-}  // namespace detail
+}  // namespace impl
 
 
 template <ImageDataStorage storage_type, typename SinkType>
@@ -186,11 +186,11 @@ bool write_png(const ImageData<storage_type>& img_data,
     throw std::runtime_error("Unsupported bit depth of image data for PNG output");
   }
 
-  detail::set_destination(obj, sink);
+  impl::set_destination(obj, sink);
 
   if (obj.error_state())
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
@@ -203,7 +203,7 @@ bool write_png(const ImageData<storage_type>& img_data,
 
   if (!img_info_set)
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
@@ -211,15 +211,15 @@ bool write_png(const ImageData<storage_type>& img_data,
 
   if (!pars_set)
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
-  detail::PNGCompressionCycle cycle(obj, options.set_bgr, options.invert_monochrome);
+  impl::PNGCompressionCycle cycle(obj, options.set_bgr, options.invert_monochrome);
   const auto row_pointers = get_row_pointers(img_data);
   cycle.compress(row_pointers);
 
-  detail::assign_message_log(obj, messages);
+  impl::assign_message_log(obj, messages);
   return !obj.error_state();
 }
 
