@@ -203,9 +203,11 @@ To use Conan, first install it, e.g. with `pip`:
 
 (On MacOS, you might prefer an installation with `brew` instead.)
 
-Add the required Bincrafters remote, if not present yet:
+The `conan-center` remote should be present with a default installation.
+This can be checked by the `conan remote list` command.
+If so, no further action is necessary; if not, add it with:
 
-    conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+    conan remote add conan-center https://conan.bintray.com
 
 From your (clean) build directory, call Conan before the CMake invocation (as follows, or similar):
 
