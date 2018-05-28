@@ -1,7 +1,7 @@
 [requires]
 libjpeg-turbo/[>1.5.0]@bincrafters/stable
 libpng/[>1.2.0]@bincrafters/stable
-boost_filesystem/[>1.54.0]@bincrafters/stable
+boost/1.67.0@conan/stable
 
 # There does not seem to be a working, cross-platform package for Google Benchmark yet.
 # There does not seem to be a working, cross-platform package for OpenCV yet.
