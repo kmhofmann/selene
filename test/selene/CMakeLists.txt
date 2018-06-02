@@ -47,7 +47,7 @@ target_include_directories(selene_tests PRIVATE
 
 target_link_libraries(selene_tests
         selene
-        ${SELENE_BOOST_TARGET_NAME}
+        Boost::filesystem
         Threads::Threads)
 
 if (OPENCV_CORE_FOUND)

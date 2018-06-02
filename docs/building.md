@@ -190,11 +190,13 @@ the 64-bit compiled versions instead of the 32-bit ones.
 
 #### Using Conan
 
-**Selene** supports optional use of [Conan](https://conan.io/) as a dependency manager on all supported platforms.
-(It is also possible to install [a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene) using Conan).
+**Selene** supports optional use of [Conan](https://conan.io/) (version >= 1.4.1) as a dependency manager on all
+supported platforms.
+(It is also possible to install [a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene)
+using Conan).
 See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
 
-Currently, `libjpeg-turbo`, `libpng` and `Boost.Filesystem` (for the tests) can be built using Conan.
+Currently, `libjpeg-turbo`, `libpng` and `boost` (for the tests) can be built using Conan.
 There are no stable, cross-platform Conan recipes available yet for `OpenCV` or Google's `benchmark` library.
 
 To use Conan, first install it, e.g. with `pip`:
