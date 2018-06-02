@@ -6,30 +6,31 @@
 _Doxygen_ documentation can be built using the provided `Doxyfile`.
 Simply run `doxygen` in the main library directory.
 
-A regularly updated version of the API documentation [is hosted here](https://selene-lib.org/docs/).
+* A regularly updated version of the API documentation [is hosted here](https://selene-lib.org/docs/).
+
+## Examples
 
 Commented example code for select functionality (which can serve as a tutorial) can be found in the
-[`examples` folder of the repository](../examples). (To be extended.)
+[`examples` folder of the repository](../examples).
 
-## Compiler support
+## Platform and compiler support
 
 **Selene** requires a compiler supporting C++14 and a respective conforming standard library implementation.
+As such, it can be built on the usual major plaforms: **Linux**, **MacOS**, **Windows**.
 
-The library is mainly developed on 
-- Ubuntu Linux using the latest GCC and Clang versions (currently: GCC 8.1.0, GCC 7.3.0 and Clang 6.0.0)
-- MacOS using the latest AppleClang version (currently: 9.0.0).
+There are no obvious reasons why **Selene** could not be compiled on other platforms, such as **Android** or **iOS**.
+However, these platforms are not within the testing scope.
 
 Continuous integration tests are currently being run on:
-- Ubuntu Linux, using GCC 5.4.1, GCC 6.4.0, and GCC 7.2.0 (via [Travis CI](https://travis-ci.org/)).
+- Ubuntu Linux 18.04  (via [Travis CI](https://travis-ci.org/)/Docker), using the following compilers:
+    - GCC 8.1, GCC 7.2, GCC 6.4, GCC 5.4
+    - Clang 6.0 (with and without AddressSanitizer), Clang 5.0, Clang 4.0, Clang 3.9, Clang 3.8.
 - Windows, using Visual Studio 2017 (via [Appveyor](https://www.appveyor.com/)).
 
 Continuous integration tests using Clang (and with sanitizers enabled) are on the "would be great" list, but setting
 these up with [Travis CI](https://travis-ci.org/)'s hopelessly outdated Ubuntu images is exceedingly difficult, so it might not happen for a
 while.
 (The main difficulty is in using a recent version of `libc++` or `libstdc++` with Clang.)
-
-There are no obvious reasons why **Selene** could not be compiled on other platforms, such as Android or iOS.
-However, these platforms are not within the testing scope.
 
 ## Work in progress
 

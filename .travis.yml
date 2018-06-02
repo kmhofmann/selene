@@ -1,82 +1,47 @@
-language: cpp
-sudo: true
-dist: trusty
-
-branches:
-  except:
-  - appveyor-test
-
-env:
-  global:
-    - MAKEFLAGS="-j2"
+os: linux
+services:
+   - docker
+sudo: required
+language: python
 
 branches:
   except:
   - appveyor-test
   - /.*no-ci.*/
 
-matrix:
-  include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - george-edison55-precise-backports
-          packages:
-            - g++-5
-            - cmake-data
-            - cmake
-            - libjpeg-turbo8-dev
-            - libboost-filesystem-dev
-            - libopencv-dev
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-            - cmake-data
-            - cmake
-            - libjpeg-turbo8-dev
-            - libboost-filesystem-dev
-            - libopencv-dev
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - george-edison55-precise-backports
-          packages:
-            - g++-7
-            - cmake-data
-            - cmake
-            - libjpeg-turbo8-dev
-            - libboost-filesystem-dev
-            - libopencv-dev
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - cmake --version;
-  - ${CC} --version;
-  - ${CXX} --version;
-  - cd ${TRAVIS_BUILD_DIR}/..
-  - git clone git://git.code.sf.net/p/libpng/code libpng && cd libpng && git checkout v1.6.34
-  - mkdir -p build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local .. && make && sudo make install
-  - cd ${TRAVIS_BUILD_DIR}
-
-before_script:
-  - mkdir build && cd build && cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ${TRAVIS_BUILD_DIR}
+env:
+  matrix:
+    - DOCKER_IMAGE=lasote/conanclang60
+      CC=clang
+      CXX=clang++
+      ASAN=1
+    - DOCKER_IMAGE=lasote/conanclang60
+      CC=clang
+      CXX=clang++
+    - DOCKER_IMAGE=lasote/conanclang50
+      CC=clang
+      CXX=clang++
+    - DOCKER_IMAGE=lasote/conanclang40
+      CC=clang
+      CXX=clang++
+    - DOCKER_IMAGE=lasote/conanclang39
+      CC=clang
+      CXX=clang++
+    - DOCKER_IMAGE=lasote/conanclang38
+      CC=clang
+      CXX=clang++
+    - DOCKER_IMAGE=lasote/conangcc8
+      CC=gcc
+      CXX=g++
+    - DOCKER_IMAGE=lasote/conangcc7
+      CC=gcc
+      CXX=g++
+    - DOCKER_IMAGE=lasote/conangcc6
+      CC=gcc
+      CXX=g++
+    - DOCKER_IMAGE=lasote/conangcc5
+      CC=gcc
+      CXX=g++
 
 script:
-  - make
-  - SELENE_DATA_PATH=${TRAVIS_BUILD_DIR}/data ./test/selene/selene_tests -d yes
+  docker run -v$(pwd):/home/conan $DOCKER_IMAGE bash -c "CC=${CC} CXX=${CXX} ASAN=${ASAN} .travis/build_project.sh"
