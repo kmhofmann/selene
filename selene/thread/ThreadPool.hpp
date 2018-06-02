@@ -19,7 +19,7 @@
 #include <vector>
 
 #include <selene/base/Assert.hpp>
-#include <selene/thread/detail/TaskQueue.hpp>
+#include <selene/thread/impl/TaskQueue.hpp>
 
 namespace sln {
 
@@ -53,7 +53,7 @@ public:
   std::size_t size() const;
 
 private:
-  std::vector<detail::TaskQueue> queues_;
+  std::vector<impl::TaskQueue> queues_;
   std::vector<std::thread> threads_;
   std::atomic<std::size_t> index_;
   std::atomic<std::size_t> num_threads_;
@@ -106,7 +106,7 @@ inline ThreadPool::~ThreadPool()
 {
   std::lock_guard<std::mutex> lock(mutex_);
 
-  std::for_each(queues_.begin(), queues_.end(), [](detail::TaskQueue& q) { q.set_finished(); });
+  std::for_each(queues_.begin(), queues_.end(), [](impl::TaskQueue& q) { q.set_finished(); });
   std::for_each(threads_.begin(), threads_.end(), [](std::thread& t) { t.join(); });
 }
 
@@ -171,7 +171,7 @@ inline void ThreadPool::run_loop(std::size_t thread_index)
 
   while (true)
   {
-    detail::Callable current_task;
+    impl::Callable current_task;
 
     for (std::size_t n = 0; n < 32 * num_threads_; ++n)
     {

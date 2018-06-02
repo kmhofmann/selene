@@ -6,7 +6,7 @@
 
 namespace sln {
 
-namespace detail {
+namespace impl {
 
 void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
 {
@@ -21,6 +21,6 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
   }
 }
 
-}  // namespace detail
+}  // namespace impl
 
 }  // namespace sln

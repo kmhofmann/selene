@@ -77,7 +77,7 @@ cv::Mat create_test_image_cv(sln::PixelLength width, sln::PixelLength height)
 
   const auto rows = static_cast<int>(height);
   const auto cols = static_cast<int>(width);
-  const auto type = sln::detail::PixelToOpenCVType<PixelType>::type;
+  const auto type = sln::impl::PixelToOpenCVType<PixelType>::type;
   cv::Mat img_cv(rows, cols, type);
 
   for (int row = 0; row < img_cv.rows; ++row)
@@ -108,7 +108,7 @@ void compare_images(const sln::Image<PixelType>& img, const cv::Mat& img_cv)
   constexpr auto nr_bytes_per_channel = sln::PixelTraits<PixelType>::nr_bytes_per_channel;
 
   REQUIRE(img_cv.channels() == nr_channels);
-  REQUIRE(sln::detail::opencv_nr_bytes_per_channel(img_cv) == nr_bytes_per_channel);
+  REQUIRE(sln::impl::opencv_nr_bytes_per_channel(img_cv) == nr_bytes_per_channel);
   REQUIRE(img_cv.cols == static_cast<int>(img.width()));
   REQUIRE(img_cv.rows == static_cast<int>(img.height()));
 

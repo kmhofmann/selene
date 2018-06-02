@@ -37,7 +37,7 @@ cv::Mat copy_to_opencv_mat(const Image<T>& img);
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 // clang-format off
 template <typename T> struct PixelToOpenCVType;
@@ -115,7 +115,7 @@ inline bool opencv_mat_type_is_unsigned(const cv::Mat& img_cv)
   return (img_cv.depth() == CV_8U || img_cv.depth() == CV_16U);
 }
 
-}  // namespace detail
+}  // namespace impl
 
 /** \brief Wraps an OpenCV `cv::Mat` matrix instance in an `Image<T>`.
  *
@@ -132,10 +132,10 @@ inline Image<T> wrap_opencv_mat(cv::Mat& img_cv)
   SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<T>::nr_channels);
-  SELENE_ASSERT(detail::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<T>::nr_bytes_per_channel);
-  SELENE_ASSERT(detail::opencv_mat_type_is_integral(img_cv) == PixelTraits<T>::is_integral);
-  SELENE_ASSERT(detail::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<T>::is_floating_point);
-  SELENE_ASSERT(detail::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
+  SELENE_ASSERT(impl::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<T>::nr_bytes_per_channel);
+  SELENE_ASSERT(impl::opencv_mat_type_is_integral(img_cv) == PixelTraits<T>::is_integral);
+  SELENE_ASSERT(impl::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<T>::is_floating_point);
+  SELENE_ASSERT(impl::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
 
   const auto data = img_cv.data;
   const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
@@ -159,10 +159,10 @@ Image<T> copy_opencv_mat(const cv::Mat& img_cv)
   SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<T>::nr_channels);
-  SELENE_ASSERT(detail::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<T>::nr_bytes_per_channel);
-  SELENE_ASSERT(detail::opencv_mat_type_is_integral(img_cv) == PixelTraits<T>::is_integral);
-  SELENE_ASSERT(detail::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<T>::is_floating_point);
-  SELENE_ASSERT(detail::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
+  SELENE_ASSERT(impl::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<T>::nr_bytes_per_channel);
+  SELENE_ASSERT(impl::opencv_mat_type_is_integral(img_cv) == PixelTraits<T>::is_integral);
+  SELENE_ASSERT(impl::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<T>::is_floating_point);
+  SELENE_ASSERT(impl::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<T>::is_unsigned);
 
   const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
   const auto height = PixelLength(static_cast<PixelLength::value_type>(img_cv.rows));
@@ -197,7 +197,7 @@ inline cv::Mat wrap_in_opencv_mat(Image<T>& img)
   const auto height = img.height();
   const auto stride_bytes = img.stride_bytes();
 
-  const auto type = detail::PixelToOpenCVType<T>::type;
+  const auto type = impl::PixelToOpenCVType<T>::type;
   const auto data = static_cast<void*>(img.byte_ptr());
 
   return cv::Mat(height, width, type, data, stride_bytes);
@@ -220,7 +220,7 @@ cv::Mat copy_to_opencv_mat(const Image<T>& img)
   const auto height = img.height();
   const auto nr_bytes_per_row = width * PixelTraits<T>::nr_bytes;
 
-  const auto type = detail::PixelToOpenCVType<T>::type;
+  const auto type = impl::PixelToOpenCVType<T>::type;
   cv::Mat img_cv(height, width, type);
 
   for (int row = 0; row < img_cv.rows; ++row)

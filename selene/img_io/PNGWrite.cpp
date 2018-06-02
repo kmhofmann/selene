@@ -8,7 +8,7 @@
 
 #include <selene/base/Utils.hpp>
 #include <selene/img_io/PNGWrite.hpp>
-#include <selene/img_io/detail/PNGDetail.hpp>
+#include <selene/img_io/impl/PNGDetail.hpp>
 
 #include <array>
 #include <cstdint>
@@ -47,7 +47,7 @@ struct PNGCompressionObject::Impl
 {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
-  detail::PNGErrorManager error_manager;
+  impl::PNGErrorManager error_manager;
   bool valid = false;
   bool needs_reset = false;
 };
@@ -55,8 +55,8 @@ struct PNGCompressionObject::Impl
 PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompressionObject::Impl>())
 {
   auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
-  png_error_ptr user_error_fn = detail::error_handler;
-  png_error_ptr user_warning_fn = detail::warning_handler;
+  png_error_ptr user_error_fn = impl::error_handler;
+  png_error_ptr user_warning_fn = impl::warning_handler;
   impl_->png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, user_error_ptr, user_error_fn, user_warning_fn);
 
   if (!impl_->png_ptr)
@@ -181,7 +181,7 @@ const MessageLog& PNGCompressionObject::message_log() const
 }
 
 
-namespace detail {
+namespace impl {
 
 // ----------------------
 // Compression structures
@@ -246,7 +246,7 @@ void user_write_data(png_structp png_ptr, png_bytep data, png_size_t length)
 
   if (io_ptr == nullptr)
   {
-    detail::error_handler(png_ptr, "[selene] png_get_io_ptr() failed");
+    impl::error_handler(png_ptr, "[selene] png_get_io_ptr() failed");
   }
 
   auto writer = static_cast<VectorWriter*>(io_ptr);
@@ -288,7 +288,7 @@ void set_destination(PNGCompressionObject& obj, VectorWriter& sink)
 failure_state:;
 }
 
-}  // namespace detail
+}  // namespace impl
 
 /// \endcond
 

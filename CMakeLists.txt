@@ -22,8 +22,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SELENE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Conan support: the cmake_paths generator requires Conan >= 1.4.1
+if (EXISTS ${CMAKE_BINARY_DIR}/conan_paths.cmake)
+    include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+endif()
+
 include(cmake/get_external.cmake)
-include(cmake/conan_support.cmake)
 include(cmake/find_dependencies.cmake)
 include(cmake/compiler_options.cmake)
 

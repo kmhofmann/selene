@@ -18,8 +18,8 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/RowPointers.hpp>
 #include <selene/img_io/JPEGCommon.hpp>
-#include <selene/img_io/detail/JPEGCommon.hpp>
-#include <selene/img_io/detail/Util.hpp>
+#include <selene/img_io/impl/JPEGCommon.hpp>
+#include <selene/img_io/impl/Util.hpp>
 
 #include <selene/io/FileWriter.hpp>
 #include <selene/io/VectorWriter.hpp>
@@ -32,13 +32,13 @@ namespace sln {
 
 class JPEGCompressionObject;
 
-namespace detail {
+namespace impl {
 class JPEGCompressionCycle;
 void set_destination(JPEGCompressionObject&, FileWriter&);
 void set_destination(JPEGCompressionObject&, VectorWriter&);
 bool flush_data_buffer(JPEGCompressionObject&, FileWriter&);
 bool flush_data_buffer(JPEGCompressionObject&, VectorWriter&);
-}  // namespace detail
+}  // namespace impl
 
 /** \brief JPEG compression options.
  *
@@ -96,11 +96,11 @@ private:
 
   void reset_if_needed();
 
-  friend class detail::JPEGCompressionCycle;
-  friend void detail::set_destination(JPEGCompressionObject&, FileWriter&);
-  friend void detail::set_destination(JPEGCompressionObject&, VectorWriter&);
-  friend bool detail::flush_data_buffer(JPEGCompressionObject&, FileWriter&);
-  friend bool detail::flush_data_buffer(JPEGCompressionObject&, VectorWriter&);
+  friend class impl::JPEGCompressionCycle;
+  friend void impl::set_destination(JPEGCompressionObject&, FileWriter&);
+  friend void impl::set_destination(JPEGCompressionObject&, VectorWriter&);
+  friend bool impl::flush_data_buffer(JPEGCompressionObject&, FileWriter&);
+  friend bool impl::flush_data_buffer(JPEGCompressionObject&, VectorWriter&);
 };
 
 
@@ -141,7 +141,7 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 class JPEGCompressionCycle
 {
@@ -155,7 +155,7 @@ private:
   JPEGCompressionObject& obj_;
 };
 
-}  // namespace detail
+}  // namespace impl
 
 
 template <ImageDataStorage storage_type, typename SinkType>
@@ -176,18 +176,18 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
-  detail::set_destination(obj, sink);
+  impl::set_destination(obj, sink);
 
   if (obj.error_state())
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
   const auto nr_channels = img_data.nr_channels();
   const auto nr_bytes_per_channel = img_data.nr_bytes_per_channel();
   const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto)
-                                  ? detail::pixel_format_to_color_space(img_data.pixel_format())
+                                  ? impl::pixel_format_to_color_space(img_data.pixel_format())
                                   : options.in_color_space;
 
   const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()), static_cast<int>(img_data.height()),
@@ -196,7 +196,7 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
 
   if (!img_info_set)
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
@@ -205,25 +205,25 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
 
   if (!pars_set)
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
   {
-    detail::JPEGCompressionCycle cycle(obj);
+    impl::JPEGCompressionCycle cycle(obj);
     const auto row_pointers = get_row_pointers(img_data);
     cycle.compress(row_pointers);
     // Destructor of JPEGCompressionCycle calls jpeg_finish_compress(), which updates internal state
   }
 
-  bool flushed = detail::flush_data_buffer(obj, sink);
+  bool flushed = impl::flush_data_buffer(obj, sink);
   if (!flushed)
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return false;
   }
 
-  detail::assign_message_log(obj, messages);
+  impl::assign_message_log(obj, messages);
   return !obj.error_state();
 }
 

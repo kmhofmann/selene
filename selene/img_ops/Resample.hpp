@@ -24,7 +24,7 @@ void resample(const Image<PixelType>& img_src, PixelLength new_width, PixelLengt
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 template <typename Func, typename FuncSafe, typename PixelType>
 void apply_resample_functions(Func func, FuncSafe func_safe,
@@ -96,7 +96,7 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
 
 }
 
-}  // namespace detail
+}  // namespace impl
 
 
 /** \brief Resamples the input image pixels to fit the output image dimensions, using the specified interpolation mode.
@@ -156,9 +156,9 @@ void resample(const Image<PixelType>& img_src, PixelLength new_width, PixelLengt
     return ImageInterpolator<interpolation_mode, BorderAccessMode::Replicated>::interpolate(img_src, x, y);
   };
 
-  detail::apply_resample_functions(func, func_safe, dst_to_src_factor_x, dst_to_src_factor_y,
-                                   safe_boundary_left, safe_boundary_right, safe_boundary_top, safe_boundary_bottom,
-                                   img_dst);
+  impl::apply_resample_functions(func, func_safe, dst_to_src_factor_x, dst_to_src_factor_y,
+                                 safe_boundary_left, safe_boundary_right, safe_boundary_top, safe_boundary_bottom,
+                                 img_dst);
 }
 
 }  // namespace sln

@@ -7,7 +7,7 @@
 #include <png.h>
 
 #include <selene/img_io/PNGRead.hpp>
-#include <selene/img_io/detail/PNGDetail.hpp>
+#include <selene/img_io/impl/PNGDetail.hpp>
 
 #include <array>
 #include <cstdint>
@@ -50,7 +50,7 @@ struct PNGDecompressionObject::Impl
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   png_infop end_info = nullptr;
-  detail::PNGErrorManager error_manager;
+  impl::PNGErrorManager error_manager;
   PixelFormat pixel_format_ = PixelFormat::Unknown;
   bool valid = false;
   bool needs_reset = false;
@@ -73,8 +73,8 @@ void PNGDecompressionObject::allocate()
   SELENE_FORCED_ASSERT(!impl_->end_info);
 
   auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
-  png_error_ptr user_error_fn = detail::error_handler;
-  png_error_ptr user_warning_fn = detail::warning_handler;
+  png_error_ptr user_error_fn = impl::error_handler;
+  png_error_ptr user_warning_fn = impl::warning_handler;
   impl_->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, user_error_ptr, user_error_fn, user_warning_fn);
 
   if (!impl_->png_ptr)
@@ -116,7 +116,7 @@ void PNGDecompressionObject::deallocate()
   impl_->png_ptr = nullptr;
   impl_->info_ptr = nullptr;
   impl_->end_info = nullptr;
-  impl_->error_manager = detail::PNGErrorManager();
+  impl_->error_manager = impl::PNGErrorManager();
   impl_->pixel_format_ = PixelFormat::Unknown;
   impl_->valid = false;
 }
@@ -388,7 +388,7 @@ PixelFormat PNGDecompressionObject::get_pixel_format() const
 }
 
 
-namespace detail {
+namespace impl {
 
 PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_(obj), error_state_(false)
 {
@@ -474,7 +474,7 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 
   if (io_ptr == nullptr)
   {
-    detail::error_handler(png_ptr, "[selene] png_get_io_ptr() failed");
+    impl::error_handler(png_ptr, "[selene] png_get_io_ptr() failed");
   }
 
   auto reader = static_cast<MemoryReader*>(io_ptr);
@@ -482,7 +482,7 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 
   if (static_cast<png_size_t>(reader->bytes_remaining()) < length)
   {
-    detail::error_handler(png_ptr, "[selene] access in user_read_data() out of bounds");
+    impl::error_handler(png_ptr, "[selene] access in user_read_data() out of bounds");
   }
 
   auto nr_bytes_read = read(*reader, data, length);
@@ -582,7 +582,7 @@ PNGImageInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
-}  // namespace detail
+}  // namespace impl
 
 
 /// \endcond

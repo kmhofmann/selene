@@ -5,7 +5,7 @@
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img_io/JPEGWrite.hpp>
-#include <selene/img_io/detail/JPEGDetail.hpp>
+#include <selene/img_io/impl/JPEGDetail.hpp>
 
 #include <jpeglib.h>
 
@@ -20,7 +20,7 @@ namespace sln {
 struct JPEGCompressionObject::Impl
 {
   jpeg_compress_struct cinfo;
-  detail::JPEGErrorManager error_manager;
+  impl::JPEGErrorManager error_manager;
 
   unsigned char* output_buffer = nullptr;  // temporary buffer for in-memory decompression
   unsigned long output_size = 0;  // size of in-memory buffer
@@ -32,8 +32,8 @@ struct JPEGCompressionObject::Impl
 JPEGCompressionObject::JPEGCompressionObject() : impl_(std::make_unique<JPEGCompressionObject::Impl>())
 {
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
-  impl_->cinfo.err->error_exit = detail::error_exit;
-  impl_->cinfo.err->output_message = detail::output_message;
+  impl_->cinfo.err->error_exit = impl::error_exit;
+  impl_->cinfo.err->output_message = impl::output_message;
   jpeg_create_compress(&impl_->cinfo);
   impl_->valid = true;
 }
@@ -89,7 +89,7 @@ bool JPEGCompressionObject::set_image_info(int width, int height, int nr_channel
   impl_->cinfo.image_width = static_cast<JDIMENSION>(width);
   impl_->cinfo.image_height = static_cast<JDIMENSION>(height);
   impl_->cinfo.input_components = nr_channels;
-  impl_->cinfo.in_color_space = detail::color_space_pub_to_lib(in_color_space);
+  impl_->cinfo.in_color_space = impl::color_space_pub_to_lib(in_color_space);
 
   jpeg_set_defaults(&impl_->cinfo);
   return true;
@@ -111,7 +111,7 @@ bool JPEGCompressionObject::set_compression_parameters(int quality, JPEGColorSpa
   // Set output color space if explicitly specified; otherwise, defaults will have been set by jpeg_set_defaults()
   if (color_space != JPEGColorSpace::Auto)
   {
-    jpeg_set_colorspace(&impl_->cinfo, detail::color_space_pub_to_lib(color_space));
+    jpeg_set_colorspace(&impl_->cinfo, impl::color_space_pub_to_lib(color_space));
   }
 
   jpeg_set_quality(&impl_->cinfo, quality, force_baseline);
@@ -139,7 +139,7 @@ const MessageLog& JPEGCompressionObject::message_log() const
 }
 
 
-namespace detail {
+namespace impl {
 
 JPEGCompressionCycle::JPEGCompressionCycle(JPEGCompressionObject& obj) : obj_(obj)
 {
@@ -231,7 +231,7 @@ bool flush_data_buffer(JPEGCompressionObject& obj, VectorWriter& sink)
   return true;
 }
 
-}  // namespace detail
+}  // namespace impl
 
 /// \endcond
 

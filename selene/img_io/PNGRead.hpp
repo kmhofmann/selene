@@ -18,7 +18,7 @@
 #include <selene/img/ImageData.hpp>
 #include <selene/img/PixelFormat.hpp>
 #include <selene/img/RowPointers.hpp>
-#include <selene/img_io/detail/Util.hpp>
+#include <selene/img_io/impl/Util.hpp>
 
 #include <selene/io/FileReader.hpp>
 #include <selene/io/MemoryReader.hpp>
@@ -33,14 +33,14 @@ class PNGImageInfo;
 struct PNGDecompressionOptions;
 class PNGDecompressionObject;
 
-namespace detail {
+namespace impl {
 class PNGDecompressionCycle;
 void set_source(PNGDecompressionObject&, FileReader&);
 void set_source(PNGDecompressionObject&, MemoryReader&);
 PNGImageInfo read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
 PNGImageInfo read_header(FileReader&, PNGDecompressionObject&);
 PNGImageInfo read_header(MemoryReader&, PNGDecompressionObject&);
-}  // namespace detail
+}  // namespace impl
 
 /** \brief PNG image information, containing the image size, the number of channels, and the bit depth.
  *
@@ -142,10 +142,10 @@ private:
   void deallocate();
   void reset_if_needed();
 
-  friend class detail::PNGDecompressionCycle;
-  friend void detail::set_source(PNGDecompressionObject&, FileReader&);
-  friend void detail::set_source(PNGDecompressionObject&, MemoryReader&);
-  friend PNGImageInfo detail::read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
+  friend class impl::PNGDecompressionCycle;
+  friend void impl::set_source(PNGDecompressionObject&, FileReader&);
+  friend void impl::set_source(PNGDecompressionObject&, MemoryReader&);
+  friend PNGImageInfo impl::read_header_info(PNGDecompressionObject&, const std::array<std::uint8_t, 8>&, bool);
 };
 
 /** \brief Reads header of PNG image data stream.
@@ -258,7 +258,7 @@ private:
   SourceType* source_;
   PNGDecompressionOptions options_;
   mutable PNGDecompressionObject obj_;
-  mutable std::unique_ptr<detail::PNGDecompressionCycle> cycle_;
+  mutable std::unique_ptr<impl::PNGDecompressionCycle> cycle_;
   bool header_read_ = false;
   bool valid_header_read_ = false;
 
@@ -269,7 +269,7 @@ private:
 // ----------
 // Implementation:
 
-namespace detail {
+namespace impl {
 
 class PNGDecompressionCycle
 {
@@ -286,7 +286,7 @@ private:
   bool error_state_;
 };
 
-}  // namespace detail
+}  // namespace impl
 
 
 template <typename SourceType>
@@ -308,10 +308,10 @@ PNGImageInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, b
       source.seek_abs(src_pos);
     }
 
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
   };
 
-  detail::set_source(obj, source);
+  impl::set_source(obj, source);
 
   if (obj.error_state())
   {
@@ -319,7 +319,7 @@ PNGImageInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, b
     return PNGImageInfo();
   }
 
-  const auto header_info = detail::read_header(source, obj);
+  const auto header_info = impl::read_header(source, obj);
   scope_exit();
   return header_info;
 }
@@ -341,20 +341,20 @@ ImageData<> read_png(PNGDecompressionObject& obj,
 {
   if (!provided_header_info)
   {
-    detail::set_source(obj, source);
+    impl::set_source(obj, source);
 
     if (obj.error_state())
     {
-      detail::assign_message_log(obj, messages);
+      impl::assign_message_log(obj, messages);
       return ImageData<>();
     }
   }
 
-  const PNGImageInfo header_info = provided_header_info ? *provided_header_info : detail::read_header(source, obj);
+  const PNGImageInfo header_info = provided_header_info ? *provided_header_info : impl::read_header(source, obj);
 
   if (!header_info.is_valid())
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return ImageData<>();
   }
 
@@ -365,15 +365,15 @@ ImageData<> read_png(PNGDecompressionObject& obj,
 
   if (!pars_set)
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return ImageData<>();
   }
 
-  detail::PNGDecompressionCycle cycle(obj);
+  impl::PNGDecompressionCycle cycle(obj);
 
   if (cycle.error_state())
   {
-    detail::assign_message_log(obj, messages);
+    impl::assign_message_log(obj, messages);
     return ImageData<>();
   }
 
@@ -398,7 +398,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
     img.clear();  // invalidates image data
   }
 
-  detail::assign_message_log(obj, messages);
+  impl::assign_message_log(obj, messages);
   return img;
 }
 
@@ -414,7 +414,7 @@ template <typename SourceType>
 PNGReader<SourceType>::PNGReader(SourceType& source, PNGDecompressionOptions options)
     : source_(&source), options_(options)
 {
-  detail::set_source(obj_, source);
+  impl::set_source(obj_, source);
 }
 
 template <typename SourceType>
@@ -422,7 +422,7 @@ void PNGReader<SourceType>::set_source(SourceType& source)
 {
   reset();
   source_ = &source;
-  detail::set_source(obj_, source);
+  impl::set_source(obj_, source);
 }
 
 template <typename SourceType>
@@ -438,7 +438,7 @@ PNGImageInfo PNGReader<SourceType>::read_header()
     throw std::runtime_error("PNGReader: Cannot call read_header() after call to get_output_image_info() or read_image_data().");
   }
 
-  const PNGImageInfo header_info = detail::read_header(*source_, obj_);
+  const PNGImageInfo header_info = impl::read_header(*source_, obj_);
   header_read_ = true;
   valid_header_read_ = header_info.is_valid();
   return header_info;
@@ -480,7 +480,7 @@ PNGImageInfo PNGReader<SourceType>::get_output_image_info()
       return PNGImageInfo();
     }
 
-    cycle_ = std::make_unique<detail::PNGDecompressionCycle>(obj_);
+    cycle_ = std::make_unique<impl::PNGDecompressionCycle>(obj_);
   }
 
   return cycle_->get_output_info();

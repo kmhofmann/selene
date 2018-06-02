@@ -16,26 +16,26 @@
 
 namespace sln {
 
-namespace detail {
+namespace impl {
 
 class PixelIndexTag;
 class PixelLengthTag;
 class StrideTag;
 class ImageRowAlignmentTag;
 
-}  // namespace detail
+}  // namespace impl
 
-using PixelIndex = ExplicitType<std::int32_t, detail::PixelIndexTag>;  ///< Type representing a signed integral
+using PixelIndex = ExplicitType<std::int32_t, impl::PixelIndexTag>;  ///< Type representing a signed integral
                                                                        ///< scalar as part of an image coordinate
                                                                        ///< (x or y).
 
-using PixelLength = ExplicitType<std::int32_t, detail::PixelLengthTag>;  ///< Type representing a length in
+using PixelLength = ExplicitType<std::int32_t, impl::PixelLengthTag>;  ///< Type representing a length in
                                                                          ///< x or y-direction.
 
-using Stride = ExplicitType<std::size_t, detail::StrideTag>;  ///< Type representing an image stride
+using Stride = ExplicitType<std::size_t, impl::StrideTag>;  ///< Type representing an image stride
                                                               ///< (nr of bytes per row).
 
-using ImageRowAlignment = ExplicitType<std::size_t, detail::ImageRowAlignmentTag>;  ///< Type representing an image row
+using ImageRowAlignment = ExplicitType<std::size_t, impl::ImageRowAlignmentTag>;  ///< Type representing an image row
                                                                                     ///< alignment.
 
 /** \brief Explicitly converts the provided value to `PixelIndex` type.
@@ -92,7 +92,7 @@ constexpr inline PixelLength operator"" _px(unsigned long long length)
 
 // ----------
 
-namespace detail {
+namespace impl {
 
 inline Stride compute_stride_bytes(std::size_t row_bytes, std::size_t alignment_bytes)
 {
@@ -123,7 +123,7 @@ inline std::size_t guess_row_alignment(std::uintptr_t ptr, std::size_t stride_by
   return start_alignment;
 }
 
-}  // namespace detail
+}  // namespace impl
 
 }  // namespace sln
 

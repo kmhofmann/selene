@@ -338,7 +338,7 @@ inline ImageData<ImageDataStorage::Modifiable>::ImageData(PixelLength width,
                                                           SampleFormat sample_format)
 {
   const auto row_bytes = nr_bytes_per_channel * nr_channels * width;
-  const auto stride_bytes = detail::compute_stride_bytes(row_bytes, row_alignment_bytes);
+  const auto stride_bytes = impl::compute_stride_bytes(row_bytes, row_alignment_bytes);
   constexpr bool shrink_to_fit = true;
   constexpr bool force_allocation = false;
   constexpr bool allow_view_reallocation = true;
@@ -433,7 +433,7 @@ inline ImageData<ImageDataStorage::Modifiable>::ImageData(const ImageData<ImageD
   if (other.owns_memory_)
   {
     const auto nr_bytes = stride_bytes_ * height_;
-    allocate_bytes(nr_bytes, detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+    allocate_bytes(nr_bytes, impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                          other.stride_bytes()));
   }
 }
@@ -467,7 +467,7 @@ inline ImageData<ImageDataStorage::Modifiable>& ImageData<ImageDataStorage::Modi
   if (other.owns_memory_)
   {
     const auto nr_bytes = stride_bytes_ * height_;
-    allocate_bytes(nr_bytes, detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+    allocate_bytes(nr_bytes, impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                          other.stride_bytes()));
   }
 
@@ -608,7 +608,7 @@ inline void ImageData<ImageDataStorage::Modifiable>::allocate(PixelLength width,
                                                               bool allow_view_reallocation)
 {
   const auto row_bytes = nr_bytes_per_channel * nr_channels * width;
-  const auto stride_bytes = detail::compute_stride_bytes(row_bytes, row_alignment_bytes);
+  const auto stride_bytes = impl::compute_stride_bytes(row_bytes, row_alignment_bytes);
   allocate(width, height, nr_channels, nr_bytes_per_channel, stride_bytes, row_alignment_bytes, pixel_format,
            sample_format, shrink_to_fit, force_allocation, allow_view_reallocation);
 }

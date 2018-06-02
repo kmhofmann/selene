@@ -59,12 +59,12 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/detail/Util.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/Util.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
@@ -138,8 +138,8 @@ add_library(selene::selene_thread ALIAS selene_thread)
 
 target_sources(selene_thread INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.hpp>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/detail/Callable.hpp>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/detail/TaskQueue.hpp>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/impl/Callable.hpp>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/impl/TaskQueue.hpp>
         )
 
 target_include_directories(selene_thread INTERFACE

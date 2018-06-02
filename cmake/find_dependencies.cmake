@@ -56,12 +56,7 @@ endif()
 # Boost
 
 if (SELENE_BUILD_TESTS OR SELENE_BUILD_EXAMPLES OR SELENE_BUILD_BENCHMARKS)
-    if (SELENE_HAVE_CONAN)
-        set(SELENE_BOOST_TARGET_NAME CONAN_PKG::boost_filesystem)  # HACK
-    else()
-        find_package(Boost REQUIRED filesystem system)
-        set(SELENE_BOOST_TARGET_NAME Boost::filesystem)  # HACK
-    endif()
+    find_package(Boost REQUIRED filesystem system)
 endif()
 
 # Google Benchmark

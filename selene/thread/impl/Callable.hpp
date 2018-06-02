@@ -2,13 +2,13 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_THREAD_DETAIL_CALLABLE_HPP
-#define SELENE_THREAD_DETAIL_CALLABLE_HPP
+#ifndef SELENE_THREAD_IMPL_CALLABLE_HPP
+#define SELENE_THREAD_IMPL_CALLABLE_HPP
 
 #include <memory>
 
 namespace sln {
-namespace detail {
+namespace impl {
 
 /// \cond INTERNAL
 
@@ -79,7 +79,7 @@ private:
 
 /// \endcond
 
-}  // namespace detail
+}  // namespace impl
 }  // namespace sln
 
-#endif  // SELENE_THREAD_DETAIL_CALLABLE_HPP
+#endif  // SELENE_THREAD_IMPL_CALLABLE_HPP

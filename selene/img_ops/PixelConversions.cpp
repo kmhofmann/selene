@@ -6,7 +6,7 @@
 
 namespace sln {
 
-constexpr std::array<default_float_t, 3> detail::RGBToYCoefficients::values;
-constexpr std::array<default_float_t, 3> detail::BGRToYCoefficients::values;
+constexpr std::array<default_float_t, 3> impl::RGBToYCoefficients::values;
+constexpr std::array<default_float_t, 3> impl::BGRToYCoefficients::values;
 
 }  // namespace sln

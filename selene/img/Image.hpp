@@ -715,7 +715,7 @@ Image<PixelType>::Image(PixelLength width, PixelLength height, Stride stride_byt
  */
 template <typename PixelType>
 Image<PixelType>::Image(PixelLength width, PixelLength height, ImageRowAlignment row_alignment_bytes)
-    : stride_bytes_(detail::compute_stride_bytes(PixelTraits<PixelType>::nr_bytes * width, row_alignment_bytes))
+    : stride_bytes_(impl::compute_stride_bytes(PixelTraits<PixelType>::nr_bytes * width, row_alignment_bytes))
     , width_(width)
     , height_(height)
 {
@@ -792,7 +792,7 @@ inline Image<PixelType>::Image(const Image<PixelType>& other)
   }
 
   // Allocate memory to copy data from other image
-  allocate_bytes(height_ * stride_bytes_, detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
+  allocate_bytes(height_ * stride_bytes_, impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                                       other.stride_bytes()));
   // Copy the image data
   copy_rows_from(other);
@@ -840,7 +840,7 @@ inline Image<PixelType>& Image<PixelType>::operator=(const Image<PixelType>& oth
     if (!equal_size)
     {
       allocate_bytes(stride_bytes_ * height_,
-                     detail::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
+                     impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                  other.stride_bytes()));
     }
 
@@ -1117,7 +1117,7 @@ void Image<PixelType>::allocate(PixelLength width,
                                 bool allow_view_reallocation)
 {
   const auto row_bytes = width * PixelTraits<PixelType>::nr_bytes;
-  const auto stride_bytes = detail::compute_stride_bytes(row_bytes, row_alignment_bytes);
+  const auto stride_bytes = impl::compute_stride_bytes(row_bytes, row_alignment_bytes);
   allocate(width, height, stride_bytes, row_alignment_bytes, shrink_to_fit, force_allocation, allow_view_reallocation);
 }
 
