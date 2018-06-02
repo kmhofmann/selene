@@ -13,7 +13,8 @@ configuration:
 
 branches:
   except:
-    - appveyor-test
+    - travis-ci-test
+    - travis-test
     - /.*no-ci.*/
 
 init:
