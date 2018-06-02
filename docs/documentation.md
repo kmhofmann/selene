@@ -27,11 +27,6 @@ Continuous integration tests are currently being run on:
     - Clang 6.0 (with and without AddressSanitizer), Clang 5.0, Clang 4.0, Clang 3.9, Clang 3.8.
 - Windows, using Visual Studio 2017 (via [Appveyor](https://www.appveyor.com/)).
 
-Continuous integration tests using Clang (and with sanitizers enabled) are on the "would be great" list, but setting
-these up with [Travis CI](https://travis-ci.org/)'s hopelessly outdated Ubuntu images is exceedingly difficult, so it might not happen for a
-while.
-(The main difficulty is in using a recent version of `libc++` or `libstdc++` with Clang.)
-
 ## Work in progress
 
 The library is work-in-progress and released as an early preview, and shall be considerably extended and modified in
