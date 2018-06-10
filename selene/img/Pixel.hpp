@@ -189,6 +189,22 @@ using Pixel_64f2 = Pixel<float64_t, 2, PixelFormat::Unknown>;  ///< 64-bit float
 using Pixel_64f3 = Pixel<float64_t, 3, PixelFormat::Unknown>;  ///< 64-bit floating point 3-channel pixel.
 using Pixel_64f4 = Pixel<float64_t, 4, PixelFormat::Unknown>;  ///< 64-bit floating point 4-channel pixel.
 
+template <typename T = std::uint8_t> using PixelY = Pixel<T, 1, PixelFormat::Y>;
+template <typename T = std::uint8_t> using PixelYA = Pixel<T, 2, PixelFormat::YA>;
+
+template <typename T = std::uint8_t> using PixelRGB = Pixel<T, 3, PixelFormat::RGB>;
+template <typename T = std::uint8_t> using PixelBGR = Pixel<T, 3, PixelFormat::BGR>;
+template <typename T = std::uint8_t> using PixelYCbCr = Pixel<T, 3, PixelFormat::YCbCr>;
+template <typename T = std::uint8_t> using PixelCIELab = Pixel<T, 3, PixelFormat::CIELab>;
+template <typename T = std::uint8_t> using PixelICCLab = Pixel<T, 3, PixelFormat::ICCLab>;
+
+template <typename T = std::uint8_t> using PixelRGBA = Pixel<T, 3, PixelFormat::RGBA>;
+template <typename T = std::uint8_t> using PixelBGRA = Pixel<T, 3, PixelFormat::BGRA>;
+template <typename T = std::uint8_t> using PixelARGB = Pixel<T, 3, PixelFormat::ARGB>;
+template <typename T = std::uint8_t> using PixelABGR = Pixel<T, 3, PixelFormat::ABGR>;
+template <typename T = std::uint8_t> using PixelCMYK = Pixel<T, 3, PixelFormat::CMYK>;
+template <typename T = std::uint8_t> using PixelYCCK = Pixel<T, 3, PixelFormat::YCCK>;
+
 // ----------
 // Implementation:
 

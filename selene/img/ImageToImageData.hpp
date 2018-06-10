@@ -18,11 +18,13 @@
 namespace sln {
 
 template <typename PixelType>
-ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format);
+ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat new_pixel_format /*= PixelFormat::Invalid*/);  // default argument forward declared in Image.hpp
 
 template <typename PixelType>
-ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format);
+ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
+template <typename PixelType>
+ImageData<ImageDataStorage::Constant> to_image_data_view(const Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
 // ----------
 // Implementation:
@@ -48,7 +50,7 @@ ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format);
  * @return An `ImageData` instance.
  */
 template <typename PixelType>
-ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
+ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat new_pixel_format)
 {
   if (!img.is_valid())
   {
@@ -57,9 +59,12 @@ ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
 
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  constexpr auto pixel_format = PixelTraits<PixelType>::pixel_format;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
-  if (pixel_format != PixelFormat::Unknown && get_nr_channels(pixel_format) != nr_channels)
+  new_pixel_format = (new_pixel_format == PixelFormat::Invalid) ? pixel_format : new_pixel_format;
+
+  if (new_pixel_format != PixelFormat::Unknown && get_nr_channels(new_pixel_format) != nr_channels)
   {
     throw std::runtime_error("Mismatch in pixel format and number of channels.");
   }
@@ -73,14 +78,14 @@ ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
   if (is_view)
   {
     const auto data = img.byte_ptr();
-    return ImageData<>(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
+    return ImageData<>(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, new_pixel_format,
                        sample_format);
   }
   else
   {
     auto data = img.relinquish_data_ownership();
-    return ImageData<>(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format,
-                       sample_format);
+    return ImageData<>(std::move(data), width, height, nr_channels, nr_bytes_per_channel, stride_bytes,
+                       new_pixel_format, sample_format);
   }
 }
 
@@ -105,7 +110,7 @@ ImageData<> to_image_data(Image<PixelType>&& img, PixelFormat pixel_format)
  * @return An `ImageData` instance, which will be a view (i.e. `is_view() == true`).
  */
 template <typename PixelType>
-ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
+ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat new_pixel_format)
 {
   if (!img.is_valid())
   {
@@ -114,9 +119,12 @@ ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
 
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  constexpr auto pixel_format = PixelTraits<PixelType>::pixel_format;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
-  if (pixel_format != PixelFormat::Unknown && get_nr_channels(pixel_format) != nr_channels)
+  new_pixel_format = (new_pixel_format == PixelFormat::Invalid) ? pixel_format : new_pixel_format;
+
+  if (new_pixel_format != PixelFormat::Unknown && get_nr_channels(new_pixel_format) != nr_channels)
   {
     throw std::runtime_error("Mismatch in pixel format and number of channels.");
   }
@@ -125,7 +133,8 @@ ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
   const auto height = img.height();
   const auto stride_bytes = img.stride_bytes();
   const auto data = img.byte_ptr();
-  return ImageData<>(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, pixel_format, sample_format);
+  return ImageData<>(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes, new_pixel_format,
+                     sample_format);
 }
 
 /** \brief Creates a dynamically typed `ImageData` view from a statically typed `Image<PixelType>` instance.
@@ -149,7 +158,7 @@ ImageData<> to_image_data_view(Image<PixelType>& img, PixelFormat pixel_format)
  * @return An `ImageData` instance, which will be a view (i.e. `is_view() == true`).
  */
 template <typename PixelType>
-ImageData<ImageDataStorage::Constant> to_image_data_view(const Image<PixelType>& img, PixelFormat pixel_format)
+ImageData<ImageDataStorage::Constant> to_image_data_view(const Image<PixelType>& img, PixelFormat new_pixel_format)
 {
   if (!img.is_valid())
   {
@@ -158,9 +167,12 @@ ImageData<ImageDataStorage::Constant> to_image_data_view(const Image<PixelType>&
 
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  constexpr auto pixel_format = PixelTraits<PixelType>::pixel_format;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
-  if (pixel_format != PixelFormat::Unknown && get_nr_channels(pixel_format) != nr_channels)
+  new_pixel_format = (new_pixel_format == PixelFormat::Invalid) ? pixel_format : new_pixel_format;
+
+  if (new_pixel_format != PixelFormat::Unknown && get_nr_channels(new_pixel_format) != nr_channels)
   {
     throw std::runtime_error("Mismatch in pixel format and number of channels.");
   }
@@ -170,7 +182,7 @@ ImageData<ImageDataStorage::Constant> to_image_data_view(const Image<PixelType>&
   const auto stride_bytes = img.stride_bytes();
   const auto data = img.byte_ptr();
   return ImageData<ImageDataStorage::Constant>(data, width, height, nr_channels, nr_bytes_per_channel, stride_bytes,
-                                               pixel_format, sample_format);
+                                               new_pixel_format, sample_format);
 }
 
 }  // namespace sln

@@ -50,6 +50,7 @@ Image<PixelType> to_image(ImageData<>&& img_data)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  constexpr auto pixel_format = PixelTraits<PixelType>::pixel_format;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
   if (!img_data.is_valid())
@@ -60,6 +61,13 @@ Image<PixelType> to_image(ImageData<>&& img_data)
   if (img_data.nr_channels() != nr_channels || img_data.nr_bytes_per_channel() != nr_bytes_per_channel)
   {
     throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible nr of channels.");
+  }
+
+  if (img_data.pixel_format() != PixelFormat::Unknown
+      && pixel_format != PixelFormat::Unknown  // TODO: should conversion to Unknown be allowed?
+      && img_data.pixel_format() != pixel_format)
+  {
+    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: imcompatible pixel formats.");
   }
 
   if (img_data.sample_format() != SampleFormat::Unknown && img_data.sample_format() != sample_format)
@@ -106,6 +114,7 @@ Image<PixelType> to_image_view(ImageData<>& img_data)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  constexpr auto pixel_format = PixelTraits<PixelType>::pixel_format;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
   if (!img_data.is_valid())
@@ -116,6 +125,13 @@ Image<PixelType> to_image_view(ImageData<>& img_data)
   if (img_data.nr_channels() != nr_channels || img_data.nr_bytes_per_channel() != nr_bytes_per_channel)
   {
     throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible nr of channels.");
+  }
+
+  if (img_data.pixel_format() != PixelFormat::Unknown
+      && pixel_format != PixelFormat::Unknown  // TODO: should conversion to Unknown be allowed?
+      && img_data.pixel_format() != pixel_format)
+  {
+    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: imcompatible pixel formats.");
   }
 
   if (img_data.sample_format() != SampleFormat::Unknown && img_data.sample_format() != sample_format)

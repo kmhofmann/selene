@@ -40,7 +40,8 @@ enum class PixelFormat : unsigned char
   YCCK,  ///< 4-channel format: YCCK
   XXXX,  ///< 4-channel format: Unknown
 
-  Unknown  ///< Completely unknown pixel format.
+  Unknown,  ///< Completely unknown pixel format.
+  Invalid,  ///< Invalid pixel format.
 };
 
 /** \brief A sample format enumeration.
@@ -100,6 +101,7 @@ inline constexpr std::size_t get_nr_channels(PixelFormat pixel_format) noexcept
     case PixelFormat::XXXX: return 4;
 
     case PixelFormat::Unknown: return 0;
+    case PixelFormat::Invalid: return 0;
   }
 
   return 0;
@@ -136,6 +138,7 @@ inline constexpr bool has_alpha_channel(PixelFormat pixel_format) noexcept
     case PixelFormat::XXXX: return false;
 
     case PixelFormat::Unknown: return false;
+    case PixelFormat::Invalid: return false;
   }
 
   return false;

@@ -39,6 +39,9 @@ struct PixelTraits
   /// True, if the pixel elements are unsigned; false otherwise.
   static constexpr bool is_unsigned = std::is_unsigned<Element>::value;
 
+  /// The pixel format.
+  static constexpr PixelFormat pixel_format = PixelFormat::Unknown;
+
   /// The sample format (unsigned/signed integer or floating point number).
   static constexpr SampleFormat sample_format =
       std::is_integral<Element>::value
@@ -49,13 +52,14 @@ struct PixelTraits
   static constexpr Element zero_element = Element{0};
 };
 
-/** \brief Class representing traits of a pixel. Specialization for `Pixel<T, N>`.
+/** \brief Class representing traits of a pixel. Specialization for `Pixel<T, N, PF>`.
  *
  * @tparam T The channel element type of the pixel type.
  * @tparam N The number of channels of the pixel type.
+ * @tparam PF The pixel format of the pixel type.
  */
-template <typename T, std::size_t N>
-struct PixelTraits<Pixel<T, N>>
+template <typename T, std::size_t N, PixelFormat PF>
+struct PixelTraits<Pixel<T, N, PF>>
 {
   using Element = T;  ///< The pixel element type.
   static constexpr std::size_t nr_channels = N;  ///< The number of channels per pixel.
@@ -71,6 +75,9 @@ struct PixelTraits<Pixel<T, N>>
   /// True, if the pixel elements are unsigned; false otherwise.
   static constexpr bool is_unsigned = std::is_unsigned<T>::value;
 
+  /// The pixel format.
+  static constexpr PixelFormat pixel_format = PF;
+
   /// The sample format (unsigned/signed integer or floating point number).
   static constexpr SampleFormat sample_format = std::is_integral<T>::value
                                                     ? (std::is_unsigned<T>::value ? SampleFormat::UnsignedInteger
@@ -79,7 +86,7 @@ struct PixelTraits<Pixel<T, N>>
                                                                                         : SampleFormat::Unknown);
 
   /// The value of the zero element.
-  static constexpr Pixel<T, N> zero_element = Pixel<T, N>{make_array_n_equal<Element, N>(0)};
+    static constexpr Pixel<T, N, PF> zero_element = Pixel<T, N, PF>{make_array_n_equal<Element, N>(0)};
 };
 
 // Out-of-line definitions for non-integral static declarations above:
@@ -87,8 +94,8 @@ struct PixelTraits<Pixel<T, N>>
 template <typename Element_>
 constexpr Element_ PixelTraits<Element_>::zero_element;
 
-template <typename T, std::size_t N>
-constexpr Pixel<T, N> PixelTraits<Pixel<T, N>>::zero_element;
+template <typename T, std::size_t N, PixelFormat PF>
+constexpr Pixel<T, N, PF> PixelTraits<Pixel<T, N, PF>>::zero_element;
 
 }  // namespace sln
 

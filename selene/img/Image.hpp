@@ -47,7 +47,7 @@ template <typename PixelType>
 Image<PixelType> view(const Image<PixelType>&, PixelIndex, PixelIndex, PixelLength, PixelLength);
 
 template <typename PixelType>
-ImageData<ImageDataStorage::Modifiable> to_image_data(Image<PixelType>&&, PixelFormat);
+ImageData<ImageDataStorage::Modifiable> to_image_data(Image<PixelType>&&, PixelFormat = PixelFormat::Invalid);
 
 
 /** \brief Statically typed image class.
@@ -270,6 +270,22 @@ using Image_64f1 = Image<Pixel<float64_t, 1>>;  ///< 64-bit floating point 1-cha
 using Image_64f2 = Image<Pixel<float64_t, 2>>;  ///< 64-bit floating point 2-channel image.
 using Image_64f3 = Image<Pixel<float64_t, 3>>;  ///< 64-bit floating point 3-channel image.
 using Image_64f4 = Image<Pixel<float64_t, 4>>;  ///< 64-bit floating point 4-channel image.
+
+template <typename T = std::uint8_t> using ImageY = Image<Pixel<T, 1, PixelFormat::Y>>;
+template <typename T = std::uint8_t> using ImageYA = Image<Pixel<T, 2, PixelFormat::YA>>;
+
+template <typename T = std::uint8_t> using ImageRGB = Image<Pixel<T, 3, PixelFormat::RGB>>;
+template <typename T = std::uint8_t> using ImageBGR = Image<Pixel<T, 3, PixelFormat::BGR>>;
+template <typename T = std::uint8_t> using ImageYCbCr = Image<Pixel<T, 3, PixelFormat::YCbCr>>;
+template <typename T = std::uint8_t> using ImageCIELab = Image<Pixel<T, 3, PixelFormat::CIELab>>;
+template <typename T = std::uint8_t> using ImageICCLab = Image<Pixel<T, 3, PixelFormat::ICCLab>>;
+
+template <typename T = std::uint8_t> using ImageRGBA = Image<Pixel<T, 3, PixelFormat::RGBA>>;
+template <typename T = std::uint8_t> using ImageBGRA = Image<Pixel<T, 3, PixelFormat::BGRA>>;
+template <typename T = std::uint8_t> using ImageARGB = Image<Pixel<T, 3, PixelFormat::ARGB>>;
+template <typename T = std::uint8_t> using ImageABGR = Image<Pixel<T, 3, PixelFormat::ABGR>>;
+template <typename T = std::uint8_t> using ImageCMYK = Image<Pixel<T, 3, PixelFormat::CMYK>>;
+template <typename T = std::uint8_t> using ImageYCCK = Image<Pixel<T, 3, PixelFormat::YCCK>>;
 
 // ----------
 
