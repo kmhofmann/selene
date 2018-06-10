@@ -50,7 +50,7 @@ namespace impl {
 template <PixelFormat pixel_format_dst, typename PixelSrc>
 struct TargetPixelType
 {
-  using type = Pixel<typename PixelTraits<PixelSrc>::Element, get_nr_channels(pixel_format_dst)>;
+  using type = Pixel<typename PixelTraits<PixelSrc>::Element, get_nr_channels(pixel_format_dst), pixel_format_dst>;
 };
 
 template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename = void>

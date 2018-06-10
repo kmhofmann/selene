@@ -4,6 +4,7 @@
 
 #include <selene/img/Image.hpp>
 #include <selene/img/ImageAccess.hpp>
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/RelativeAccessor.hpp>
 
 #include <benchmark/benchmark.h>

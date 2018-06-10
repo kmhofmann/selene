@@ -2,6 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
 #include <selene/img_ops/ImageConversions.hpp>
@@ -27,7 +28,7 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  auto img = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
+  auto img = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
   assert(img.width() == 1024_px);
   assert(img.height() == 684_px);
 
@@ -62,11 +63,11 @@ int main(int argc, char** argv)
   // Let's still write both crops to disk.
 
   std::cout << "Writing the result to disk: '" << output_filename_clone_crop << "'...\n";
-  write_image(to_image_data_view(img_clone_crop, PixelFormat::RGB), ImageFormat::PNG,
+  write_image(to_image_data_view(img_clone_crop), ImageFormat::PNG,
               FileWriter(output_filename_clone_crop));
 
   std::cout << "Writing the result to disk: '" << output_filename_view_crop << "'...\n";
-  write_image(to_image_data_view(img_view_crop, PixelFormat::RGB), ImageFormat::PNG,
+  write_image(to_image_data_view(img_view_crop), ImageFormat::PNG,
               FileWriter(output_filename_view_crop));
 
   return 0;

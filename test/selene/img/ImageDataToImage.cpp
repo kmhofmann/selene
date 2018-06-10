@@ -7,6 +7,7 @@
 #include <selene/img/Image.hpp>
 #include <selene/img/ImageData.hpp>
 #include <selene/img/ImageDataToImage.hpp>
+#include <selene/img/ImageTypeAliases.hpp>
 
 #include <numeric>
 

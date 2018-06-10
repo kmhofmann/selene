@@ -58,12 +58,12 @@ struct PixelTraits
  * @tparam N The number of channels of the pixel type.
  * @tparam PF The pixel format of the pixel type.
  */
-template <typename T, std::size_t N, PixelFormat PF>
-struct PixelTraits<Pixel<T, N, PF>>
+template <typename T, std::size_t N, PixelFormat pixel_format_>
+struct PixelTraits<Pixel<T, N, pixel_format_>>
 {
   using Element = T;  ///< The pixel element type.
   static constexpr std::size_t nr_channels = N;  ///< The number of channels per pixel.
-  static constexpr std::uint16_t nr_bytes = sizeof(Pixel<T, N>);  ///< The number of bytes per pixel.
+  static constexpr std::uint16_t nr_bytes = sizeof(Pixel<T, N, pixel_format_>);  ///< The number of bytes per pixel.
   static constexpr std::uint16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise.
@@ -76,7 +76,7 @@ struct PixelTraits<Pixel<T, N, PF>>
   static constexpr bool is_unsigned = std::is_unsigned<T>::value;
 
   /// The pixel format.
-  static constexpr PixelFormat pixel_format = PF;
+  static constexpr PixelFormat pixel_format = pixel_format_;
 
   /// The sample format (unsigned/signed integer or floating point number).
   static constexpr SampleFormat sample_format = std::is_integral<T>::value
@@ -86,7 +86,8 @@ struct PixelTraits<Pixel<T, N, PF>>
                                                                                         : SampleFormat::Unknown);
 
   /// The value of the zero element.
-    static constexpr Pixel<T, N, PF> zero_element = Pixel<T, N, PF>{make_array_n_equal<Element, N>(0)};
+  static constexpr Pixel<T, N, pixel_format_> zero_element =
+    Pixel<T, N, pixel_format_>{make_array_n_equal<Element, N>(0)};
 };
 
 // Out-of-line definitions for non-integral static declarations above:
@@ -94,8 +95,8 @@ struct PixelTraits<Pixel<T, N, PF>>
 template <typename Element_>
 constexpr Element_ PixelTraits<Element_>::zero_element;
 
-template <typename T, std::size_t N, PixelFormat PF>
-constexpr Pixel<T, N, PF> PixelTraits<Pixel<T, N, PF>>::zero_element;
+template <typename T, std::size_t N, PixelFormat pixel_format>
+constexpr Pixel<T, N, pixel_format> PixelTraits<Pixel<T, N, pixel_format>>::zero_element;
 
 }  // namespace sln
 

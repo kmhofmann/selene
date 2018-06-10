@@ -2,6 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/ImageAccess.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
@@ -27,7 +28,7 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  auto img = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
+  auto img = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
   assert(img.width() == 1024_px);
   assert(img.height() == 684_px);
 
@@ -42,7 +43,7 @@ int main(int argc, char** argv)
   //   - get<ImageInterpolationMode::NearestNeighbor>(img, fx, fy)
   //   - get<ImageInterpolationMode::Bilinear, BorderAccessMode::ZeroPadding>(img, fx, fy)
 
-  Image<Pixel_8u3> img_interpolation(target_width, target_height);
+  Image<PixelRGB_8u> img_interpolation(target_width, target_height);
 
   for (auto y = 0_idx; y < target_height; ++y)
   {
@@ -61,7 +62,7 @@ int main(int argc, char** argv)
   //   - get<BorderAccessMode::Replicated>(img, x, y);
   //   - get<BorderAccessMode::ZeroPadding>(img, x, y);
 
-  Image<Pixel_8u3> img_border_access(img.width(), img.height());
+  Image<PixelRGB_8u> img_border_access(img.width(), img.height());
 
   for (auto y = 0_idx; y < img.height(); ++y)
   {
@@ -72,11 +73,11 @@ int main(int argc, char** argv)
   }
 
   std::cout << "Writing the result to disk: '" << output_filename_interpolated << "'...\n";
-  write_image(to_image_data_view(img_interpolation, PixelFormat::RGB), ImageFormat::PNG,
+  write_image(to_image_data_view(img_interpolation), ImageFormat::PNG,
               FileWriter(output_filename_interpolated));
 
   std::cout << "Writing the result to disk: '" << output_filename_border_access << "'...\n";
-  write_image(to_image_data_view(img_border_access, PixelFormat::RGB), ImageFormat::PNG,
+  write_image(to_image_data_view(img_border_access), ImageFormat::PNG,
               FileWriter(output_filename_border_access));
 
   return 0;

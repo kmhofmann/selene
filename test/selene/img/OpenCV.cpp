@@ -7,6 +7,7 @@
 #if defined(SELENE_WITH_OPENCV)
 
 #include <selene/img/Image.hpp>
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/OpenCV.hpp>
 #include <selene/img/Pixel.hpp>
 

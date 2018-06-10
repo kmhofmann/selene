@@ -6,6 +6,7 @@
 #define SELENE_TEST_IMG_TEST_IMAGES_HPP
 
 #include <selene/img/Image.hpp>
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/PixelTraits.hpp>
 #include <selene/img/Types.hpp>
 #include <selene/img_ops/Algorithms.hpp>

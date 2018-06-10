@@ -2,6 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
 
@@ -48,11 +49,11 @@ int main(int argc, char** argv)
 #endif  // NDEBUG
 
   // If the read image data has the correct properties, we can convert it to a strongly typed instance of
-  // `Image<Pixel_8u3>` to potentially perform further data manipulations.
-  // In this case, `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
+  // `Image<PixelRGB_8u>` to potentially perform further data manipulations.
+  // In this case, `PixelRGB_8u` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  std::cout << "Converting the ImageData<> instance to a (strongly typed) Image<Pixel_8u3>...\n";
-  const Image<Pixel_8u3> img = to_image<Pixel_8u3>(std::move(img_data_0));
+  std::cout << "Converting the ImageData<> instance to a (strongly typed) Image<PixelRGB_8u>...\n";
+  const Image<PixelRGB_8u> img = to_image<PixelRGB_8u>(std::move(img_data_0));
 
   // Since the data was moved into the `Image<>` instance, the contents of `img_data_0` are now invalid!
   // But the new, strongly typed image is.
@@ -63,9 +64,8 @@ int main(int argc, char** argv)
 
   // Now we will simply write the image to disk again. To do this, we convert back to an `ImageData` instance;
   // in this case a view onto constant image data (also since we declared `img` const above).
-  // We also give the image data a semantic `PixelFormat` tag, such that the image writing routine knows what to expect.
 
-  const ImageData<ImageDataStorage::Constant> img_data_1 = to_image_data_view(img, PixelFormat::RGB);
+  const ImageData<ImageDataStorage::Constant> img_data_1 = to_image_data_view(img);
 
   std::cout << "Writing the image to disk again...\n";
   write_image(img_data_1, ImageFormat::PNG, FileWriter(output_filename_png));
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
   std::cout << "Reading the image from memory...\n";
   ImageData<> img_data_2 = read_image(MemoryReader(encoded_png_data.data(), encoded_png_data.size()));
-  const Image<Pixel_8u3> img_2 = to_image<Pixel_8u3>(std::move(img_data_2));
+  const Image<PixelRGB_8u> img_2 = to_image<PixelRGB_8u>(std::move(img_data_2));
 
   // And of course the resulting image is identical to the one previously read from disk
 

@@ -74,9 +74,10 @@ struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
 
   template <typename T,
             std::size_t nr_channels,
+            PixelFormat pixel_format,
             typename ScalarAccess = default_float_t,
             typename ScalarOutputElement = default_float_t>
-  static auto interpolate(const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y) noexcept;
+  static auto interpolate(const Image<Pixel<T, nr_channels, pixel_format>>& img, ScalarAccess x, ScalarAccess y) noexcept;
 };
 
 
@@ -191,9 +192,10 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
  * `Pixel<ScalarOutputElement, nr_channels>`.
  */
 template <BorderAccessMode AccessMode>
-template <typename T, std::size_t nr_channels, typename ScalarAccess, typename ScalarOutputElement>
+template <typename T, std::size_t nr_channels, PixelFormat pixel_format, typename ScalarAccess,
+          typename ScalarOutputElement>
 inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(
-    const Image<Pixel<T, nr_channels>>& img, ScalarAccess x, ScalarAccess y) noexcept
+    const Image<Pixel<T, nr_channels, pixel_format>>& img, ScalarAccess x, ScalarAccess y) noexcept
 {
   static_assert(std::is_floating_point<ScalarAccess>::value, "Interpolation coordinates must be floating point.");
   static_assert(std::is_floating_point<ScalarOutputElement>::value,
@@ -210,7 +212,7 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 1});
   const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 1});
 
-  Pixel<ScalarOutputElement, nr_channels> dst;
+  Pixel<ScalarOutputElement, nr_channels, pixel_format> dst;
   for (std::size_t i = 0; i < nr_channels; ++i)  // nr_channels is known at compile-time
   {
     dst[i] = ScalarOutputElement(a[i]) + ((b[i] - a[i]) * dx) + ((c[i] - a[i]) * dy)

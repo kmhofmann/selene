@@ -38,6 +38,7 @@ std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format)
     case PixelFormat::XXXX: os << "PixelFormat::XXXX"; break;
 
     case PixelFormat::Unknown: os << "PixelFormat::Unknown"; break;
+    case PixelFormat::Invalid: os << "PixelFormat::Invalid"; break;
   }
 
   return os;

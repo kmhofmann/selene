@@ -2,6 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
 #include <selene/img_ops/ImageConversions.hpp>
@@ -25,9 +26,9 @@ int main(int argc, char** argv)
   const char* data_path = (argc >= 2) ? argv[1] : nullptr;
 
   // Read in the example image (check the implementation in Utils.hpp);
-  // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
+  // `PixelRGB_8u` designates 3 channels (R, G, B) of unsigned 8-bit data for each pixel.
 
-  const auto img_rgb = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
+  const auto img_rgb = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
 
   // We will now perform three color format conversions:
   // - From RGB to Y (grayscale)
@@ -45,15 +46,15 @@ int main(int argc, char** argv)
   // Finally, we write out all resulting images to disk
 
   std::cout << "Writing the result to disk: '" << output_filename_y << "'...\n";
-  write_image(to_image_data_view(img_y, PixelFormat::Y), ImageFormat::PNG,
+  write_image(to_image_data_view(img_y), ImageFormat::PNG,
               FileWriter(output_filename_y));
 
   std::cout << "Writing the result to disk: '" << output_filename_rgba << "'...\n";
-  write_image(to_image_data_view(img_rgba, PixelFormat::RGBA), ImageFormat::PNG,
+  write_image(to_image_data_view(img_rgba), ImageFormat::PNG,
               FileWriter(output_filename_rgba));
 
   std::cout << "Writing the result to disk: '" << output_filename_bgr << "'...\n";
-  write_image(to_image_data_view(img_bgr, PixelFormat::BGR), ImageFormat::PNG,
+  write_image(to_image_data_view(img_bgr), ImageFormat::PNG,
                    FileWriter(output_filename_bgr));
 
   return 0;

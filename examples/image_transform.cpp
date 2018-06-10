@@ -2,6 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
 #include <selene/img_ops/Algorithms.hpp>
@@ -25,11 +26,11 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  const auto img_rgb = sln_examples::read_example_image<Pixel_8u3>("bike_duck.png", data_path);
+  const auto img_rgb = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
 
   // Transform the image from 8-bit integral to 32-bit floating point type, and normalize values to be within (0...1)
   std::cout << "Transforming the image from 8-bit integral to 32-bit floating point type (0...1)...\n";
-  auto img_f = sln::transform_pixels<sln::Pixel_32f3>(img_rgb, [](const auto& px) { return sln::Pixel_32f3(px) / 255.0; });
+  auto img_f = transform_pixels<PixelRGB_8u>(img_rgb, [](const auto& px) { return PixelRGB_32f(px) / 255.0; });
 
   // Play around with the color channels
   sln::for_each_pixel(img_f, [](auto& px) {
@@ -39,11 +40,11 @@ int main(int argc, char** argv)
   });
 
   // Transform the image back to 8-bit integral representation (0...255)
-  auto img_transf = sln::transform_pixels<sln::Pixel_8u3>(img_f, [](const auto& px) { return sln::Pixel_8u3(px * 255.0); });
+  auto img_transf = transform_pixels<PixelRGB_8u>(img_f, [](const auto& px) { return PixelRGB_8u(px * 255.0); });
 
   // Write out the transformed image to disk
   std::cout << "Writing the result to disk: '" << output_filename_transformed << "'...\n";
-  write_image(to_image_data_view(img_transf, PixelFormat::RGB), ImageFormat::PNG,
+  write_image(to_image_data_view(img_transf), ImageFormat::PNG,
               FileWriter(output_filename_transformed));
 
   return 0;

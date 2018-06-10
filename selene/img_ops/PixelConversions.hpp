@@ -61,8 +61,8 @@ struct PixelConversion;
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::Y>
 {
-  template <typename T>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 1>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 1, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -71,70 +71,70 @@ struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::YA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 1>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 1, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 2>(src[0], a);
+    return Pixel<T, 2, PixelFormat::YA>(src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 1>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 1, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[0], src[0], src[0]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[0], src[0], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 1>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 1, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[0], src[0], src[0]);
+    return Pixel<T, 3, PixelFormat::BGR>(src[0], src[0], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 1, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[0], src[0], src[0], a);
+    return Pixel<T, 4, PixelFormat::RGBA>(src[0], src[0], src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 1, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[0], src[0], src[0], a);
+    return Pixel<T, 4, PixelFormat::BGRA>(src[0], src[0], src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 1, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+    return Pixel<T, 4, PixelFormat::ARGB>(a, src[0], src[0], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 1>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 1, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+    return Pixel<T, 4, PixelFormat::ABGR>(a, src[0], src[0], src[0]);
   }
 };
 
@@ -145,18 +145,18 @@ struct PixelConversion<sln::PixelFormat::Y, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::Y>
 {
-  template <typename T>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 2>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 2, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>(src[0]);
+    return Pixel<T, 1, PixelFormat::Y>(src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::YA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 2>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 2, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -165,60 +165,60 @@ struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::YA>
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 2>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 2, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[0], src[0], src[0]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[0], src[0], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> ya_to_bgr(const Pixel<T, 2>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, sln::PixelFormat::BGR> ya_to_bgr(const Pixel<T, 2, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[0], src[0], src[0]);
+    return Pixel<T, 3, sln::PixelFormat::BGR>(src[0], src[0], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, sln::PixelFormat::RGBA> apply(const Pixel<T, 2, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[0], src[0], src[0], a);
+    return Pixel<T, 4, sln::PixelFormat::RGBA>(src[0], src[0], src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, sln::PixelFormat::BGRA> apply(const Pixel<T, 2, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[0], src[0], src[0], a);
+    return Pixel<T, 4, sln::PixelFormat::BGRA>(src[0], src[0], src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, sln::PixelFormat::ARGB> apply(const Pixel<T, 2, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+    return Pixel<T, 4, sln::PixelFormat::ARGB>(a, src[0], src[0], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 2>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, sln::PixelFormat::ABGR> apply(const Pixel<T, 2, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[0], src[0], src[0]);
+    return Pixel<T, 4, sln::PixelFormat::ABGR>(a, src[0], src[0], src[0]);
   }
 };
 
@@ -229,40 +229,40 @@ struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::Y>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::YA>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 2>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src), a};
+    return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src), a};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 2>{linear_combination<T, 3, impl::RGBToYCoefficients>(src), a};
+    return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::RGBToYCoefficients>(src), a};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -271,50 +271,50 @@ struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::RGB>
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[2], src[1], src[0]);
+    return Pixel<T, 3, PixelFormat::BGR>(src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[0], src[1], src[2], a);
+    return Pixel<T, 4, PixelFormat::RGBA>(src[0], src[1], src[2], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[2], src[1], src[0], a);
+    return Pixel<T, 4, PixelFormat::BGRA>(src[2], src[1], src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[0], src[1], src[2]);
+    return Pixel<T, 4, PixelFormat::ARGB>(a, src[0], src[1], src[2]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[2], src[1], src[0]);
+    return Pixel<T, 4, PixelFormat::ABGR>(a, src[2], src[1], src[0]);
   }
 };
 
@@ -325,50 +325,50 @@ struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::Y>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::YA>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 2>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src), a};
+    return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src), a};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 2>{linear_combination<T, 3, impl::BGRToYCoefficients>(src), a};
+    return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::BGRToYCoefficients>(src), a};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[2], src[1], src[0]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 3>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -377,40 +377,40 @@ struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::BGR>
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+    static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[2], src[1], src[0], a);
+    return Pixel<T, 4, PixelFormat::RGBA>(src[2], src[1], src[0], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(src[0], src[1], src[2], a);
+    return Pixel<T, 4, PixelFormat::BGRA>(src[0], src[1], src[2], a);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[2], src[1], src[0]);
+    return Pixel<T, 4, PixelFormat::ARGB>(a, src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 3>& src, const T a) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
-    return Pixel<T, 4>(a, src[0], src[1], src[2]);
+    return Pixel<T, 4, PixelFormat::ABGR>(a, src[0], src[1], src[2]);
   }
 };
 
@@ -421,60 +421,60 @@ struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::Y>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::YA>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src), src[3]};
+    return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src), src[3]};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{linear_combination<T, 3, impl::RGBToYCoefficients>(src), src[3]};
+    return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::RGBToYCoefficients>(src), src[3]};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[0], src[1], src[2]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[0], src[1], src[2]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[2], src[1], src[0]);
+    return Pixel<T, 3, PixelFormat::BGR>(src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -483,30 +483,30 @@ struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::RGBA>
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[2], src[1], src[0], src[3]);
+    return Pixel<T, 4, PixelFormat::BGRA>(src[2], src[1], src[0], src[3]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[3], src[0], src[1], src[2]);
+    return Pixel<T, 4, PixelFormat::ARGB>(src[3], src[0], src[1], src[2]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+    return Pixel<T, 4, PixelFormat::ABGR>(src[3], src[2], src[1], src[0]);
   }
 };
 
@@ -517,70 +517,70 @@ struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::Y>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
+    return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::YA>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src), src[3]};
+    return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src), src[3]};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{linear_combination<T, 3, impl::BGRToYCoefficients>(src), src[3]};
+    return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::BGRToYCoefficients>(src), src[3]};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[2], src[1], src[0]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[0], src[1], src[2]);
+    return Pixel<T, 3, PixelFormat::BGR>(src[0], src[1], src[2]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[2], src[1], src[0], src[3]);
+    return Pixel<T, 4, PixelFormat::RGBA>(src[2], src[1], src[0], src[3]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -589,20 +589,20 @@ struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::BGRA>
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+    return Pixel<T, 4, PixelFormat::ARGB>(src[3], src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[3], src[0], src[1], src[2]);
+    return Pixel<T, 4, PixelFormat::ABGR>(src[3], src[0], src[1], src[2]);
   }
 };
 
@@ -613,80 +613,80 @@ struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::Y>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1)};
+    return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1)};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1)};
+    return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1)};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::YA>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1), src[0]};
+    return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1), src[0]};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1), src[0]};
+    return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1), src[0]};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[1], src[2], src[3]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[1], src[2], src[3]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[3], src[2], src[1]);
+    return Pixel<T, 3, PixelFormat::BGR>(src[3], src[2], src[1]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[1], src[2], src[3], src[0]);
+    return Pixel<T, 4, PixelFormat::RGBA>(src[1], src[2], src[3], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+    return Pixel<T, 4, PixelFormat::BGRA>(src[3], src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return src;
   }
@@ -695,10 +695,10 @@ struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ARGB>
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[0], src[3], src[2], src[1]);
+    return Pixel<T, 4, PixelFormat::ABGR>(src[0], src[3], src[2], src[1]);
   }
 };
 
@@ -709,90 +709,90 @@ struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::Y>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1)};
+    return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1)};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 1> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 1>{linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1)};
+    return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1)};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::YA>
 {
-  template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1), src[0]};
+    return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1), src[0]};
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
-  static constexpr Pixel<T, 2> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 2>{linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1), src[0]};
+    return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1), src[0]};
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::RGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::RGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[3], src[2], src[1]);
+    return Pixel<T, 3, PixelFormat::RGB>(src[3], src[2], src[1]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::BGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 3> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 3, PixelFormat::BGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 3>(src[1], src[2], src[3]);
+    return Pixel<T, 3, PixelFormat::BGR>(src[1], src[2], src[3]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::RGBA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::RGBA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[3], src[2], src[1], src[0]);
+    return Pixel<T, 4, PixelFormat::RGBA>(src[3], src[2], src[1], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::BGRA>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::BGRA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[1], src[2], src[3], src[0]);
+    return Pixel<T, 4, PixelFormat::BGRA>(src[1], src[2], src[3], src[0]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ARGB>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ARGB> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
-    return Pixel<T, 4>(src[0], src[3], src[2], src[1]);
+    return Pixel<T, 4, PixelFormat::ARGB>(src[0], src[3], src[2], src[1]);
   }
 };
 
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
 {
-  template <typename T>
-  static constexpr Pixel<T, 4> apply(const Pixel<T, 4>& src) noexcept
+  template <typename T, PixelFormat pixel_format>
+  static constexpr Pixel<T, 4, PixelFormat::ABGR> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return src;
   }

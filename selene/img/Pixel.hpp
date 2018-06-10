@@ -67,14 +67,14 @@ public:
   // Allow implicit conversion to T, iff nr_channels_ ==1:
   constexpr operator std::conditional_t<nr_channels_ == 1, T, void>() const noexcept;
 
-  constexpr Pixel<T, nr_channels_, pixel_format_>& operator+=(
-      const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
-  constexpr Pixel<T, nr_channels_, pixel_format_>& operator-=(
-      const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
-  constexpr Pixel<T, nr_channels_, pixel_format_>& operator*=(
-      const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
-  constexpr Pixel<T, nr_channels_, pixel_format_>& operator/=(
-      const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_, pixel_format_>&
+    operator+=( const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_, pixel_format_>&
+    operator-=( const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_, pixel_format_>&
+    operator*=( const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
+  constexpr Pixel<T, nr_channels_, pixel_format_>&
+    operator/=( const Pixel<T, nr_channels_, pixel_format_>& rhs) noexcept;
 
   constexpr Pixel<T, nr_channels_, pixel_format_>& operator+=(T rhs) noexcept;
   constexpr Pixel<T, nr_channels_, pixel_format_>& operator-=(T rhs) noexcept;
@@ -88,122 +88,57 @@ private:
   std::array<T, nr_channels> data_;
 };
 
-template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr bool operator==(const Pixel<T, nr_channels_, pixel_format_>& px0,
-                          const Pixel<T, nr_channels_, pixel_format_>& px1) noexcept;
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr bool operator==(const Pixel<T, nr_channels_, pixel_format_0>& px0,
+                          const Pixel<T, nr_channels_, pixel_format_1>& px1) noexcept;
 
-template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_>& px0,
-                          const Pixel<T, nr_channels_, pixel_format_>& px1) noexcept;
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_0>& px0,
+                          const Pixel<T, nr_channels_, pixel_format_1>& px1) noexcept;
 
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept;
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator-(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept;
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept;
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept;
-
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+(
-    Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
-
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+(
-    T lhs, Pixel<U, nr_channels_, pixel_format_> rhs) noexcept;
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator/(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator-(
-    Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
+operator+(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*(
-    Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
+operator+(T lhs, Pixel<U, nr_channels_, pixel_format_> rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*(
-    T lhs, Pixel<U, nr_channels_, pixel_format_> rhs) noexcept;
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
+operator-(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/(
-    Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
+operator*(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
-// ----------
-// Aliases:
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
+operator*(T lhs, Pixel<U, nr_channels_, pixel_format_> rhs) noexcept;
 
-using Pixel_8u1 = Pixel<std::uint8_t, 1, PixelFormat::Unknown>;  ///< 8-bit unsigned 1-channel pixel.
-using Pixel_8u2 = Pixel<std::uint8_t, 2, PixelFormat::Unknown>;  ///< 8-bit unsigned 2-channel pixel.
-using Pixel_8u3 = Pixel<std::uint8_t, 3, PixelFormat::Unknown>;  ///< 8-bit unsigned 3-channel pixel.
-using Pixel_8u4 = Pixel<std::uint8_t, 4, PixelFormat::Unknown>;  ///< 8-bit unsigned 4-channel pixel.
-
-using Pixel_8s1 = Pixel<std::int8_t, 1, PixelFormat::Unknown>;  ///< 8-bit signed 1-channel pixel.
-using Pixel_8s2 = Pixel<std::int8_t, 2, PixelFormat::Unknown>;  ///< 8-bit signed 2-channel pixel.
-using Pixel_8s3 = Pixel<std::int8_t, 3, PixelFormat::Unknown>;  ///< 8-bit signed 3-channel pixel.
-using Pixel_8s4 = Pixel<std::int8_t, 4, PixelFormat::Unknown>;  ///< 8-bit signed 4-channel pixel.
-
-using Pixel_16u1 = Pixel<std::uint16_t, 1, PixelFormat::Unknown>;  ///< 16-bit unsigned 1-channel pixel.
-using Pixel_16u2 = Pixel<std::uint16_t, 2, PixelFormat::Unknown>;  ///< 16-bit unsigned 2-channel pixel.
-using Pixel_16u3 = Pixel<std::uint16_t, 3, PixelFormat::Unknown>;  ///< 16-bit unsigned 3-channel pixel.
-using Pixel_16u4 = Pixel<std::uint16_t, 4, PixelFormat::Unknown>;  ///< 16-bit unsigned 4-channel pixel.
-
-using Pixel_16s1 = Pixel<std::int16_t, 1, PixelFormat::Unknown>;  ///< 16-bit signed 1-channel pixel.
-using Pixel_16s2 = Pixel<std::int16_t, 2, PixelFormat::Unknown>;  ///< 16-bit signed 2-channel pixel.
-using Pixel_16s3 = Pixel<std::int16_t, 3, PixelFormat::Unknown>;  ///< 16-bit signed 3-channel pixel.
-using Pixel_16s4 = Pixel<std::int16_t, 4, PixelFormat::Unknown>;  ///< 16-bit signed 4-channel pixel.
-
-using Pixel_32u1 = Pixel<std::uint32_t, 1, PixelFormat::Unknown>;  ///< 32-bit unsigned 1-channel pixel.
-using Pixel_32u2 = Pixel<std::uint32_t, 2, PixelFormat::Unknown>;  ///< 32-bit unsigned 2-channel pixel.
-using Pixel_32u3 = Pixel<std::uint32_t, 3, PixelFormat::Unknown>;  ///< 32-bit unsigned 3-channel pixel.
-using Pixel_32u4 = Pixel<std::uint32_t, 4, PixelFormat::Unknown>;  ///< 32-bit unsigned 4-channel pixel.
-
-using Pixel_32s1 = Pixel<std::int32_t, 1, PixelFormat::Unknown>;  ///< 32-bit signed 1-channel pixel.
-using Pixel_32s2 = Pixel<std::int32_t, 2, PixelFormat::Unknown>;  ///< 32-bit signed 2-channel pixel.
-using Pixel_32s3 = Pixel<std::int32_t, 3, PixelFormat::Unknown>;  ///< 32-bit signed 3-channel pixel.
-using Pixel_32s4 = Pixel<std::int32_t, 4, PixelFormat::Unknown>;  ///< 32-bit signed 4-channel pixel.
-
-using Pixel_64u1 = Pixel<std::uint64_t, 1, PixelFormat::Unknown>;  ///< 64-bit unsigned 1-channel pixel.
-using Pixel_64u2 = Pixel<std::uint64_t, 2, PixelFormat::Unknown>;  ///< 64-bit unsigned 2-channel pixel.
-using Pixel_64u3 = Pixel<std::uint64_t, 3, PixelFormat::Unknown>;  ///< 64-bit unsigned 3-channel pixel.
-using Pixel_64u4 = Pixel<std::uint64_t, 4, PixelFormat::Unknown>;  ///< 64-bit unsigned 4-channel pixel.
-
-using Pixel_64s1 = Pixel<std::int64_t, 1, PixelFormat::Unknown>;  ///< 64-bit signed 1-channel pixel.
-using Pixel_64s2 = Pixel<std::int64_t, 2, PixelFormat::Unknown>;  ///< 64-bit signed 2-channel pixel.
-using Pixel_64s3 = Pixel<std::int64_t, 3, PixelFormat::Unknown>;  ///< 64-bit signed 3-channel pixel.
-using Pixel_64s4 = Pixel<std::int64_t, 4, PixelFormat::Unknown>;  ///< 64-bit signed 4-channel pixel.
-
-using Pixel_32f1 = Pixel<float32_t, 1, PixelFormat::Unknown>;  ///< 32-bit floating point 1-channel pixel.
-using Pixel_32f2 = Pixel<float32_t, 2, PixelFormat::Unknown>;  ///< 32-bit floating point 2-channel pixel.
-using Pixel_32f3 = Pixel<float32_t, 3, PixelFormat::Unknown>;  ///< 32-bit floating point 3-channel pixel.
-using Pixel_32f4 = Pixel<float32_t, 4, PixelFormat::Unknown>;  ///< 32-bit floating point 4-channel pixel.
-
-using Pixel_64f1 = Pixel<float64_t, 1, PixelFormat::Unknown>;  ///< 64-bit floating point 1-channel pixel.
-using Pixel_64f2 = Pixel<float64_t, 2, PixelFormat::Unknown>;  ///< 64-bit floating point 2-channel pixel.
-using Pixel_64f3 = Pixel<float64_t, 3, PixelFormat::Unknown>;  ///< 64-bit floating point 3-channel pixel.
-using Pixel_64f4 = Pixel<float64_t, 4, PixelFormat::Unknown>;  ///< 64-bit floating point 4-channel pixel.
-
-template <typename T = std::uint8_t> using PixelY = Pixel<T, 1, PixelFormat::Y>;
-template <typename T = std::uint8_t> using PixelYA = Pixel<T, 2, PixelFormat::YA>;
-
-template <typename T = std::uint8_t> using PixelRGB = Pixel<T, 3, PixelFormat::RGB>;
-template <typename T = std::uint8_t> using PixelBGR = Pixel<T, 3, PixelFormat::BGR>;
-template <typename T = std::uint8_t> using PixelYCbCr = Pixel<T, 3, PixelFormat::YCbCr>;
-template <typename T = std::uint8_t> using PixelCIELab = Pixel<T, 3, PixelFormat::CIELab>;
-template <typename T = std::uint8_t> using PixelICCLab = Pixel<T, 3, PixelFormat::ICCLab>;
-
-template <typename T = std::uint8_t> using PixelRGBA = Pixel<T, 3, PixelFormat::RGBA>;
-template <typename T = std::uint8_t> using PixelBGRA = Pixel<T, 3, PixelFormat::BGRA>;
-template <typename T = std::uint8_t> using PixelARGB = Pixel<T, 3, PixelFormat::ARGB>;
-template <typename T = std::uint8_t> using PixelABGR = Pixel<T, 3, PixelFormat::ABGR>;
-template <typename T = std::uint8_t> using PixelCMYK = Pixel<T, 3, PixelFormat::CMYK>;
-template <typename T = std::uint8_t> using PixelYCCK = Pixel<T, 3, PixelFormat::YCCK>;
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
+operator/(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
 // ----------
 // Implementation:
@@ -561,10 +496,14 @@ constexpr Pixel<T, nr_channels_, pixel_format_> Pixel<T, nr_channels_, pixel_for
  * \param px1 The right-hand side pixel to compare.
  * \return True, if the two pixels have equal values for all channels; false otherwise.
  */
-template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr bool operator==(const Pixel<T, nr_channels_, pixel_format_>& px0,
-                          const Pixel<T, nr_channels_, pixel_format_>& px1) noexcept
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr bool operator==(const Pixel<T, nr_channels_, pixel_format_0>& px0,
+                          const Pixel<T, nr_channels_, pixel_format_1>& px1) noexcept
 {
+  static_assert(pixel_format_0 == pixel_format_1
+                || pixel_format_0 == PixelFormat::Unknown
+                || pixel_format_1 == PixelFormat::Unknown, "Illegal pixel equality comparison");
+
   bool equal = true;
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
@@ -584,9 +523,9 @@ constexpr bool operator==(const Pixel<T, nr_channels_, pixel_format_>& px0,
  * \param px1 The right-hand side pixel to compare.
  * \return True, if the two pixels are not equal; false, if they are equal.
  */
-template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_>& px0,
-                          const Pixel<T, nr_channels_, pixel_format_>& px1) noexcept
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_0>& px0,
+                          const Pixel<T, nr_channels_, pixel_format_1>& px1) noexcept
 {
   return !(px0 == px1);
 }
@@ -601,11 +540,16 @@ constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_>& px0,
  * @param rhs The right-hand side pixel value.
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  static_assert(pixel_format_0 == pixel_format_1
+                || pixel_format_0 == PixelFormat::Unknown
+                || pixel_format_1 == PixelFormat::Unknown, "Pixel addition not allowed: different pixel formats");
+
+  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
@@ -625,11 +569,16 @@ constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+
  * @param rhs The right-hand side pixel value.
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator-(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  static_assert(pixel_format_0 == pixel_format_1
+                || pixel_format_0 == PixelFormat::Unknown
+                || pixel_format_1 == PixelFormat::Unknown, "Pixel subtraction not allowed: different pixel formats");
+
+  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
@@ -649,11 +598,16 @@ constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator-
  * @param rhs The right-hand side pixel value.
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  static_assert(pixel_format_0 == pixel_format_1
+                || pixel_format_0 == PixelFormat::Unknown
+                || pixel_format_1 == PixelFormat::Unknown, "Pixel multiplication not allowed: different pixel formats");
+
+  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
@@ -673,11 +627,16 @@ constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*
  * @param rhs The right-hand side pixel value.
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
-template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/(
-    Pixel<T, nr_channels_, pixel_format_> lhs, const Pixel<U, nr_channels_, pixel_format_>& rhs) noexcept
+template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
+constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
+          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+operator/(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  static_assert(pixel_format_0 == pixel_format_1
+                || pixel_format_0 == PixelFormat::Unknown
+                || pixel_format_1 == PixelFormat::Unknown, "Pixel division not allowed: different pixel formats");
+
+  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {

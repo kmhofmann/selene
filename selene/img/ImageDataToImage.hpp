@@ -67,7 +67,7 @@ Image<PixelType> to_image(ImageData<>&& img_data)
       && pixel_format != PixelFormat::Unknown  // TODO: should conversion to Unknown be allowed?
       && img_data.pixel_format() != pixel_format)
   {
-    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: imcompatible pixel formats.");
+    throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible pixel formats.");
   }
 
   if (img_data.sample_format() != SampleFormat::Unknown && img_data.sample_format() != sample_format)

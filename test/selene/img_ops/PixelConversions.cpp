@@ -47,22 +47,22 @@ void check_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
     REQUIRE(static_cast<std::uint64_t>(dst_abgr_to_y) == static_cast<std::uint64_t>(x));
 
     const auto dst_rgb_to_ya = sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::YA>(src_xxx, T{0});
-    REQUIRE(dst_rgb_to_ya == sln::Pixel<T, 2>(x, 0));
+    REQUIRE(dst_rgb_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_bgr_to_ya = sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::YA>(src_xxx, T{0});
-    REQUIRE(dst_bgr_to_ya == sln::Pixel<T, 2>(x, 0));
+    REQUIRE(dst_bgr_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_rgba_to_ya = sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::YA>(src_xxxa);
-    REQUIRE(dst_rgba_to_ya == sln::Pixel<T, 2>(x, 0));
+    REQUIRE(dst_rgba_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_bgra_to_ya = sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::YA>(src_xxxa);
-    REQUIRE(dst_rgba_to_ya == sln::Pixel<T, 2>(x, 0));
+    REQUIRE(dst_rgba_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_argb_to_ya = sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::YA>(src_axxx);
-    REQUIRE(dst_argb_to_ya == sln::Pixel<T, 2>(x, 0));
+    REQUIRE(dst_argb_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_abgr_to_ya = sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::YA>(src_axxx);
-    REQUIRE(dst_abgr_to_ya == sln::Pixel<T, 2>(x, 0));
+    REQUIRE(dst_abgr_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     sln::Pixel<T, 3> src1(x / 1, x / 2, x / 3);
 

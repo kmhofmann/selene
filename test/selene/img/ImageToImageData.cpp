@@ -7,6 +7,7 @@
 #include <selene/img/Image.hpp>
 #include <selene/img/ImageData.hpp>
 #include <selene/img/ImageToImageData.hpp>
+#include <selene/img/ImageTypeAliases.hpp>
 
 using namespace sln::literals;
 
