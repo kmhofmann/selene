@@ -97,24 +97,16 @@ constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_0>& px0,
                           const Pixel<T, nr_channels_, pixel_format_1>& px1) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
-operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
+constexpr auto operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
-operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
+constexpr auto operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
-operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
+constexpr auto operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
-operator/(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
+constexpr auto operator/(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept;
 
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_>
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
@@ -541,8 +533,7 @@ constexpr bool operator!=(const Pixel<T, nr_channels_, pixel_format_0>& px0,
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+constexpr auto
 operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
   static_assert(pixel_format_0 == pixel_format_1
@@ -570,8 +561,7 @@ operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+constexpr auto
 operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
   static_assert(pixel_format_0 == pixel_format_1
@@ -599,8 +589,7 @@ operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+constexpr auto
 operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
   static_assert(pixel_format_0 == pixel_format_1
@@ -628,8 +617,7 @@ operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
  * @return The operation result. Note that the element type will be `std::common_type_t<T, U>`.
  */
 template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
-constexpr Pixel<std::common_type_t<T, U>, nr_channels_,
-          pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1>
+constexpr auto
 operator/(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels_, pixel_format_1>& rhs) noexcept
 {
   static_assert(pixel_format_0 == pixel_format_1
