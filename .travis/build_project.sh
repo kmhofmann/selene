@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo "CC = ${CC}"
 echo "CXX = ${CXX}"
 echo "ASAN = ${ASAN}"
 cmake --version;
 ${CC} --version;
 ${CXX} --version;
+
+echo "COMMIT $(git rev-parse HEAD)"
+echo "BRANCHES"
+git branch
+echo "----------"
 
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libjpeg-turbo8-dev libpng-dev libopencv-dev libboost-filesystem-dev
