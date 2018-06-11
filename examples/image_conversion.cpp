@@ -33,15 +33,15 @@ int main(int argc, char** argv)
   // We will now perform three color format conversions:
   // - From RGB to Y (grayscale)
   std::cout << "Converting the image from RGB to Y (grayscale)...\n";
-  const auto img_y = convert_image<PixelFormat::RGB, PixelFormat::Y>(img_rgb);
+  const auto img_y = convert_image<PixelFormat::Y>(img_rgb);
 
   // - From RGB to RGBA (adding an alpha channel with the extra argument to convert_image())
   std::cout << "Converting the image from RGB to RGBA (slightly transparent)...\n";
-  const auto img_rgba = convert_image<PixelFormat::RGB, PixelFormat::RGBA>(img_rgb, std::uint8_t{192});
+  const auto img_rgba = convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{192});
 
   // - From RGB to BGR
   std::cout << "Converting the image from RGB to BGR...\n";
-  const auto img_bgr = convert_image<PixelFormat::RGB, PixelFormat::BGR>(img_rgb);
+  const auto img_bgr = convert_image<PixelFormat::BGR>(img_rgb);
 
   // Finally, we write out all resulting images to disk
 

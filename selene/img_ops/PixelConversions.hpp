@@ -19,9 +19,12 @@
 
 namespace sln {
 
+// Overloads for unknown source pixel format
+
 template <PixelFormat pixel_format_src,
           PixelFormat pixel_format_dst,
           typename PixelSrc,
+          typename = std::enable_if_t<PixelTraits<PixelSrc>::pixel_format == PixelFormat::Unknown>,
           typename = std::enable_if_t<!conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
 constexpr auto convert_pixel(const PixelSrc& px) noexcept;
 
@@ -29,8 +32,26 @@ template <PixelFormat pixel_format_src,
           PixelFormat pixel_format_dst,
           typename PixelSrc,
           typename ElementType,
+          typename = std::enable_if_t<PixelTraits<PixelSrc>::pixel_format == PixelFormat::Unknown>,
           typename = std::enable_if_t<conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
 constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept;
+
+// Overloads for known source pixel format
+
+template <PixelFormat pixel_format_dst,
+          typename PixelSrc,
+          typename = std::enable_if_t<PixelTraits<PixelSrc>::pixel_format != PixelFormat::Unknown>,
+          typename = std::enable_if_t<!conversion_requires_alpha_value(PixelTraits<PixelSrc>::pixel_format, pixel_format_dst)>>
+constexpr auto convert_pixel(const PixelSrc& px) noexcept;
+
+template <PixelFormat pixel_format_dst,
+          typename PixelSrc,
+          typename ElementType,
+          typename = std::enable_if_t<PixelTraits<PixelSrc>::pixel_format != PixelFormat::Unknown>,
+          typename = std::enable_if_t<conversion_requires_alpha_value(PixelTraits<PixelSrc>::pixel_format, pixel_format_dst)>>
+constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept;
+
+// Channel expansion convenience function
 
 template <std::size_t N, typename T>
 constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept;
@@ -800,7 +821,14 @@ struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
 
 }  // namespace impl
 
+
+// Overloads for unknown source pixel format
+
+
 /** \brief Converts a pixel value from a source to a target pixel format.
+ *
+ * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
+ * will have to be explicitly specified as first template parameter.
  *
  * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
  * compile-time.
@@ -808,7 +836,7 @@ struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
  * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
  * ARGB, ABGR.
  *
- * Example: `convert_pixel<PixelFormat::RGB, PixelFormat::Y>(Pixel_8u3(255, 0, 0))` will return a `Pixel_8u1` instance,
+ * Example: `convert_pixel<PixelFormat::RGB, PixelFormat::Y>(Pixel_8u3(255, 0, 0))` will return a `PixelY_8u` instance,
  * performing an RGB -> grayscale conversion.
  *
  * @tparam pixel_format_src The source pixel format.
@@ -817,11 +845,14 @@ struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
  * @param px The pixel value to convert.
  * @return A pixel value in the target format.
  */
-template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename>
+template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename, typename>
 inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
 {
   static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
                 "Incorrect source pixel format.");
+  static_assert(pixel_format_src == PixelTraits<PixelSrc>::pixel_format
+                || PixelTraits<PixelSrc>::pixel_format == PixelFormat::Unknown,
+                "Pixel format mismatch");
   return impl::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px);
 }
 
@@ -830,13 +861,16 @@ inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
  * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
  * In this case, the additional alpha value has to be manually specified.
  *
+ * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
+ * will have to be explicitly specified as first template parameter.
+ *
  * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
  * compile-time.
  *
  * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
  * ARGB, ABGR.
  *
- * Example: `convert_pixel<PixelFormat::RGB, PixelFormat::Y>(Pixel_8u3(255, 0, 0))` will return a `Pixel_8u1` instance,
+ * Example: `convert_pixel<PixelFormat::RGB, PixelFormat::Y>(Pixel_8u3(255, 0, 0))` will return a `PixelY_8u` instance,
  * performing an RGB -> grayscale conversion.
  *
  * @tparam pixel_format_src The source pixel format.
@@ -847,11 +881,73 @@ inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
  * @param alpha_value The alpha value to assign to the output pixel.
  * @return A pixel value in the target format.
  */
-template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename>
+template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename, typename>
 inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept
 {
   static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
                 "Incorrect source pixel format.");
+  static_assert(pixel_format_src == PixelTraits<PixelSrc>::pixel_format
+                || PixelTraits<PixelSrc>::pixel_format == PixelFormat::Unknown,
+                "Pixel format mismatch");
+  return impl::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px, alpha_value);
+}
+
+
+// Overloads for known source pixel format
+
+
+/** \brief Converts a pixel value from a source to a target pixel format.
+ *
+ * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
+ *
+ * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
+ * compile-time.
+ *
+ * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
+ * ARGB, ABGR.
+ *
+ * Example: `convert_pixel<PixelFormat::Y>(PixelRGB_8u(255, 0, 0))` will return a `PixelY_8u` instance,
+ * performing an RGB -> grayscale conversion.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam PixelSrc The pixel type (usually automatically deduced).
+ * @param px The pixel value to convert.
+ * @return A pixel value in the target format.
+ */
+template <PixelFormat pixel_format_dst, typename PixelSrc, typename, typename>
+inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
+{
+  constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
+  return impl::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px);
+}
+
+/** \brief Converts a pixel value from a source to a target pixel format.
+ *
+ * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
+ * In this case, the additional alpha value has to be manually specified.
+ *
+ * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
+ *
+ * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
+ * compile-time.
+ *
+ * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
+ * ARGB, ABGR.
+ *
+ * Example: `convert_pixel<PixelFormat::Y>(PixelRGB_8u(255, 0, 0))` will return a `PixelY_8u` instance,
+ * performing an RGB -> grayscale conversion.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam PixelSrc The pixel type (usually automatically deduced).
+ * @tparam ElementType The pixel element type (for the target format; usually automatically deduced).
+ * @param px The pixel value to convert.
+ * @param alpha_value The alpha value to assign to the output pixel.
+ * @return A pixel value in the target format.
+ */
+template <PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename, typename>
+inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept
+{
+  constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
   return impl::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px, alpha_value);
 }
 

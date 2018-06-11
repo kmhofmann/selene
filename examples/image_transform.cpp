@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 
   // Transform the image from 8-bit integral to 32-bit floating point type, and normalize values to be within (0...1)
   std::cout << "Transforming the image from 8-bit integral to 32-bit floating point type (0...1)...\n";
-  auto img_f = transform_pixels<PixelRGB_8u>(img_rgb, [](const auto& px) { return PixelRGB_32f(px) / 255.0; });
+  auto img_f = transform_pixels<PixelRGB_32f>(img_rgb, [](const auto& px) { return PixelRGB_32f(px) / 255.0; });
 
   // Play around with the color channels
   sln::for_each_pixel(img_f, [](auto& px) {

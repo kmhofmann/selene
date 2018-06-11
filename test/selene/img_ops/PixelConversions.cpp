@@ -128,60 +128,60 @@ void check_random_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(
 
     // Check that back-and-forth conversions yield the input result again
 
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::Y, sln::PixelFormat::YA>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::YA>(
                 sln::convert_pixel<sln::PixelFormat::YA, sln::PixelFormat::Y>(src_xx), x1)
             == src_xx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::YA, sln::PixelFormat::Y>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::Y>(
                 sln::convert_pixel<sln::PixelFormat::Y, sln::PixelFormat::YA>(src_x, x1))
             == src_x);
 
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::BGR>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGR>(
                 sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::RGB>(src_xxx))
             == src_xxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::RGBA>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGBA>(
                 sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::RGB>(src_xxxx), x3)
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::BGRA>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGRA>(
                 sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::RGB>(src_xxxx), x3)
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::ARGB>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ARGB>(
                 sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::RGB>(src_xxxx), x0)
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGB, sln::PixelFormat::ABGR>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ABGR>(
                 sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::RGB>(src_xxxx), x0)
             == src_xxxx);
 
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::RGBA>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGBA>(
                 sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::BGR>(src_xxxx), x3)
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::BGRA>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGRA>(
                 sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::BGR>(src_xxxx), x3)
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::ARGB>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ARGB>(
                 sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::BGR>(src_xxxx), x0)
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::ABGR>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ABGR>(
                 sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::BGR>(src_xxxx), x0)
             == src_xxxx);
 
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::BGRA>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGRA>(
                 sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::RGBA>(src_xxxx))
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::ARGB>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ARGB>(
                 sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::RGBA>(src_xxxx))
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::RGBA, sln::PixelFormat::ABGR>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ABGR>(
                 sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::RGBA>(src_xxxx))
             == src_xxxx);
 
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::ARGB>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ARGB>(
                 sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::BGRA>(src_xxxx))
             == src_xxxx);
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::ABGR>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ABGR>(
                 sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::BGRA>(src_xxxx))
             == src_xxxx);
 
-    REQUIRE(sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::ABGR>(
+    REQUIRE(sln::convert_pixel<sln::PixelFormat::ABGR>(
                 sln::convert_pixel<sln::PixelFormat::ABGR, sln::PixelFormat::ARGB>(src_xxxx))
             == src_xxxx);
 

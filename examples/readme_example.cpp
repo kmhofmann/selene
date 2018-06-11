@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
   // Convert whole image to RGBA, adding semi-transparent alpha channel
   const Image<PixelRGBA_8u> img_rgba =
-      convert_image<PixelFormat::RGB, PixelFormat::RGBA>(img_rgb, std::uint8_t{128});
+      convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{128});
 
   // Encode in-memory to PNG
   std::vector<std::uint8_t> encoded_png_data;

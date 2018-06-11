@@ -26,7 +26,7 @@ int main(int argc, char** argv)
   const char* data_path = (argc >= 2) ? argv[1] : nullptr;
 
   // Read in the example image (check the implementation in Utils.hpp);
-  // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
+  // `PixelRGB_8u` designates 3 channels (R, G, B) of unsigned 8-bit data for each pixel.
 
   auto img = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
   assert(img.width() == 1024_px);
