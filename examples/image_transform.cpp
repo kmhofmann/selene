@@ -34,9 +34,9 @@ int main(int argc, char** argv)
 
   // Play around with the color channels
   sln::for_each_pixel(img_f, [](auto& px) {
-    px[0] = std::pow(px[0], 0.1);
-    px[1] = std::pow(px[1], 0.8);
-    px[2] = std::pow(px[2], 0.3);
+    px[0] = std::pow(px[0], 0.1f);
+    px[1] = std::pow(px[1], 0.8f);
+    px[2] = std::pow(px[2], 0.3f);
   });
 
   // Transform the image back to 8-bit integral representation (0...255)
