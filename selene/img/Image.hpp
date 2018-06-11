@@ -1715,7 +1715,7 @@ Image<PixelTypeDst> clone(const Image<PixelTypeSrc>& src, PixelIndex x0, PixelIn
  * @param src Source image.
  * @return An image (pointing to non-owned memory), which represents a view onto the source image.
  */
-template <typename PixelTypeSrc, typename PixelTypeDst = PixelTypeSrc>
+template <typename PixelTypeSrc, typename PixelTypeDst>
 Image<PixelTypeDst> view(const Image<PixelTypeSrc>& src)
 {
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
@@ -1746,7 +1746,7 @@ Image<PixelTypeDst> view(const Image<PixelTypeSrc>& src)
  * @param height The height of the sub-region.
  * @return An image (pointing to non-owned memory), which represents a view onto the source image sub-region.
  */
-template <typename PixelTypeSrc, typename PixelTypeDst = PixelTypeSrc>
+template <typename PixelTypeSrc, typename PixelTypeDst>
 Image<PixelTypeDst> view(const Image<PixelTypeSrc>& src, PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height)
 {
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
