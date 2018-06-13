@@ -88,6 +88,15 @@ private:
   std::array<T, nr_channels> data_;
 };
 
+template <typename PixelType>
+struct ConstifyPixel
+{
+  using type = Pixel<typename PixelType::value_type, PixelType::nr_channels, PixelType::pixel_format>;
+};
+
+template <typename PixelType> using ConstifyPixel_t = typename ConstifyPixel<PixelType>::type;
+
+
 template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_0, PixelFormat pixel_format_1>
 constexpr bool operator==(const Pixel<T, nr_channels_, pixel_format_0>& px0,
                           const Pixel<T, nr_channels_, pixel_format_1>& px1) noexcept;
