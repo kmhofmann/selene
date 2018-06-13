@@ -91,7 +91,7 @@ private:
 template <typename PixelType>
 struct ConstifyPixel
 {
-  using type = Pixel<typename PixelType::value_type, PixelType::nr_channels, PixelType::pixel_format>;
+  using type = const PixelType;
 };
 
 template <typename PixelType> using ConstifyPixel_t = typename ConstifyPixel<PixelType>::type;

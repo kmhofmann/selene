@@ -21,13 +21,17 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <type_traits>
 
 namespace sln {
 
 template <ImageDataStorage storage_type>
 class ImageData;
 
-template <typename PixelTypeSrc, typename PixelTypeDst>
+template <typename PixelType>
+void clone(const Image<PixelType>&, Image<PixelType>&);
+
+template <typename PixelTypeSrc, typename PixelTypeDst, typename = std::enable_if_t<!std::is_same<PixelTypeSrc, PixelTypeDst>::value>>
 void clone(const Image<PixelTypeSrc>&, Image<PixelTypeDst>&);
 
 template <typename PixelType>
@@ -49,13 +53,14 @@ class Image
 {
 public:
   using PixelType = PixelType_;  ///< The pixel type.
+  using DataPtrType = std::conditional_t<std::is_const<PixelType>::value, const std::uint8_t*, std::uint8_t*>;
   using iterator = ImageRowIterator<PixelType>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType>;  ///< The const_iterator type.
 
   Image();
   Image(PixelLength width, PixelLength height, Stride stride_bytes = Stride{0});
   Image(PixelLength width, PixelLength height, ImageRowAlignment row_alignment_bytes);
-  Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
+  Image(DataPtrType data, PixelLength width, PixelLength height, Stride stride_bytes = Stride{0}) noexcept;
   Image(MemoryBlock<AlignedNewAllocator>&& data,
         PixelLength width,
         PixelLength height,
@@ -107,14 +112,14 @@ public:
   const_iterator end() const noexcept;
   const_iterator cend() const noexcept;
 
-  std::uint8_t* byte_ptr() noexcept;
-  const std::uint8_t* byte_ptr() const noexcept;
+  DataPtrType byte_ptr() noexcept;
+  const DataPtrType byte_ptr() const noexcept;
 
-  std::uint8_t* byte_ptr(PixelIndex y) noexcept;
-  const std::uint8_t* byte_ptr(PixelIndex y) const noexcept;
+  DataPtrType byte_ptr(PixelIndex y) noexcept;
+  const DataPtrType byte_ptr(PixelIndex y) const noexcept;
 
-  std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) noexcept;
-  const std::uint8_t* byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
+  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept;
+  const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
 
   PixelType* data() noexcept;
   const PixelType* data() const noexcept;
@@ -154,13 +159,16 @@ private:
   void deallocate_bytes();
   void deallocate_bytes_if_owned();
   void reset();
-  void copy_rows_from(const Image<PixelType>& src);
+  template <typename PixelTypeSrc> void copy_rows_from(const Image<PixelTypeSrc>& src);
   Bytes compute_data_offset(PixelIndex y) const noexcept;
   Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
   MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
-  template <typename PixelTypeSrc, typename PixelTypeDst>
+  template <typename PixelType>
+    friend void clone(const Image<PixelType>&, Image<PixelType>&);
+
+  template <typename PixelTypeSrc, typename PixelTypeDst, typename>
     friend void clone(const Image<PixelTypeSrc>&, Image<PixelTypeDst>&);
 
   friend ImageData<ImageDataStorage::Modifiable> to_image_data<PixelType>(Image<PixelType>&&, PixelFormat);
@@ -174,8 +182,8 @@ bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1);
 template <typename PixelType>
 bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1);
 
-template <typename PixelTypeSrc, typename PixelTypeDst = PixelTypeSrc>
-void clone(const Image<PixelTypeSrc>& src, Image<PixelTypeDst>& dst);
+//template <typename PixelTypeSrc, typename PixelTypeDst = PixelTypeSrc>
+//void clone(const Image<PixelTypeSrc>& src, Image<PixelTypeDst>& dst);
 
 template <typename PixelTypeSrc, typename PixelTypeDst = PixelTypeSrc>
 void clone(const Image<PixelTypeSrc>& src,
@@ -280,8 +288,8 @@ Image<PixelType>::Image(PixelLength width, PixelLength height, ImageRowAlignment
  * @param stride_bytes The stride (row length) in bytes.
  */
 template <typename PixelType>
-Image<PixelType>::Image(std::uint8_t* data, PixelLength width, PixelLength height, Stride stride_bytes) noexcept
-    : data_(data)
+Image<PixelType>::Image(DataPtrType data, PixelLength width, PixelLength height, Stride stride_bytes) noexcept
+    : data_(const_cast<std::uint8_t*>(data))  // HACK  // NOLINT
     , stride_bytes_(std::max(stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * width)))
     , width_(width)
     , height_(height)
@@ -837,7 +845,7 @@ inline typename Image<PixelType>::const_iterator Image<PixelType>::cend() const 
  * @return Pointer to the first image data byte.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr() noexcept
+inline typename Image<PixelType>::DataPtrType Image<PixelType>::byte_ptr() noexcept
 {
   return data_;
 }
@@ -848,7 +856,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr() noexcept
  * @return Constant pointer to the first image data byte.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr() const noexcept
+inline const typename Image<PixelType>::DataPtrType Image<PixelType>::byte_ptr() const noexcept
 {
   return data_;
 }
@@ -860,7 +868,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr() const noexcept
  * @return Pointer to the first image data byte of row `y`.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) noexcept
+inline typename Image<PixelType>::DataPtrType Image<PixelType>::byte_ptr(PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -872,7 +880,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) noexcept
  * @return Constant pointer to the first image data byte of row `y`.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const noexcept
+inline const typename Image<PixelType>::DataPtrType Image<PixelType>::byte_ptr(PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(y);
 }
@@ -885,7 +893,7 @@ inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex y) const noexce
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) noexcept
+inline typename Image<PixelType>::DataPtrType Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -899,7 +907,7 @@ inline std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) noex
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
 template <typename PixelType>
-inline const std::uint8_t* Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+inline const typename Image<PixelType>::DataPtrType Image<PixelType>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept
 {
   return data_ + compute_data_offset(x, y);
 }
@@ -1110,10 +1118,11 @@ void Image<PixelType>::reset()
 }
 
 template <typename PixelType>
-void Image<PixelType>::copy_rows_from(const Image<PixelType>& src)
+template <typename PixelTypeSrc>
+void Image<PixelType>::copy_rows_from(const Image<PixelTypeSrc>& src)
 {
-  SELENE_ASSERT(data_ && src.data_);
-  SELENE_ASSERT(width_ == src.width_ && height_ == src.height_);
+  SELENE_ASSERT(data_ && src.data());
+  SELENE_ASSERT(width_ == src.width() && height_ == src.height());
 
   for (PixelIndex y = 0_idx; y < height_; ++y)
   {
@@ -1210,24 +1219,44 @@ bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1)
  * @param src Source image.
  * @param dst Destination image.
  */
-template <typename PixelTypeSrc, typename PixelTypeDst>
-void clone(const Image<PixelTypeSrc>& src, Image<PixelTypeDst>& dst)
+template <typename PixelType>
+void clone(const Image<PixelType>& src, Image<PixelType>& dst)
 {
-  // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
-  // nr of channels, or be PixelFormat::Unknown in either source or target.
-  static_assert(std::is_same<typename PixelTraits<PixelTypeSrc>::Element,
-                             typename PixelTraits<PixelTypeDst>::Element>::value
-                && PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels
-                && (get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
-                        == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
-                    || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
-                    || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown),
-                "Incompatible source and target pixel types");
-
   if (&src == &dst)
   {
     throw std::runtime_error("Destination cannot be the same as the source for image cloning");
   }
+
+  if (!src.is_valid())
+  {
+    dst.clear();
+    return;
+  }
+
+  dst.allocate(src.width(), src.height(), src.stride_bytes());
+  dst.copy_rows_from(src);
+}
+
+template <typename PixelTypeSrc, typename PixelTypeDst, typename>
+void clone(const Image<PixelTypeSrc>& src, Image<PixelTypeDst>& dst)
+{
+  // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
+  // nr of channels, or be PixelFormat::Unknown in either source or target.
+  static_assert(std::is_same<std::remove_cv_t<typename PixelTraits<PixelTypeSrc>::Element>,
+                             std::remove_cv_t<typename PixelTraits<PixelTypeDst>::Element>>::value,
+                "Incompatible source and target pixel types");
+  static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
+                "Incompatible source and target pixel types");
+  static_assert(get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
+                  == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
+                 || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
+                 || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown,
+                "Incompatible source and target pixel types");
+
+  //if (&src == &dst)
+  //{
+  //  throw std::runtime_error("Destination cannot be the same as the source for image cloning");
+  //}
 
   if (!src.is_valid())
   {
@@ -1309,17 +1338,17 @@ Image<PixelTypeDst> view(const Image<PixelTypeSrc>& src)
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
   static_assert(std::is_same<typename PixelTraits<ConstPixelTypeSrc>::Element,
-                             typename PixelTraits<PixelTypeDst>::Element>::value
-                && PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels
-                && (get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
-                        == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
-                    || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
-                    || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown),
+                             typename PixelTraits<PixelTypeDst>::Element>::value,
+                "Incompatible source and target pixel types");
+  static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
+                "Incompatible source and target pixel types");
+  static_assert(get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
+                  == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
+                 || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
+                 || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown,
                 "Incompatible source and target pixel types");
 
-  //return Image<PixelTypeDst>(src.byte_ptr(), src.width(), src.height(), src.stride_bytes());
-  auto byte_ptr = const_cast<std::uint8_t*>(src.byte_ptr());  // TODO: remove HACK
-  return Image<PixelTypeDst>(byte_ptr, src.width(), src.height(), src.stride_bytes());
+  return Image<PixelTypeDst>(src.byte_ptr(), src.width(), src.height(), src.stride_bytes());
 }
 
 /** \brief Returns an image representing a view onto the provided source image.
@@ -1338,12 +1367,14 @@ Image<PixelTypeDst> view(Image<PixelTypeSrc>& src)
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
   static_assert(std::is_same<typename PixelTraits<PixelTypeSrc>::Element,
-                             typename PixelTraits<PixelTypeDst>::Element>::value
-                && PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels
-                && (get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
-                        == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
-                    || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
-                    || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown),
+                             typename PixelTraits<PixelTypeDst>::Element>::value,
+                "Incompatible source and target pixel types");
+  static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
+                "Incompatible source and target pixel types");
+  static_assert(get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
+                  == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
+                 || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
+                 || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown,
                 "Incompatible source and target pixel types");
 
   return Image<PixelTypeDst>(src.byte_ptr(), src.width(), src.height(), src.stride_bytes());
@@ -1357,19 +1388,18 @@ Image<PixelTypeDst> view(const Image<PixelTypeSrc>& src, PixelIndex x0, PixelInd
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
   static_assert(std::is_same<typename PixelTraits<ConstPixelTypeSrc>::Element,
-                             typename PixelTraits<PixelTypeDst>::Element>::value
-                && PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels
-                && (get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
-                        == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
-                    || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
-                    || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown),
+                             typename PixelTraits<PixelTypeDst>::Element>::value,
+                "Incompatible source and target pixel types");
+  static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
+                "Incompatible source and target pixel types");
+  static_assert(get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
+                  == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
+                 || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
+                 || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown,
                 "Incompatible source and target pixel types");
 
-  //const auto data_offset = Bytes(src.stride_bytes() * y0 + PixelTraits<PixelTypeSrc>::nr_bytes * x0);
-  //return Image<PixelTypeDst>(src.byte_ptr() + data_offset, width, height, src.stride_bytes());
-  auto byte_ptr = const_cast<std::uint8_t*>(src.byte_ptr());  // TODO: remove HACK
   const auto data_offset = Bytes(src.stride_bytes() * y0 + PixelTraits<PixelTypeSrc>::nr_bytes * x0);
-  return Image<PixelTypeDst>(byte_ptr + data_offset, width, height, src.stride_bytes());
+  return Image<PixelTypeDst>(src.byte_ptr() + data_offset, width, height, src.stride_bytes());
 }
 
 /** \brief Returns an image representing a view onto the specified sub-region of the provided source image.
@@ -1392,12 +1422,14 @@ Image<PixelTypeDst> view(Image<PixelTypeSrc>& src, PixelIndex x0, PixelIndex y0,
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
   static_assert(std::is_same<typename PixelTraits<PixelTypeSrc>::Element,
-                             typename PixelTraits<PixelTypeDst>::Element>::value
-                && PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels
-                && (get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
-                        == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
-                    || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
-                    || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown),
+                             typename PixelTraits<PixelTypeDst>::Element>::value,
+                "Incompatible source and target pixel types");
+  static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
+                "Incompatible source and target pixel types");
+  static_assert(get_nr_channels(PixelTraits<PixelTypeSrc>::pixel_format)
+                  == get_nr_channels(PixelTraits<PixelTypeDst>::pixel_format)
+                 || PixelTraits<PixelTypeSrc>::pixel_format == PixelFormat::Unknown
+                 || PixelTraits<PixelTypeDst>::pixel_format == PixelFormat::Unknown,
                 "Incompatible source and target pixel types");
 
   const auto data_offset = Bytes(src.stride_bytes() * y0 + PixelTraits<PixelTypeSrc>::nr_bytes * x0);

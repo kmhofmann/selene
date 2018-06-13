@@ -307,3 +307,21 @@ TEST_CASE("Image comparison", "[img]")
   REQUIRE(img_xxx_2.height() == img_xxx.height());
   REQUIRE(img_xxx_2 == img_xxx);
 }
+
+TEST_CASE("Image view creation", "[img]")
+{
+  auto img0 = sln_test::make_3x3_test_image_8u1();
+  auto img0_view = sln::view(img0);
+
+  REQUIRE(img0(1_idx, 1_idx) == 50);
+  img0_view(1_idx, 1_idx) = 42;
+  REQUIRE(img0(1_idx, 1_idx) == 42);
+
+  const auto img1 = sln_test::make_3x3_test_image_8u1();
+  auto img1_view = sln::view(img1);
+
+  REQUIRE(img1(1_idx, 1_idx) == 50);
+  //img1_view(1_idx, 1_idx) = 42;
+  //REQUIRE(img1(1_idx, 1_idx) == 42);
+}
+
