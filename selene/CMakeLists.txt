@@ -38,13 +38,16 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataBase.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataStorage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/ImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/ImageTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/PixelTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/PixelTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RelativeAccessor.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
