@@ -51,6 +51,7 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/RelativeAccessor.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGCommon.hpp
@@ -69,6 +70,7 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/Util.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.hpp

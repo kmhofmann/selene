@@ -22,11 +22,13 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_JPEG.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_PNG.cpp
         ${CMAKE_CURRENT_LIST_DIR}/io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.cpp

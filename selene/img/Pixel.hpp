@@ -85,6 +85,8 @@ public:
 
 private:
   static_assert(std::is_arithmetic<T>::value, "Pixel element type needs to be an arithmetic type");
+  static_assert(get_nr_channels(pixel_format_) == nr_channels_
+                || pixel_format_ == PixelFormat::Unknown, "Pixel format mismatch");
   std::array<T, nr_channels> data_;
 };
 
@@ -163,9 +165,6 @@ constexpr Pixel<T, nr_channels_, pixel_format_>::Pixel(Args... args) noexcept
                 "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_, pixel_format_>) == nr_channels_ * sizeof(T),
                 "Pixel class is not tightly packed");
-
-  static_assert(get_nr_channels(pixel_format_) == nr_channels_
-                || pixel_format_ == PixelFormat::Unknown, "Pixel format mismatch");
 }
 
 /** \brief Constructor initializing all pixel channels.
@@ -186,9 +185,6 @@ constexpr Pixel<T, nr_channels_, pixel_format_>::Pixel(const std::array<T, nr_ch
                 "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_, pixel_format_>) == nr_channels_ * sizeof(T),
                 "Pixel class is not tightly packed");
-
-  static_assert(get_nr_channels(pixel_format_) == nr_channels_ || pixel_format_ == PixelFormat::Unknown,
-      "Pixel format mismatch");
 }
 
 /** \brief Copy constructor taking a `Pixel<>` with a different element type.
@@ -207,9 +203,6 @@ constexpr Pixel<T, nr_channels_, pixel_format_>::Pixel(const Pixel<U, nr_channel
   static_assert(std::is_trivial<Pixel<T, nr_channels_>>::value, "Pixel type is not trivial");
   static_assert(std::is_standard_layout<Pixel<T, nr_channels_>>::value, "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
-
-  static_assert(get_nr_channels(pixel_format_) == nr_channels_ || pixel_format_ == PixelFormat::Unknown,
-      "Pixel format mismatch");
 
   for (std::size_t i = 0; i < nr_channels; ++i)
   {
