@@ -24,12 +24,29 @@ auto stack_images(Imgs... imgs);
 // ----------
 // Implementation:
 
+/** \brief Copies all channel(s) of the source image to the specified channel(s) of the target image.
+ *
+ * The channels [dst_start_channel, ..., dst_start_channel + nr_channels(src) - 1] of the target image will be modified.
+ *
+ * The function throws an exception either if there are too many source channels to copy, i.e. they don't fit into the
+ * target image, or if the two images are not already the same size.
+ *
+ * @tparam ImgSrc The image type of the source image.
+ * @tparam ImgDst The image type of the target image.
+ * @param src The source image.
+ * @param dst The target image.
+ * @param dst_start_channel The channel where to start inserting the source channels. 
+ */
 template <typename ImgSrc, typename ImgDst>
 void inject_channels(const ImgSrc& src, ImgDst& dst, std::size_t dst_start_channel)
 {
   constexpr auto nr_channels_src = sln::PixelTraits<typename ImgSrc::PixelType>::nr_channels;
   constexpr auto nr_channels_dst = sln::PixelTraits<typename ImgDst::PixelType>::nr_channels;
-  SELENE_FORCED_ASSERT(dst_start_channel + nr_channels_src <= nr_channels_dst);
+
+  if (dst_start_channel + nr_channels_src > nr_channels_dst)
+  {
+    throw std::runtime_error("inject_channels: Source channels do not fit in target image using specified starting channel.");
+  }
 
   if (dst.width() != src.width() || dst.height() != src.height())
   {
@@ -125,6 +142,18 @@ auto stack_images(const Img& img)
   return sln::clone(img);
 }
 
+/** \brief Stacks the channels of the specified images, and returns the concatenated output image.
+ *
+ * The number of channels of the returned image will be equal to the cumulative number of channels of the input
+ * images.
+ *
+ * All input images have to be of the same size; otherwise, an exception is thrown.
+ *
+ * @tparam pixel_format The desired pixel format of the output image.
+ * @tparam Imgs The image types of the input images (parameter pack).
+ * @param imgs The input images (parameter pack).
+ * @return The concatenated output image.
+ */
 template <sln::PixelFormat pixel_format, typename... Imgs>
 auto stack_images(Imgs... imgs)
 {

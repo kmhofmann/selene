@@ -40,7 +40,7 @@ void check_channels(const Img& img, const std::array<std::uint8_t, N>& values)
 
 }
 
-} // namespace _
+} // namespace
 
 
 TEST_CASE("Channel injection", "[img]")
