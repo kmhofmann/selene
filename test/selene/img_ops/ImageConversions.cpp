@@ -85,40 +85,40 @@ TEST_CASE("Image conversions", "[img]")
 
   SECTION("Convert RGB to Y (unknown source pixel format)")
   {
-    sln::ImageY_8u img_y0;
-    sln::convert_image<sln::PixelFormat::RGB, sln::PixelFormat::Y>(img_xxx, img_y0);
+    sln::ImageY_8u img_y_0;
+    sln::convert_image<sln::PixelFormat::RGB, sln::PixelFormat::Y>(img_xxx, img_y_0);
 
-    REQUIRE(img_y(0_idx, 0_idx) == 11);
-    REQUIRE(img_y(1_idx, 0_idx) == 21);
-    REQUIRE(img_y(2_idx, 0_idx) == 31);
-    REQUIRE(img_y(0_idx, 1_idx) == 41);
-    REQUIRE(img_y(1_idx, 1_idx) == 51);
-    REQUIRE(img_y(2_idx, 1_idx) == 61);
-    REQUIRE(img_y(0_idx, 2_idx) == 71);
-    REQUIRE(img_y(1_idx, 2_idx) == 81);
-    REQUIRE(img_y(2_idx, 2_idx) == 91);
+    REQUIRE(img_y_0(0_idx, 0_idx) == 11);
+    REQUIRE(img_y_0(1_idx, 0_idx) == 21);
+    REQUIRE(img_y_0(2_idx, 0_idx) == 31);
+    REQUIRE(img_y_0(0_idx, 1_idx) == 41);
+    REQUIRE(img_y_0(1_idx, 1_idx) == 51);
+    REQUIRE(img_y_0(2_idx, 1_idx) == 61);
+    REQUIRE(img_y_0(0_idx, 2_idx) == 71);
+    REQUIRE(img_y_0(1_idx, 2_idx) == 81);
+    REQUIRE(img_y_0(2_idx, 2_idx) == 91);
 
     sln::ImageY_8u img_y_1 = sln::convert_image<sln::PixelFormat::RGB, sln::PixelFormat::Y>(img_xxx);
-    REQUIRE(img_y_1 == img_y);
+    REQUIRE(img_y_1 == img_y_0);
   }
 
   SECTION("Convert RGB to Y (known source pixel format)")
   {
-    sln::ImageY_8u img_y0;
-    sln::convert_image<sln::PixelFormat::Y>(img_rgb, img_y0);
+    sln::ImageY_8u img_y_0;
+    sln::convert_image<sln::PixelFormat::Y>(img_rgb, img_y_0);
 
-    REQUIRE(img_y(0_idx, 0_idx) == 11);
-    REQUIRE(img_y(1_idx, 0_idx) == 21);
-    REQUIRE(img_y(2_idx, 0_idx) == 31);
-    REQUIRE(img_y(0_idx, 1_idx) == 41);
-    REQUIRE(img_y(1_idx, 1_idx) == 51);
-    REQUIRE(img_y(2_idx, 1_idx) == 61);
-    REQUIRE(img_y(0_idx, 2_idx) == 71);
-    REQUIRE(img_y(1_idx, 2_idx) == 81);
-    REQUIRE(img_y(2_idx, 2_idx) == 91);
+    REQUIRE(img_y_0(0_idx, 0_idx) == 11);
+    REQUIRE(img_y_0(1_idx, 0_idx) == 21);
+    REQUIRE(img_y_0(2_idx, 0_idx) == 31);
+    REQUIRE(img_y_0(0_idx, 1_idx) == 41);
+    REQUIRE(img_y_0(1_idx, 1_idx) == 51);
+    REQUIRE(img_y_0(2_idx, 1_idx) == 61);
+    REQUIRE(img_y_0(0_idx, 2_idx) == 71);
+    REQUIRE(img_y_0(1_idx, 2_idx) == 81);
+    REQUIRE(img_y_0(2_idx, 2_idx) == 91);
 
     sln::ImageY_8u img_y_1 = sln::convert_image<sln::PixelFormat::Y>(img_rgb);
-    REQUIRE(img_y_1 == img_y);
+    REQUIRE(img_y_1 == img_y_0);
   }
 
   SECTION("Convert RGB to RGBA (unknown source pixel format)")
