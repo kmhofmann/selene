@@ -85,8 +85,8 @@ TEST_CASE("Image conversions", "[img]")
 
   SECTION("Convert RGB to Y (unknown source pixel format)")
   {
-    sln::ImageY_8u img_y;
-    sln::convert_image<sln::PixelFormat::RGB, sln::PixelFormat::Y>(img_xxx, img_y);
+    sln::ImageY_8u img_y0;
+    sln::convert_image<sln::PixelFormat::RGB, sln::PixelFormat::Y>(img_xxx, img_y0);
 
     REQUIRE(img_y(0_idx, 0_idx) == 11);
     REQUIRE(img_y(1_idx, 0_idx) == 21);
@@ -104,8 +104,8 @@ TEST_CASE("Image conversions", "[img]")
 
   SECTION("Convert RGB to Y (known source pixel format)")
   {
-    sln::ImageY_8u img_y;
-    sln::convert_image<sln::PixelFormat::Y>(img_rgb, img_y);
+    sln::ImageY_8u img_y0;
+    sln::convert_image<sln::PixelFormat::Y>(img_rgb, img_y0);
 
     REQUIRE(img_y(0_idx, 0_idx) == 11);
     REQUIRE(img_y(1_idx, 0_idx) == 21);
