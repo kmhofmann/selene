@@ -138,21 +138,6 @@ target_include_directories(selene_io PUBLIC
 
 #------------------------------------------------------------------------------
 
-add_library(selene_thread INTERFACE)
-add_library(selene::selene_thread ALIAS selene_thread)
-
-target_sources(selene_thread INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.hpp>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/impl/Callable.hpp>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/thread/impl/TaskQueue.hpp>
-        )
-
-target_include_directories(selene_thread INTERFACE
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
-
-#------------------------------------------------------------------------------
-
 add_library(selene INTERFACE)
 add_library(selene::selene ALIAS selene)
 
@@ -160,7 +145,7 @@ target_include_directories(selene INTERFACE
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(selene INTERFACE selene_base selene_img selene_io selene_thread)
+target_link_libraries(selene INTERFACE selene_base selene_img selene_io)
 
 #------------------------------------------------------------------------------
 
@@ -184,7 +169,7 @@ configure_package_config_file(
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install library files
-install(TARGETS selene_base selene_img selene_io selene_thread selene
+install(TARGETS selene_base selene_img selene_io selene
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

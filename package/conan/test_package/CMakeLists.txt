@@ -16,7 +16,6 @@ target_link_libraries(example PRIVATE
          selene::selene_base
          selene::selene_img
          selene::selene_io
-         selene::selene_thread
          )
 
 # CTest is a testing tool that can be used to test your project.

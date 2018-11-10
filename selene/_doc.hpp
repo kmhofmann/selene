@@ -19,7 +19,6 @@
  *   - Pixel-level and image-level conversion functions between different pixel formats (e.g. RGB -> Grayscale, etc.).
  * - Functions for interoperability with OpenCV cv::Mat matrices (wrapping or cloning).
  * - Functions for binary IO from and to files or memory.
- * - A simple thread pool, to enable task-based parallelism.
  *
  * This is the automatically generated Doxygen documentation for the **Selene** API.
  */

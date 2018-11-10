@@ -33,7 +33,6 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/thread/ThreadPool.cpp
         )
 
 target_compile_options(selene_tests PRIVATE
@@ -49,8 +48,7 @@ target_include_directories(selene_tests PRIVATE
 
 target_link_libraries(selene_tests
         selene
-        Boost::filesystem
-        Threads::Threads)
+        Boost::filesystem)
 
 if (OPENCV_CORE_FOUND)
     target_link_libraries(selene_tests opencv_core)

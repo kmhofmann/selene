@@ -65,8 +65,3 @@ if (SELENE_BUILD_BENCHMARKS)
     find_package(benchmark REQUIRED)
 endif()
 
-# Threads
-
-if (SELENE_BUILD_TESTS)
-    find_package(Threads REQUIRED)
-endif()

@@ -71,9 +71,3 @@ It currently contains, among other things
     * [VectorReader](https://github.com/kmhofmann/selene/blob/master/selene/io/VectorReader.hpp) /
     [VectorWriter](https://github.com/kmhofmann/selene/blob/master/selene/io/VectorWriter.hpp):
     Reading/writing from and to `std::vector<std::uint8_t>`, extending as needed when writing
-
-  * A simple thread pool.
-    * [ThreadPool](https://github.com/kmhofmann/selene/blob/master/selene/thread/ThreadPool.hpp):
-    Concurrent processing of tasks (function calls).
-    Offers fairly basic functionality. For more complex tasks, prefer to use a dedicated task concurrency library such
-    as [transwarp](https://github.com/bloomen/transwarp).
