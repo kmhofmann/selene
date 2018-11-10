@@ -52,6 +52,27 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.hpp
+        )
+add_library(selene::selene_img ALIAS selene_img)
+
+target_compile_options(selene_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+
+target_compile_definitions(selene_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+
+target_include_directories(selene_img PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}>
+        $<INSTALL_INTERFACE:include>)
+
+if (OPENCV_CORE_FOUND)
+    target_compile_definitions(selene_img PUBLIC SELENE_WITH_OPENCV)
+    # no need to link against it, as it's only used in a header
+endif()
+
+target_link_libraries(selene_img PUBLIC selene_base)
+
+#------------------------------------------------------------------------------
+
+add_library(selene_img_io
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGCommon.hpp
@@ -69,6 +90,41 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/Util.hpp
+        )
+add_library(selene::selene_img_io ALIAS selene_img_io)
+
+target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+
+target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+
+target_include_directories(selene_img_io PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}>
+        $<INSTALL_INTERFACE:include>)
+
+if (JPEG_FOUND)
+    target_compile_definitions(selene_img_io PUBLIC SELENE_WITH_LIBJPEG)
+    if (JPEG_PARTIAL_DECODING)
+        target_compile_definitions(selene_img_io PUBLIC SELENE_LIBJPEG_PARTIAL_DECODING)
+    endif()
+    if (JPEG_EXTENDED_COLORSPACES)
+        target_compile_definitions(selene_img_io PUBLIC SELENE_LIBJPEG_EXTENDED_COLORSPACES)
+    endif()
+    target_include_directories(selene_img_io PUBLIC ${JPEG_INCLUDE_DIR})
+    target_link_libraries(selene_img_io PUBLIC ${JPEG_LIBRARIES})
+    # Imported target support upcoming in CMake (commit 87f2cf3b1ce0ef7b8e71eae0f44cf9753660d423)
+    #target_link_libraries(selene_img_io PUBLIC JPEG::JPEG)
+endif()
+
+if (PNG_FOUND)
+    target_compile_definitions(selene_img_io PUBLIC SELENE_WITH_LIBPNG)
+    target_link_libraries(selene_img_io PUBLIC PNG::PNG)
+endif()
+
+target_link_libraries(selene_img_io PUBLIC selene_img)
+
+#------------------------------------------------------------------------------
+
+add_library(selene_img_ops
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
@@ -77,41 +133,17 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
         )
-add_library(selene::selene_img ALIAS selene_img)
+add_library(selene::selene_img_ops ALIAS selene_img_ops)
 
-target_compile_options(selene_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_compile_definitions(selene_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_definitions(selene_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-target_include_directories(selene_img PUBLIC
+target_include_directories(selene_img_ops PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
-if (JPEG_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_LIBJPEG)
-    if (JPEG_PARTIAL_DECODING)
-        target_compile_definitions(selene_img PUBLIC SELENE_LIBJPEG_PARTIAL_DECODING)
-    endif()
-    if (JPEG_EXTENDED_COLORSPACES)
-        target_compile_definitions(selene_img PUBLIC SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-    endif()
-    target_include_directories(selene_img PUBLIC ${JPEG_INCLUDE_DIR})
-    target_link_libraries(selene_img PUBLIC ${JPEG_LIBRARIES})
-    # Imported target support upcoming in CMake (commit 87f2cf3b1ce0ef7b8e71eae0f44cf9753660d423)
-    #target_link_libraries(selene_img PUBLIC JPEG::JPEG)
-endif()
-
-if (PNG_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_LIBPNG)
-    target_link_libraries(selene_img PUBLIC PNG::PNG)
-endif()
-
-if (OPENCV_CORE_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_OPENCV)
-    # no need to link against it, as it's only used in a header
-endif()
-
-target_link_libraries(selene_img PUBLIC selene_base)
+target_link_libraries(selene_img_ops PUBLIC selene_img)
 
 #------------------------------------------------------------------------------
 
@@ -145,7 +177,12 @@ target_include_directories(selene INTERFACE
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(selene INTERFACE selene_base selene_img selene_io)
+target_link_libraries(selene INTERFACE
+        selene_base
+        selene_img
+        selene_img_io
+        selene_img_ops
+        selene_io)
 
 #------------------------------------------------------------------------------
 
@@ -169,7 +206,7 @@ configure_package_config_file(
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install library files
-install(TARGETS selene_base selene_img selene_io selene
+install(TARGETS selene_base selene_img selene_img_io selene_img_ops selene_io selene
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -13,10 +13,12 @@ find_package(selene REQUIRED)
 
 add_executable(example example.cpp)
 target_link_libraries(example PRIVATE
-         selene::selene_base
-         selene::selene_img
-         selene::selene_io
-         )
+        selene::selene_base
+        selene::selene_img
+        selene::selene_img_io
+        selene::selene_img_ops
+        selene::selene_io
+        )
 
 # CTest is a testing tool that can be used to test your project.
 enable_testing()
