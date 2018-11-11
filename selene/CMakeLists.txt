@@ -52,6 +52,18 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img2/DynImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/DynImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Image.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/ImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Layout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Pixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/PixelFormat.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/PixelTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/PixelTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Types.hpp
         )
 add_library(selene::selene_img ALIAS selene_img)
 
