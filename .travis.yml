@@ -11,35 +11,23 @@ branches:
 
 env:
   matrix:
-    - DOCKER_IMAGE=lasote/conanclang60
+    - DOCKER_IMAGE=conanio/clang7
       CC=clang
       CXX=clang++
       ASAN=1
-    - DOCKER_IMAGE=lasote/conanclang60
+    - DOCKER_IMAGE=conanio/clang7
       CC=clang
       CXX=clang++
-    - DOCKER_IMAGE=lasote/conanclang50
+    - DOCKER_IMAGE=conanio/clang60
       CC=clang
       CXX=clang++
-    - DOCKER_IMAGE=lasote/conanclang40
+    - DOCKER_IMAGE=conanio/clang50
       CC=clang
       CXX=clang++
-    - DOCKER_IMAGE=lasote/conanclang39
-      CC=clang
-      CXX=clang++
-    - DOCKER_IMAGE=lasote/conanclang38
-      CC=clang
-      CXX=clang++
-    - DOCKER_IMAGE=lasote/conangcc8
+    - DOCKER_IMAGE=conanio/gcc8
       CC=gcc
       CXX=g++
-    - DOCKER_IMAGE=lasote/conangcc7
-      CC=gcc
-      CXX=g++
-    - DOCKER_IMAGE=lasote/conangcc6
-      CC=gcc
-      CXX=g++
-    - DOCKER_IMAGE=lasote/conangcc5
+    - DOCKER_IMAGE=conanio/gcc7
       CC=gcc
       CXX=g++
 
