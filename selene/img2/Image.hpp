@@ -13,10 +13,10 @@
 
 #include <selene/img2/ImageView.hpp>
 
-namespace sln2 {
+namespace sln {
 
 template <typename PixelType_>
-class Image
+class Image : public ImageBase<Image<PixelType_>>
 {
 public:
   using PixelType = PixelType_;
@@ -24,6 +24,7 @@ public:
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
   explicit Image(TypedLayout layout);
+  Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
   ~Image();
 
   Image(const Image<PixelType>&);
@@ -41,8 +42,8 @@ public:
   PixelLength width() const noexcept { return view_.width(); }
   PixelLength height() const noexcept { return view_.height(); }
   Stride stride_bytes() const noexcept { return view_.stride_bytes(); }
-  std::size_t row_bytes() const noexcept { return view_.row_bytes(); }
-  std::size_t total_bytes() const noexcept { return view_.total_bytes(); }
+  std::ptrdiff_t row_bytes() const noexcept { return view_.row_bytes(); }
+  std::ptrdiff_t total_bytes() const noexcept { return view_.total_bytes(); }
   bool is_packed() const noexcept { return view_.is_packed(); }
 
   bool is_empty() const noexcept { return view_.is_empty(); }
@@ -80,21 +81,24 @@ public:
   PixelType& operator()(PixelIndex x, PixelIndex y) noexcept             { return view_.operator()(x, y); }
   const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept { return view_.operator()(x, y); }
 
+  ImageView<PixelType, ImageModifiability::Mutable>& view() noexcept { return view_; }
+  const ImageView<PixelType, ImageModifiability::Mutable>& view() const noexcept { return view_; }
+
   // Implicit conversion to the underlying view
-  constexpr operator ImageView<PixelType>&() noexcept
+  operator ImageView<PixelType, ImageModifiability::Mutable>&() noexcept
   {
     return view_;
   }
 
   // Implicit conversion to the underlying view
-  constexpr operator const ImageView<PixelType>&() const noexcept
+  operator const ImageView<PixelType, ImageModifiability::Mutable>&() const noexcept
   {
     return view_;
   }
 
 private:
   constexpr static auto base_alignment_bytes = 16ul;
-    ImageView<PixelType, ImageModifiability::Mutable> view_;
+  ImageView<PixelType, ImageModifiability::Mutable> view_;
 
   template <typename PixelTypeSrc> void copy_rows_from(const Image<PixelTypeSrc>& src);
 
@@ -105,6 +109,12 @@ private:
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
     : view_(this->allocate_memory(layout, base_alignment_bytes))
+{
+}
+
+template <typename PixelType_>
+Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
+    : view_(this->allocate_memory(layout, row_alignment_bytes))
 {
 }
 
@@ -233,7 +243,7 @@ ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_m
   const auto nr_bytes_to_allocate = stride_bytes * layout.height();
 
   auto memory = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, alignment_bytes);
-  SELENE_ASSERT(memory.size() == nr_bytes_to_allocate);
+  SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
   return ImageView<PixelType, ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width(), layout.height(), stride_bytes}};
 }
@@ -241,7 +251,8 @@ ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_m
 template <typename PixelType_>
 void Image<PixelType_>::deallocate_memory()
 {
-  delete view_.byte_ptr();
+  std::uint8_t* ptr = view_.byte_ptr();
+  sln::AlignedNewAllocator::deallocate(ptr);
 }
 
 }  // namespace sln

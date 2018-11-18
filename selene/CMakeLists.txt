@@ -144,6 +144,8 @@ add_library(selene_img_ops
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img2_ops/ImageFunctions.hpp
         )
 add_library(selene::selene_img_ops ALIAS selene_img_ops)
 

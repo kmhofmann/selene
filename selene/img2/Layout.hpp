@@ -10,7 +10,7 @@
 #include <selene/img2/PixelFormat.hpp>
 #include <selene/img2/Types.hpp>
 
-namespace sln2 {
+namespace sln {
 
 class TypedLayout
 {
@@ -75,8 +75,8 @@ public:
       , sample_format_(sample_format)
   { }
 
-  PixelFormat pixel_format() { return pixel_format_; }
-  SampleFormat sample_format() { return sample_format_; }
+  PixelFormat pixel_format() const { return pixel_format_; }
+  SampleFormat sample_format() const { return sample_format_; }
 
 private:
   PixelFormat pixel_format_;
@@ -105,7 +105,7 @@ public:
   using Type = const std::uint8_t*;
   using ConstType = const std::uint8_t*;
 
-  explicit DataPtr(const std::uint8_t* data) noexcept
+  /*explicit*/ DataPtr(const std::uint8_t* data) noexcept
       : data_(data)
   { }
 
@@ -124,11 +124,12 @@ public:
   using Type = std::uint8_t*;
   using ConstType = const std::uint8_t*;
 
-  explicit DataPtr(std::uint8_t* data) noexcept
+  /*explicit*/ DataPtr(std::uint8_t* data) noexcept
       : data_(data)
   { }
 
   std::uint8_t* data() noexcept { return data_; }
+  std::uint8_t* data() const noexcept { return data_; }
 
 private:
   std::uint8_t* data_;

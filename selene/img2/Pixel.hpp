@@ -16,7 +16,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace sln2 {
+namespace sln {
 
 /** \brief Represents a statically typed pixel with arbitrary number of channels.
  *

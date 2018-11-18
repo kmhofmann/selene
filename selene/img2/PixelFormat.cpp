@@ -4,7 +4,7 @@
 
 #include <selene/img2/PixelFormat.hpp>
 
-namespace sln2 {
+namespace sln {
 
 /** \brief Converts a pixel format value into a character stream representation, e.g. for printing.
  *

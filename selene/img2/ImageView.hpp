@@ -7,13 +7,14 @@
 
 /// @file
 
+#include <selene/img2/ImageBase.hpp>
 #include <selene/img2/Layout.hpp>
 #include <selene/img2/PixelTraits.hpp>
 
-namespace sln2 {
+namespace sln {
 
-template <typename PixelType_, ImageModifiability modifiability = ImageModifiability::Constant>
-class ImageView
+template <typename PixelType_, ImageModifiability modifiability>
+class ImageView : public ImageBase<ImageView<PixelType_, modifiability>>
 {
 public:
   using PixelType = PixelType_;
@@ -29,8 +30,8 @@ public:
   PixelLength width() const noexcept { return layout_.width(); }
   PixelLength height() const noexcept { return layout_.height(); }
   Stride stride_bytes() const noexcept { return layout_.stride_bytes(); }
-  std::size_t row_bytes() const noexcept { return layout_.width() * PixelTraits<PixelType>::nr_bytes; }
-  std::size_t total_bytes() const noexcept { return layout_.stride_bytes() * layout_.height(); }
+  std::ptrdiff_t row_bytes() const noexcept { return layout_.width() * PixelTraits<PixelType>::nr_bytes; }
+  std::ptrdiff_t total_bytes() const noexcept { return layout_.stride_bytes() * layout_.height(); }
   bool is_packed() const noexcept { return layout_.stride_bytes() == static_cast<Stride::value_type>(PixelTraits<PixelType>::nr_bytes * layout_.width()); }
 
   bool is_empty() const noexcept { return ptr_.data() == nullptr || layout_.width() == 0 || layout_.height() == 0; }
@@ -85,6 +86,9 @@ private:
     return sln::Bytes{layout_.stride_bytes() * y + PixelTraits<PixelType>::nr_bytes * x};
   }
 };
+
+template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;
+template <typename PixelType> using ConstImageView = ImageView<PixelType, ImageModifiability::Constant>;
 
 }  // namespace sln
 

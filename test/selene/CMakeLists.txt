@@ -11,28 +11,34 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Round.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Image.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageAccess.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageData.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_JPEG.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_PNG.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.hpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/Image.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/ImageAccess.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/ImageData.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img/Utilities.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_io/IO_JPEG.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_io/IO_PNG.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.cpp
+        #${CMAKE_CURRENT_LIST_DIR}/io/IO.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img2/_TestImages.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/_TestImages.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/DynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Pixel.cpp
         )
 
 target_compile_options(selene_tests PRIVATE

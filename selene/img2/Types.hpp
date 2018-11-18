@@ -14,7 +14,7 @@
 #include <cstdint>
 #include <limits>
 
-namespace sln2 {
+namespace sln {
 
 namespace impl {
 
@@ -94,7 +94,7 @@ constexpr inline PixelLength operator"" _px(unsigned long long length)
 
 namespace impl {
 
-inline Stride compute_stride_bytes(std::size_t row_bytes, std::size_t alignment_bytes)
+inline Stride compute_stride_bytes(std::ptrdiff_t row_bytes, std::ptrdiff_t alignment_bytes)
 {
   if (alignment_bytes == 0)
   {
@@ -106,7 +106,7 @@ inline Stride compute_stride_bytes(std::size_t row_bytes, std::size_t alignment_
   return stride_bytes;
 }
 
-inline std::size_t guess_row_alignment(std::uintptr_t ptr, std::size_t stride_bytes, std::size_t start_alignment = 128)
+inline std::ptrdiff_t guess_row_alignment(std::uintptr_t ptr, std::ptrdiff_t stride_bytes, std::ptrdiff_t start_alignment = 128)
 {
   SELENE_ASSERT(start_alignment > 0 && sln::bit_count(start_alignment) == 1);  // should be power of 2
 

@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <type_traits>
 
-namespace sln2 {
+namespace sln {
 
 /** \brief Class representing traits of a pixel.
  *
@@ -26,7 +26,7 @@ template <typename Element_>
 struct PixelTraits
 {
   using Element = Element_;  ///< The pixel element type.
-  static constexpr std::size_t nr_channels = 1;  ///< The number of channels per pixel.
+  static constexpr std::ptrdiff_t nr_channels = 1;  ///< The number of channels per pixel.
   static constexpr std::int16_t nr_bytes = sizeof(Element);  ///< The number of bytes per pixel.
   static constexpr std::int16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
@@ -62,7 +62,7 @@ template <typename T, std::size_t N, PixelFormat pixel_format_>
 struct PixelTraits<Pixel<T, N, pixel_format_>>
 {
   using Element = T;  ///< The pixel element type.
-  static constexpr std::size_t nr_channels = N;  ///< The number of channels per pixel.
+  static constexpr std::ptrdiff_t nr_channels = N;  ///< The number of channels per pixel.
   static constexpr std::int16_t nr_bytes = sizeof(Pixel<T, N, pixel_format_>);  ///< The number of bytes per pixel.
   static constexpr std::int16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 

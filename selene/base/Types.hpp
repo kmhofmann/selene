@@ -31,7 +31,7 @@ class BytesTag;
 
 }  // namespace impl
 
-using Bytes = ExplicitType<std::size_t, impl::BytesTag>;  ///< Type representing a number of bytes.
+using Bytes = ExplicitType<std::ptrdiff_t, impl::BytesTag>;  ///< Type representing a number of bytes.
 
 inline namespace literals {
 

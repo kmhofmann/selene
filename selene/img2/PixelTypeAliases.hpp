@@ -9,7 +9,7 @@
 
 #include <selene/img2/Pixel.hpp>
 
-namespace sln2 {
+namespace sln {
 
 using Pixel_8u1 = Pixel<std::uint8_t, 1, PixelFormat::Unknown>;  ///< 8-bit unsigned 1-channel pixel.
 using Pixel_8u2 = Pixel<std::uint8_t, 2, PixelFormat::Unknown>;  ///< 8-bit unsigned 2-channel pixel.

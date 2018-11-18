@@ -13,14 +13,16 @@
 
 #include <selene/img2/DynImageView.hpp>
 
-namespace sln2 {
+namespace sln {
 
 class DynImage
 {
 public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
+  using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
   explicit DynImage(UntypedLayout layout);
+  DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes);
   ~DynImage();
 
   DynImage(const DynImage&);
@@ -40,8 +42,8 @@ public:
   std::int16_t nr_channels() const noexcept { return view_.nr_channels(); }
   std::int16_t nr_bytes_per_channel() const noexcept { return view_.nr_bytes_per_channel(); }
   Stride stride_bytes() const noexcept { return view_.stride_bytes(); }
-  std::size_t row_bytes() const noexcept { return view_.row_bytes(); }
-  std::size_t total_bytes() const noexcept { return view_.total_bytes(); }
+  std::ptrdiff_t row_bytes() const noexcept { return view_.row_bytes(); }
+  std::ptrdiff_t total_bytes() const noexcept { return view_.total_bytes(); }
   PixelFormat pixel_format() const noexcept { return view_.pixel_format(); }
   SampleFormat sample_format() const noexcept { return view_.sample_format(); }
   bool is_packed() const noexcept { return view_.is_packed(); }
@@ -58,13 +60,13 @@ public:
 //  const_iterator cend() const noexcept;
 
   DataPtrType byte_ptr() noexcept             { return view_.byte_ptr(); }
-  const DataPtrType byte_ptr() const noexcept { return view_.byte_ptr(); }
+  ConstDataPtrType byte_ptr() const noexcept { return view_.byte_ptr(); }
 
   DataPtrType byte_ptr(PixelIndex y) noexcept             { return view_.byte_ptr(y); }
-  const DataPtrType byte_ptr(PixelIndex y) const noexcept { return view_.byte_ptr(y); }
+  ConstDataPtrType byte_ptr(PixelIndex y) const noexcept { return view_.byte_ptr(y); }
 
   DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept             { return view_.byte_ptr(x, y); }
-  const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return view_.byte_ptr(x, y); }
+  ConstDataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return view_.byte_ptr(x, y); }
 
   template <typename PixelType>
   PixelType* data() noexcept             { return view_.data<PixelType>(); }
@@ -96,14 +98,17 @@ public:
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept { return view_.pixel<PixelType>(x, y); }
 
+  DynImageView<ImageModifiability::Mutable>& view() noexcept { return view_; }
+  const DynImageView<ImageModifiability::Mutable>& view() const noexcept { return view_; }
+
   // Implicit conversion to the underlying view
-  constexpr operator DynImageView<ImageModifiability::Mutable>&() noexcept
+  operator DynImageView<ImageModifiability::Mutable>&() noexcept
   {
     return view_;
   }
 
   // Implicit conversion to the underlying view
-  constexpr operator const DynImageView<ImageModifiability::Mutable>&() const noexcept
+  operator const DynImageView<ImageModifiability::Mutable>&() const noexcept
   {
     return view_;
   }
@@ -120,6 +125,11 @@ private:
 
 inline DynImage::DynImage(UntypedLayout layout)
     : view_(this->allocate_memory(layout, base_alignment_bytes))
+{
+}
+
+inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes)
+    : view_(this->allocate_memory(layout, row_alignment_bytes))
 {
 }
 
@@ -238,14 +248,15 @@ inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(Untyp
   const auto nr_bytes_to_allocate = stride_bytes * layout.height();
 
   auto memory = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, alignment_bytes);
-  SELENE_ASSERT(memory.size() == nr_bytes_to_allocate);
+  SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
   return DynImageView<ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width(), layout.height(), layout.nr_channels(), layout.nr_bytes_per_channel(), stride_bytes}};
 }
 
 inline void DynImage::deallocate_memory()
 {
-  delete view_.byte_ptr();
+  std::uint8_t* ptr = view_.byte_ptr();
+  sln::AlignedNewAllocator::deallocate(ptr);
 }
 
 }  // namespace sln

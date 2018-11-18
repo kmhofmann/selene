@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <ostream>
 
-namespace sln2 {
+namespace sln {
 
 /** \brief A pixel format enumeration.
  *
