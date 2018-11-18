@@ -10,6 +10,7 @@
 #include <selene/img_io/PNGWrite.hpp>
 #include <selene/img_io/impl/PNGDetail.hpp>
 
+#include <algorithm>
 #include <array>
 #include <cstdint>
 #include <cstdio>
@@ -145,7 +146,7 @@ bool PNGCompressionObject::set_compression_parameters(int compression_level, boo
 {
   auto png_ptr = impl_->png_ptr;
 
-  compression_level = clamp(compression_level, 0, 9);
+  compression_level = std::clamp(compression_level, 0, 9);
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {

@@ -17,10 +17,6 @@
 
 namespace sln {
 
-// The following function definitions employ some tricks to coerce Visual C++ into choosing the right overloads
-// (tested with Visual Studio v15.5.2). The std::integral_constant<> parameters should not be needed, and the
-// std::enable_if<> statements could all be part of the template parameters.
-
 /** \brief Returns the pixel value of the image at the specified (floating point) location, using the specified
  * interpolation method and border access mode.
  *
@@ -38,10 +34,7 @@ template <ImageInterpolationMode InterpolationMode = ImageInterpolationMode::Bil
           typename ImageType,
           typename Index,
           typename = std::enable_if_t<std::is_floating_point<Index>::value>>
-inline decltype(auto) get(const ImageType& img,
-                          Index x,
-                          Index y,
-                          std::integral_constant<ImageInterpolationMode, InterpolationMode> = {}) noexcept
+inline decltype(auto) get(const ImageType& img, Index x, Index y) noexcept
 {
   return ImageInterpolator<InterpolationMode, AccessMode>::interpolate(img, x, y);
 }
@@ -64,10 +57,7 @@ template <BorderAccessMode AccessMode,
           typename ImageType,
           typename Index,
           typename = std::enable_if_t<std::is_floating_point<Index>::value>>
-inline decltype(auto) get(const ImageType& img,
-                          Index x,
-                          Index y,
-                          std::integral_constant<BorderAccessMode, AccessMode> = {}) noexcept
+inline decltype(auto) get(const ImageType& img, Index x, Index y) noexcept
 {
   return get<ImageInterpolationMode::Bilinear, AccessMode>(img, x, y);
 }
@@ -84,9 +74,7 @@ inline decltype(auto) get(const ImageType& img,
  * @return Pixel value at the specified (x, y) location.
  */
 template <BorderAccessMode AccessMode = BorderAccessMode::Unchecked, typename ImageType>
-inline decltype(auto) get(const ImageType& img,
-                          PixelIndex x,
-                          PixelIndex y) noexcept
+inline decltype(auto) get(const ImageType& img, PixelIndex x, PixelIndex y) noexcept
 {
   return ImageBorderAccessor<AccessMode>::access(img, x, y);
 }

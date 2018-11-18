@@ -18,42 +18,6 @@
 
 namespace {
 
-template <typename T>
-void test_clamp(const T& value, const T& min, const T& max)
-{
-  const auto result = sln::clamp(value, min, max);
-
-  REQUIRE(!(result < min));
-  REQUIRE(!(result > max));
-
-  if (value > min && value < max)
-  {
-    REQUIRE(result == value);
-  }
-  else if (value <= min)
-  {
-    REQUIRE(result == min);
-  }
-  else if (value >= max)
-  {
-    REQUIRE(result == max);
-  }
-}
-
-template <typename T, typename RNG>
-void test_clamps(RNG& rng, int nr_trials)
-{
-  auto die = sln_test::uniform_distribution<T>(T{0}, std::numeric_limits<T>::max());
-
-  for (auto i = 0; i < nr_trials; ++i)
-  {
-    const auto value0 = die(rng);
-    const auto value1 = die(rng);
-    const auto value = (i % 5 == 0) ? value0 : die(rng);
-    test_clamp(value, std::min(value0, value1), std::max(value0, value1));
-  }
-}
-
 template <typename T, int N>
 void test_array_n_equal(const std::array<T, N>& arr, T value)
 {
@@ -93,23 +57,6 @@ void test_array_from_function(std::uint32_t seed)
 }
 
 }  // namespace
-
-TEST_CASE("Clamp", "[base]")
-{
-  std::mt19937 rng(42ul);
-
-  constexpr auto nr_trials = 1000;
-  test_clamps<std::uint8_t>(rng, nr_trials);
-  test_clamps<std::int8_t>(rng, nr_trials);
-  test_clamps<std::uint16_t>(rng, nr_trials);
-  test_clamps<std::int16_t>(rng, nr_trials);
-  test_clamps<std::uint32_t>(rng, nr_trials);
-  test_clamps<std::int32_t>(rng, nr_trials);
-  test_clamps<std::uint64_t>(rng, nr_trials);
-  test_clamps<std::int64_t>(rng, nr_trials);
-  test_clamps<sln::float32_t>(rng, nr_trials);
-  test_clamps<sln::float64_t>(rng, nr_trials);
-}
 
 TEST_CASE("Power", "[base]")
 {

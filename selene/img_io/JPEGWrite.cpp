@@ -9,6 +9,7 @@
 
 #include <jpeglib.h>
 
+#include <algorithm>
 #include <csetjmp>
 #include <cstdio>
 #include <stdexcept>
@@ -101,7 +102,7 @@ failure_state:
 bool JPEGCompressionObject::set_compression_parameters(int quality, JPEGColorSpace color_space, bool optimize_coding)
 {
   const auto force_baseline = TRUE;
-  quality = clamp(quality, 0, 100);
+  quality = std::clamp(quality, 0, 100);
 
   if (setjmp(impl_->error_manager.setjmp_buffer))
   {
