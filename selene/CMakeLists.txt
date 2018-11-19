@@ -53,10 +53,15 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.hpp
 
+        ${CMAKE_CURRENT_LIST_DIR}/img2/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/DynImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/DynImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/Image.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/ImageBase.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/ImageIterators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/ImageTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/ImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/ImageViewTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/Layout.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/Pixel.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/PixelFormat.cpp

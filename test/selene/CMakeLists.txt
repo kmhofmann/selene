@@ -37,6 +37,7 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img2/_TestImages.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/_TestImages.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/DynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/Layout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/Image.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/Pixel.cpp
         )

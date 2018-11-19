@@ -40,14 +40,13 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
     }
   }
 
-  //sln::Image<T> img2;
-  //clone(img, img2);
-  //REQUIRE(img2.width() == img.width());
-  //REQUIRE(img2.height() == img.height());
-  //REQUIRE(img2.stride_bytes() == img.stride_bytes());
-  //REQUIRE(img2.is_packed());
-  //REQUIRE(!img2.is_view());
-  //REQUIRE(!img2.is_empty());
+  sln::Image<T> img2;
+  clone(img, img2);
+  REQUIRE(img2.width() == img.width());
+  REQUIRE(img2.height() == img.height());
+  REQUIRE(img2.stride_bytes() == img.stride_bytes());
+  REQUIRE(img2.is_packed());
+  REQUIRE(!img2.is_empty());
 
   //sln::Image<T> img3;
   //img3.set_view(img.byte_ptr(), img.width(), img.height(), img.stride_bytes());

@@ -15,25 +15,25 @@ namespace sln {
 template <typename PixelType_, ImageModifiability modifiability>
 class ImageView;
 
-template <typename PixelType>
+template <typename PixelType, ImageModifiability modifiability>
 class ImageRowIterator;
 
-template <typename PixelType>
+template <typename PixelType, ImageModifiability modifiability>
 class ConstImageRowIterator;
 
 /** \brief Represents an image row (of a non-const image) whose elements can be iterated through.
  *
  * @tparam PixelType The pixel type.
  */
-template <typename PixelType>
+template <typename PixelType, ImageModifiability modifiability>
 class ImageRow
 {
 public:
   ~ImageRow() = default;  ///< Destructor.
-  ImageRow(const ImageRow&) = default;  ///< Copy constructor.
-  ImageRow& operator=(const ImageRow&) = default;  ///< Copy assigment operator.
-  ImageRow(ImageRow&&) noexcept = default;  ///< Copy constructor.
-  ImageRow& operator=(ImageRow&&) noexcept = default;  ///< Copy assigment operator.
+  ImageRow(const ImageRow<PixelType, modifiability>&) = default;  ///< Copy constructor.
+  ImageRow& operator=(const ImageRow<PixelType, modifiability>&) = default;  ///< Copy assigment operator.
+  ImageRow(ImageRow<PixelType, modifiability>&&) noexcept = default;  ///< Copy constructor.
+  ImageRow& operator=(ImageRow<PixelType, modifiability>&&) noexcept = default;  ///< Copy assigment operator.
 
   /** \brief Returns an iterator to the first element of the image row.
    *
@@ -119,14 +119,15 @@ public:
   }
 
 private:
-  Image<PixelType>* img_;
+  ImageView<PixelType, modifiability>* img_;
   PixelIndex row_index_;
 
-  ImageRow(Image<PixelType>* img, PixelIndex row_index) : img_(img), row_index_(row_index)
+  ImageRow(ImageView<PixelType, modifiability>* img, PixelIndex row_index) : img_(img), row_index_(row_index)
   {
   }
-  friend class Image<PixelType>;
-  friend class ImageRowIterator<PixelType>;
+
+  friend class ImageView<PixelType, modifiability>;
+  friend class ImageRowIterator<PixelType, modifiability>;
 };
 
 
@@ -134,21 +135,21 @@ private:
  *
  * @tparam PixelType The pixel type.
  */
-template <typename PixelType>
+template <typename PixelType, ImageModifiability modifiability>
 class ImageRowIterator
 {
 public:
   ~ImageRowIterator() = default;  ///< Destructor.
-  ImageRowIterator(const ImageRowIterator&) = default;  ///< Copy constructor.
-  ImageRowIterator& operator=(const ImageRowIterator&) = default;  ///< Copy assignment operator.
-  ImageRowIterator(ImageRowIterator&&) noexcept = default;  ///< Move constructor.
-  ImageRowIterator& operator=(ImageRowIterator&&) noexcept = default;  ///< Move assignment operator.
+  ImageRowIterator(const ImageRowIterator<PixelType, modifiability>&) = default;  ///< Copy constructor.
+  ImageRowIterator& operator=(const ImageRowIterator<PixelType, modifiability>&) = default;  ///< Copy assignment operator.
+  ImageRowIterator(ImageRowIterator<PixelType, modifiability>&&) noexcept = default;  ///< Move constructor.
+  ImageRowIterator& operator=(ImageRowIterator<PixelType, modifiability>&&) noexcept = default;  ///< Move assignment operator.
 
   /** \brief Iterator pre-decrement.
    *
    * @return Reference to *this.
    */
-  ImageRowIterator& operator--() noexcept
+  ImageRowIterator<PixelType, modifiability>& operator--() noexcept
   {
     --row_.row_index_;
     return *this;
@@ -159,7 +160,7 @@ public:
    * @return Reference to *this.
    */
 
-  ImageRowIterator& operator++() noexcept
+  ImageRowIterator<PixelType, modifiability>& operator++() noexcept
   {
     ++row_.row_index_;
     return *this;
@@ -169,7 +170,7 @@ public:
    *
    * @return Reference to *this.
    */
-  ImageRowIterator operator--(int) noexcept
+  ImageRowIterator<PixelType, modifiability> operator--(int) noexcept
   {
     ImageRowIterator it(*this);
     operator--();
@@ -180,7 +181,7 @@ public:
    *
    * @return Reference to *this.
    */
-  ImageRowIterator operator++(int) noexcept
+  ImageRowIterator<PixelType, modifiability> operator++(int) noexcept
   {
     ImageRowIterator it(*this);
     operator++();
@@ -192,7 +193,7 @@ public:
    * @param it Another ImageRowIterator instance.
    * @return True, if both iterators reference the same row; false otherwise.
    */
-  bool operator==(const ImageRowIterator& it) const noexcept
+  bool operator==(const ImageRowIterator<PixelType, modifiability>& it) const noexcept
   {
     return row_ == it.row_;
   }
@@ -202,7 +203,7 @@ public:
    * @param it Another ImageRowIterator instance.
    * @return True, if both iterators not reference the same row; false if they do.
    */
-  bool operator!=(const ImageRowIterator& it) const noexcept
+  bool operator!=(const ImageRowIterator<PixelType, modifiability>& it) const noexcept
   {
     return row_ != it.row_;
   }
@@ -211,18 +212,19 @@ public:
    *
    * @return An `ImageRow` instance representing the respective row.
    */
-  ImageRow<PixelType>& operator*() noexcept
+  ImageRow<PixelType, modifiability>& operator*() noexcept
   {
     return row_;
   }
 
 private:
-  ImageRow<PixelType> row_;
+  ImageRow<PixelType, modifiability> row_;
 
-  explicit ImageRowIterator(ImageRow<PixelType> row) : row_(row)
+  explicit ImageRowIterator(ImageRow<PixelType, modifiability> row) : row_(row)
   {
   }
-  friend class Image<PixelType>;
+
+  friend class ImageView<PixelType, modifiability>;
 };
 
 
@@ -230,15 +232,15 @@ private:
  *
  * @tparam PixelType The pixel type.
  */
-template <typename PixelType>
+template <typename PixelType, ImageModifiability modifiability>
 class ConstImageRow
 {
 public:
   ~ConstImageRow() = default;  ///< Destructor.
-  ConstImageRow(const ConstImageRow&) = default;  ///< Copy constructor.
-  ConstImageRow& operator=(const ConstImageRow&) = default;  ///< Copy assigment operator.
-  ConstImageRow(ConstImageRow&&) noexcept = default;  ///< Copy constructor.
-  ConstImageRow& operator=(ConstImageRow&&) noexcept = default;  ///< Copy assigment operator.
+  ConstImageRow(const ConstImageRow<PixelType, modifiability>&) = default;  ///< Copy constructor.
+  ConstImageRow& operator=(const ConstImageRow<PixelType, modifiability>&) = default;  ///< Copy assigment operator.
+  ConstImageRow(ConstImageRow<PixelType, modifiability>&&) noexcept = default;  ///< Copy constructor.
+  ConstImageRow& operator=(ConstImageRow<PixelType, modifiability>&&) noexcept = default;  ///< Copy assigment operator.
 
   /** \brief Returns a const iterator to the first element of the image row.
    *
@@ -306,14 +308,14 @@ public:
   }
 
 private:
-  const Image<PixelType>* img_;
+  const ImageView<PixelType, modifiability>* img_;
   PixelIndex row_index_;
 
-  ConstImageRow(const Image<PixelType>* img, PixelIndex row_index) : img_(img), row_index_(row_index)
+  ConstImageRow(const ImageView<PixelType, modifiability>* img, PixelIndex row_index) : img_(img), row_index_(row_index)
   {
   }
-  friend class Image<PixelType>;
-  friend class ConstImageRowIterator<PixelType>;
+  friend class ImageView<PixelType, modifiability>;
+  friend class ConstImageRowIterator<PixelType, modifiability>;
 };
 
 
@@ -321,21 +323,21 @@ private:
  *
  * @tparam PixelType The pixel type.
  */
-template <typename PixelType>
+template <typename PixelType, ImageModifiability modifiability>
 class ConstImageRowIterator
 {
 public:
   ~ConstImageRowIterator() = default;  ///< Destructor.
-  ConstImageRowIterator(const ConstImageRowIterator&) = default;  ///< Copy constructor.
-  ConstImageRowIterator& operator=(const ConstImageRowIterator&) = default;  ///< Copy assignment operator.
-  ConstImageRowIterator(ConstImageRowIterator&&) noexcept = default;  ///< Copy constructor.
-  ConstImageRowIterator& operator=(ConstImageRowIterator&&) noexcept = default;  ///< Copy assignment operator.
+  ConstImageRowIterator(const ConstImageRowIterator<PixelType, modifiability>&) = default;  ///< Copy constructor.
+  ConstImageRowIterator& operator=(const ConstImageRowIterator<PixelType, modifiability>&) = default;  ///< Copy assignment operator.
+  ConstImageRowIterator(ConstImageRowIterator<PixelType, modifiability>&&) noexcept = default;  ///< Copy constructor.
+  ConstImageRowIterator& operator=(ConstImageRowIterator<PixelType, modifiability>&&) noexcept = default;  ///< Copy assignment operator.
 
   /** \brief Iterator pre-decrement.
    *
    * @return Reference to *this.
    */
-  ConstImageRowIterator& operator--() noexcept
+  ConstImageRowIterator<PixelType, modifiability>& operator--() noexcept
   {
     --row_.row_index_;
     return *this;
@@ -345,7 +347,7 @@ public:
    *
    * @return Reference to *this.
    */
-  ConstImageRowIterator& operator++() noexcept
+  ConstImageRowIterator<PixelType, modifiability>& operator++() noexcept
   {
     ++row_.row_index_;
     return *this;
@@ -355,7 +357,7 @@ public:
    *
    * @return Reference to *this.
    */
-  ConstImageRowIterator operator--(int) noexcept
+  ConstImageRowIterator<PixelType, modifiability> operator--(int) noexcept
   {
     ConstImageRowIterator it(*this);
     operator--();
@@ -366,7 +368,7 @@ public:
    *
    * @return Reference to *this.
    */
-  ConstImageRowIterator operator++(int) noexcept
+  ConstImageRowIterator<PixelType, modifiability> operator++(int) noexcept
   {
     ConstImageRowIterator it(*this);
     operator++();
@@ -378,7 +380,7 @@ public:
    * @param it Another ConstImageRowIterator instance.
    * @return True, if both iterators reference the same row; false otherwise.
    */
-  bool operator==(const ConstImageRowIterator& it) const noexcept
+  bool operator==(const ConstImageRowIterator<PixelType, modifiability>& it) const noexcept
   {
     return row_ == it.row_;
   }
@@ -388,7 +390,7 @@ public:
    * @param it Another ConstImageRowIterator instance.
    * @return True, if both iterators not reference the same row; false if they do.
    */
-  bool operator!=(const ConstImageRowIterator& it) const noexcept
+  bool operator!=(const ConstImageRowIterator<PixelType, modifiability>& it) const noexcept
   {
     return row_ != it.row_;
   }
@@ -397,18 +399,19 @@ public:
    *
    * @return A `ConstImageRow` instance representing the respective row.
    */
-  const ConstImageRow<PixelType>& operator*() const noexcept
+  const ConstImageRow<PixelType, modifiability>& operator*() const noexcept
   {
     return row_;
   }
 
 private:
-  ConstImageRow<PixelType> row_;
+  ConstImageRow<PixelType, modifiability> row_;
 
-  explicit ConstImageRowIterator(ConstImageRow<PixelType> row) : row_(row)
+  explicit ConstImageRowIterator(ConstImageRow<PixelType, modifiability> row) : row_(row)
   {
   }
-  friend class Image<PixelType>;
+
+  friend class ImageView<PixelType, modifiability>;
 };
 
 }  // namespace sln

@@ -23,6 +23,14 @@ public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
+  using iterator = ImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
+  using const_iterator = ConstImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
+
+  constexpr static bool is_view = false;
+  constexpr static bool is_modifiable = true;
+  constexpr static ImageModifiability modifiability() { return ImageModifiability::Mutable; }
+
+  Image();
   explicit Image(TypedLayout layout);
   Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
   ~Image();
@@ -36,7 +44,6 @@ public:
   template <ImageModifiability modifiability> explicit Image(const ImageView<PixelType, modifiability>&);
   template <ImageModifiability modifiability> Image<PixelType>& operator=(const ImageView<PixelType, modifiability>&);
 
-  TypedLayout& layout() noexcept { return view_.layout(); }
   const TypedLayout& layout() const noexcept { return view_.layout(); }
 
   PixelLength width() const noexcept { return view_.width(); }
@@ -49,13 +56,13 @@ public:
   bool is_empty() const noexcept { return view_.is_empty(); }
   bool is_valid() const noexcept { return view_.is_valid(); };
 
-//  iterator begin() noexcept;
-//  const_iterator begin() const noexcept;
-//  const_iterator cbegin() const noexcept;
-//
-//  iterator end() noexcept;
-//  const_iterator end() const noexcept;
-//  const_iterator cend() const noexcept;
+  iterator begin() noexcept { return view_.begin(); }
+  const_iterator begin() const noexcept { return view_.begin(); }
+  const_iterator cbegin() const noexcept { return view_.cbegin(); }
+
+  iterator end() noexcept { return view_.end(); }
+  const_iterator end() const noexcept { return view_.end(); }
+  const_iterator cend() const noexcept { return view_.cend(); }
 
   DataPtrType byte_ptr() noexcept             { return view_.byte_ptr(); }
   ConstDataPtrType byte_ptr() const noexcept { return view_.byte_ptr(); }
@@ -82,29 +89,43 @@ public:
   const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept { return view_.operator()(x, y); }
 
   ImageView<PixelType, ImageModifiability::Mutable>& view() noexcept { return view_; }
-  const ImageView<PixelType, ImageModifiability::Mutable>& view() const noexcept { return view_; }
+  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>(this->byte_ptr(), this->layout()); }
 
-  // Implicit conversion to the underlying view
-  operator ImageView<PixelType, ImageModifiability::Mutable>&() noexcept
-  {
-    return view_;
-  }
+//  //// Implicit conversion to the underlying view
+//  //operator ImageView<PixelType, ImageModifiability::Mutable>&() noexcept
+//  //{
+//  //  return view_;
+//  //}
+//
+//  //// Implicit conversion to the underlying view
+//  //operator const ImageView<PixelType, ImageModifiability::Mutable>&() const noexcept
+//  //{
+//  //  return view_;
+//  //}
 
-  // Implicit conversion to the underlying view
-  operator const ImageView<PixelType, ImageModifiability::Mutable>&() const noexcept
-  {
-    return view_;
-  }
+  bool reallocate(TypedLayout layout);
+  bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
 
 private:
-  constexpr static auto base_alignment_bytes = 16ul;
+  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   ImageView<PixelType, ImageModifiability::Mutable> view_;
 
-  template <typename PixelTypeSrc> void copy_rows_from(const Image<PixelTypeSrc>& src);
+  template <typename Derived> void copy_rows_from(const ImageBase<Derived>& src);
 
-  ImageView<PixelType, ImageModifiability::Mutable> allocate_memory(TypedLayout layout, std::size_t alignment_bytes);
+  ImageView<PixelType, ImageModifiability::Mutable> allocate_memory(TypedLayout layout, std::ptrdiff_t alignment_bytes);
   void deallocate_memory();
 };
+
+template <typename PixelType_>
+struct ImageBaseTraits<Image<PixelType_>>
+{
+  using PixelType = PixelType_;
+};
+
+template <typename PixelType_>
+Image<PixelType_>::Image()
+{
+}
 
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
@@ -186,8 +207,8 @@ Image<PixelType_>& Image<PixelType_>::operator=(Image<PixelType>&& other) noexce
 }
 
 template <typename PixelType_>
-template <ImageModifiability modifiability>
-Image<PixelType_>::Image(const ImageView<PixelType, modifiability>& other)
+template <ImageModifiability modifiability_>
+Image<PixelType_>::Image(const ImageView<PixelType, modifiability_>& other)
     : view_(allocate_memory(other.layout(),
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                       other.stride_bytes())))
@@ -196,8 +217,8 @@ Image<PixelType_>::Image(const ImageView<PixelType, modifiability>& other)
 }
 
 template <typename PixelType_>
-template <ImageModifiability modifiability>
-Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modifiability>& other)
+template <ImageModifiability modifiability_>
+Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modifiability_>& other)
 {
   // Check for self-assignment
   if (&this->view_ == &other)
@@ -224,8 +245,27 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
 }
 
 template <typename PixelType_>
-template <typename PixelTypeSrc>
-void Image<PixelType_>::copy_rows_from(const Image<PixelTypeSrc>& src)
+bool Image<PixelType_>::reallocate(TypedLayout layout)
+{
+  return this->reallocate(layout, Image<PixelType_>::base_alignment_bytes);
+}
+
+template <typename PixelType_>
+bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
+{
+  if (layout == this->view_.layout())
+  {
+    return false;
+  }
+
+  this->deallocate_memory();
+  view_ = this->allocate_memory(layout, row_alignment_bytes);
+  return true;
+}
+
+template <typename PixelType_>
+template <typename Derived>
+void Image<PixelType_>::copy_rows_from(const ImageBase<Derived>& src)
 {
   SELENE_ASSERT(data() && src.data());
   SELENE_ASSERT(width() == src.width() && height() == src.height());
@@ -237,15 +277,15 @@ void Image<PixelType_>::copy_rows_from(const Image<PixelTypeSrc>& src)
 }
 
 template <typename PixelType_>
-ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_memory(TypedLayout layout, std::size_t alignment_bytes)
+ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_memory(TypedLayout layout, std::ptrdiff_t alignment_bytes)
 {
-  const auto stride_bytes = std::max(layout.stride_bytes(), Stride(PixelTraits<PixelType>::nr_bytes * layout.width()));
-  const auto nr_bytes_to_allocate = stride_bytes * layout.height();
+  const auto stride_bytes = std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width));
+  const auto nr_bytes_to_allocate = stride_bytes * layout.height;
 
-  auto memory = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, alignment_bytes);
+  auto memory = sln::AlignedNewAllocator::allocate(static_cast<std::size_t>(nr_bytes_to_allocate), static_cast<std::size_t>(alignment_bytes));
   SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
-  return ImageView<PixelType, ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width(), layout.height(), stride_bytes}};
+  return ImageView<PixelType, ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width, layout.height, stride_bytes}};
 }
 
 template <typename PixelType_>

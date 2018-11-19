@@ -106,21 +106,44 @@ inline Stride compute_stride_bytes(std::ptrdiff_t row_bytes, std::ptrdiff_t alig
   return stride_bytes;
 }
 
-inline std::ptrdiff_t guess_row_alignment(std::uintptr_t ptr, std::ptrdiff_t stride_bytes, std::ptrdiff_t start_alignment = 128)
+inline ImageRowAlignment guess_row_alignment(std::uintptr_t ptr, std::ptrdiff_t stride_bytes)
 {
-  SELENE_ASSERT(start_alignment > 0 && sln::bit_count(start_alignment) == 1);  // should be power of 2
-
-  while (start_alignment > 0)
+  if (ptr % 128 == 0 && stride_bytes % 128 == 0)
   {
-    if (ptr % start_alignment == 0 && stride_bytes % start_alignment == 0)
-    {
-      return start_alignment;
-    }
-
-    start_alignment >>= 1;
+    return ImageRowAlignment{128};
   }
 
-  return start_alignment;
+  if (ptr % 64 == 0 && stride_bytes % 64 == 0)
+  {
+    return ImageRowAlignment{64};
+  }
+
+  if (ptr % 32 == 0 && stride_bytes % 32 == 0)
+  {
+    return ImageRowAlignment{32};
+  }
+
+  if (ptr % 16 == 0 && stride_bytes % 16 == 0)
+  {
+    return ImageRowAlignment{16};
+  }
+
+  if (ptr % 8 == 0 && stride_bytes % 8 == 0)
+  {
+    return ImageRowAlignment{8};
+  }
+
+  if (ptr % 4 == 0 && stride_bytes % 4 == 0)
+  {
+    return ImageRowAlignment{4};
+  }
+
+  if (ptr % 2 == 0 && stride_bytes % 2 == 0)
+  {
+    return ImageRowAlignment{2};
+  }
+
+  return ImageRowAlignment{1};
 }
 
 }  // namespace impl

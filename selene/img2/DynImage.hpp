@@ -21,6 +21,10 @@ public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
+  constexpr static bool is_view = false;
+  constexpr static bool is_owning = true;
+  constexpr static bool is_modifiable = true;
+
   explicit DynImage(UntypedLayout layout);
   DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes);
   ~DynImage();
@@ -34,7 +38,6 @@ public:
   template <ImageModifiability modifiability> explicit DynImage(const DynImageView<modifiability>&);
   template <ImageModifiability modifiability> DynImage& operator=(const DynImageView<modifiability>&);
 
-  UntypedLayout& layout() noexcept { return view_.layout(); }
   const UntypedLayout& layout() const noexcept { return view_.layout(); }
 
   PixelLength width() const noexcept { return view_.width(); }
@@ -98,23 +101,26 @@ public:
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept { return view_.pixel<PixelType>(x, y); }
 
-  DynImageView<ImageModifiability::Mutable>& view() noexcept { return view_; }
-  const DynImageView<ImageModifiability::Mutable>& view() const noexcept { return view_; }
+//  DynImageView<ImageModifiability::Mutable>& view() noexcept { return view_; }
+//  const DynImageView<ImageModifiability::Mutable>& view() const noexcept { return view_; }
+//
+//  //// Implicit conversion to the underlying view
+//  //operator DynImageView<ImageModifiability::Mutable>&() noexcept
+//  //{
+//  //  return view_;
+//  //}
+//
+//  //// Implicit conversion to the underlying view
+//  //operator const DynImageView<ImageModifiability::Mutable>&() const noexcept
+//  //{
+//  //  return view_;
+//  //}
 
-  // Implicit conversion to the underlying view
-  operator DynImageView<ImageModifiability::Mutable>&() noexcept
-  {
-    return view_;
-  }
-
-  // Implicit conversion to the underlying view
-  operator const DynImageView<ImageModifiability::Mutable>&() const noexcept
-  {
-    return view_;
-  }
+  bool reallocate(UntypedLayout layout);
+  bool reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes);
 
 private:
-  constexpr static auto base_alignment_bytes = 16ul;
+  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   DynImageView<ImageModifiability::Mutable> view_;
 
   void copy_rows_from(const DynImage& src);
@@ -231,6 +237,23 @@ DynImage& DynImage::operator=(const DynImageView<modifiability>& other)
   return *this;
 }
 
+inline bool DynImage::reallocate(UntypedLayout layout)
+{
+  return this->reallocate(layout, DynImage::base_alignment_bytes);
+}
+
+inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes)
+{
+  if (layout == this->view_.layout())
+  {
+    return false;
+  }
+
+  this->deallocate_memory();
+  view_ = this->allocate_memory(layout, row_alignment_bytes);
+  return true;
+}
+
 inline void DynImage::copy_rows_from(const DynImage& src)
 {
   SELENE_ASSERT(byte_ptr() && src.byte_ptr());
@@ -244,13 +267,13 @@ inline void DynImage::copy_rows_from(const DynImage& src)
 
 inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(UntypedLayout layout, std::size_t alignment_bytes)
 {
-  const auto stride_bytes = std::max(layout.stride_bytes(), Stride(layout.nr_bytes_per_channel() * layout.nr_channels() * layout.width()));
-  const auto nr_bytes_to_allocate = stride_bytes * layout.height();
+  const auto stride_bytes = std::max(layout.stride_bytes, Stride(layout.nr_bytes_per_channel * layout.nr_channels * layout.width));
+  const auto nr_bytes_to_allocate = stride_bytes * layout.height;
 
   auto memory = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, alignment_bytes);
   SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
-  return DynImageView<ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width(), layout.height(), layout.nr_channels(), layout.nr_bytes_per_channel(), stride_bytes}};
+  return DynImageView<ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width, layout.height, layout.nr_channels, layout.nr_bytes_per_channel, stride_bytes}};
 }
 
 inline void DynImage::deallocate_memory()

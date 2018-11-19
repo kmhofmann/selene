@@ -7,6 +7,7 @@
 
 /// @file
 
+#include <type_traits>
 #include <utility>
 
 namespace sln {
@@ -26,6 +27,8 @@ class ExplicitType
   /// \cond INTERNAL
 public:
   using value_type = ValueType_;
+  using tag_type = TagType_;
+
   constexpr ExplicitType() : value_()
   {
   }
@@ -48,19 +51,21 @@ public:
   {
     return value_;
   }
-
-  constexpr ExplicitType<ValueType_, TagType_> operator-()
+  
+  constexpr ExplicitType<ValueType_, TagType_> operator-() noexcept
   {
     return ExplicitType<ValueType_, TagType_>(-value_);
   }
 
-  friend void swap(ExplicitType& a, ExplicitType& b) noexcept
+  friend constexpr void swap(ExplicitType& a, ExplicitType& b) noexcept
   {
     using std::swap;
     swap(static_cast<value_type&>(a), static_cast<value_type&>(b));
   }
 
 private:
+  static_assert(std::is_arithmetic_v<value_type>);
+
   value_type value_;
   /// \endcond
 };

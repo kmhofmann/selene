@@ -19,25 +19,28 @@ class DynImageView
 public:
   using DataPtrType = typename DataPtr<modifiability>::Type;
 
+  constexpr static bool is_view = true;
+  constexpr static bool is_owning = false;
+  constexpr static bool is_modifiable = (modifiability == ImageModifiability::Mutable);
+
   DynImageView(DataPtr<modifiability> ptr, UntypedLayout layout)
       : ptr_(ptr), layout_(layout)
   { }
 
-  UntypedLayout& layout() noexcept { return layout_; }
   const UntypedLayout& layout() const noexcept { return layout_; }
 
-  PixelLength width() const noexcept { return layout_.width(); }
-  PixelLength height() const noexcept { return layout_.height(); }
-  std::int16_t nr_channels() const noexcept { return layout_.nr_channels(); }
-  std::int16_t nr_bytes_per_channel() const noexcept { return layout_.nr_bytes_per_channel(); }
-  Stride stride_bytes() const noexcept { return layout_.stride_bytes(); }
-  std::ptrdiff_t row_bytes() const noexcept { return layout_.width() * nr_pixel_bytes(); }
-  std::ptrdiff_t total_bytes() const noexcept { return layout_.stride_bytes() * layout_.height(); }
-  PixelFormat pixel_format() const noexcept { return semantics_.pixel_format(); }
-  SampleFormat sample_format() const noexcept { return semantics_.sample_format(); }
-  bool is_packed() const noexcept { return layout_.stride_bytes() == static_cast<Stride::value_type>(nr_pixel_bytes() * layout_.width()); }
+  PixelLength width() const noexcept { return layout_.width; }
+  PixelLength height() const noexcept { return layout_.height; }
+  std::int16_t nr_channels() const noexcept { return layout_.nr_channels; }
+  std::int16_t nr_bytes_per_channel() const noexcept { return layout_.nr_bytes_per_channel; }
+  Stride stride_bytes() const noexcept { return layout_.stride_bytes; }
+  std::ptrdiff_t row_bytes() const noexcept { return layout_.row_bytes(); }
+  std::ptrdiff_t total_bytes() const noexcept { return layout_.total_bytes(); }
+  PixelFormat pixel_format() const noexcept { return semantics_.pixel_format; }
+  SampleFormat sample_format() const noexcept { return semantics_.sample_format; }
+  bool is_packed() const noexcept { return layout_.is_packed(); }
 
-  bool is_empty() const noexcept { return ptr_.data() == nullptr || layout_.width() == 0 || layout_.height() == 0; }
+  bool is_empty() const noexcept { return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0; }
   bool is_valid() const noexcept { return !is_empty(); };
 
 //  iterator begin() noexcept;
@@ -70,10 +73,10 @@ public:
   const PixelType* data(PixelIndex y) const noexcept { return reinterpret_cast<const PixelType*>(this->byte_ptr(y)); }
 
   template <typename PixelType, typename T = void, typename = std::enable_if_t<modifiability == ImageModifiability::Mutable, T>>
-  PixelType* data_row_end(PixelIndex y) noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr(y) + nr_pixel_bytes() * layout_.width()); }
+  PixelType* data_row_end(PixelIndex y) noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width); }
 
   template <typename PixelType>
-  const PixelType* data_row_end(PixelIndex y) const noexcept { return reinterpret_cast<const PixelType*>(this->byte_ptr(y) + nr_pixel_bytes() * layout_.width()); }
+  const PixelType* data_row_end(PixelIndex y) const noexcept { return reinterpret_cast<const PixelType*>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width); }
 
   template <typename PixelType, typename T = void, typename = std::enable_if_t<modifiability == ImageModifiability::Mutable, T>>
   PixelType* data(PixelIndex x, PixelIndex y) noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr(x, y)); }
@@ -92,19 +95,14 @@ private:
   UntypedLayout layout_;
   UntypedImageSemantics semantics_;
 
-  std::int16_t nr_pixel_bytes() const noexcept
-  {
-    return layout_.nr_bytes_per_channel() * layout_.nr_channels();
-  }
-
   sln::Bytes compute_data_offset(PixelIndex y) const noexcept
   {
-    return sln::Bytes{layout_.stride_bytes() * y};
+    return sln::Bytes{layout_.stride_bytes * y};
   }
 
   sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
   {
-    return sln::Bytes{layout_.stride_bytes() * y + nr_pixel_bytes() * x};
+    return sln::Bytes{layout_.stride_bytes * y + layout_.nr_bytes_per_pixel() * x};
   }
 };
 
