@@ -7,6 +7,11 @@
 
 /// @file
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4996)
+#endif
+
 #include <selene/base/Assert.hpp>
 #include <selene/io/WriterMode.hpp>
 
@@ -352,5 +357,9 @@ inline std::size_t write(FileWriter& sink, const T* values, std::size_t nr_value
 }
 
 }  // namespace sln
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 #endif  // SELENE_IO_FILE_WRITER_HPP

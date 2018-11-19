@@ -7,6 +7,11 @@
 
 /// @file
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4996)
+#endif
+
 #include <selene/base/Assert.hpp>
 
 #include <cerrno>
@@ -341,5 +346,9 @@ inline std::size_t read(FileReader& source, T* values, std::size_t nr_values) no
 }
 
 }  // namespace sln
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 #endif  // SELENE_IO_FILE_READER_HPP
