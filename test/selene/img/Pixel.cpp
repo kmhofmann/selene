@@ -6,12 +6,12 @@
 
 #include <selene/base/Types.hpp>
 
-#include <selene/img/Pixel.hpp>
-#include <selene/img/PixelTraits.hpp>
+#include <selene/img/pixel/Pixel.hpp>
+#include <selene/img/pixel/PixelTraits.hpp>
 
 using namespace sln::literals;
 
-TEST_CASE("Pixel operations", "[img]")
+TEST_CASE("Pixel operations", "[DEPRECATED_img]")
 {
   sln::Pixel<std::uint8_t, 3> px0(42, 13, 8);
   REQUIRE(px0[0] == 42);

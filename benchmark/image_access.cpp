@@ -2,10 +2,10 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <selene/img/Image.hpp>
-#include <selene/img/ImageAccess.hpp>
-#include <selene/img/ImageTypeAliases.hpp>
-#include <selene/img/RelativeAccessor.hpp>
+#include <selene/DEPRECATED_img/Image.hpp>
+#include <selene/DEPRECATED_img/ImageAccess.hpp>
+#include <selene/DEPRECATED_img/ImageTypeAliases.hpp>
+#include <selene/DEPRECATED_img/RelativeAccessor.hpp>
 
 #include <benchmark/benchmark.h>
 

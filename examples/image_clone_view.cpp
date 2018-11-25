@@ -4,10 +4,10 @@
 
 #include <selene/base/io/FileWriter.hpp>
 
-#include <selene/img/ImageTypeAliases.hpp>
-#include <selene/img/ImageToImageData.hpp>
-#include <selene/img_io/IO.hpp>
-#include <selene/img_ops/ImageConversions.hpp>
+#include <selene/DEPRECATED_img/ImageTypeAliases.hpp>
+#include <selene/DEPRECATED_img/ImageToImageData.hpp>
+#include <selene/DEPRECATED_img_io/IO.hpp>
+#include <selene/DEPRECATED_img_ops/ImageConversions.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   auto img_clone = clone(img);
   assert(img_clone == img);
 
-  // ...or we can create a view onto the data of `img`.
+  // ...or we can create a view onto the data of `DEPRECATED_img`.
 
   auto img_view = view(img);
   assert(img_view == img);

@@ -7,8 +7,8 @@
 
 #include <selene/base/io/FileReader.hpp>
 
-#include <selene/img/ImageDataToImage.hpp>
-#include <selene/img_io/IO.hpp>
+#include <selene/DEPRECATED_img/ImageDataToImage.hpp>
+#include <selene/DEPRECATED_img_io/IO.hpp>
 
 #include <cassert>
 #include <filesystem>
