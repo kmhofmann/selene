@@ -74,10 +74,14 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/pixel/Pixel.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/Utils.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageIterators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utils.hpp
         )
 
 target_compile_options(selene_tests PRIVATE

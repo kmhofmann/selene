@@ -52,9 +52,9 @@ public:
   const_iterator begin() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
   const_iterator cbegin() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
 
-  iterator end() noexcept              { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
-  const_iterator end() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
-  const_iterator cend() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
+  iterator end() noexcept              { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
+  const_iterator end() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
+  const_iterator cend() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
 
   DataPtrType byte_ptr() noexcept             { return ptr_.data(); }
   const DataPtrType byte_ptr() const noexcept { return ptr_.data(); }

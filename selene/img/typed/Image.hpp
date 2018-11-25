@@ -26,7 +26,6 @@ public:
   using iterator = ImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
 
-  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   constexpr static bool is_view = false;
   constexpr static bool is_modifiable = true;
   constexpr static ImageModifiability modifiability() { return ImageModifiability::Mutable; }
@@ -101,11 +100,13 @@ public:
   bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
 
 private:
+  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
+
   ImageView<PixelType, ImageModifiability::Mutable> view_;
 
   template <typename Derived> void copy_rows_from(const ImageBase<Derived>& src);
 
-  ImageView<PixelType, ImageModifiability::Mutable> allocate_memory(TypedLayout layout, std::ptrdiff_t alignment_bytes);
+  ImageView<PixelType, ImageModifiability::Mutable> allocate_memory(TypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes);
   void deallocate_memory();
 };
 
@@ -122,13 +123,13 @@ Image<PixelType_>::Image()
 
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
-    : view_(this->allocate_memory(layout, base_alignment_bytes))
+    : view_(this->allocate_memory(layout, base_alignment_bytes, 0))
 {
 }
 
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
-    : view_(this->allocate_memory(layout, row_alignment_bytes))
+    : view_(this->allocate_memory(layout, base_alignment_bytes, row_alignment_bytes))
 {
 }
 
@@ -141,6 +142,7 @@ Image<PixelType_>::~Image()
 template <typename PixelType_>
 Image<PixelType_>::Image(const Image<PixelType>& other)
     : view_(allocate_memory(other.layout(),
+                            base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                       other.stride_bytes())))
 {
@@ -165,8 +167,9 @@ Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
 
     // Allocate new memory
     view_ = allocate_memory(other.layout(),
-                           impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                     other.stride_bytes()));
+                            base_alignment_bytes,
+                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+                                                      other.stride_bytes()));
   }
 
   copy_rows_from(other);
@@ -203,6 +206,7 @@ template <typename PixelType_>
 template <ImageModifiability modifiability_>
 Image<PixelType_>::Image(const ImageView<PixelType, modifiability_>& other)
     : view_(allocate_memory(other.layout(),
+                            base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                       other.stride_bytes())))
 {
@@ -228,6 +232,7 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
 
     // Allocate new memory
     view_ = allocate_memory(other.layout(),
+                            base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes()));
   }
@@ -245,7 +250,7 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
     return false;
   }
 
-  layout.stride_bytes = std::max(layout.stride_bytes, Stride{PixelTraits<PixelType>::nr_bytes * layout.width});
+  layout.stride_bytes = impl::compute_stride_bytes(std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)), row_alignment_bytes);
   const auto nr_bytes_to_allocate = layout.stride_bytes * layout.height;
   const auto nr_currently_allocated_bytes = this->stride_bytes() * this->height();
 
@@ -259,7 +264,7 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
   }
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, row_alignment_bytes);
+  view_ = this->allocate_memory(layout, base_alignment_bytes, row_alignment_bytes);
   return true;
 }
 
@@ -277,12 +282,13 @@ void Image<PixelType_>::copy_rows_from(const ImageBase<Derived>& src)
 }
 
 template <typename PixelType_>
-ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_memory(TypedLayout layout, std::ptrdiff_t alignment_bytes)
+ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_memory(TypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes)
 {
-  const auto stride_bytes = std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width));
+  const auto stride_bytes = impl::compute_stride_bytes(std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)), row_alignment_bytes);
   const auto nr_bytes_to_allocate = stride_bytes * layout.height;
 
-  auto memory = sln::AlignedNewAllocator::allocate(static_cast<std::size_t>(nr_bytes_to_allocate), static_cast<std::size_t>(alignment_bytes));
+  base_alignment_bytes = std::max(row_alignment_bytes, base_alignment_bytes);
+  auto memory = sln::AlignedNewAllocator::allocate(static_cast<std::size_t>(nr_bytes_to_allocate), static_cast<std::size_t>(base_alignment_bytes));
   SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
   return ImageView<PixelType, ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width, layout.height, stride_bytes}};

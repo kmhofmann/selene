@@ -52,9 +52,9 @@ public:
   template <typename PixelType> const_iterator<PixelType> begin() const noexcept  { return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, 0_idx)); }
   template <typename PixelType> const_iterator<PixelType> cbegin() const noexcept { return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, 0_idx)); }
 
-  template <typename PixelType> iterator<PixelType>       end() noexcept        { return DynImageRowIterator<PixelType, modifiability_>(DynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
-  template <typename PixelType> const_iterator<PixelType> end() const noexcept  { return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
-  template <typename PixelType> const_iterator<PixelType> cend() const noexcept { return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
+  template <typename PixelType> iterator<PixelType>       end() noexcept        { return DynImageRowIterator<PixelType, modifiability_>(DynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
+  template <typename PixelType> const_iterator<PixelType> end() const noexcept  { return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
+  template <typename PixelType> const_iterator<PixelType> cend() const noexcept { return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
 
   DataPtrType byte_ptr() noexcept             { return ptr_.data(); }
   const DataPtrType byte_ptr() const noexcept { return ptr_.data(); }
