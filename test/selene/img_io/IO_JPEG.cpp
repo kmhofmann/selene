@@ -10,11 +10,11 @@
 
 #include <boost/filesystem.hpp>
 
-#include <selene/io/FileReader.hpp>
-#include <selene/io/FileUtils.hpp>
-#include <selene/io/FileWriter.hpp>
-#include <selene/io/MemoryReader.hpp>
-#include <selene/io/VectorWriter.hpp>
+#include <selene/base/io/FileReader.hpp>
+#include <selene/base/io/FileUtils.hpp>
+#include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/MemoryReader.hpp>
+#include <selene/base/io/VectorWriter.hpp>
 
 #include <selene/img/Image.hpp>
 #include <selene/img/ImageData.hpp>
