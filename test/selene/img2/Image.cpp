@@ -22,6 +22,10 @@ namespace {
 template <typename T>
 void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_value)
 {
+  {
+    sln::Image<T> img;
+  }
+
   sln::Image<T> img({width, height});
   REQUIRE(img.width() == width);
   REQUIRE(img.height() == height);

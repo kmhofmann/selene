@@ -71,8 +71,10 @@ public:
   auto operator()(PixelIndex x, PixelIndex y) noexcept       { return derived().operator()(x, y); }
   auto operator()(PixelIndex x, PixelIndex y) const noexcept { return derived().operator()(x, y); }
 
-//  auto view() noexcept       { return derived().view(); }
-//  auto view() const noexcept { return derived().view(); }
+  auto view() noexcept       { return derived().view(); }
+  auto view() const noexcept { return derived().view(); }
+
+  auto clear() { return derived().clear(); }
 };
 
 }  // namespace sln

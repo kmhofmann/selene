@@ -55,6 +55,7 @@ add_library(selene_img
 
         ${CMAKE_CURRENT_LIST_DIR}/img2/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/DynImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img2/DynImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/DynImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img2/ImageBase.hpp

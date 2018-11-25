@@ -91,20 +91,14 @@ public:
   ImageView<PixelType, ImageModifiability::Mutable>& view() noexcept { return view_; }
   ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>(this->byte_ptr(), this->layout()); }
 
-//  //// Implicit conversion to the underlying view
-//  //operator ImageView<PixelType, ImageModifiability::Mutable>&() noexcept
-//  //{
-//  //  return view_;
-//  //}
-//
-//  //// Implicit conversion to the underlying view
-//  //operator const ImageView<PixelType, ImageModifiability::Mutable>&() const noexcept
-//  //{
-//  //  return view_;
-//  //}
+  void clear()
+  {
+    deallocate_memory();
+    view_.clear();
+  }
 
-  bool reallocate(TypedLayout layout);
-  bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
+  bool reallocate(TypedLayout layout, bool shrink_to_fit = true);
+  bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
 
 private:
   constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
@@ -245,16 +239,29 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
 }
 
 template <typename PixelType_>
-bool Image<PixelType_>::reallocate(TypedLayout layout)
+bool Image<PixelType_>::reallocate(TypedLayout layout, bool shrink_to_fit)
 {
-  return this->reallocate(layout, Image<PixelType_>::base_alignment_bytes);
+  return this->reallocate(layout, Image<PixelType_>::base_alignment_bytes, shrink_to_fit);
 }
 
 template <typename PixelType_>
-bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
+bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit)
 {
   if (layout == this->view_.layout())
   {
+    return false;
+  }
+
+  layout.stride_bytes = std::max(layout.stride_bytes, Stride{PixelTraits<PixelType>::nr_bytes * layout.width});
+  const auto nr_bytes_to_allocate = layout.stride_bytes * layout.height;
+  const auto nr_currently_allocated_bytes = this->stride_bytes() * this->height();
+
+  // No need to act if size parameters match
+  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
+                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
+  if (bytes_match)
+  {
+    view_ = ImageView<PixelType, ImageModifiability::Mutable>(this->byte_ptr(), layout);
     return false;
   }
 

@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG2_IMAGEVIEW_HPP
-#define SELENE_IMG2_IMAGEVIEW_HPP
+#ifndef SELENE_IMG2_IMAGE_VIEW_HPP
+#define SELENE_IMG2_IMAGE_VIEW_HPP
 
 /// @file
 
@@ -45,12 +45,12 @@ public:
   bool is_empty() const noexcept { return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0; }
   bool is_valid() const noexcept { return !is_empty(); };
 
-  iterator begin() noexcept { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, 0_idx)); }
-  const_iterator begin() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
+  iterator begin() noexcept              { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, 0_idx)); }
+  const_iterator begin() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
   const_iterator cbegin() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
 
-  iterator end() noexcept { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
-  const_iterator end() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
+  iterator end() noexcept              { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
+  const_iterator end() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
   const_iterator cend() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height})); }
 
   DataPtrType byte_ptr() noexcept             { return ptr_.data(); }
@@ -79,6 +79,12 @@ public:
 
   ImageView<PixelType, modifiability_>& view() noexcept { return *this; }
   ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>(this->byte_ptr(), this->layout()); } // TODO: optimize
+
+  void clear()
+  {
+    ptr_ = DataPtr<modifiability_>();
+    layout_ = TypedLayout();
+  }
 
 private:
   static_assert(std::is_trivial<PixelType>::value, "Pixel type is not trivial");
@@ -109,4 +115,4 @@ struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
 
 }  // namespace sln
 
-#endif  // SELENE_IMG2_IMAGEVIEW_HPP
+#endif  // SELENE_IMG2_IMAGE_VIEW_HPP

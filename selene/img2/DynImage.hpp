@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG2_DYNIMAGE_HPP
-#define SELENE_IMG2_DYNIMAGE_HPP
+#ifndef SELENE_IMG2_DYN_IMAGE_HPP
+#define SELENE_IMG2_DYN_IMAGE_HPP
 
 /// @file
 
@@ -21,9 +21,13 @@ public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
+  template <typename PixelType> using iterator = DynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
+  template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
+
   constexpr static bool is_view = false;
   constexpr static bool is_owning = true;
   constexpr static bool is_modifiable = true;
+  constexpr static ImageModifiability modifiability() { return ImageModifiability::Mutable; }
 
   explicit DynImage(UntypedLayout layout);
   DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes);
@@ -52,23 +56,23 @@ public:
   bool is_packed() const noexcept { return view_.is_packed(); }
 
   bool is_empty() const noexcept { return view_.is_empty(); }
-  bool is_valid() const noexcept { return view_.is_valid(); };
+  bool is_valid() const noexcept { return view_.is_valid(); }
 
-//  iterator begin() noexcept;
-//  const_iterator begin() const noexcept;
-//  const_iterator cbegin() const noexcept;
-//
-//  iterator end() noexcept;
-//  const_iterator end() const noexcept;
-//  const_iterator cend() const noexcept;
+  template <typename PixelType> iterator<PixelType> begin() noexcept { return view_.begin<PixelType>(); }
+  template <typename PixelType> const_iterator<PixelType> begin() const noexcept { return view_.begin<PixelType>(); }
+  template <typename PixelType> const_iterator<PixelType> cbegin() const noexcept { return view_.cbegin<PixelType>(); }
 
-  DataPtrType byte_ptr() noexcept             { return view_.byte_ptr(); }
+  template <typename PixelType> iterator<PixelType> end() noexcept { return view_.end<PixelType>(); }
+  template <typename PixelType> const_iterator<PixelType> end() const noexcept { return view_.end<PixelType>(); }
+  template <typename PixelType> const_iterator<PixelType> cend() const noexcept { return view_.cend<PixelType>(); }
+
+  DataPtrType byte_ptr() noexcept            { return view_.byte_ptr(); }
   ConstDataPtrType byte_ptr() const noexcept { return view_.byte_ptr(); }
 
-  DataPtrType byte_ptr(PixelIndex y) noexcept             { return view_.byte_ptr(y); }
+  DataPtrType byte_ptr(PixelIndex y) noexcept            { return view_.byte_ptr(y); }
   ConstDataPtrType byte_ptr(PixelIndex y) const noexcept { return view_.byte_ptr(y); }
 
-  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept             { return view_.byte_ptr(x, y); }
+  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept            { return view_.byte_ptr(x, y); }
   ConstDataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return view_.byte_ptr(x, y); }
 
   template <typename PixelType>
@@ -125,7 +129,7 @@ private:
 
   void copy_rows_from(const DynImage& src);
 
-  DynImageView<ImageModifiability::Mutable> allocate_memory(UntypedLayout layout, std::size_t alignment_bytes);
+  DynImageView<ImageModifiability::Mutable> allocate_memory(UntypedLayout layout, std::ptrdiff_t alignment_bytes);
   void deallocate_memory();
 };
 
@@ -201,8 +205,8 @@ inline DynImage& DynImage::operator=(DynImage&& other) noexcept
   return *this;
 }
 
-template <ImageModifiability modifiability>
-DynImage::DynImage(const DynImageView<modifiability>& other)
+template <ImageModifiability modifiability_>
+DynImage::DynImage(const DynImageView<modifiability_>& other)
     : view_(allocate_memory(other.layout(),
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes())))
@@ -210,8 +214,8 @@ DynImage::DynImage(const DynImageView<modifiability>& other)
   copy_rows_from(other);
 }
 
-template <ImageModifiability modifiability>
-DynImage& DynImage::operator=(const DynImageView<modifiability>& other)
+template <ImageModifiability modifiability_>
+DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
 {
   // Check for self-assignment
   if (&this->view_ == &other)
@@ -265,12 +269,12 @@ inline void DynImage::copy_rows_from(const DynImage& src)
   }
 }
 
-inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(UntypedLayout layout, std::size_t alignment_bytes)
+inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(UntypedLayout layout, std::ptrdiff_t alignment_bytes)
 {
   const auto stride_bytes = std::max(layout.stride_bytes, Stride(layout.nr_bytes_per_channel * layout.nr_channels * layout.width));
   const auto nr_bytes_to_allocate = stride_bytes * layout.height;
 
-  auto memory = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, alignment_bytes);
+  auto memory = sln::AlignedNewAllocator::allocate(static_cast<std::size_t>(nr_bytes_to_allocate), static_cast<std::size_t>(alignment_bytes));
   SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
   return DynImageView<ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width, layout.height, layout.nr_channels, layout.nr_bytes_per_channel, stride_bytes}};
@@ -284,4 +288,4 @@ inline void DynImage::deallocate_memory()
 
 }  // namespace sln
 
-#endif  // SELENE_IMG2_DYNIMAGE_HPP
+#endif  // SELENE_IMG2_DYN_IMAGE_HPP
