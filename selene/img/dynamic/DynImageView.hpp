@@ -121,6 +121,9 @@ private:
   }
 };
 
+using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;
+using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;
+
 }  // namespace sln
 
 #endif  // SELENE_IMG_DYNAMIC_DYN_IMAGE_VIEW_HPP

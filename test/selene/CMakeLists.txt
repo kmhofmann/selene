@@ -69,6 +69,7 @@ add_executable(selene_tests
 
         ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/RowPointers.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/Types.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/pixel/Pixel.cpp
