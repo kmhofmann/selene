@@ -29,6 +29,31 @@ target_include_directories(selene_base PUBLIC
 
 #------------------------------------------------------------------------------
 
+add_library(selene_base_io
+        base/io/FileReader.hpp
+        base/io/FileUtils.cpp
+        base/io/FileUtils.hpp
+        base/io/FileWriter.hpp
+        base/io/MemoryReader.hpp
+        base/io/MemoryWriter.hpp
+        base/io/VectorReader.hpp
+        base/io/VectorWriter.hpp
+        base/io/WriterMode.hpp
+        )
+add_library(selene::selene_base_io ALIAS selene_base_io)
+
+target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILER_OPTIONS})
+
+target_compile_definitions(selene_base_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+
+target_include_directories(selene_base_io PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}>
+        $<INSTALL_INTERFACE:include>)
+
+target_link_libraries(selene_base_io PUBLIC selene_base)
+
+#------------------------------------------------------------------------------
+
 add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/BoundingBox.hpp
@@ -138,7 +163,7 @@ if (PNG_FOUND)
     target_link_libraries(selene_img_io PUBLIC PNG::PNG)
 endif()
 
-target_link_libraries(selene_img_io PUBLIC selene_img)
+target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
 
 #------------------------------------------------------------------------------
 
@@ -167,29 +192,6 @@ target_link_libraries(selene_img_ops PUBLIC selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_io
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileUtils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileUtils.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/MemoryReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/MemoryWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/VectorReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/VectorWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/WriterMode.hpp
-        )
-add_library(selene::selene_io ALIAS selene_io)
-
-target_compile_options(selene_io PRIVATE ${SELENE_COMPILER_OPTIONS})
-
-target_compile_definitions(selene_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_io PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
-
-#------------------------------------------------------------------------------
-
 add_library(selene INTERFACE)
 add_library(selene::selene ALIAS selene)
 
@@ -199,10 +201,10 @@ target_include_directories(selene INTERFACE
 
 target_link_libraries(selene INTERFACE
         selene_base
+        selene_base_io
         selene_img
         selene_img_io
-        selene_img_ops
-        selene_io)
+        selene_img_ops)
 
 #------------------------------------------------------------------------------
 
@@ -226,7 +228,7 @@ configure_package_config_file(
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install library files
-install(TARGETS selene_base selene_img selene_img_io selene_img_ops selene_io selene
+install(TARGETS selene_base selene_img selene_img_io selene_img_ops selene_base_io selene
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

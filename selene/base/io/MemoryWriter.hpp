@@ -8,7 +8,7 @@
 /// @file
 
 #include <selene/base/Assert.hpp>
-#include <selene/io/WriterMode.hpp>
+#include <selene/base/io/WriterMode.hpp>
 
 #include <cstdint>
 #include <cstdlib>

@@ -2,14 +2,14 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/base/io/FileReader.hpp>
+#include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/MemoryReader.hpp>
+#include <selene/base/io/VectorWriter.hpp>
+
 #include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img/ImageToImageData.hpp>
 #include <selene/img_io/IO.hpp>
-
-#include <selene/io/FileReader.hpp>
-#include <selene/io/FileWriter.hpp>
-#include <selene/io/MemoryReader.hpp>
-#include <selene/io/VectorWriter.hpp>
 
 #include <cassert>
 #include <iostream>

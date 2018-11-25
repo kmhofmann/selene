@@ -14,15 +14,15 @@
 #include <selene/base/MessageLog.hpp>
 #include <selene/base/Utils.hpp>
 
+#include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/VectorWriter.hpp>
+
 #include <selene/img/BoundingBox.hpp>
 #include <selene/img/ImageData.hpp>
 #include <selene/img/RowPointers.hpp>
 #include <selene/img_io/JPEGCommon.hpp>
 #include <selene/img_io/impl/JPEGCommon.hpp>
 #include <selene/img_io/impl/Util.hpp>
-
-#include <selene/io/FileWriter.hpp>
-#include <selene/io/VectorWriter.hpp>
 
 #include <array>
 #include <cstdio>
