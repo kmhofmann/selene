@@ -18,41 +18,10 @@
 
 namespace sln {
 
-template <typename PixelType>
-bool allocate(Image<PixelType>& img_dst, TypedLayout layout)
-{
-  const bool did_reallocate = img_dst.reallocate(layout, guess_row_alignment(reinterpret_cast<std::uintptr_t>(img_dst.byte_ptr()), img_dst.stride_bytes()));
-  return did_reallocate;
-
-  //layout.stride_bytes = std::max(layout.stride_bytes, Stride{PixelTraits<PixelType>::nr_bytes * layout.width});
-  //const auto nr_bytes_to_allocate = layout.stride_bytes * layout.height;
-  //const auto nr_currently_allocated_bytes = DEPRECATED_img.stride_bytes() * DEPRECATED_img.height();
-
-  //auto commit_new_geometry = [=]() {
-  //  width_ = width;
-  //  height_ = height;
-  //  stride_bytes_ = stride_bytes;
-  //};
-
-  //// No need to act, if size parameters match
-  //const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
-  //                                       : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
-  //if (!force_allocation && bytes_match && owns_memory_)
-  //{
-  //  commit_new_geometry();
-  //  return;
-  //}
-
-  //commit_new_geometry();
-
-  //deallocate_bytes_if_owned();
-  //allocate_bytes(nr_bytes_to_allocate, base_alignment_bytes);
-}
-
 template <typename Derived>
-bool maybe_allocate(ImageBase<Derived>& img_dst, const TypedLayout& layout)
+bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout = false, bool shrink_to_fit = false)
 {
-  if (img_dst.width() == layout.width && img_dst.height() == layout.height)
+  if (!force_layout && img_dst.width() == layout.width && img_dst.height() == layout.height)
   {
     return false;
   }
@@ -61,14 +30,11 @@ bool maybe_allocate(ImageBase<Derived>& img_dst, const TypedLayout& layout)
   {
     throw std::runtime_error("Cannot resize image view.");
   }
-
-  return allocate(img_dst.derived(), layout);
-
-  //constexpr auto base_alignment_bytes = Image<PixelType>::default_base_alignment_;
-  //constexpr auto shrink_to_fit = true;
-  //constexpr auto force_allocation = false;
-  //constexpr auto allow_view_reallocation = false;
-  ////allocate(width, height, stride_bytes, base_alignment_bytes, shrink_to_fit, force_allocation, allow_view_reallocation);
+  else
+  {
+    const bool did_reallocate = img_dst.derived().reallocate(layout, guess_row_alignment(reinterpret_cast<std::uintptr_t>(img_dst.byte_ptr()), img_dst.stride_bytes()), shrink_to_fit);
+    return did_reallocate;
+  }
 }
 
 template <typename PixelType, typename Derived>
@@ -164,7 +130,7 @@ void clone(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst)
 {
   static_check_copy_compatibility(img_src, img_dst);
 
-  maybe_allocate(img_dst, img_src.layout());
+  allocate(img_dst, img_src.layout());
   copy_rows_from(img_src, img_dst);
 }
 
@@ -174,7 +140,7 @@ void clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src, 
   static_check_copy_compatibility(img_src, img_dst);
 
   const auto view_src = view(img_src, region_src);
-  maybe_allocate(img_dst, view_src.layout());
+  allocate(img_dst, view_src.layout());
   copy_rows_from(view_src, img_dst);
 }
 

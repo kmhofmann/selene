@@ -26,8 +26,19 @@ public:
   UntypedLayout(PixelLength width_,
                 PixelLength height_,
                 std::int16_t nr_channels_,
+                std::int16_t nr_bytes_per_channel_) noexcept
+      : width(width_)
+      , height(height_)
+      , nr_channels(nr_channels_)
+      , nr_bytes_per_channel(nr_bytes_per_channel_)
+      , stride_bytes(width_ * nr_channels_ * nr_bytes_per_channel_)
+  { }
+
+  UntypedLayout(PixelLength width_,
+                PixelLength height_,
+                std::int16_t nr_channels_,
                 std::int16_t nr_bytes_per_channel_,
-                Stride stride_bytes_ = Stride{0}) noexcept
+                Stride stride_bytes_) noexcept
       : width(width_)
       , height(height_)
       , nr_channels(nr_channels_)
@@ -41,10 +52,25 @@ public:
   std::int16_t nr_bytes_per_channel;
   Stride stride_bytes;
 
-  std::ptrdiff_t nr_bytes_per_pixel() const noexcept { return nr_channels * nr_bytes_per_channel; }
-  std::ptrdiff_t row_bytes() const noexcept { return width * nr_bytes_per_pixel(); }
-  std::ptrdiff_t total_bytes() const noexcept { return stride_bytes * height; }
-  bool is_packed() const noexcept { return stride_bytes == nr_channels * nr_bytes_per_channel * width; }
+  std::ptrdiff_t nr_bytes_per_pixel() const noexcept
+  {
+    return nr_channels * nr_bytes_per_channel;
+  }
+
+  std::ptrdiff_t row_bytes() const noexcept
+  {
+    return width * nr_bytes_per_pixel();
+  }
+
+  std::ptrdiff_t total_bytes() const noexcept
+  {
+    return stride_bytes * height;
+  }
+
+  bool is_packed() const noexcept
+  {
+    return stride_bytes == width * nr_channels * nr_bytes_per_channel;
+  }
 };
 
 inline bool operator==(const UntypedLayout& l, const UntypedLayout& r)

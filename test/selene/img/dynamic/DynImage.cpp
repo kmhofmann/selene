@@ -4,11 +4,6 @@
 
 #include <catch.hpp>
 
-#include <selene/base/Types.hpp>
-#include <selene/base/Utils.hpp>
-
-#include <selene/img/common/Types.hpp>
-
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/dynamic/DynImageView.hpp>
 
@@ -33,16 +28,13 @@ std::vector<std::uint8_t> generate_random_data(std::size_t nr_bytes)
 template <typename PixelType>
 void test_dyn_image_construction(std::mt19937& rng)
 {
-  //using ImageData = sln::ImageData<sln::ImageDataStorage::Modifiable>;
-  //using ConstImageData = sln::ImageData<sln::ImageDataStorage::Constant>;
-
   constexpr auto nr_channels = sln::PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = sln::PixelTraits<PixelType>::nr_bytes_per_channel;
 
-  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_wh(0, 100);  // width/height
+  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_wh(0, 30);  // width/height
   std::uniform_int_distribution<std::size_t> dist_algn(4, 6);  // log2(alignment_bytes)
 
-  for (std::size_t i = 0; i < 50; ++i)
+  for (std::size_t i = 0; i < 10; ++i)
   {
     // Randomly determine image data properties
     const auto width = sln::PixelLength{dist_wh(rng)};
@@ -115,8 +107,7 @@ void test_dyn_image_construction_over_channels(std::mt19937& rng)
 }  // namespace
 
 
-
-TEST_CASE("DynImage construction", "[DEPRECATED_img]")
+TEST_CASE("DynImage construction", "[img]")
 {
   std::mt19937 rng(42);
   test_dyn_image_construction_over_channels<std::uint8_t>(rng);
@@ -128,4 +119,3 @@ TEST_CASE("DynImage construction", "[DEPRECATED_img]")
   test_dyn_image_construction_over_channels<std::uint64_t>(rng);
   test_dyn_image_construction_over_channels<std::int64_t>(rng);
 }
-

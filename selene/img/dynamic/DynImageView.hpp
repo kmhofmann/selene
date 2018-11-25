@@ -95,6 +95,16 @@ public:
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept { return *data<PixelType>(x, y); }
 
+  DynImageView<ImageModifiability::Mutable>& view() noexcept { return *this; }
+  DynImageView<ImageModifiability::Constant> view() const noexcept { return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
+
+  void clear()
+  {
+    ptr_ = DataPtr<modifiability_>{};
+    layout_ = UntypedLayout{};
+    semantics_ = UntypedImageSemantics{};
+  }
+
 private:
   DataPtr<modifiability_> ptr_;
   UntypedLayout layout_;

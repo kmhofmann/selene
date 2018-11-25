@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMAGE_BASE_HPP
-#define SELENE_IMG_IMAGE_BASE_HPP
+#ifndef SELENE_IMG_TYPED_IMAGE_BASE_HPP
+#define SELENE_IMG_TYPED_IMAGE_BASE_HPP
 
 /// @file
 
@@ -80,4 +80,4 @@ public:
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_IMAGE_BASE_HPP
+#endif  // SELENE_IMG_TYPED_IMAGE_BASE_HPP

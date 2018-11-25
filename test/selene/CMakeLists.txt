@@ -60,18 +60,24 @@ endif()
 add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/Round.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/Utils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/io/IO.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/DynImage.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Layout.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Image.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
+#        ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
+#        ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.cpp
+#        ${CMAKE_CURRENT_LIST_DIR}/base/Round.cpp
+#        ${CMAKE_CURRENT_LIST_DIR}/base/Utils.cpp
+#        ${CMAKE_CURRENT_LIST_DIR}/base/io/IO.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/Types.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/Pixel.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.cpp
         )
 
 target_compile_options(selene_tests PRIVATE

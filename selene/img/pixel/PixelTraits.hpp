@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_PIXEL_TRAITS_HPP
-#define SELENE_IMG_PIXEL_TRAITS_HPP
+#ifndef SELENE_IMG_PIXEL_PIXEL_TRAITS_HPP
+#define SELENE_IMG_PIXEL_PIXEL_TRAITS_HPP
 
 /// @file
 
@@ -142,4 +142,4 @@ constexpr Pixel<T, N, pixel_format> PixelTraits<const Pixel<T, N, pixel_format>>
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_PIXEL_TRAITS_HPP
+#endif  // SELENE_IMG_PIXEL_PIXEL_TRAITS_HPP

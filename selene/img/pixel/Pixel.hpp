@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_PIXEL_HPP
-#define SELENE_IMG_PIXEL_HPP
+#ifndef SELENE_IMG_PIXEL_PIXEL_HPP
+#define SELENE_IMG_PIXEL_PIXEL_HPP
 
 /// @file
 
@@ -782,4 +782,4 @@ constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_PIXEL_HPP
+#endif  // SELENE_IMG_PIXEL_PIXEL_HPP

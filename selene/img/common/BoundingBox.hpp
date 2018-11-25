@@ -31,8 +31,6 @@ public:
 
   PixelIndex x1() const noexcept;
   PixelIndex y1() const noexcept;
-  PixelIndex x_end() const noexcept;
-  PixelIndex y_end() const noexcept;
 
   bool empty() const noexcept;
   void sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept;
@@ -67,9 +65,9 @@ inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width,
 
 /** Constructs a bounding box of from top-left corner (x0, y0) and bottom-right corner (x1, y1).
  *
- * Note that the bottom right coordinates are inclusive, so, for example, a box from identical top-left corner (x, y)
- * and bottom-right corner (x, y) will have width and height (1, 1).
- * Width is computed as (x1 - x0 + 1), and height is computed similarly as (y1 - y0 + 1).
+ * Note that the bottom right coordinates are *exclusive*, so, for example, a box from identical top-left corner (x, y)
+ * and bottom-right corner (x, y) will have width and height (0, 0).
+ * Width is computed as (x1 - x0), and height is computed similarly as (y1 - y0).
  *
  * \param x0 x-coordinate of the top-left box corner.
  * \param y0 y-coordinate of the top-left box corner.
@@ -77,7 +75,7 @@ inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width,
  * \param y1 y-coordinate of the bottom-right box corner.
  */
 inline BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelIndex x1, PixelIndex y1) noexcept
-    : x0_(x0), y0_(y0), width_(x1 - x0 + 1), height_(y1 - y0 + 1)
+    : x0_(x0), y0_(y0), width_(x1 - x0), height_(y1 - y0)
 {
   SELENE_ASSERT(width_ > 0);
   SELENE_ASSERT(height_ > 0);
@@ -121,38 +119,24 @@ inline PixelLength BoundingBox::height() const noexcept
 
 /** Returns the x-coordinate of the bottom-right corner, i.e. the x-coordinate of the right box side.
  *
+ * This coordinate, like y1(), is *exclusive*; i.e. is not part of the bounding box itself.
+ *
  * \return x-coordinate of the bottom-right corner.
  */
 inline PixelIndex BoundingBox::x1() const noexcept
 {
-  return PixelIndex(x0_ + width_ - 1);
+  return PixelIndex{x0_ + width_};
 }
 
 /** Returns the y-coordinate of the bottom-right corner, i.e. the y-coordinate of the bottom box side.
+ *
+ * This coordinate, like x1(), is *exclusive*; i.e. is not part of the bounding box itself.
  *
  * \return y-coordinate of the bottom-right corner.
  */
 inline PixelIndex BoundingBox::y1() const noexcept
 {
-  return PixelIndex(y0_ + height_ - 1);
-}
-
-/** Returns the x-coordinate one past the the bottom-right corner.
- *
- * \return x-coordinate one past the bottom-right corner.
- */
-inline PixelIndex BoundingBox::x_end() const noexcept
-{
-  return PixelIndex(x0_ + width_);
-}
-
-/** Returns the y-coordinate one past the the bottom-right corner.
- *
- * \return y-coordinate one past the bottom-right corner.
- */
-inline PixelIndex BoundingBox::y_end() const noexcept
-{
-  return PixelIndex(y0_ + height_);
+  return PixelIndex{y0_ + height_};
 }
 
 /** Returns true, if the bounding box has 0 width or height; false otherwise.
@@ -161,7 +145,7 @@ inline PixelIndex BoundingBox::y_end() const noexcept
  */
 inline bool BoundingBox::empty() const noexcept
 {
-  return width_ * height_ == 0;
+  return width_ == PixelLength{0} || height_ == PixelLength{0};
 }
 
 /** Sanitizes bounding box w.r.t. given maximum image extents.

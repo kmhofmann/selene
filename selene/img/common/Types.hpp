@@ -96,7 +96,7 @@ namespace impl {
 
 inline Stride compute_stride_bytes(std::ptrdiff_t row_bytes, std::ptrdiff_t alignment_bytes)
 {
-  if (alignment_bytes == 0)
+  if (alignment_bytes == 0 || row_bytes % alignment_bytes == 0)
   {
     return Stride{row_bytes};
   }

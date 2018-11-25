@@ -24,6 +24,7 @@ public:
   template <typename PixelType> using iterator = DynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
   template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
 
+  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   constexpr static bool is_view = false;
   constexpr static bool is_owning = true;
   constexpr static bool is_modifiable = true;
@@ -105,26 +106,18 @@ public:
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept { return view_.pixel<PixelType>(x, y); }
 
-//  DynImageView<ImageModifiability::Mutable>& view() noexcept { return view_; }
-//  const DynImageView<ImageModifiability::Mutable>& view() const noexcept { return view_; }
-//
-//  //// Implicit conversion to the underlying view
-//  //operator DynImageView<ImageModifiability::Mutable>&() noexcept
-//  //{
-//  //  return view_;
-//  //}
-//
-//  //// Implicit conversion to the underlying view
-//  //operator const DynImageView<ImageModifiability::Mutable>&() const noexcept
-//  //{
-//  //  return view_;
-//  //}
+  DynImageView<ImageModifiability::Mutable>& view() noexcept { return view_; }
+  DynImageView<ImageModifiability::Constant> view() const noexcept { return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }
 
-  bool reallocate(UntypedLayout layout);
+  void clear()
+  {
+    deallocate_memory();
+    view_.clear();
+  }
+
   bool reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes);
 
 private:
-  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   DynImageView<ImageModifiability::Mutable> view_;
 
   void copy_rows_from(const DynImage& src);
@@ -239,11 +232,6 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
   copy_rows_from(other);
 
   return *this;
-}
-
-inline bool DynImage::reallocate(UntypedLayout layout)
-{
-  return this->reallocate(layout, DynImage::base_alignment_bytes);
 }
 
 inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes)

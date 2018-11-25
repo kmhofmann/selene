@@ -4,14 +4,11 @@
 
 #include <catch.hpp>
 
-#include <selene/base/Types.hpp>
-
 #include <selene/img/pixel/Pixel.hpp>
-#include <selene/img/pixel/PixelTraits.hpp>
 
 using namespace sln::literals;
 
-TEST_CASE("Pixel operations", "[DEPRECATED_img]")
+TEST_CASE("Pixel operations", "[img]")
 {
   sln::Pixel<std::uint8_t, 3> px0(42, 13, 8);
   REQUIRE(px0[0] == 42);
@@ -76,68 +73,60 @@ TEST_CASE("Pixel operations", "[DEPRECATED_img]")
     REQUIRE(px5[2] == 127);
   }
 
-// We can only use the below pixel arithmetic in a constexpr context with C++ 17, since std::array<>::operator[] is not
-// declared constexpr before C++17.
-#if __cplusplus >= 201703L
-#define SELENE_CONSTEXPR constexpr
-#else
-#define SELENE_CONSTEXPR const
-#endif
-
   SECTION("Pixel arithmetic 1")
   {
-    SELENE_CONSTEXPR auto px1 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + std::uint8_t{40};
+    constexpr auto px1 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + std::uint8_t{40};
     REQUIRE(px1 == sln::Pixel<std::uint8_t, 3>(50, 60, 70));
 
-    SELENE_CONSTEXPR auto px2 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::Pixel<std::uint8_t, 3>(5, 6, 7);
+    constexpr auto px2 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::Pixel<std::uint8_t, 3>(5, 6, 7);
     REQUIRE(px2 == sln::Pixel<std::uint8_t, 3>(15, 26, 37));
 
-    SELENE_CONSTEXPR auto px3 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) - std::uint8_t{10};
+    constexpr auto px3 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) - std::uint8_t{10};
     REQUIRE(px3 == sln::Pixel<std::uint8_t, 3>(0, 10, 20));
 
-    SELENE_CONSTEXPR auto px4 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) - sln::Pixel<std::uint8_t, 3>(1, 2, 3);
+    constexpr auto px4 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) - sln::Pixel<std::uint8_t, 3>(1, 2, 3);
     REQUIRE(px4 == sln::Pixel<std::uint8_t, 3>(9, 18, 27));
 
-    SELENE_CONSTEXPR auto px5 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * std::uint8_t{3};
+    constexpr auto px5 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * std::uint8_t{3};
     REQUIRE(px5 == sln::Pixel<std::uint8_t, 3>(30, 60, 90));
 
-    SELENE_CONSTEXPR auto px6 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * sln::Pixel<std::uint8_t, 3>(5, 3, 1);
+    constexpr auto px6 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * sln::Pixel<std::uint8_t, 3>(5, 3, 1);
     REQUIRE(px6 == sln::Pixel<std::uint8_t, 3>(50, 60, 30));
 
-    SELENE_CONSTEXPR auto px7 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) / std::uint8_t{2};
+    constexpr auto px7 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) / std::uint8_t{2};
     REQUIRE(px7 == sln::Pixel<std::uint8_t, 3>(5, 10, 15));
 
-    SELENE_CONSTEXPR auto px8 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) / sln::Pixel<std::uint8_t, 3>(2, 4, 6);
+    constexpr auto px8 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) / sln::Pixel<std::uint8_t, 3>(2, 4, 6);
     REQUIRE(px8 == sln::Pixel<std::uint8_t, 3>(5, 5, 5));
   }
 
   SECTION("Pixel arithmetic 2")
   {
-    SELENE_CONSTEXPR auto px1 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + std::uint32_t{40};
+    constexpr auto px1 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + std::uint32_t{40};
     REQUIRE(std::is_same<std::decay_t<decltype(px1)>, sln::Pixel<std::uint32_t, 3>>::value);
     REQUIRE(px1 == sln::Pixel<std::uint32_t, 3>(50, 60, 70));
 
-    SELENE_CONSTEXPR auto px2 = std::uint32_t{40} + sln::Pixel<std::uint8_t, 3>(10, 20, 30);
+    constexpr auto px2 = std::uint32_t{40} + sln::Pixel<std::uint8_t, 3>(10, 20, 30);
     REQUIRE(std::is_same<std::decay_t<decltype(px2)>, sln::Pixel<std::uint32_t, 3>>::value);
     REQUIRE(px2 == sln::Pixel<std::uint32_t, 3>(50, 60, 70));
 
-    SELENE_CONSTEXPR auto px3 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * std::uint32_t{5};
+    constexpr auto px3 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * std::uint32_t{5};
     REQUIRE(std::is_same<std::decay_t<decltype(px3)>, sln::Pixel<std::uint32_t, 3>>::value);
     REQUIRE(px3 == sln::Pixel<std::uint32_t, 3>(50, 100, 150));
 
-    SELENE_CONSTEXPR auto px4 = std::uint32_t{5} * sln::Pixel<std::uint8_t, 3>(10, 20, 30);
+    constexpr auto px4 = std::uint32_t{5} * sln::Pixel<std::uint8_t, 3>(10, 20, 30);
     REQUIRE(std::is_same<std::decay_t<decltype(px4)>, sln::Pixel<std::uint32_t, 3>>::value);
     REQUIRE(px4 == sln::Pixel<std::uint32_t, 3>(50, 100, 150));
 
-    SELENE_CONSTEXPR auto px5 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::float32_t{40.0f};
+    constexpr auto px5 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::float32_t{40.0f};
     REQUIRE(std::is_same<std::decay_t<decltype(px5)>, sln::Pixel<sln::float32_t, 3>>::value);
     REQUIRE(px5 == sln::Pixel<sln::float32_t, 3>(50.0f, 60.0f, 70.0f));
 
-    SELENE_CONSTEXPR auto px6 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::float32_t{40.0f};
+    constexpr auto px6 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::float32_t{40.0f};
     REQUIRE(std::is_same<std::decay_t<decltype(px6)>, sln::Pixel<sln::float32_t, 3>>::value);
     REQUIRE(px6 == sln::Pixel<sln::float32_t, 3>(50.0f, 60.0f, 70.0f));
 
-    SELENE_CONSTEXPR auto px7 = -sln::Pixel<std::int32_t, 3>(10, 20, 30);
+    constexpr auto px7 = -sln::Pixel<std::int32_t, 3>(10, 20, 30);
     REQUIRE(px7 == sln::Pixel<std::int32_t, 3>(-10, -20, -30));
   }
 }

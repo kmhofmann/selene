@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMAGE_HPP
-#define SELENE_IMG_IMAGE_HPP
+#ifndef SELENE_IMG_TYPED_IMAGE_HPP
+#define SELENE_IMG_TYPED_IMAGE_HPP
 
 /// @file
 
@@ -26,6 +26,7 @@ public:
   using iterator = ImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
 
+  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   constexpr static bool is_view = false;
   constexpr static bool is_modifiable = true;
   constexpr static ImageModifiability modifiability() { return ImageModifiability::Mutable; }
@@ -97,11 +98,9 @@ public:
     view_.clear();
   }
 
-  bool reallocate(TypedLayout layout, bool shrink_to_fit = true);
   bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
 
 private:
-  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
   ImageView<PixelType, ImageModifiability::Mutable> view_;
 
   template <typename Derived> void copy_rows_from(const ImageBase<Derived>& src);
@@ -239,12 +238,6 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
 }
 
 template <typename PixelType_>
-bool Image<PixelType_>::reallocate(TypedLayout layout, bool shrink_to_fit)
-{
-  return this->reallocate(layout, Image<PixelType_>::base_alignment_bytes, shrink_to_fit);
-}
-
-template <typename PixelType_>
 bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit)
 {
   if (layout == this->view_.layout())
@@ -304,4 +297,4 @@ void Image<PixelType_>::deallocate_memory()
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_IMAGE_HPP
+#endif  // SELENE_IMG_TYPED_IMAGE_HPP

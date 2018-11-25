@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMAGE_VIEW_TYPE_ALIASES_HPP
-#define SELENE_IMG_IMAGE_VIEW_TYPE_ALIASES_HPP
+#ifndef SELENE_IMG_TYPED_IMAGE_VIEW_TYPE_ALIASES_HPP
+#define SELENE_IMG_TYPED_IMAGE_VIEW_TYPE_ALIASES_HPP
 
 /// @file
 
@@ -93,4 +93,4 @@ SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(YCCK, 4)
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_IMAGE_VIEW_TYPE_ALIASES_HPP
+#endif  // SELENE_IMG_TYPED_IMAGE_VIEW_TYPE_ALIASES_HPP

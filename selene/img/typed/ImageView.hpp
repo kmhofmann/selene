@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMAGE_VIEW_HPP
-#define SELENE_IMG_IMAGE_VIEW_HPP
+#ifndef SELENE_IMG_TYPED_IMAGE_VIEW_HPP
+#define SELENE_IMG_TYPED_IMAGE_VIEW_HPP
 
 /// @file
 
@@ -42,7 +42,7 @@ public:
   PixelLength height() const noexcept { return layout_.height; }
   Stride stride_bytes() const noexcept { return layout_.stride_bytes; }
   std::ptrdiff_t row_bytes() const noexcept { return layout_.row_bytes<PixelType>(); }
-  std::ptrdiff_t total_bytes() const noexcept { return layout_.total_bytes(); }
+  std::ptrdiff_t total_bytes() const noexcept { return layout_.total_bytes<PixelType>(); }
   bool is_packed() const noexcept { return layout_.is_packed<PixelType>(); }
 
   bool is_empty() const noexcept { return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0; }
@@ -81,12 +81,12 @@ public:
   const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept { return *this->data(x, y); }
 
   ImageView<PixelType, modifiability_>& view() noexcept { return *this; }
-  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>(this->byte_ptr(), this->layout()); } // TODO: optimize
+  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
 
   void clear()
   {
-    ptr_ = DataPtr<modifiability_>();
-    layout_ = TypedLayout();
+    ptr_ = DataPtr<modifiability_>{};
+    layout_ = TypedLayout{};
   }
 
 private:
@@ -118,4 +118,4 @@ struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_IMAGE_VIEW_HPP
+#endif  // SELENE_IMG_TYPED_IMAGE_VIEW_HPP
