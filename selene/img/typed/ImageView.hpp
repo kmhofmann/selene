@@ -23,6 +23,7 @@ class ImageView : public ImageBase<ImageView<PixelType_, modifiability_>>
 public:
   using PixelType = PixelType_;
   using DataPtrType = typename DataPtr<modifiability_>::Type;
+  using PixelTypePtr = std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
 
   using iterator = ImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
@@ -65,20 +66,20 @@ public:
   DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept             { return ptr_.data() + this->compute_data_offset(x, y); }
   const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return ptr_.data() + this->compute_data_offset(x, y); }
 
-  PixelType* data() noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr()); }
-  const PixelType* data() const noexcept { return reinterpret_cast<PixelType*>(this->byte_ptr()); }
+  PixelTypePtr data() noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr()); }
+  const PixelTypePtr data() const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr()); }
 
-  PixelType* data(PixelIndex y) noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr(y)); }
-  const PixelType* data(PixelIndex y) const noexcept { return reinterpret_cast<PixelType*>(this->byte_ptr(y)); }
+  PixelTypePtr data(PixelIndex y) noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y)); }
+  const PixelTypePtr data(PixelIndex y) const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y)); }
 
-  PixelType* data_row_end(PixelIndex y) noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width); }
-  const PixelType* data_row_end(PixelIndex y) const noexcept { return reinterpret_cast<PixelType*>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width); }
+  PixelTypePtr data_row_end(PixelIndex y) noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width); }
+  const PixelTypePtr data_row_end(PixelIndex y) const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width); }
 
-  PixelType* data(PixelIndex x, PixelIndex y) noexcept             { return reinterpret_cast<PixelType*>(this->byte_ptr(x, y)); }
-  const PixelType* data(PixelIndex x, PixelIndex y) const noexcept { return reinterpret_cast<PixelType*>(this->byte_ptr(x, y)); }
+  PixelTypePtr data(PixelIndex x, PixelIndex y) noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr(x, y)); }
+  const PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(x, y)); }
 
-  PixelType& operator()(PixelIndex x, PixelIndex y) noexcept             { return *this->data(x, y); }
-  const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept { return *this->data(x, y); }
+  auto& operator()(PixelIndex x, PixelIndex y) noexcept             { return *this->data(x, y); }
+  const auto& operator()(PixelIndex x, PixelIndex y) const noexcept { return *this->data(x, y); }
 
   ImageView<PixelType, modifiability_>& view() noexcept { return *this; }
   ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize

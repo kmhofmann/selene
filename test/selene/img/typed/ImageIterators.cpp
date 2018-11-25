@@ -6,7 +6,7 @@
 
 #include <selene/img/typed/Image.hpp>
 
-#include <test/selene/img/typed/Utils.hpp>
+#include <test/selene/img/typed/_Utils.hpp>
 
 using namespace sln::literals;
 
