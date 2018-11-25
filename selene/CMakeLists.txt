@@ -126,6 +126,8 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/ImageAccess.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/Interpolators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/RelativeAccessor.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.hpp
         )
 add_library(selene::selene_img ALIAS selene_img)
 
