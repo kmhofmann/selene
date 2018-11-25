@@ -16,6 +16,23 @@
 namespace sln {
 
 template <typename PixelType_>
+class Image;
+
+template <typename PixelType_>
+struct ImageBaseTraits<Image<PixelType_>>
+{
+  using PixelType = PixelType_;
+
+  constexpr static bool is_view = false;
+  constexpr static bool is_modifiable = true;
+
+  constexpr static ImageModifiability modifiability()
+  {
+    return ImageModifiability::Mutable;
+  }
+};
+
+template <typename PixelType_>
 class Image : public ImageBase<Image<PixelType_>>
 {
 public:
@@ -26,9 +43,9 @@ public:
   using iterator = ImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
 
-  constexpr static bool is_view = false;
-  constexpr static bool is_modifiable = true;
-  constexpr static ImageModifiability modifiability() { return ImageModifiability::Mutable; }
+  constexpr static bool is_view = ImageBaseTraits<Image<PixelType>>::is_view;
+  constexpr static bool is_modifiable = ImageBaseTraits<Image<PixelType>>::is_modifiable;
+  constexpr static ImageModifiability modifiability() { return ImageBaseTraits<Image<PixelType>>::modifiability(); }
 
   Image();
   explicit Image(TypedLayout layout);
@@ -100,7 +117,7 @@ public:
   bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
 
 private:
-  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
+  constexpr static auto default_base_alignment_bytes = ImageRowAlignment{16ul};
 
   ImageView<PixelType, ImageModifiability::Mutable> view_;
 
@@ -111,25 +128,19 @@ private:
 };
 
 template <typename PixelType_>
-struct ImageBaseTraits<Image<PixelType_>>
-{
-  using PixelType = PixelType_;
-};
-
-template <typename PixelType_>
 Image<PixelType_>::Image()
 {
 }
 
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
-    : view_(this->allocate_memory(layout, base_alignment_bytes, 0))
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0))
 {
 }
 
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
-    : view_(this->allocate_memory(layout, base_alignment_bytes, row_alignment_bytes))
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes))
 {
 }
 
@@ -142,7 +153,7 @@ Image<PixelType_>::~Image()
 template <typename PixelType_>
 Image<PixelType_>::Image(const Image<PixelType>& other)
     : view_(allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                       other.stride_bytes())))
 {
@@ -167,7 +178,7 @@ Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
 
     // Allocate new memory
     view_ = allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes()));
   }
@@ -206,7 +217,7 @@ template <typename PixelType_>
 template <ImageModifiability modifiability_>
 Image<PixelType_>::Image(const ImageView<PixelType, modifiability_>& other)
     : view_(allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
                                                       other.stride_bytes())))
 {
@@ -232,7 +243,7 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
 
     // Allocate new memory
     view_ = allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes()));
   }
@@ -264,7 +275,7 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
   }
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, base_alignment_bytes, row_alignment_bytes);
+  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes);
   return true;
 }
 

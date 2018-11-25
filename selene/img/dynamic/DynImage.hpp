@@ -117,7 +117,7 @@ public:
   bool reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
 
 private:
-  constexpr static auto base_alignment_bytes = ImageRowAlignment{16ul};
+  constexpr static auto default_base_alignment_bytes = ImageRowAlignment{16ul};
 
   DynImageView<ImageModifiability::Mutable> view_;
 
@@ -128,12 +128,12 @@ private:
 };
 
 inline DynImage::DynImage(UntypedLayout layout)
-    : view_(this->allocate_memory(layout, base_alignment_bytes, 0))
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0))
 {
 }
 
 inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes)
-    : view_(this->allocate_memory(layout, base_alignment_bytes, row_alignment_bytes))
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes))
 {
 }
 
@@ -144,7 +144,7 @@ inline DynImage::~DynImage()
 
 inline DynImage::DynImage(const DynImage& other)
     : view_(allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes())))
 {
@@ -168,7 +168,7 @@ inline DynImage& DynImage::operator=(const DynImage& other)
 
     // Allocate new memory
     view_ = allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes()));
   }
@@ -204,7 +204,7 @@ inline DynImage& DynImage::operator=(DynImage&& other) noexcept
 template <ImageModifiability modifiability_>
 DynImage::DynImage(const DynImageView<modifiability_>& other)
     : view_(allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes())))
 {
@@ -229,7 +229,7 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
 
     // Allocate new memory
     view_ = allocate_memory(other.layout(),
-                            base_alignment_bytes,
+                            default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
                                                       other.stride_bytes()));
   }
@@ -260,7 +260,7 @@ inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_ali
   }
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, base_alignment_bytes, row_alignment_bytes);
+  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes);
   return true;
 }
 

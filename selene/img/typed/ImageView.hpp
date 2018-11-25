@@ -18,6 +18,23 @@
 namespace sln {
 
 template <typename PixelType_, ImageModifiability modifiability_>
+class ImageView;
+
+template <typename PixelType_, ImageModifiability modifiability_>
+struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
+{
+  using PixelType = PixelType_;
+
+  constexpr static bool is_view = true;
+  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
+
+  constexpr static ImageModifiability modifiability()
+  {
+    return modifiability_;
+  }
+};
+
+template <typename PixelType_, ImageModifiability modifiability_>
 class ImageView : public ImageBase<ImageView<PixelType_, modifiability_>>
 {
 public:
@@ -28,9 +45,13 @@ public:
   using iterator = ImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
 
-  constexpr static bool is_view = true;
-  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
-  constexpr static ImageModifiability modifiability() { return modifiability_; }
+//  constexpr static bool is_view = true;
+//  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
+//  constexpr static ImageModifiability modifiability() { return modifiability_; }
+
+  constexpr static bool is_view = ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_view;
+  constexpr static bool is_modifiable = ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_modifiable;
+  constexpr static ImageModifiability modifiability() { return ImageBaseTraits<ImageView<PixelType_, modifiability_>>::modifiability(); }
 
   ImageView() = default;
   ImageView(DataPtr<modifiability_> ptr, TypedLayout layout)
@@ -110,12 +131,6 @@ private:
 
 template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;
 template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;
-
-template <typename PixelType_, ImageModifiability modifiability_>
-struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
-{
-  using PixelType = PixelType_;
-};
 
 }  // namespace sln
 

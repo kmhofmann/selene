@@ -141,11 +141,7 @@ inline PixelIndex RelativeAccessor<ImageType_>::anchor_y() const noexcept
  */
 template <typename ImageType_>
 template <typename T>
-#ifndef _MSC_VER
 inline typename RelativeAccessor<ImageType_>::template XY<T>
-#else
-inline typename RelativeAccessor<ImageType_>::XY<T>
-#endif
 RelativeAccessor<ImageType_>::absolute_coordinates(T x, T y) const noexcept
 {
   const auto abs_x = T{anchor_x_ + x};

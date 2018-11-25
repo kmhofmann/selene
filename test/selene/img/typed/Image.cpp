@@ -88,7 +88,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   //REQUIRE(!img.is_view());
   //REQUIRE(!img.is_empty());
 
-  for (std::size_t alignment = 1; alignment <= 128; alignment <<= 1)
+  for (std::ptrdiff_t alignment = 1; alignment <= 128; alignment <<= 1)
   {
     sln::Image<T> img({width, height}, sln::ImageRowAlignment{alignment});
     REQUIRE(img.width() == width);
