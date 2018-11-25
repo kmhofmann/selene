@@ -55,7 +55,7 @@ target_include_directories(selene_tests PRIVATE
 
 target_link_libraries(selene_tests
         selene
-        Boost::filesystem)
+        ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 if (OPENCV_CORE_FOUND)
     target_link_libraries(selene_tests opencv_core)

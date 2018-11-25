@@ -15,7 +15,7 @@ Commented example code for select functionality (which can serve as a tutorial) 
 
 ## Platform and compiler support
 
-**Selene** requires a compiler supporting C++14 and a respective conforming standard library implementation.
+**Selene** requires a compiler supporting C++17 and a respective conforming standard library implementation.
 As such, it can be built on the usual major plaforms: **Linux**, **MacOS**, **Windows**.
 
 There are no obvious reasons why **Selene** could not be compiled on other platforms, such as **Android** or **iOS**.
@@ -23,8 +23,8 @@ However, these platforms are not within the testing scope.
 
 Continuous integration tests are currently being run on:
 - Ubuntu Linux 18.04  (via [Travis CI](https://travis-ci.org/)/Docker), using the following compilers:
-    - GCC 8.1, GCC 7.2, GCC 6.4, GCC 5.4
-    - Clang 6.0 (with and without AddressSanitizer), Clang 5.0, Clang 4.0, Clang 3.9, Clang 3.8.
+    - GCC 8.2, GCC 7.3
+    - Clang 7.0 (with and without AddressSanitizer), Clang 6.0, Clang 5.0
 - Windows, using Visual Studio 2017 (via [Appveyor](https://www.appveyor.com/)).
 
 ## Work in progress

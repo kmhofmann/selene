@@ -8,9 +8,8 @@
 #include <selene/img_ops/ImageConversions.hpp>
 #include <selene/img_ops/Transformations.hpp>
 
-#include <boost/filesystem.hpp>
-
 #include <cassert>
+#include <filesystem>
 
 #include "Utils.hpp"
 

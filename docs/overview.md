@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Selene** is a C++14 image representation, processing and I/O library.
+**Selene** is a C++17 image representation, processing and I/O library.
 
 It currently contains, among other things
 

@@ -34,13 +34,11 @@ before_build:
         vcpkg install libjpeg-turbo
         vcpkg install libpng
         vcpkg install opencv
-        vcpkg install boost
       } Else {
         $env:VCPKG_DEFAULT_TRIPLET="x64-windows"
         vcpkg install libjpeg-turbo
         vcpkg install libpng
         vcpkg install opencv
-        vcpkg install boost
       }
 
   - cmd: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Community\VC\Auxiliary\Build\vcvars%ARCHITECTURE%.bat

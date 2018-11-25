@@ -4,8 +4,6 @@
 
 #include <catch.hpp>
 
-#include <boost/filesystem.hpp>
-
 #include <selene/base/MessageLog.hpp>
 
 #include <selene/base/io/FileReader.hpp>
@@ -16,7 +14,9 @@
 
 #include <test/selene/Utils.hpp>
 
-namespace fs = boost::filesystem;
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;

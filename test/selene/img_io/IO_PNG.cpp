@@ -10,8 +10,7 @@
 
 #include <cstdlib>
 #include <cstring>
-
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/FileUtils.hpp>
@@ -29,7 +28,7 @@
 
 #include <test/selene/Utils.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using namespace sln::literals;
 
 constexpr auto ref_width = 1024;

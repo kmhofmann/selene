@@ -10,9 +10,8 @@
 #include <selene/img/ImageDataToImage.hpp>
 #include <selene/img_io/IO.hpp>
 
-#include <boost/filesystem.hpp>
-
 #include <cassert>
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -20,7 +19,7 @@
 namespace sln_examples {
 
 inline void print_help_and_exit(const char* error_message,
-                                const std::vector<boost::filesystem::path>* paths_considered = nullptr)
+                                const std::vector<std::filesystem::path>* paths_considered = nullptr)
 {
   std::cout << "ERROR: " << error_message << "\n\n";
   std::cout << "You likely need to specify the correct path to the selene 'data/' directory.\n";
@@ -41,18 +40,18 @@ inline void print_help_and_exit(const char* error_message,
   std::exit(-1);
 }
 
-inline boost::filesystem::path full_data_path(const char* filename, const char* data_path = nullptr)
+inline std::filesystem::path full_data_path(const char* filename, const char* data_path = nullptr)
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
-  boost::filesystem::path full_path;
-  std::vector<boost::filesystem::path> paths_considered;
+  std::filesystem::path full_path;
+  std::vector<std::filesystem::path> paths_considered;
 
   if (data_path)
   {
-    full_path = boost::filesystem::path(data_path) / boost::filesystem::path(filename);
+    full_path = std::filesystem::path(data_path) / std::filesystem::path(filename);
     paths_considered.emplace_back(full_path);
 
-    if (boost::filesystem::exists(full_path))
+    if (std::filesystem::exists(full_path))
     {
       return full_path;
     }
@@ -60,27 +59,27 @@ inline boost::filesystem::path full_data_path(const char* filename, const char* 
 
   if (env_var)
   {
-    full_path = boost::filesystem::path(env_var) / boost::filesystem::path(filename);
+    full_path = std::filesystem::path(env_var) / std::filesystem::path(filename);
     paths_considered.emplace_back(full_path);
 
-    if (boost::filesystem::exists(full_path))
+    if (std::filesystem::exists(full_path))
     {
       return full_path;
     }
   }
 
-  full_path = boost::filesystem::path("../data") / boost::filesystem::path(filename);
+  full_path = std::filesystem::path("../data") / std::filesystem::path(filename);
   paths_considered.emplace_back(full_path);
 
-  if (boost::filesystem::exists(full_path))
+  if (std::filesystem::exists(full_path))
   {
     return full_path;
   }
 
-  full_path = boost::filesystem::path("../../data") / boost::filesystem::path(filename);
+  full_path = std::filesystem::path("../../data") / std::filesystem::path(filename);
   paths_considered.emplace_back(full_path);
 
-  if (boost::filesystem::exists(full_path))
+  if (std::filesystem::exists(full_path))
   {
     return full_path;
   }
