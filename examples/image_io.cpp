@@ -7,9 +7,9 @@
 #include <selene/base/io/MemoryReader.hpp>
 #include <selene/base/io/VectorWriter.hpp>
 
-#include <selene/DEPRECATED_img/ImageTypeAliases.hpp>
-#include <selene/DEPRECATED_img/ImageToImageData.hpp>
-#include <selene/DEPRECATED_img_io/IO.hpp>
+#include <selene/old_img/ImageTypeAliases.hpp>
+#include <selene/old_img/ImageToImageData.hpp>
+#include <selene/old_img_io/IO.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
   assert(img.height() == img_data_0_height);
 
   // Now we will simply write the image to disk again. To do this, we convert back to an `ImageData` instance;
-  // in this case a view onto constant image data (also since we declared `DEPRECATED_img` const above).
+  // in this case a view onto constant image data (also since we declared `old_img` const above).
 
   const ImageData<ImageDataStorage::Constant> img_data_1 = to_image_data_view(img);
 

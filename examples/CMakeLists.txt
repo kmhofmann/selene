@@ -10,53 +10,53 @@ add_executable(image_access
 target_compile_options(image_access PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_access PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_access PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_access selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_access selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_clone_view
         ${CMAKE_CURRENT_LIST_DIR}/image_clone_view.cpp)
 target_compile_options(image_clone_view PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_clone_view PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_clone_view PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_clone_view selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_clone_view selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_conversion
         ${CMAKE_CURRENT_LIST_DIR}/image_conversion.cpp)
 target_compile_options(image_conversion PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_conversion PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_conversion PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_conversion selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_conversion selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_io
         ${CMAKE_CURRENT_LIST_DIR}/image_io.cpp)
 target_compile_options(image_io PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_io PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_io selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_io selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_resample
         ${CMAKE_CURRENT_LIST_DIR}/image_resample.cpp)
 target_compile_options(image_resample PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_resample PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_resample PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_resample selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_resample selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_rotate
         ${CMAKE_CURRENT_LIST_DIR}/image_rotate.cpp)
 target_compile_options(image_rotate PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_rotate PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_rotate PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_rotate selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_rotate selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_transform
         ${CMAKE_CURRENT_LIST_DIR}/image_transform.cpp)
 target_compile_options(image_transform PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_transform PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_transform PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_transform selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_transform selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(readme_example
         ${CMAKE_CURRENT_LIST_DIR}/readme_example.cpp)
 target_compile_options(readme_example PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(readme_example PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(readme_example PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(readme_example selene_DEPRECATED ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(readme_example selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})

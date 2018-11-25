@@ -1,12 +1,12 @@
 #include <selene/base/io/FileUtils.hpp>
 
-#include <selene/DEPRECATED_img/ImageTypeAliases.hpp>
-#include <selene/DEPRECATED_img/ImageDataToImage.hpp>
-#include <selene/DEPRECATED_img/ImageToImageData.hpp>
-#include <selene/DEPRECATED_img_io/IO.hpp>
-#include <selene/DEPRECATED_img_ops/Algorithms.hpp>
-#include <selene/DEPRECATED_img_ops/ImageConversions.hpp>
-#include <selene/DEPRECATED_img_ops/Transformations.hpp>
+#include <selene/old_img/ImageTypeAliases.hpp>
+#include <selene/old_img/ImageDataToImage.hpp>
+#include <selene/old_img/ImageToImageData.hpp>
+#include <selene/old_img_io/IO.hpp>
+#include <selene/old_img_ops/Algorithms.hpp>
+#include <selene/old_img_ops/ImageConversions.hpp>
+#include <selene/old_img_ops/Transformations.hpp>
 
 #include <cassert>
 #include <filesystem>

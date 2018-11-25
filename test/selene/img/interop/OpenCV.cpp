@@ -154,7 +154,7 @@ void test_functions(sln::PixelLength width, sln::PixelLength height)
 
 }  // namespace
 
-TEST_CASE("OpenCV interoperability", "[DEPRECATED_img]")
+TEST_CASE("OpenCV interoperability", "[img]")
 {
   for (auto w = 1_px; w < 32; w += 3)
   {

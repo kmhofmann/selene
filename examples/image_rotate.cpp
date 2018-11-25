@@ -4,10 +4,10 @@
 
 #include <selene/base/io/FileWriter.hpp>
 
-#include <selene/DEPRECATED_img/ImageTypeAliases.hpp>
-#include <selene/DEPRECATED_img/ImageToImageData.hpp>
-#include <selene/DEPRECATED_img_io/IO.hpp>
-#include <selene/DEPRECATED_img_ops/Transformations.hpp>
+#include <selene/old_img/ImageTypeAliases.hpp>
+#include <selene/old_img/ImageToImageData.hpp>
+#include <selene/old_img_io/IO.hpp>
+#include <selene/old_img_ops/Transformations.hpp>
 
 #include <iostream>
 #include <string>

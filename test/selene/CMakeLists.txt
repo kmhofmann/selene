@@ -4,7 +4,7 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_executable(selene_DEPRECATED_tests
+add_executable(selene_old_tests
         ${CMAKE_CURRENT_LIST_DIR}/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
@@ -13,46 +13,46 @@ add_executable(selene_DEPRECATED_tests
         ${CMAKE_CURRENT_LIST_DIR}/base/_Utils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/IO.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/_TestImages.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/_TestImages.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/BorderAccessors.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Image.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageAccess.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageData.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageDataToImage.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageToImageData.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Interpolators.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/OpenCV.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Pixel.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Utilities.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/IO_JPEG.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/IO_PNG.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/Algorithms.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/ChannelOperations.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/ImageConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/PixelConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/Resample.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/Transformations.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/_TestImages.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/_TestImages.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/BorderAccessors.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageAccess.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageData.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataToImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageToImageData.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Interpolators.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/OpenCV.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Pixel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Utilities.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/IO.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/IO_JPEG.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/IO_PNG.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Algorithms.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/ChannelOperations.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/ImageConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/PixelConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Resample.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Transformations.cpp
         )
 
-target_compile_options(selene_DEPRECATED_tests PRIVATE
+target_compile_options(selene_old_tests PRIVATE
         ${SELENE_COMPILER_OPTIONS}
         ${SELENE_TEST_COMPILER_OPTIONS})
 
-target_compile_definitions(selene_DEPRECATED_tests PRIVATE
+target_compile_definitions(selene_old_tests PRIVATE
         ${SELENE_COMPILER_DEFINITIONS})
 
-target_include_directories(selene_DEPRECATED_tests PRIVATE
+target_include_directories(selene_old_tests PRIVATE
         ${SELENE_DIR}
         ${SELENE_DIR}/external/Catch2/single_include)
 
-target_link_libraries(selene_DEPRECATED_tests
-        selene_DEPRECATED
+target_link_libraries(selene_old_tests
+        selene_old
         ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 if (OPENCV_CORE_FOUND)
-    target_link_libraries(selene_DEPRECATED_tests opencv_core)
+    target_link_libraries(selene_old_tests opencv_core)
 endif()
 
 #------------------------------------------------------------------------------

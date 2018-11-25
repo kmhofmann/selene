@@ -54,46 +54,46 @@ target_link_libraries(selene_base_io PUBLIC selene_base)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_DEPRECATED_img
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/BorderAccessors.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/BoundingBox.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Image.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageAccess.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageData.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageDataBase.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageDataStorage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageDataToImage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageIterators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageToImageData.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/ImageTypeAliases.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Interpolators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/OpenCV.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Pixel.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/PixelFormat.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/PixelFormat.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/PixelTraits.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/PixelTypeAliases.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/RelativeAccessor.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/RowPointers.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Types.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img/Utilities.hpp
+add_library(selene_old_img
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/BorderAccessors.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/BoundingBox.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Image.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageAccess.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataBase.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataStorage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataToImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageIterators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageToImageData.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Interpolators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/OpenCV.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Pixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelFormat.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/RelativeAccessor.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/RowPointers.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Types.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img/Utilities.hpp
         )
-add_library(selene::selene_DEPRECATED_img ALIAS selene_DEPRECATED_img)
+add_library(selene::selene_old_img ALIAS selene_old_img)
 
-target_compile_options(selene_DEPRECATED_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+target_compile_options(selene_old_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_compile_definitions(selene_DEPRECATED_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_definitions(selene_old_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-target_include_directories(selene_DEPRECATED_img PUBLIC
+target_include_directories(selene_old_img PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
 if (OPENCV_CORE_FOUND)
-    target_compile_definitions(selene_DEPRECATED_img PUBLIC SELENE_WITH_OPENCV)
+    target_compile_definitions(selene_old_img PUBLIC SELENE_WITH_OPENCV)
     # no need to link against it, as it's only used in a header
 endif()
 
-target_link_libraries(selene_DEPRECATED_img PUBLIC selene_base)
+target_link_libraries(selene_old_img PUBLIC selene_base)
 
 #------------------------------------------------------------------------------
 
@@ -148,82 +148,83 @@ target_link_libraries(selene_img PUBLIC selene_base)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_DEPRECATED_img_io
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/IO.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/JPEGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/JPEGRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/JPEGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/JPEGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/PNGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/PNGRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/PNGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/PNGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/impl/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/impl/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/impl/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/impl/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/impl/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_io/impl/Util.hpp
+add_library(selene_old_img_io
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/IO.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/IO.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/JPEGRead.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/JPEGRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/JPEGWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/JPEGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/PNGRead.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/PNGRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/PNGWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/PNGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/impl/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/impl/JPEGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/impl/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/impl/PNGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/impl/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_io/impl/Util.hpp
         )
-add_library(selene::selene_DEPRECATED_img_io ALIAS selene_DEPRECATED_img_io)
+add_library(selene::selene_old_img_io ALIAS selene_old_img_io)
 
-target_compile_options(selene_DEPRECATED_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+target_compile_options(selene_old_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_compile_definitions(selene_DEPRECATED_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_definitions(selene_old_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-target_include_directories(selene_DEPRECATED_img_io PUBLIC
+target_include_directories(selene_old_img_io PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
 if (JPEG_FOUND)
-    target_compile_definitions(selene_DEPRECATED_img_io PUBLIC SELENE_WITH_LIBJPEG)
+    target_compile_definitions(selene_old_img_io PUBLIC SELENE_WITH_LIBJPEG)
     if (JPEG_PARTIAL_DECODING)
-        target_compile_definitions(selene_DEPRECATED_img_io PUBLIC SELENE_LIBJPEG_PARTIAL_DECODING)
+        target_compile_definitions(selene_old_img_io PUBLIC SELENE_LIBJPEG_PARTIAL_DECODING)
     endif()
     if (JPEG_EXTENDED_COLORSPACES)
-        target_compile_definitions(selene_DEPRECATED_img_io PUBLIC SELENE_LIBJPEG_EXTENDED_COLORSPACES)
+        target_compile_definitions(selene_old_img_io PUBLIC SELENE_LIBJPEG_EXTENDED_COLORSPACES)
     endif()
-    target_include_directories(selene_DEPRECATED_img_io PUBLIC ${JPEG_INCLUDE_DIR})
-    target_link_libraries(selene_DEPRECATED_img_io PUBLIC ${JPEG_LIBRARIES})
+    target_include_directories(selene_old_img_io PUBLIC ${JPEG_INCLUDE_DIR})
+    target_link_libraries(selene_old_img_io PUBLIC ${JPEG_LIBRARIES})
     # Imported target support upcoming in CMake (commit 87f2cf3b1ce0ef7b8e71eae0f44cf9753660d423)
-    #target_link_libraries(selene_DEPRECATED_img_io PUBLIC JPEG::JPEG)
+    #target_link_libraries(selene_old_img_io PUBLIC JPEG::JPEG)
 endif()
 
 if (PNG_FOUND)
-    target_compile_definitions(selene_DEPRECATED_img_io PUBLIC SELENE_WITH_LIBPNG)
-    target_link_libraries(selene_DEPRECATED_img_io PUBLIC PNG::PNG)
+    target_compile_definitions(selene_old_img_io PUBLIC SELENE_WITH_LIBPNG)
+    target_link_libraries(selene_old_img_io PUBLIC PNG::PNG)
 endif()
 
-target_link_libraries(selene_DEPRECATED_img_io PUBLIC selene_base_io selene_DEPRECATED_img)
+target_link_libraries(selene_old_img_io PUBLIC selene_base_io selene_old_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_DEPRECATED_img_ops
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/Algorithms.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/ChannelOperations.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/ImageConversions.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/PixelConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/PixelConversions.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/Resample.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/DEPRECATED_img_ops/Transformations.hpp
+add_library(selene_old_img_ops
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/ChannelOperations.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/ImageConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/PixelConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/PixelConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Resample.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Transformations.hpp
         )
-add_library(selene::selene_DEPRECATED_img_ops ALIAS selene_DEPRECATED_img_ops)
+add_library(selene::selene_old_img_ops ALIAS selene_old_img_ops)
 
-target_compile_options(selene_DEPRECATED_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+target_compile_options(selene_old_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_compile_definitions(selene_DEPRECATED_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_definitions(selene_old_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-target_include_directories(selene_DEPRECATED_img_ops PUBLIC
+target_include_directories(selene_old_img_ops PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(selene_DEPRECATED_img_ops PUBLIC selene_img)
+target_link_libraries(selene_old_img_ops PUBLIC selene_old_img)
 
 #------------------------------------------------------------------------------
 
 add_library(selene_img_ops
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageFunctions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageFunctions.hpp
         )
 add_library(selene::selene_img_ops ALIAS selene_img_ops)
@@ -240,19 +241,19 @@ target_link_libraries(selene_img_ops PUBLIC selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_DEPRECATED INTERFACE)
-add_library(selene::selene_DEPRECATED ALIAS selene_DEPRECATED)
+add_library(selene_old INTERFACE)
+add_library(selene::selene_old ALIAS selene_old)
 
-target_include_directories(selene_DEPRECATED INTERFACE
+target_include_directories(selene_old INTERFACE
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(selene_DEPRECATED INTERFACE
+target_link_libraries(selene_old INTERFACE
         selene_base
         selene_base_io
-        selene_DEPRECATED_img
-        selene_DEPRECATED_img_io
-        selene_DEPRECATED_img_ops)
+        selene_old_img
+        selene_old_img_io
+        selene_old_img_ops)
 
 #------------------------------------------------------------------------------
 
