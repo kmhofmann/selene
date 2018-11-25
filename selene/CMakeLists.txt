@@ -120,6 +120,7 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageViewTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.hpp
         )
 add_library(selene::selene_img ALIAS selene_img)
 
