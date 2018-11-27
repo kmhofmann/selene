@@ -106,8 +106,9 @@ public:
   PixelType& operator()(PixelIndex x, PixelIndex y) noexcept             { return view_.operator()(x, y); }
   const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept { return view_.operator()(x, y); }
 
-  ImageView<PixelType, ImageModifiability::Mutable>& view() noexcept { return view_; }
-  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>(this->byte_ptr(), this->layout()); }
+  ImageView<PixelType, ImageModifiability::Mutable>& view() noexcept { return view_.view(); }
+  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return view_.constant_view(); }
+  ImageView<PixelType, ImageModifiability::Constant> constant_view() const noexcept { return view_.constant_view(); }
 
   void clear()
   {

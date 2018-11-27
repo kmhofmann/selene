@@ -48,6 +48,8 @@ PixelFormat check_img_to_dyn_img_compatibility(const ImageView<PixelType, modifi
   {
     throw std::runtime_error("Mismatch in pixel format and number of channels.");
   }
+
+  return new_pixel_format;
 }
 
 }  // namespace impl
@@ -60,10 +62,9 @@ DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format)
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
-  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img, new_pixel_format);
+  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img.view(), new_pixel_format);
 
-  const auto& img_layout = img.layout();
-
+  const auto img_layout = img.layout();
   auto memory = img.relinquish_data_ownership();
   return DynImage{std::move(memory),
                   {img_layout.width, img_layout.height, nr_channels, nr_bytes_per_channel, img_layout.stride_bytes},
@@ -78,7 +79,7 @@ MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pix
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
-  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img, new_pixel_format);
+  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img.view(), new_pixel_format);
 
   return MutableDynImageView{img.byte_ptr(),
                              UntypedLayout{img.width(), img.height(), nr_channels, nr_bytes_per_channel, img.stride_bytes()},

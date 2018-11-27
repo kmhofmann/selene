@@ -28,6 +28,8 @@ public:
   constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
   constexpr static ImageModifiability modifiability() { return modifiability_; }
 
+  DynImageView() = default;
+
   DynImageView(DataPtr<modifiability_> ptr, UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{})
       : ptr_(ptr), layout_(layout), semantics_(semantics)
   { }
@@ -96,8 +98,9 @@ public:
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept { return *data<PixelType>(x, y); }
 
-  DynImageView<ImageModifiability::Mutable>& view() noexcept { return *this; }
-  DynImageView<ImageModifiability::Constant> view() const noexcept { return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
+  DynImageView<modifiability_>& view() noexcept { return *this; }
+  DynImageView<ImageModifiability::Constant> view() const noexcept { return constant_view(); }  // TODO: optimize
+  DynImageView<ImageModifiability::Constant> constant_view() const noexcept { return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
 
   void clear()
   {

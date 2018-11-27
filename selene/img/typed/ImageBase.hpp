@@ -74,6 +74,7 @@ public:
 
   auto view() noexcept       { return derived().view(); }
   auto view() const noexcept { return derived().view(); }
+  auto constant_view() const noexcept { return derived().constant_view(); }
 
   auto clear() { return derived().clear(); }
 };

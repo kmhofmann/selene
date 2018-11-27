@@ -103,7 +103,8 @@ public:
   const auto& operator()(PixelIndex x, PixelIndex y) const noexcept { return *this->data(x, y); }
 
   ImageView<PixelType, modifiability_>& view() noexcept { return *this; }
-  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
+  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return constant_view(); }  // TODO: optimize
+  ImageView<PixelType, ImageModifiability::Constant> constant_view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
 
   void clear()
   {

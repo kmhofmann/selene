@@ -67,18 +67,19 @@ void check_dyn_img_to_img_compatibility(const DynImageView<modifiability>& dyn_i
 template <typename PixelType>
 Image<PixelType> to_image(DynImage&& dyn_img)
 {
-  impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img);
+  impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img.view());
 
+  const auto dyn_img_layout = dyn_img.layout();
   auto memory = dyn_img.relinquish_data_ownership();
   return Image<PixelType>{std::move(memory),
-                          TypedLayout{dyn_img.width(), dyn_img.height(), dyn_img.stride_bytes()}};
+                          TypedLayout{dyn_img_layout.width, dyn_img_layout.height, dyn_img_layout.stride_bytes}};
 }
 
 // TODO: adapt documentation from old function
 template <typename PixelType>
 MutableImageView<PixelType> to_image_view(DynImage& dyn_img)
 {
-  impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img);
+  impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img.view());
 
   return MutableImageView<PixelType>{dyn_img.byte_ptr(),
                                      TypedLayout{dyn_img.width(), dyn_img.height(), dyn_img.stride_bytes()}};
