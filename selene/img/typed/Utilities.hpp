@@ -7,8 +7,8 @@
 
 /// @file
 
-#include <selene/img/typed/Image.hpp>
 #include <selene/img/pixel/PixelTraits.hpp>
+#include <selene/img/typed/Image.hpp>
 
 namespace sln {
 

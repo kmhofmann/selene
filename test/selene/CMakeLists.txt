@@ -90,6 +90,8 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/Interpolators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/RelativeAccessor.cpp
 
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/DynImageToImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/ImageToDynImage.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.cpp
         )
 

@@ -28,11 +28,12 @@ public:
   constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
   constexpr static ImageModifiability modifiability() { return modifiability_; }
 
-  DynImageView(DataPtr<modifiability_> ptr, UntypedLayout layout)
-      : ptr_(ptr), layout_(layout)
+  DynImageView(DataPtr<modifiability_> ptr, UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{})
+      : ptr_(ptr), layout_(layout), semantics_(semantics)
   { }
 
   const UntypedLayout& layout() const noexcept { return layout_; }
+  const UntypedImageSemantics& semantics() const noexcept { return semantics_; }
 
   PixelLength width() const noexcept { return layout_.width; }
   PixelLength height() const noexcept { return layout_.height; }

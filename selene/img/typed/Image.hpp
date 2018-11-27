@@ -50,6 +50,7 @@ public:
   Image();
   explicit Image(TypedLayout layout);
   Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
+  Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout layout);
   ~Image();
 
   Image(const Image<PixelType>&);
@@ -115,6 +116,7 @@ public:
   }
 
   bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
+  MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
 private:
   constexpr static auto default_base_alignment_bytes = ImageRowAlignment{16ul};
@@ -141,6 +143,12 @@ Image<PixelType_>::Image(TypedLayout layout)
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes))
+{
+}
+
+template <typename PixelType_>
+Image<PixelType_>::Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout layout)
+    : view_(memory.transfer_data(), layout)
 {
 }
 
@@ -277,6 +285,16 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
   this->deallocate_memory();
   view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes);
   return true;
+}
+
+template <typename PixelType_>
+MemoryBlock<AlignedNewAllocator> Image<PixelType_>::relinquish_data_ownership()
+{
+  const auto ptr = this->byte_ptr();
+  const auto len = this->total_bytes();
+
+  view_.clear();
+  return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, static_cast<std::size_t>(len));
 }
 
 template <typename PixelType_>

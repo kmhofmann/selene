@@ -29,8 +29,9 @@ public:
   constexpr static bool is_modifiable = true;
   constexpr static ImageModifiability modifiability() { return ImageModifiability::Mutable; }
 
-  explicit DynImage(UntypedLayout layout);
-  DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes);
+  explicit DynImage(UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{});
+  DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, UntypedImageSemantics semantics = UntypedImageSemantics{});
+  DynImage(MemoryBlock<AlignedNewAllocator>&& memory, UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{});
   ~DynImage();
 
   DynImage(const DynImage&);
@@ -43,6 +44,7 @@ public:
   template <ImageModifiability modifiability> DynImage& operator=(const DynImageView<modifiability>&);
 
   const UntypedLayout& layout() const noexcept { return view_.layout(); }
+  const UntypedImageSemantics& semantics() const noexcept { return view_.semantics(); }
 
   PixelLength width() const noexcept { return view_.width(); }
   PixelLength height() const noexcept { return view_.height(); }
@@ -115,6 +117,7 @@ public:
   }
 
   bool reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
+  MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
 private:
   constexpr static auto default_base_alignment_bytes = ImageRowAlignment{16ul};
@@ -123,17 +126,23 @@ private:
 
   void copy_rows_from(const DynImage& src);
 
-  DynImageView<ImageModifiability::Mutable> allocate_memory(UntypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes);
+  DynImageView<ImageModifiability::Mutable> allocate_memory(UntypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes, UntypedImageSemantics semantics);
   void deallocate_memory();
 };
 
-inline DynImage::DynImage(UntypedLayout layout)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0))
+inline DynImage::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0, semantics))
 {
 }
 
-inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes))
+inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, UntypedImageSemantics semantics)
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, semantics))
+{
+}
+
+
+inline DynImage::DynImage(MemoryBlock<AlignedNewAllocator>&& memory, UntypedLayout layout, UntypedImageSemantics semantics)
+    : view_(memory.transfer_data(), layout, semantics)
 {
 }
 
@@ -146,7 +155,8 @@ inline DynImage::DynImage(const DynImage& other)
     : view_(allocate_memory(other.layout(),
                             default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes())))
+                                                      other.stride_bytes()),
+                            other.semantics()))
 {
   copy_rows_from(other);
 }
@@ -170,7 +180,8 @@ inline DynImage& DynImage::operator=(const DynImage& other)
     view_ = allocate_memory(other.layout(),
                             default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes()));
+                                                      other.stride_bytes()),
+                            other.semantics());
   }
 
   copy_rows_from(other);
@@ -181,7 +192,7 @@ inline DynImage& DynImage::operator=(const DynImage& other)
 inline DynImage::DynImage(DynImage&& other) noexcept
     : view_(other.view_)
 {
-  other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, {PixelLength{0}, PixelLength{0}, std::int16_t{0}, std::int16_t{0}, Stride{0}}};
+  other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
 }
 
 inline DynImage& DynImage::operator=(DynImage&& other) noexcept
@@ -196,7 +207,7 @@ inline DynImage& DynImage::operator=(DynImage&& other) noexcept
   this->deallocate_memory();
 
   view_ = other.view_;
-  other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, {PixelLength{0}, PixelLength{0}, std::int16_t{0}, std::int16_t{0}, Stride{0}}};
+  other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
 
   return *this;
 }
@@ -206,7 +217,8 @@ DynImage::DynImage(const DynImageView<modifiability_>& other)
     : view_(allocate_memory(other.layout(),
                             default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes())))
+                                                      other.stride_bytes()),
+                            other.semantics()))
 {
   copy_rows_from(other);
 }
@@ -231,7 +243,8 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
     view_ = allocate_memory(other.layout(),
                             default_base_alignment_bytes,
                             impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes()));
+                                                      other.stride_bytes()),
+                            other.semantics());
   }
 
   copy_rows_from(other);
@@ -260,8 +273,17 @@ inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_ali
   }
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes);
+  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, this->semantics());  // TODO: should semantics always stay the same?
   return true;
+}
+
+inline MemoryBlock<AlignedNewAllocator> DynImage::relinquish_data_ownership()
+{
+  const auto ptr = this->byte_ptr();
+  const auto len = this->total_bytes();
+
+  view_.clear();
+  return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, static_cast<std::size_t>(len));
 }
 
 inline void DynImage::copy_rows_from(const DynImage& src)
@@ -275,7 +297,7 @@ inline void DynImage::copy_rows_from(const DynImage& src)
   }
 }
 
-inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(UntypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes)
+inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(UntypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes, UntypedImageSemantics semantics)
 {
   const auto stride_bytes = impl::compute_stride_bytes(std::max(layout.stride_bytes, Stride{layout.nr_bytes_per_channel * layout.nr_channels * layout.width}), row_alignment_bytes);
   const auto nr_bytes_to_allocate = stride_bytes * layout.height;
@@ -284,7 +306,7 @@ inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(Untyp
   auto memory = sln::AlignedNewAllocator::allocate(static_cast<std::size_t>(nr_bytes_to_allocate), static_cast<std::size_t>(base_alignment_bytes));
   SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
 
-  return DynImageView<ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width, layout.height, layout.nr_channels, layout.nr_bytes_per_channel, stride_bytes}};
+  return DynImageView<ImageModifiability::Mutable>{{memory.transfer_data()}, {layout.width, layout.height, layout.nr_channels, layout.nr_bytes_per_channel, stride_bytes}, semantics};
 }
 
 inline void DynImage::deallocate_memory()
