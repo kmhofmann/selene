@@ -118,7 +118,7 @@ public:
     view_.clear();
   }
 
-  bool reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
+  bool reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, UntypedImageSemantics semantics = UntypedImageSemantics{}, bool shrink_to_fit = true);
   MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
 private:
@@ -254,7 +254,7 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
   return *this;
 }
 
-inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit)
+inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, UntypedImageSemantics semantics, bool shrink_to_fit)
 {
   if (layout == this->view_.layout())
   {
@@ -275,7 +275,7 @@ inline bool DynImage::reallocate(UntypedLayout layout, ImageRowAlignment row_ali
   }
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, this->semantics());  // TODO: should semantics always stay the same?
+  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, semantics);
   return true;
 }
 
