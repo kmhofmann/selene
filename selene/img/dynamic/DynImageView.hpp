@@ -19,6 +19,7 @@ class DynImageView
 {
 public:
   using DataPtrType = typename DataPtr<modifiability_>::Type;
+  using ConstDataPtrType = typename DataPtr<ImageModifiability::Constant>::Type;
 
   template <typename PixelType> using iterator = DynImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
   template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
@@ -100,7 +101,7 @@ public:
 
   DynImageView<modifiability_>& view() noexcept { return *this; }
   DynImageView<ImageModifiability::Constant> view() const noexcept { return constant_view(); }  // TODO: optimize
-  DynImageView<ImageModifiability::Constant> constant_view() const noexcept { return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
+  DynImageView<ImageModifiability::Constant> constant_view() const noexcept { return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout(), this->semantics()}; }  // TODO: optimize
 
   void clear()
   {

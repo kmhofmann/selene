@@ -41,9 +41,9 @@ auto get_row_pointers(ImageType& img) -> std::vector<typename ImageType::DataPtr
  * @return List of row pointers.
  */
 template <typename ImageType>
-auto get_row_pointers(const ImageType& img) -> std::vector<typename ImageType::DataPtrType>
+auto get_const_row_pointers(const ImageType& img) -> std::vector<typename ImageType::ConstDataPtrType>
 {
-  std::vector<typename ImageType::DataPtrType> row_pointers(img.height());
+  std::vector<typename ImageType::ConstDataPtrType> row_pointers(img.height());
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {

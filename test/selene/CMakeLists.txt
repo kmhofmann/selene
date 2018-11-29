@@ -93,6 +93,10 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/DynImageToImage.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/ImageToDynImage.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_JPEG.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_PNG.cpp
         )
 
 target_compile_options(selene_tests PRIVATE
