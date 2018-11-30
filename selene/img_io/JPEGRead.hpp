@@ -470,7 +470,7 @@ bool JPEGReader<SourceType>::read_image_data(DynImage& dyn_img)
   const auto output_width = output_info.width;
   const auto output_height = output_info.height;
   const auto output_nr_channels = output_info.nr_channels;
-  const auto output_nr_bytes_per_channel = 1;
+  const auto output_nr_bytes_per_channel = std::int16_t{1};
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
   const auto output_pixel_format = impl::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_format = SampleFormat::UnsignedInteger;
