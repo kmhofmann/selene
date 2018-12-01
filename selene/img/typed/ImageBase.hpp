@@ -40,43 +40,43 @@ public:
   bool is_empty() const noexcept { return derived().is_empty(); }
   bool is_valid() const noexcept { return derived().is_valid(); }
 
-  auto begin() noexcept { return derived().begin(); }
-  auto begin() const noexcept { return derived().begin(); }
-  auto cbegin() const noexcept { return derived().cbegin(); }
+  decltype(auto) begin() noexcept { return derived().begin(); }
+  decltype(auto) begin() const noexcept { return derived().begin(); }
+  decltype(auto) cbegin() const noexcept { return derived().cbegin(); }
 
-  auto end() noexcept { return derived().end(); }
-  auto end() const noexcept  { return derived().end(); }
-  auto cend() const noexcept { return derived().cend(); }
+  decltype(auto) end() noexcept { return derived().end(); }
+  decltype(auto) end() const noexcept  { return derived().end(); }
+  decltype(auto) cend() const noexcept { return derived().cend(); }
 
-  auto byte_ptr() noexcept       { return derived().byte_ptr(); }
-  auto byte_ptr() const noexcept { return derived().byte_ptr(); }
+  decltype(auto) byte_ptr() noexcept       { return derived().byte_ptr(); }
+  decltype(auto) byte_ptr() const noexcept { return derived().byte_ptr(); }
 
-  auto byte_ptr(PixelIndex y) noexcept       { return derived().byte_ptr(y); }
-  auto byte_ptr(PixelIndex y) const noexcept { return derived().byte_ptr(y); }
+  decltype(auto) byte_ptr(PixelIndex y) noexcept       { return derived().byte_ptr(y); }
+  decltype(auto) byte_ptr(PixelIndex y) const noexcept { return derived().byte_ptr(y); }
 
-  auto byte_ptr(PixelIndex x, PixelIndex y) noexcept       { return derived().byte_ptr(x, y); }
-  auto byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return derived().byte_ptr(x, y); }
+  decltype(auto) byte_ptr(PixelIndex x, PixelIndex y) noexcept       { return derived().byte_ptr(x, y); }
+  decltype(auto) byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return derived().byte_ptr(x, y); }
 
-  auto data() noexcept       { return derived().data(); }
-  auto data() const noexcept { return derived().data(); }
+  decltype(auto) data() noexcept       { return derived().data(); }
+  decltype(auto) data() const noexcept { return derived().data(); }
 
-  auto data(PixelIndex y) noexcept       { return derived().data(y); }
-  auto data(PixelIndex y) const noexcept { return derived().data(y); }
+  decltype(auto) data(PixelIndex y) noexcept       { return derived().data(y); }
+  decltype(auto) data(PixelIndex y) const noexcept { return derived().data(y); }
 
-  auto data_row_end(PixelIndex y) noexcept       { return derived().data_row_end(y); }
-  auto data_row_end(PixelIndex y) const noexcept { return derived().data_row_end(y); }
+  decltype(auto) data_row_end(PixelIndex y) noexcept       { return derived().data_row_end(y); }
+  decltype(auto) data_row_end(PixelIndex y) const noexcept { return derived().data_row_end(y); }
 
-  auto data(PixelIndex x, PixelIndex y) noexcept       { return derived().data(x, y); }
-  auto data(PixelIndex x, PixelIndex y) const noexcept { return derived().data(x, y); }
+  decltype(auto) data(PixelIndex x, PixelIndex y) noexcept       { return derived().data(x, y); }
+  decltype(auto) data(PixelIndex x, PixelIndex y) const noexcept { return derived().data(x, y); }
 
-  auto operator()(PixelIndex x, PixelIndex y) noexcept       { return derived().operator()(x, y); }
-  auto operator()(PixelIndex x, PixelIndex y) const noexcept { return derived().operator()(x, y); }
+  decltype(auto) operator()(PixelIndex x, PixelIndex y) noexcept       { return derived().operator()(x, y); }
+  decltype(auto) operator()(PixelIndex x, PixelIndex y) const noexcept { return derived().operator()(x, y); }
 
-  auto view() noexcept       { return derived().view(); }
-  auto view() const noexcept { return derived().view(); }
-  auto constant_view() const noexcept { return derived().constant_view(); }
+  decltype(auto) view() noexcept       { return derived().view(); }
+  decltype(auto) view() const noexcept { return derived().view(); }
+  decltype(auto) constant_view() const noexcept { return derived().constant_view(); }
 
-  auto clear() { return derived().clear(); }
+  decltype(auto) clear() { return derived().clear(); }
 };
 
 }  // namespace sln

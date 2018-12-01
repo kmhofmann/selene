@@ -53,18 +53,29 @@ inline sln::Image<sln::Pixel<std::uint8_t, 3>> make_3x3_test_image_8u3()
   return img;
 }
 
+template <typename PixelType, typename RNG, typename Distribution>
+PixelType construct_random_pixel(RNG& rng, Distribution& dist)
+{
+  using ElementType = typename sln::PixelTraits<PixelType>::Element;
+  constexpr auto nr_channels = sln::PixelTraits<PixelType>::nr_channels;
+
+  PixelType px;
+  for (std::size_t i = 0; i < nr_channels; ++i)
+  {
+    px[i] = static_cast<ElementType>(dist(rng));
+  }
+  return px;
+}
+
 template <typename PixelType, typename RNG>
 sln::Image<PixelType> construct_random_image(sln::PixelLength width, sln::PixelLength height, RNG& rng)
 {
   using namespace sln::literals;
-
-  static_assert(sln::PixelTraits<PixelType>::nr_channels == 1, "Unexpected multi-channel image");
-
   using Element = typename sln::PixelTraits<PixelType>::Element;
 
   constexpr auto is_int = sln::PixelTraits<PixelType>::is_integral;
-  auto die = sln_test::uniform_distribution<Element>(Element{0},
-                                                     is_int ? std::numeric_limits<Element>::max() : Element{1});
+  auto dist = sln_test::uniform_distribution<Element>(Element{0},
+                                                      is_int ? std::numeric_limits<Element>::max() : Element{1});
 
   std::uniform_int_distribution<std::uint16_t> die_stride(0, 16);
   const auto extra_stride_bytes = std::size_t{die_stride(rng) * sizeof(Element)};
@@ -76,7 +87,7 @@ sln::Image<PixelType> construct_random_image(sln::PixelLength width, sln::PixelL
     auto ptr = img.data(y);
     for (auto x = 0_idx; x < img.width(); ++x)
     {
-      *ptr++ = PixelType{die(rng)};
+      *ptr++ = construct_random_pixel<PixelType>(rng, dist);
     }
   }
 
