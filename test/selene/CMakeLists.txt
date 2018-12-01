@@ -105,6 +105,7 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.cpp
         )

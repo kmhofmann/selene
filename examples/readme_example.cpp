@@ -1,19 +1,26 @@
 #include <selene/base/io/FileUtils.hpp>
 
-#include <selene/old_img/ImageTypeAliases.hpp>
-#include <selene/old_img/ImageDataToImage.hpp>
-#include <selene/old_img/ImageToImageData.hpp>
-#include <selene/old_img_io/IO.hpp>
-#include <selene/old_img_ops/Algorithms.hpp>
-#include <selene/old_img_ops/ImageConversions.hpp>
-#include <selene/old_img_ops/Transformations.hpp>
+#include <selene/base/io/FileWriter.hpp>
+
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/ImageTypeAliases.hpp>
+
+#include <selene/img/interop/ImageToDynImage.hpp>
+
+#include <selene/img_io/IO.hpp>
+
+#include <selene/img_ops/Algorithms.hpp>
+#include <selene/img_ops/ImageConversions.hpp>
+#include <selene/img_ops/Transformations.hpp>
+#include <selene/img_ops/View.hpp>
 
 #include <cassert>
 #include <filesystem>
 
-#include "Utils_old.hpp"
+#include "Utils.hpp"
 
-using namespace sln;  // Never outside of example code
+using namespace sln;  // Only for the README file. Don't do this otherwise.
 
 int main(int argc, char** argv)
 {
@@ -23,7 +30,7 @@ int main(int argc, char** argv)
   const auto example_img_path = sln_examples::full_data_path("bike_duck.jpg", data_path);
 
   // Decode JPEG image data from disk
-  ImageData<> img_data = read_image(FileReader(example_img_path.string()));
+  DynImage img_data = read_image(FileReader(example_img_path.string()));
   assert(img_data.nr_channels() == 3 && img_data.nr_bytes_per_channel() == 1);
 
   // Convert to strongly typed RGB image
@@ -31,7 +38,7 @@ int main(int argc, char** argv)
   assert(img_rgb.width() > 400_px && img_rgb.height() > 350_px);
 
   // Create non-owning view on part of the image
-  Image<PixelRGB_8u> img_part = view(img_rgb, 100_idx, 100_idx, 300_px, 250_px);
+  MutableImageView<PixelRGB_8u> img_part = view(img_rgb, {100_idx, 100_idx, 300_px, 250_px});
 
   // Darken this part
   for_each_pixel(img_part, [](auto& px){ px /= 4; });
@@ -45,7 +52,7 @@ int main(int argc, char** argv)
 
   // Encode in-memory to PNG
   std::vector<std::uint8_t> encoded_png_data;
-  write_image(to_image_data_view(img_rgba), ImageFormat::PNG,
+  write_image(to_dyn_image_view(img_rgba), ImageFormat::PNG,
               VectorWriter(encoded_png_data));
 
   // Write encoded binary data to disk (or do something else with it...)

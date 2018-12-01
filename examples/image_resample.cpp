@@ -4,21 +4,26 @@
 
 #include <selene/base/io/FileWriter.hpp>
 
-#include <selene/old_img/ImageTypeAliases.hpp>
-#include <selene/old_img/ImageToImageData.hpp>
-#include <selene/old_img_io/IO.hpp>
-#include <selene/old_img_ops/Resample.hpp>
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/ImageTypeAliases.hpp>
+
+#include <selene/img/interop/ImageToDynImage.hpp>
+
+#include <selene/img_io/IO.hpp>
+
+#include <selene/img_ops/Resample.hpp>
 
 #include <cassert>
 #include <iostream>
 #include <string>
 
-#include "Utils_old.hpp"
+#include "Utils.hpp"
 
 constexpr auto output_filename_resampled_0 = "bike_duck_bilinear_resampled_0.jpg";
 constexpr auto output_filename_resampled_1 = "bike_duck_bilinear_resampled_1.jpg";
 
-using namespace sln;  // Never outside of example code
+using namespace sln::literals;
 
 int main(int argc, char** argv)
 {
@@ -28,23 +33,23 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `PixelRGB_8u` designates 3 channels (R, G, B) of unsigned 8-bit data for each pixel.
 
-  auto img = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
+  auto img = sln_examples::read_example_image<sln::PixelRGB_8u>("bike_duck.png", data_path);
   assert(img.width() == 1024_px);
   assert(img.height() == 684_px);
 
   // Resample the image to a much smaller size. This results in plenty of aliasing.
-  const auto img_resampled_0 = resample(img, 256_px, 171_px);
+  const auto img_resampled_0 = sln::resample(img, 256_px, 171_px);
 
   // Afterwards, resample to its original size.
-  const auto img_resampled_1 = resample(img_resampled_0, img.width(), img.height());
+  const auto img_resampled_1 = sln::resample(img_resampled_0, img.width(), img.height());
 
   std::cout << "Writing the result to disk: '" << output_filename_resampled_0 << "'...\n";
-  write_image(to_image_data_view(img_resampled_0), ImageFormat::JPEG,
-              FileWriter(output_filename_resampled_0));
+  sln::write_image(sln::to_dyn_image_view(img_resampled_0), sln::ImageFormat::JPEG,
+                   sln::FileWriter(output_filename_resampled_0));
 
   std::cout << "Writing the result to disk: '" << output_filename_resampled_1 << "'...\n";
-  write_image(to_image_data_view(img_resampled_1), ImageFormat::JPEG,
-              FileWriter(output_filename_resampled_1));
+  sln::write_image(sln::to_dyn_image_view(img_resampled_1), sln::ImageFormat::JPEG,
+                   sln::FileWriter(output_filename_resampled_1));
 
   return 0;
 }

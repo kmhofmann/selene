@@ -24,7 +24,7 @@ add_executable(image_conversion
 target_compile_options(image_conversion PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_conversion PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_conversion PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_conversion selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_conversion selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_io
         ${CMAKE_CURRENT_LIST_DIR}/image_io.cpp)
@@ -38,25 +38,25 @@ add_executable(image_resample
 target_compile_options(image_resample PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_resample PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_resample PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_resample selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_resample selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_rotate
         ${CMAKE_CURRENT_LIST_DIR}/image_rotate.cpp)
 target_compile_options(image_rotate PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_rotate PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_rotate PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_rotate selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_rotate selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_transform
         ${CMAKE_CURRENT_LIST_DIR}/image_transform.cpp)
 target_compile_options(image_transform PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_transform PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_transform PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_transform selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_transform selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(readme_example
         ${CMAKE_CURRENT_LIST_DIR}/readme_example.cpp)
 target_compile_options(readme_example PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(readme_example PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(readme_example PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(readme_example selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(readme_example selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
