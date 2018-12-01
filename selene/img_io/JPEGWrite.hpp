@@ -22,6 +22,7 @@
 
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/dynamic/DynImageView.hpp>
+#include <selene/img/dynamic/StaticChecks.hpp>
 
 #include <selene/img_io/JPEGCommon.hpp>
 #include <selene/img_io/impl/JPEGCommon.hpp>
@@ -179,6 +180,8 @@ bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
+  impl::static_check_is_dyn_image_or_view(dyn_img_or_view);
+
   impl::set_destination(obj, sink);
 
   if (obj.error_state())

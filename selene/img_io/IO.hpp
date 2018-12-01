@@ -61,7 +61,7 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst);
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return An `ImageData` instance. Reading the image stream was successful, if `is_valid() == true`, and unsuccessful
+ * @return A `DynImage` instance. Reading the image stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
 template <typename SourceType>

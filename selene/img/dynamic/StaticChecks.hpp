@@ -14,6 +14,8 @@
 
 namespace sln {
 
+namespace impl {
+
 template <typename DynImageOrView>
 void static_check_is_dyn_image_or_view(const DynImageOrView&)
 {
@@ -22,6 +24,16 @@ void static_check_is_dyn_image_or_view(const DynImageOrView&)
                 || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Constant>>,
                 "Supplied type needs be either a sln::DynImage or a sln::DynImageView<>.");
 }
+
+template <typename DynImageOrView>
+void static_check_is_dyn_image_or_mutable_view(const DynImageOrView&)
+{
+  static_assert(std::is_same_v<DynImageOrView, DynImage>
+                || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Mutable>>,
+                "Supplied type needs be either a sln::DynImage or a sln::MutableDynImageView<>.");
+}
+
+} // namespace impl
 
 }  // namespace sln
 

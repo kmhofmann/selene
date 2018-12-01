@@ -22,6 +22,7 @@
 #include <selene/img/common/RowPointers.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/StaticChecks.hpp>
 
 #include <selene/img_io/impl/Util.hpp>
 
@@ -225,8 +226,8 @@ DynImage read_png(PNGDecompressionObject& obj,
  *
  * read_png(), however, does not allow reading of the decompressed image data into pre-allocated memory.
  * This is enabled by calling `get_output_image_info()` on an instance of this class, then allocating the respective
- * `ImageData<>` instance (which can be itself a view to pre-allocated memory), and finally calling
- * `read_image_data(ImageData<>&)`.
+ * `DynImage` instance (or by providing a `DynImageView` into pre-allocated memory), and finally calling
+ * `read_image_data(DynImage&)` or `read_image_data(MutableDynImageView&)`.
  *
  * A PNGReader<> instance is stateful:
  * Calling of `read_header()`, `set_decompression_options()`, or `get_output_image_info()` is optional.
@@ -252,7 +253,7 @@ public:
 
   PNGImageInfo get_output_image_info();
   DynImage read_image_data();
-  bool read_image_data(DynImage& dyn_img);
+  template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
 
   MessageLog& message_log();
 
@@ -497,8 +498,11 @@ DynImage PNGReader<SourceType>::read_image_data()
 }
 
 template <typename SourceType>
-bool PNGReader<SourceType>::read_image_data(DynImage& dyn_img)
+template <typename DynImageOrView>
+bool PNGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 {
+  impl::static_check_is_dyn_image_or_mutable_view(dyn_img_or_view);
+
   if (!header_read_)
   {
     read_header();
@@ -524,12 +528,12 @@ bool PNGReader<SourceType>::read_image_data(DynImage& dyn_img)
   const auto output_pixel_format = obj_.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  dyn_img.reallocate({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
-                      output_stride_bytes},
-                     ImageRowAlignment{0},
-                     {output_pixel_format, output_sample_format},
-                     true);
-  auto row_pointers = get_row_pointers(dyn_img);
+  dyn_img_or_view.reallocate({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                              output_stride_bytes},
+                             ImageRowAlignment{0},
+                             {output_pixel_format, output_sample_format},
+                             false);
+  auto row_pointers = get_row_pointers(dyn_img_or_view);
   const auto dec_success = cycle_->decompress(row_pointers);
 
   reset();
