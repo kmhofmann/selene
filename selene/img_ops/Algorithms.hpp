@@ -16,7 +16,7 @@ namespace sln {
 
 /** \brief Applies a unary function to each pixel value of an image.
  *
- * @tparam PixelType The pixel type of the image.
+ * @tparam DerivedSrc The typed image type.
  * @tparam UnaryFunction The unary function type.
  * @param[in,out] img The image to apply the function on.
  * @param f The unary function to apply to each pixel. Its signature should be `void f(PixelType&)`.
@@ -38,10 +38,10 @@ UnaryFunction for_each_pixel(ImageBase<DerivedSrc>& img, UnaryFunction f)
 
 /** \brief Transforms one image into another by applying a unary operation to each pixel value.
  *
- * `sln::Image<PixelTypeDst>::maybe_allocate` is called on the destination image prior to performing the operation.
+ * `allocate` is called on the destination image prior to performing the operation.
  *
- * @tparam PixelTypeDst The pixel type of the destination image.
- * @tparam PixelTypeSrc The pixel type of the source image.
+ * @tparam DerivedDst The typed destination image type.
+ * @tparam DerivedSrc The typed source image type.
  * @tparam UnaryOperation The unary operation type.
  * @param img_src The source image.
  * @param[out] img_dst The destination image.
@@ -66,7 +66,7 @@ void transform_pixels(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst
 /** \brief Transforms one image into another by applying a unary operation to each pixel value.
  *
  * @tparam PixelTypeDst The pixel type of the destination image.
- * @tparam PixelTypeSrc The pixel type of the source image.
+ * @tparam DerivedSrc The typed source image type.
  * @tparam UnaryOperation The unary operation type.
  * @param img_src The source image.
  * @param op The unary operation. Its signature should be `PixelTypeDst f(const PixelTypeSrc&)` or `PixelTypeDst

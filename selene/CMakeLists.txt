@@ -54,49 +54,6 @@ target_link_libraries(selene_base_io PUBLIC selene_base)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_old_img
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/BorderAccessors.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/BoundingBox.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/Image.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageAccess.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageData.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataBase.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataStorage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageDataToImage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageIterators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageToImageData.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/ImageTypeAliases.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/Interpolators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/OpenCV.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/Pixel.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelFormat.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelFormat.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelTraits.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/PixelTypeAliases.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/RelativeAccessor.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/RowPointers.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/Types.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img/Utilities.hpp
-        )
-add_library(selene::selene_old_img ALIAS selene_old_img)
-
-target_compile_options(selene_old_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
-target_compile_definitions(selene_old_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_old_img PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
-
-if (OPENCV_CORE_FOUND)
-    target_compile_definitions(selene_old_img PUBLIC SELENE_WITH_OPENCV)
-    # no need to link against it, as it's only used in a header
-endif()
-
-target_link_libraries(selene_old_img PUBLIC selene_base)
-
-#------------------------------------------------------------------------------
-
 add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/DataPtr.hpp
@@ -204,29 +161,6 @@ target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_old_img_ops
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Algorithms.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/ChannelOperations.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/ImageConversions.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/PixelConversions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/PixelConversions.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Resample.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/old_img_ops/Transformations.hpp
-        )
-add_library(selene::selene_old_img_ops ALIAS selene_old_img_ops)
-
-target_compile_options(selene_old_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
-target_compile_definitions(selene_old_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_old_img_ops PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
-
-target_link_libraries(selene_old_img_ops PUBLIC selene_old_img)
-
-#------------------------------------------------------------------------------
-
 add_library(selene_img_ops
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.hpp
@@ -255,21 +189,6 @@ target_link_libraries(selene_img_ops PUBLIC selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_old INTERFACE)
-add_library(selene::selene_old ALIAS selene_old)
-
-target_include_directories(selene_old INTERFACE
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
-
-target_link_libraries(selene_old INTERFACE
-        selene_base
-        selene_base_io
-        selene_old_img
-        selene_old_img_ops)
-
-#------------------------------------------------------------------------------
-
 add_library(selene INTERFACE)
 add_library(selene::selene ALIAS selene)
 
@@ -285,57 +204,57 @@ target_link_libraries(selene INTERFACE
         selene_img_ops)
 
 #------------------------------------------------------------------------------
-#
-## Installation
-#
-#include(GNUInstallDirs)
-#include(CMakePackageConfigHelpers)
-#
-#set(SELENE_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/selene)
-#
-## Create selene-config-version.cmake
-#write_basic_package_version_file(
-#        ${CMAKE_CURRENT_BINARY_DIR}/selene-config-version.cmake
-#        VERSION ${PROJECT_VERSION}
-#        COMPATIBILITY AnyNewerVersion)
-#
-## Create selene-config.cmake
-#configure_package_config_file(
-#        ${SELENE_DIR}/cmake/selene-config.cmake.in
-#        ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
-#        INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
-#
-## Install library files
-#install(TARGETS selene_base selene_img selene_img_io selene_img_ops selene_base_io selene
-#        EXPORT selene-targets
-#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-#
-## Install headers
-#install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#        FILES_MATCHING PATTERN "*.hpp")
-#
-## Install exports
-#install(EXPORT selene-targets
-#        FILE selene-targets.cmake
-#        NAMESPACE selene::
-#        DESTINATION ${SELENE_INSTALL_CONFIGDIR})
-#
-## Install config and config-version files
-#install(FILES
-#        ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
-#        ${CMAKE_CURRENT_BINARY_DIR}/selene-config-version.cmake
-#        DESTINATION ${SELENE_INSTALL_CONFIGDIR})
-#
-##------------------------------------------------------------------------------
-#
-## Exporting from the build tree
-#
-#export(EXPORT selene-targets
-#        FILE ${CMAKE_CURRENT_BINARY_DIR}/selene-targets.cmake
-#        NAMESPACE selene::)
-#
-#export(PACKAGE selene)
+
+# Installation
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+set(SELENE_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/selene)
+
+# Create selene-config-version.cmake
+write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/selene-config-version.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion)
+
+# Create selene-config.cmake
+configure_package_config_file(
+        ${SELENE_DIR}/cmake/selene-config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
+        INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
+
+# Install library files
+install(TARGETS selene_base selene_base_io selene_img selene_img_io selene_img_ops selene
+        EXPORT selene-targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Install headers
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.hpp")
+
+# Install exports
+install(EXPORT selene-targets
+        FILE selene-targets.cmake
+        NAMESPACE selene::
+        DESTINATION ${SELENE_INSTALL_CONFIGDIR})
+
+# Install config and config-version files
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/selene-config-version.cmake
+        DESTINATION ${SELENE_INSTALL_CONFIGDIR})
+
+#------------------------------------------------------------------------------
+
+# Exporting from the build tree
+
+export(EXPORT selene-targets
+        FILE ${CMAKE_CURRENT_BINARY_DIR}/selene-targets.cmake
+        NAMESPACE selene::)
+
+export(PACKAGE selene)

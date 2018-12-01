@@ -73,7 +73,7 @@ Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img);
 /** \brief Flips the image contents according to the specified flip direction.
  *
  * @tparam flip_dir The flip direction. Must be provided
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img_src The source image.
  * @param[out] img_dst The flipped output image.
  */
@@ -117,7 +117,7 @@ void flip(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img
 /** \brief Flips the image contents according to the specified flip direction.
  *
  * @tparam flip_dir The flip direction. Must be provided
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrc The typed source image type.
  * @param img The source image.
  * @return The flipped output image.
  */
@@ -131,7 +131,7 @@ Image<typename DerivedSrc::PixelType> flip(const ImageBase<DerivedSrc>& img)
 
 /** \brief Flips the image horizontally, in-place.
  *
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img The image to be flipped horizontally.
  */
 template <typename DerivedSrcDst>
@@ -154,7 +154,7 @@ void flip_horizontally_in_place(ImageBase<DerivedSrcDst>& img)
 
 /** \brief Flips the image vertically, in-place.
  *
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img The image to be flipped vertically.
  */
 template <typename DerivedSrcDst>
@@ -198,7 +198,7 @@ void flip_vertically_in_place(ImageBase<DerivedSrcDst>& img)
  *
  * @tparam flip_h If true, the output will additionally be horizontally flipped.
  * @tparam flip_v If true, the output will additionally be vertically flipped.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img_src The source image.
  * @param[out] img_dst The transposed output image.
  */
@@ -226,7 +226,7 @@ void transpose(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>
  *
  * @tparam flip_h If true, the output will additionally be horizontally flipped.
  * @tparam flip_v If true, the output will additionally be vertically flipped.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrc The typed source image type.
  * @param img The source image.
  * @return The transposed output image.
  */
@@ -241,7 +241,7 @@ Image<typename DerivedSrc::PixelType> transpose(const ImageBase<DerivedSrc>& img
 /** \brief Rotates the image (in 90 degree increments) by the specified amount and direction.
  *
  * @tparam rot_dir The rotation amount and direction. Must be provided.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img_src The source image.
  * @param[out] img_dst The rotated output image.
  */
@@ -282,7 +282,7 @@ void rotate(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& i
 /** \brief Rotates the image (in 90 degree increments) by the specified amount and direction.
  *
  * @tparam rot_dir The rotation amount and direction. Must be provided.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrc The typed source image type.
  * @param img The source image.
  * @return The rotated output image.
  */

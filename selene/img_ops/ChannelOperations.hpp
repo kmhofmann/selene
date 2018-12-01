@@ -43,6 +43,9 @@ auto stack_images(Imgs... imgs);
 template <typename ImgSrc, typename ImgDst>
 void inject_channels(const ImgSrc& src, ImgDst& dst, std::size_t dst_start_channel)
 {
+  static_assert(is_image_type_v<ImgSrc> && is_image_type_v<ImgDst>,
+                "Need to supply a typed image (owning or view) as input/output argument to inject_channels");
+
   constexpr auto nr_channels_src = sln::PixelTraits<typename ImgSrc::PixelType>::nr_channels;
   constexpr auto nr_channels_dst = sln::PixelTraits<typename ImgDst::PixelType>::nr_channels;
 
@@ -119,7 +122,6 @@ namespace impl
   void inject_channels_rec(ImgDst& img_dst, std::size_t dst_start_channel, const ImgSrc& img_src)
   {
     inject_channels(img_src, img_dst, dst_start_channel);
-
   }
 
   template <typename ImgSrc, typename... ImgsSrc, typename ImgDst>

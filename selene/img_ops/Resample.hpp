@@ -108,7 +108,7 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
  * frequency range; therefore, aliasing may occur when shrinking the image dimensions.
  *
  * @tparam interpolation_mode The interpolation mode to use.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrc The typed source image type.
  * @param img The input image to be resampled
  * @param new_width The width of the target image.
  * @param new_height The height of the target image
@@ -129,7 +129,7 @@ auto resample(const ImageBase<DerivedSrc>& img, PixelLength new_width, PixelLeng
  * frequency range; therefore, aliasing may occur when shrinking the image dimensions.
  *
  * @tparam interpolation_mode The interpolation mode to use.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img_src The input image to be resampled.
  * @param img_dst The sampled target image.
  * @param new_width The width of the target image.

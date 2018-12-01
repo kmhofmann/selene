@@ -184,8 +184,8 @@ struct ImageConversion<pixel_format_src,
  *
  * @tparam pixel_format_src The source pixel format.
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
- * @tparam PixelDst The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
  * @param img_src The source image.
  * @param img_dst The target image. Its pixel type has to be compatible with the target pixel format.
  */
@@ -226,7 +226,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
  *
  * @tparam pixel_format_src The source pixel format.
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
  * @param img_src The source image.
  * @return The target image.
  */
@@ -264,8 +264,8 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
  *
  * @tparam pixel_format_src The source pixel format.
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
- * @tparam PixelDst The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
  * @tparam ElementType The pixel element type (for the target format; usually automatically deduced).
  * @param img_src The source image.
  * @param img_dst The target image. Its pixel type has to be compatible with the target pixel format.
@@ -312,7 +312,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
  *
  * @tparam pixel_format_src The source pixel format.
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
  * @tparam ElementType The pixel element type (for the target format; usually automatically deduced).
  * @param img_src The source image.
  * @param alpha_value The alpha value to assign to each pixel in the target image.
@@ -352,8 +352,8 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
  * conversion, writing the output to `img_y`.
  *
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
- * @tparam PixelDst The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
  * @param img_src The source image.
  * @param img_dst The target image. Its pixel type has to be compatible with the target pixel format.
  */
@@ -390,7 +390,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
  * returning the output image.
  *
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
  * @param img_src The source image.
  * @return The target image.
  */
@@ -423,8 +423,8 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
  * grayscale+luminance conversion, writing the output to `img_y`.
  *
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
- * @tparam PixelDst The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
  * @tparam ElementType The pixel element type (for the target format; usually automatically deduced).
  * @param img_src The source image.
  * @param img_dst The target image. Its pixel type has to be compatible with the target pixel format.
@@ -467,7 +467,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
  * conversion, returning the output image.
  *
  * @tparam pixel_format_dst The target pixel format.
- * @tparam PixelSrc The source pixel type (usually automatically deduced).
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
  * @tparam ElementType The pixel element type (for the target format; usually automatically deduced).
  * @param img_src The source image.
  * @param alpha_value The alpha value to assign to each pixel in the target image.
