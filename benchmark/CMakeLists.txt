@@ -9,4 +9,4 @@ add_executable(benchmark_image_access
 target_compile_options(benchmark_image_access PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(benchmark_image_access PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(benchmark_image_access PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(benchmark_image_access selene_old benchmark::benchmark)
+target_link_libraries(benchmark_image_access selene benchmark::benchmark)

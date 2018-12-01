@@ -2,10 +2,10 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <selene/old_img/Image.hpp>
-#include <selene/old_img/ImageAccess.hpp>
-#include <selene/old_img/ImageTypeAliases.hpp>
-#include <selene/old_img/RelativeAccessor.hpp>
+#include <selene/img/typed/Image.hpp>
+#include <selene/img/typed/ImageTypeAliases.hpp>
+#include <selene/img/typed/access/ImageAccess.hpp>
+#include <selene/img/typed/access/RelativeAccessor.hpp>
 
 #include <benchmark/benchmark.h>
 
@@ -13,7 +13,7 @@ using namespace sln::literals;
 
 void image_access_member_fn(benchmark::State& state)
 {
-  sln::Image_8u3 img(100_px, 10_px);
+  sln::Image_8u3 img({100_px, 10_px});
 
   for (auto _ : state)
   {
@@ -28,7 +28,7 @@ void image_access_member_fn(benchmark::State& state)
 
 void image_access_get_fn(benchmark::State& state)
 {
-  sln::Image_8u3 img(100_px, 10_px);
+  sln::Image_8u3 img({100_px, 10_px});
 
   for (auto _ : state)
   {
@@ -43,7 +43,7 @@ void image_access_get_fn(benchmark::State& state)
 
 void image_access_relative(benchmark::State& state)
 {
-  sln::Image_8u3 img(100_px, 10_px);
+  sln::Image_8u3 img({100_px, 10_px});
 
   auto rel = sln::relative_accessor(img, 50_idx, 5_idx);
 
