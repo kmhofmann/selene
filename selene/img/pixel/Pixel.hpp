@@ -143,6 +143,21 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
 operator/(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
+// -----
+
+template <typename PixelType, typename = void>
+struct IsPixelType : std::false_type
+{ };
+
+template <typename PixelType>
+struct IsPixelType<PixelType, std::void_t<typename PixelType::value_type,
+                                          decltype(std::declval<PixelType>().nr_channels),
+                                          decltype(std::declval<PixelType>().pixel_format)>> : std::true_type
+{ };
+
+template <typename PixelType>
+inline constexpr bool is_pixel_type_v = IsPixelType<PixelType>::value;
+
 // ----------
 // Implementation:
 

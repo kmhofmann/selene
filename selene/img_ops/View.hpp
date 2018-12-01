@@ -9,6 +9,8 @@
 
 #include <selene/img/common/BoundingBox.hpp>
 
+#include <selene/img/pixel/Pixel.hpp>
+
 #include <selene/img/typed/ImageBase.hpp>
 #include <selene/img/typed/ImageView.hpp>
 
@@ -19,21 +21,21 @@ namespace sln {
 // Functions after which the PixelType of the view will be unchanged:
 
 template <typename DerivedSrc,
-          typename = std::enable_if_t<std::is_base_of_v<ImageBase<DerivedSrc>, DerivedSrc>>>
+          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
 auto view(const ImageBase<DerivedSrc>& img)
 {
   return img.view();
 }
 
 template <typename DerivedSrc,
-          typename = std::enable_if_t<std::is_base_of_v<ImageBase<DerivedSrc>, DerivedSrc>>>
+          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
 auto view(ImageBase<DerivedSrc>& img)
 {
   return img.view();
 }
 
 template <typename DerivedSrc,
-          typename = std::enable_if_t<std::is_base_of_v<ImageBase<DerivedSrc>, DerivedSrc>>>
+          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
 auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -46,7 +48,7 @@ auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
 }
 
 template <typename DerivedSrc,
-          typename = std::enable_if_t<std::is_base_of_v<ImageBase<DerivedSrc>, DerivedSrc>>>
+          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
 auto view(ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -70,7 +72,7 @@ void static_check_view_pixel_types()
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
   static_assert(std::is_same<typename PixelTraits<PixelTypeSrc>::Element,
-                    typename PixelTraits<PixelTypeDst>::Element>::value,
+                             typename PixelTraits<PixelTypeDst>::Element>::value,
                 "Incompatible source and target pixel types");
   static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
                 "Incompatible source and target pixel types");
@@ -86,8 +88,13 @@ void static_check_view_pixel_types()
 
 }  // namespace impl
 
-template <typename PixelTypeDst, typename DerivedSrc>
-auto view(const ImageBase<DerivedSrc>& img)
+// Ideally, these functions should also just be called view(), with SFINAE doing its magic to enable/disable
+// these or the above overloads. No problem with Clang 7.0, but GCC 8.2.0 does not like this.
+// TODO: Investigate later.
+
+template <typename PixelTypeDst, typename DerivedSrc,
+          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(const ImageBase<DerivedSrc>& img)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
 
@@ -96,8 +103,9 @@ auto view(const ImageBase<DerivedSrc>& img)
   return ImageView<PixelTypeDst, ImageModifiability::Constant>(img.byte_ptr(), img.layout());
 }
 
-template <typename PixelTypeDst, typename DerivedSrc>
-auto view(ImageBase<DerivedSrc>& img)
+template <typename PixelTypeDst, typename DerivedSrc,
+          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(ImageBase<DerivedSrc>& img)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
 
@@ -107,8 +115,9 @@ auto view(ImageBase<DerivedSrc>& img)
   return ImageView<PixelTypeDst, modifiability>(img.byte_ptr(), img.layout());
 }
 
-template <typename PixelTypeDst, typename DerivedSrc>
-auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
+template <typename PixelTypeDst, typename DerivedSrc,
+          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
 
@@ -121,8 +130,9 @@ auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
   return ImageView<PixelTypeDst, ImageModifiability::Constant>(byte_ptr, layout);
 }
 
-template <typename PixelTypeDst, typename DerivedSrc>
-auto view(ImageBase<DerivedSrc>& img, const BoundingBox& region)
+template <typename PixelTypeDst, typename DerivedSrc,
+          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
   constexpr auto modifiability = ImageBase<DerivedSrc>::modifiability();

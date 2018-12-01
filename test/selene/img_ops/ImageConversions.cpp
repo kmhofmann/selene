@@ -21,8 +21,8 @@ TEST_CASE("Image conversions", "[img]")
   const auto img_x = sln_test::make_3x3_test_image_8u1();
   const auto img_xxx = sln_test::make_3x3_test_image_8u3();
 
-  const auto img_y = sln::view<sln::PixelY_8u>(img_x);
-  const auto img_rgb = sln::view<sln::PixelRGB_8u>(img_xxx);
+  const auto img_y = sln::view_with_pixel_type<sln::PixelY_8u>(img_x);
+  const auto img_rgb = sln::view_with_pixel_type<sln::PixelRGB_8u>(img_xxx);
 
   // Just covering a few select conversions for now...
 

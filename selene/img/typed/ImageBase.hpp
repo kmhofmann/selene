@@ -78,6 +78,21 @@ public:
   decltype(auto) clear() { return derived().clear(); }
 };
 
+// -----
+
+template <typename ImageType, typename = void>
+struct IsImageType : std::false_type
+{ };
+
+template <typename ImageType>
+struct IsImageType<ImageType, std::void_t<typename ImageType::PixelType,
+                              decltype(std::declval<ImageType>().is_view),
+                              decltype(std::declval<ImageType>().is_modifiable)>> : std::true_type
+{ };
+
+template <typename ImageType>
+inline constexpr bool is_image_type_v = IsImageType<ImageType>::value;
+
 }  // namespace sln
 
 #endif  // SELENE_IMG_TYPED_IMAGE_BASE_HPP
