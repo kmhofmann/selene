@@ -31,15 +31,15 @@ public:
   using Type = const std::uint8_t*;
   using ConstType = const std::uint8_t*;
 
-  DataPtr() noexcept
+  constexpr DataPtr() noexcept
       : data_(nullptr)
   { }
 
-  /*explicit*/ DataPtr(const std::uint8_t* data) noexcept
+  constexpr /*explicit*/ DataPtr(const std::uint8_t* data) noexcept
       : data_(data)
   { }
 
-  const std::uint8_t* data() const noexcept { return data_; }
+  constexpr const std::uint8_t* data() const noexcept { return data_; }
 
 private:
   const std::uint8_t* data_;
@@ -54,16 +54,16 @@ public:
   using Type = std::uint8_t*;
   using ConstType = const std::uint8_t*;
 
-  DataPtr() noexcept
+  constexpr DataPtr() noexcept
       : data_(nullptr)
   { }
 
-  /*explicit*/ DataPtr(std::uint8_t* data) noexcept
+  constexpr /*explicit*/ DataPtr(std::uint8_t* data) noexcept
       : data_(data)
   { }
 
-  std::uint8_t* data() noexcept { return data_; }
-  std::uint8_t* data() const noexcept { return data_; }
+  constexpr std::uint8_t* data() noexcept { return data_; }
+  constexpr std::uint8_t* data() const noexcept { return data_; }
 
 private:
   std::uint8_t* data_;
