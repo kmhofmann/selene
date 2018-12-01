@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-#include "Utils.hpp"
+#include "Utils_old.hpp"
 
 constexpr auto output_filename_transformed = "bike_duck_transformed.png";
 

@@ -10,7 +10,7 @@ add_executable(image_access
 target_compile_options(image_access PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_access PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_access PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_access selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_access selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_clone_view
         ${CMAKE_CURRENT_LIST_DIR}/image_clone_view.cpp)
@@ -31,7 +31,7 @@ add_executable(image_io
 target_compile_options(image_io PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_io PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_io selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_io selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_resample
         ${CMAKE_CURRENT_LIST_DIR}/image_resample.cpp)

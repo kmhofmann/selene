@@ -13,7 +13,7 @@
 #include <iostream>
 #include <string>
 
-#include "Utils.hpp"
+#include "Utils_old.hpp"
 
 constexpr auto output_filename_resampled_0 = "bike_duck_bilinear_resampled_0.jpg";
 constexpr auto output_filename_resampled_1 = "bike_duck_bilinear_resampled_1.jpg";

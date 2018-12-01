@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-#include "Utils.hpp"
+#include "Utils_old.hpp"
 
 constexpr auto output_filename_y = "bike_duck_converted_to_grayscale.png";
 constexpr auto output_filename_rgba = "bike_duck_converted_to_rgba.png";

@@ -13,6 +13,8 @@
 
 #include <selene/img/dynamic/DynImageView.hpp>
 
+#include <cstring>
+
 namespace sln {
 
 class DynImage
@@ -131,6 +133,13 @@ private:
   DynImageView<ImageModifiability::Mutable> allocate_memory(UntypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes, UntypedImageSemantics semantics);
   void deallocate_memory();
 };
+
+bool operator==(const DynImage& img0, const DynImage& img1);
+
+bool operator!=(const DynImage& img0, const DynImage& img1);
+
+// ----------
+// Implementation:
 
 inline DynImage::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0, semantics))
@@ -315,6 +324,47 @@ inline void DynImage::deallocate_memory()
 {
   std::uint8_t* ptr = view_.byte_ptr();
   sln::AlignedNewAllocator::deallocate(ptr);
+}
+
+// -----
+
+inline bool operator==(const DynImage& img0, const DynImage& img1)
+{
+  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
+  if ((img0.width() == 0 || img0.height() == 0) && (img1.width() == 0 || img1.height() == 0))
+  {
+    return true;
+  }
+
+  if (img0.width() != img1.width() || img0.height() != img1.height())
+  {
+    return false;
+  }
+
+  for (auto y = 0_idx; y < img0.height(); ++y)
+  {
+    const auto end0 = img0.byte_ptr(static_cast<PixelIndex>(img0.width()), y);
+    const auto begin0 = img0.byte_ptr(y);
+    const auto begin1 = img1.byte_ptr(y);
+
+    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
+    // const bool equal_row = std::equal(begin0, end0, begin1);
+    // ...so let's just call std::memcmp directly:
+    const auto nr_bytes = std::distance(begin0, end0);
+    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
+
+    if (!equal_row)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+inline bool operator!=(const DynImage& img0, const DynImage& img1)
+{
+  return !(img0 == img1);
 }
 
 }  // namespace sln

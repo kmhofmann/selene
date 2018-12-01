@@ -4,10 +4,14 @@
 
 #include <selene/base/io/FileWriter.hpp>
 
-#include <selene/old_img/ImageTypeAliases.hpp>
-#include <selene/old_img/ImageAccess.hpp>
-#include <selene/old_img/ImageToImageData.hpp>
-#include <selene/old_img_io/IO.hpp>
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/ImageTypeAliases.hpp>
+#include <selene/img/typed/access/ImageAccess.hpp>
+
+#include <selene/img/interop/ImageToDynImage.hpp>
+
+#include <selene/img_io/IO.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -18,7 +22,7 @@
 constexpr auto output_filename_interpolated = "bike_duck_bilinear_interpolation.png";
 constexpr auto output_filename_border_access = "bike_duck_border_access.png";
 
-using namespace sln;  // Never outside of example code
+using namespace sln::literals;
 
 int main(int argc, char** argv)
 {
@@ -28,7 +32,7 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  auto img = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
+  auto img = sln_examples::read_example_image<sln::PixelRGB_8u>("bike_duck.png", data_path);
   assert(img.width() == 1024_px);
   assert(img.height() == 684_px);
 
@@ -43,7 +47,7 @@ int main(int argc, char** argv)
   //   - get<ImageInterpolationMode::NearestNeighbor>(old_img, fx, fy)
   //   - get<ImageInterpolationMode::Bilinear, BorderAccessMode::ZeroPadding>(old_img, fx, fy)
 
-  Image<PixelRGB_8u> img_interpolation(target_width, target_height);
+  sln::Image<sln::PixelRGB_8u> img_interpolation({target_width, target_height});
 
   for (auto y = 0_idx; y < target_height; ++y)
   {
@@ -62,23 +66,23 @@ int main(int argc, char** argv)
   //   - get<BorderAccessMode::Replicated>(old_img, x, y);
   //   - get<BorderAccessMode::ZeroPadding>(old_img, x, y);
 
-  Image<PixelRGB_8u> img_border_access(img.width(), img.height());
+  sln::Image<sln::PixelRGB_8u> img_border_access({img.width(), img.height()});
 
   for (auto y = 0_idx; y < img.height(); ++y)
   {
     for (auto x = 0_idx; x < img.width(); ++x)
     {
-      img_border_access(x, y) = get<BorderAccessMode::Replicated>(img, PixelIndex{x + 100}, PixelIndex{y - 200});
+      img_border_access(x, y) = sln::get<sln::BorderAccessMode::Replicated>(img, sln::PixelIndex{x + 100}, sln::PixelIndex{y - 200});
     }
   }
 
   std::cout << "Writing the result to disk: '" << output_filename_interpolated << "'...\n";
-  write_image(to_image_data_view(img_interpolation), ImageFormat::PNG,
-              FileWriter(output_filename_interpolated));
+  write_image(sln::to_dyn_image_view(img_interpolation), sln::ImageFormat::PNG,
+              sln::FileWriter(output_filename_interpolated));
 
   std::cout << "Writing the result to disk: '" << output_filename_border_access << "'...\n";
-  write_image(to_image_data_view(img_border_access), ImageFormat::PNG,
-              FileWriter(output_filename_border_access));
+  write_image(sln::to_dyn_image_view(img_border_access), sln::ImageFormat::PNG,
+              sln::FileWriter(output_filename_border_access));
 
   return 0;
 }

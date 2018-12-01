@@ -23,6 +23,9 @@ Image<PixelType> to_image(DynImage&& dyn_img);
 template <typename PixelType>
 MutableImageView<PixelType> to_image_view(DynImage& dyn_img);
 
+template <typename PixelType>
+ConstantImageView<PixelType> to_image_view(const DynImage& dyn_img);
+
 template <typename PixelType, ImageModifiability modifiability>
 ImageView<PixelType, modifiability> to_image_view(const DynImageView<modifiability>& dyn_img);
 
@@ -83,6 +86,16 @@ MutableImageView<PixelType> to_image_view(DynImage& dyn_img)
 
   return MutableImageView<PixelType>{dyn_img.byte_ptr(),
                                      TypedLayout{dyn_img.width(), dyn_img.height(), dyn_img.stride_bytes()}};
+}
+
+// TODO: adapt documentation from old function
+template <typename PixelType>
+ConstantImageView<PixelType> to_image_view(const DynImage& dyn_img)
+{
+  impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img.view());
+
+  return ConstantImageView<PixelType>{dyn_img.byte_ptr(),
+                                      TypedLayout{dyn_img.width(), dyn_img.height(), dyn_img.stride_bytes()}};
 }
 
 // TODO: adapt documentation from old function

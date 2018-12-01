@@ -23,6 +23,9 @@ DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format = Pix
 template <typename PixelType>
 MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
+template <typename PixelType>
+ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
+
 template <typename PixelType, ImageModifiability modifiability>
 DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
@@ -84,6 +87,21 @@ MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pix
   return MutableDynImageView{img.byte_ptr(),
                              UntypedLayout{img.width(), img.height(), nr_channels, nr_bytes_per_channel, img.stride_bytes()},
                              UntypedImageSemantics{new_pixel_format, sample_format}};
+}
+
+// TODO: adapt documentation from old function
+template <typename PixelType>
+ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat new_pixel_format)
+{
+  constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
+  constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
+  constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
+
+  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img.view(), new_pixel_format);
+
+  return ConstantDynImageView{img.byte_ptr(),
+                              UntypedLayout{img.width(), img.height(), nr_channels, nr_bytes_per_channel, img.stride_bytes()},
+                              UntypedImageSemantics{new_pixel_format, sample_format}};
 }
 
 // TODO: adapt documentation from old function

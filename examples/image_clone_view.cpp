@@ -13,7 +13,7 @@
 #include <iostream>
 #include <string>
 
-#include "Utils.hpp"
+#include "Utils_old.hpp"
 
 constexpr auto output_filename_clone_crop = "bike_duck_clone_crop.png";
 constexpr auto output_filename_view_crop = "bike_duck_clone_view.png";

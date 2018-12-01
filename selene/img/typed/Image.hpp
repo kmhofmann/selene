@@ -13,6 +13,8 @@
 
 #include <selene/img/typed/ImageView.hpp>
 
+#include <cstring>
+
 namespace sln {
 
 template <typename PixelType_>
@@ -47,7 +49,7 @@ public:
   constexpr static bool is_modifiable = ImageBaseTraits<Image<PixelType>>::is_modifiable;
   constexpr static ImageModifiability modifiability() { return ImageBaseTraits<Image<PixelType>>::modifiability(); }
 
-  Image();
+  Image() = default;
   explicit Image(TypedLayout layout);
   Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
   Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout layout);
@@ -130,10 +132,14 @@ private:
   void deallocate_memory();
 };
 
-template <typename PixelType_>
-Image<PixelType_>::Image()
-{
-}
+template <typename PixelType>
+bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1);
+
+template <typename PixelType>
+bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1);
+
+// ----------
+// Implementation:
 
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
@@ -329,6 +335,49 @@ void Image<PixelType_>::deallocate_memory()
 {
   std::uint8_t* ptr = view_.byte_ptr();
   sln::AlignedNewAllocator::deallocate(ptr);
+}
+
+// -----
+
+template <typename PixelType>
+bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
+{
+  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
+  if ((img0.width() == 0 || img0.height() == 0) && (img1.width() == 0 || img1.height() == 0))
+  {
+    return true;
+  }
+
+  if (img0.width() != img1.width() || img0.height() != img1.height())
+  {
+    return false;
+  }
+
+  for (auto y = 0_idx; y < img0.height(); ++y)
+  {
+    const auto end0 = img0.data_row_end(y);
+    const auto begin0 = img0.data(y);
+    const auto begin1 = img1.data(y);
+
+    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
+    // const bool equal_row = std::equal(begin0, end0, begin1);
+    // ...so let's just call std::memcmp directly:
+    const auto nr_bytes = std::distance(begin0, end0) * sizeof(PixelType);
+    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
+
+    if (!equal_row)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template <typename PixelType>
+bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1)
+{
+  return !(img0 == img1);
 }
 
 }  // namespace sln
