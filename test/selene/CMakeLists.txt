@@ -100,6 +100,7 @@ add_executable(selene_tests
 
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.cpp

@@ -40,7 +40,7 @@ inline namespace literals {
  * @param nr_bytes Number of bytes.
  * @return A `Bytes` instance.
  */
-constexpr inline Bytes operator"" _b(unsigned long long nr_bytes)
+constexpr inline Bytes operator"" _b(unsigned long long nr_bytes) noexcept
 {
   //  SELENE_ASSERT(nr_bytes <= std::numeric_limits<Bytes::value_type>::max());
   return Bytes(static_cast<Bytes::value_type>(nr_bytes));

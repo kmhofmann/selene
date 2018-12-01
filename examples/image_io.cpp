@@ -67,7 +67,7 @@ int main(int argc, char** argv)
   assert(img.height() == img_data_0_height);
 
   // Now we will simply write the image to disk again. To do this, we convert back to an `ImageData` instance;
-  // in this case a view onto constant image data (also since we declared `old_img` const above).
+  // in this case a view onto constant image data (also since we declared `img` const above).
 
   const auto img_data_1 = sln::to_dyn_image_view(img);
 

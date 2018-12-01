@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   auto img_clone = sln::clone(img);
   assert(sln::equal(img_clone, img));
 
-  // ...or we can create a view onto the data of `old_img`.
+  // ...or we can create a view onto the data of `img`.
 
   auto img_view = sln::view(img);
   assert(sln::equal(img_view, img));

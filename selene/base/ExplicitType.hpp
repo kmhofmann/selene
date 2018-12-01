@@ -29,7 +29,7 @@ public:
   using value_type = ValueType_;
   using tag_type = TagType_;
 
-  constexpr ExplicitType() : value_()
+  constexpr ExplicitType() noexcept : value_()
   {
   }
 
@@ -51,7 +51,7 @@ public:
   {
     return value_;
   }
-  
+
   constexpr ExplicitType<ValueType_, TagType_> operator-() noexcept
   {
     return ExplicitType<ValueType_, TagType_>(-value_);

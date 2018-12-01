@@ -44,8 +44,8 @@ int main(int argc, char** argv)
   // We can now sample pixels in the read image by means of bilinear interpolation.
   // - The function get() defaults to bilinear interpolation when given floating point coordinates.
   // - Alternatively, we could explicitly specify an interpolation policy, or additionally a border access policy:
-  //   - get<ImageInterpolationMode::NearestNeighbor>(old_img, fx, fy)
-  //   - get<ImageInterpolationMode::Bilinear, BorderAccessMode::ZeroPadding>(old_img, fx, fy)
+  //   - get<ImageInterpolationMode::NearestNeighbor>(img, fx, fy)
+  //   - get<ImageInterpolationMode::Bilinear, BorderAccessMode::ZeroPadding>(img, fx, fy)
 
   sln::Image<sln::PixelRGB_8u> img_interpolation({target_width, target_height});
 
@@ -62,9 +62,9 @@ int main(int argc, char** argv)
   // When given integer coordinates, get() performs no interpolation, and is by default equivalent to the Image<>
   // operator().
   // - We can, however, explicitly specify a border access mode, such as:
-  //   - get<BorderAccessMode::Unchecked>(old_img, x, y);
-  //   - get<BorderAccessMode::Replicated>(old_img, x, y);
-  //   - get<BorderAccessMode::ZeroPadding>(old_img, x, y);
+  //   - get<BorderAccessMode::Unchecked>(img, x, y);
+  //   - get<BorderAccessMode::Replicated>(img, x, y);
+  //   - get<BorderAccessMode::ZeroPadding>(img, x, y);
 
   sln::Image<sln::PixelRGB_8u> img_border_access({img.width(), img.height()});
 

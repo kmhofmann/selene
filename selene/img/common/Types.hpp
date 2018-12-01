@@ -47,7 +47,7 @@ using ImageRowAlignment = sln::ExplicitType<std::ptrdiff_t, impl::ImageRowAlignm
  * @return The value as `PixelIndex`.
  */
 template <typename T>
-constexpr inline PixelIndex to_pixel_index(T value)
+constexpr inline PixelIndex to_pixel_index(T value) noexcept
 {
   return PixelIndex{static_cast<PixelIndex::value_type>(value)};
 }
@@ -61,7 +61,7 @@ constexpr inline PixelIndex to_pixel_index(T value)
  * @return The value as `PixelLength`.
  */
 template <typename T>
-constexpr inline PixelLength to_pixel_length(T value)
+constexpr inline PixelLength to_pixel_length(T value) noexcept
 {
   return PixelLength{static_cast<PixelLength::value_type>(value)};
 }
@@ -73,7 +73,7 @@ inline namespace literals {
  * @param index Pixel index.
  * @return A `PixelIndex` instance.
  */
-constexpr inline PixelIndex operator"" _idx(unsigned long long index)
+constexpr inline PixelIndex operator"" _idx(unsigned long long index) noexcept
 {
   return to_pixel_index(index);
 }
@@ -83,7 +83,7 @@ constexpr inline PixelIndex operator"" _idx(unsigned long long index)
  * @param length Pixel length.
  * @return A `PixelLength` instance.
  */
-constexpr inline PixelLength operator"" _px(unsigned long long length)
+constexpr inline PixelLength operator"" _px(unsigned long long length) noexcept
 {
   return to_pixel_length(length);
 }
