@@ -4,7 +4,7 @@
 
 /*! \mainpage Selene API documentation
  *
- * **Selene** is a C++14 image representation, processing and I/O library.
+ * **Selene** is a C++17 image representation, processing and I/O library.
  *
  * For introductory information about the library, please visit its GitHub page:
  * - https://github.com/kmhofmann/selene
