@@ -4,7 +4,7 @@
 
 #if defined(SELENE_WITH_LIBJPEG)
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <cstdlib>
 #include <filesystem>

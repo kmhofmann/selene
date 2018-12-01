@@ -2,7 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <selene/base/Types.hpp>
 #include <selene/base/io/FileReader.hpp>

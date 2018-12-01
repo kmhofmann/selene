@@ -2,7 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <selene/img_ops/View.hpp>
 
@@ -23,6 +23,5 @@ TEST_CASE("Image view creation", "[img]")
   auto img1_view = sln::view(img1);
 
   REQUIRE(img1(1_idx, 1_idx) == 50);
-  //img1_view(1_idx, 1_idx) = 42;
-  //REQUIRE(img1(1_idx, 1_idx) == 42);
+  REQUIRE(img1_view(1_idx, 1_idx) == 50);
 }

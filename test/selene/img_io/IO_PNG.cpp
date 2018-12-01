@@ -6,7 +6,7 @@
 
 #include <png.h> // to check PNG_LIBPNG_VER_MAJOR and PNG_LIBPNG_VER_MINOR below
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <cstdlib>
 #include <cstring>
