@@ -17,7 +17,7 @@ namespace sln {
 
 /** \brief Extracts a list of consecutive pointers to each image row from an image.
  *
- * @tparam T Image type.
+ * @tparam ImageType The image type.
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
@@ -36,7 +36,7 @@ auto get_row_pointers(ImageType& img) -> std::vector<typename ImageType::DataPtr
 
 /** \brief Extracts a list of consecutive (constant) pointers to each image row from an image.
  *
- * @tparam T Image type.
+ * @tparam ImageType The image type.
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */

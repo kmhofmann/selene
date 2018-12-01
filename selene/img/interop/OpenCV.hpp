@@ -127,7 +127,7 @@ inline bool opencv_mat_type_is_unsigned(const cv::Mat& img_cv)
  *
  * @tparam PixelType The pixel type of the `Image<>` to be returned.
  * @param img_cv An OpenCV matrix.
- * @return An `Image<PixelType>`, providing a non-owning view on the OpenCV matrix `img_cv`.
+ * @return A `MutableImageView<PixelType>`, providing a non-owning view on the OpenCV matrix `img_cv`.
  */
 template <typename PixelType>
 inline MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv)
@@ -154,7 +154,7 @@ inline MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv)
  *
  * @tparam PixelType The pixel type of the `Image<>` to be returned.
  * @param img_cv An OpenCV matrix.
- * @return An `Image<PixelType>`, providing a non-owning view on the OpenCV matrix `img_cv`.
+ * @return A `ConstantImageView<PixelType>`, providing a non-owning view on the OpenCV matrix `img_cv`.
  */
 template <typename PixelType>
 inline ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv)
@@ -212,7 +212,7 @@ Image<PixelType> copy_opencv_mat(const cv::Mat& img_cv)
 
 /** \brief Wraps an `Image<PixelType>` in an OpenCV cv::Mat.
  *
- * @tparam PixelType The pixel type of the `Image<>`.
+ * @tparam DerivedSrc The typed source image type.
  * @param img An image.
  * @return A `cv::Mat`, providing a non-owning view on the data of `img`.
  */
@@ -237,7 +237,7 @@ inline cv::Mat wrap_in_opencv_mat(ImageBase<DerivedSrc>& img)
 
 /** \brief Copies an `Image<PixelType>` to an OpenCV cv::Mat.
  *
- * @tparam PixelType The pixel type of the `Image<>`.
+ * @tparam DerivedSrc The typed source image type.
  * @param img An image.
  * @return A `cv::Mat`, providing a copy of the contents of `img`.
  */

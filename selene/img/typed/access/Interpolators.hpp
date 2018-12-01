@@ -150,10 +150,10 @@ inline auto ImageInterpolator<ImageInterpolationMode::NearestNeighbor, AccessMod
 /** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
  * `ImageInterpolationMode::Bilinear` and the specified `BorderAccessMode`.
  *
- * The type `PixelType` needs to support addition, subtraction, and multiplication by a scalar value.
+ * The underlying `PixelType` of the image needs to support addition, subtraction, and multiplication by a scalar value.
  *
  * @tparam AccessMode The border access mode (`BorderAccessMode`) to use.
- * @tparam PixelType The pixel type.
+ * @tparam ImageType The image type.
  * @tparam ScalarAccess The floating point type for specifying the location (x, y).
  * @tparam ScalarOutputElement The floating point type for each pixel element; i.e. the type for each channel element.
  * @param img The image to access.
