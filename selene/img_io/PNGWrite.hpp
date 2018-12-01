@@ -21,6 +21,7 @@
 #include <selene/img/common/RowPointers.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/StaticChecks.hpp>
 
 #include <selene/img_io/impl/Util.hpp>
 
@@ -118,8 +119,8 @@ private:
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <ImageModifiability modifiability, typename SinkType>
-bool write_png(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_png(const DynImageOrView& dyn_img_or_view,
                SinkType&& sink,
                PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
@@ -136,8 +137,8 @@ bool write_png(const DynImageView<modifiability>& dyn_img_view,
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <ImageModifiability modifiability, typename SinkType>
-bool write_png(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_png(const DynImageOrView& dyn_img_or_view,
                PNGCompressionObject& obj,
                SinkType&& sink,
                PNGCompressionOptions options = PNGCompressionOptions(),
@@ -165,25 +166,27 @@ private:
 }  // namespace impl
 
 
-template <ImageModifiability modifiability, typename SinkType>
-bool write_png(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_png(const DynImageOrView& dyn_img_or_view,
                SinkType&& sink,
                PNGCompressionOptions options,
                MessageLog* messages)
 {
   PNGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return write_png(dyn_img_view, obj, std::forward<SinkType>(sink), options, messages);
+  return write_png(dyn_img_or_view, obj, std::forward<SinkType>(sink), options, messages);
 }
 
-template <ImageModifiability modifiability, typename SinkType>
-bool write_png(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_png(const DynImageOrView& dyn_img_or_view,
                PNGCompressionObject& obj,
                SinkType&& sink,
                PNGCompressionOptions options,
                MessageLog* messages)
 {
-  if (dyn_img_view.nr_bytes_per_channel() != 1 && dyn_img_view.nr_bytes_per_channel() != 2)
+  static_check_is_dyn_image_or_view(dyn_img_or_view);
+
+  if (dyn_img_or_view.nr_bytes_per_channel() != 1 && dyn_img_or_view.nr_bytes_per_channel() != 2)
   {
     throw std::runtime_error("Unsupported bit depth of image data for PNG output");
   }
@@ -196,14 +199,14 @@ bool write_png(const DynImageView<modifiability>& dyn_img_view,
     return false;
   }
 
-  const auto nr_channels = dyn_img_view.nr_channels();
-  const auto bit_depth = dyn_img_view.nr_bytes_per_channel() == 1 ? 8 : 16;
+  const auto nr_channels = dyn_img_or_view.nr_channels();
+  const auto bit_depth = dyn_img_or_view.nr_bytes_per_channel() == 1 ? 8 : 16;
 
-  const bool img_info_set = obj.set_image_info(static_cast<int>(dyn_img_view.width()),
-                                               static_cast<int>(dyn_img_view.height()),
+  const bool img_info_set = obj.set_image_info(static_cast<int>(dyn_img_or_view.width()),
+                                               static_cast<int>(dyn_img_or_view.height()),
                                                static_cast<int>(nr_channels), static_cast<int>(bit_depth),
                                                options.interlaced,
-                                               dyn_img_view.pixel_format());
+                                               dyn_img_or_view.pixel_format());
 
   if (!img_info_set)
   {
@@ -220,7 +223,7 @@ bool write_png(const DynImageView<modifiability>& dyn_img_view,
   }
 
   impl::PNGCompressionCycle cycle(obj, options.set_bgr, options.invert_monochrome);
-  const auto row_pointers = get_const_row_pointers(dyn_img_view);
+  const auto row_pointers = get_const_row_pointers(dyn_img_or_view);
   cycle.compress(row_pointers);
 
   impl::assign_message_log(obj, messages);

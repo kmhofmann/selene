@@ -241,7 +241,7 @@ TEST_CASE("JPEG image writing, reusing compression object", "[img]")
     sln::FileWriter sink((tmp_path / "test_duck_gray.jpg").string());
     REQUIRE(sink.is_open());
     sln::MessageLog messages_write;
-    bool status_write = sln::write_jpeg(img_data.view(), comp_obj, sink, sln::JPEGCompressionOptions(compression_factor),
+    bool status_write = sln::write_jpeg(img_data, comp_obj, sink, sln::JPEGCompressionOptions(compression_factor),
                                         &messages_write);
     REQUIRE(status_write);
     REQUIRE(messages_write.messages().empty());

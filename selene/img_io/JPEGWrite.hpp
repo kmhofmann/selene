@@ -116,8 +116,8 @@ private:
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <ImageModifiability modifiability, typename SinkType>
-bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
@@ -134,8 +134,8 @@ bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <ImageModifiability modifiability, typename SinkType>
-bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 JPEGCompressionObject& obj,
                 SinkType&& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(),
@@ -161,19 +161,19 @@ private:
 }  // namespace impl
 
 
-template <ImageModifiability modifiability, typename SinkType>
-bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
   JPEGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return write_jpeg(dyn_img_view, obj, std::forward<SinkType>(sink), options, messages);
+  return write_jpeg(dyn_img_or_view, obj, std::forward<SinkType>(sink), options, messages);
 }
 
-template <ImageModifiability modifiability, typename SinkType>
-bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 JPEGCompressionObject& obj,
                 SinkType&& sink,
                 JPEGCompressionOptions options,
@@ -187,14 +187,14 @@ bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
     return false;
   }
 
-  const auto nr_channels = dyn_img_view.nr_channels();
-  const auto nr_bytes_per_channel = dyn_img_view.nr_bytes_per_channel();
+  const auto nr_channels = dyn_img_or_view.nr_channels();
+  const auto nr_bytes_per_channel = dyn_img_or_view.nr_bytes_per_channel();
   const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto)
-                                  ? impl::pixel_format_to_color_space(dyn_img_view.pixel_format())
+                                  ? impl::pixel_format_to_color_space(dyn_img_or_view.pixel_format())
                                   : options.in_color_space;
 
-  const auto img_info_set = obj.set_image_info(static_cast<int>(dyn_img_view.width()),
-                                               static_cast<int>(dyn_img_view.height()),
+  const auto img_info_set = obj.set_image_info(static_cast<int>(dyn_img_or_view.width()),
+                                               static_cast<int>(dyn_img_or_view.height()),
                                                static_cast<int>(nr_channels),
                                                static_cast<int>(nr_bytes_per_channel),
                                                in_color_space);
@@ -216,7 +216,7 @@ bool write_jpeg(const DynImageView<modifiability>& dyn_img_view,
 
   {
     impl::JPEGCompressionCycle cycle(obj);
-    const auto row_pointers = get_const_row_pointers(dyn_img_view);
+    const auto row_pointers = get_const_row_pointers(dyn_img_or_view);
     cycle.compress(row_pointers);
     // Destructor of JPEGCompressionCycle calls jpeg_finish_compress(), which updates internal state
   }

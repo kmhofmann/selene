@@ -111,6 +111,7 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/StaticChecks.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.hpp

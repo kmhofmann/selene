@@ -65,7 +65,7 @@ void check_write_read(sln::DynImage& dyn_img, const std::filesystem::path& tmp_p
   sln::FileWriter sink((tmp_path / "test_img.png").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
-  bool status_write = sln::write_png(dyn_img.view(), sink, sln::PNGCompressionOptions(), &messages_write);
+  bool status_write = sln::write_png(dyn_img, sink, sln::PNGCompressionOptions(), &messages_write);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
   sink.close();
@@ -258,7 +258,7 @@ TEST_CASE("PNG image writing, reusing compression object", "[img]")
     sln::FileWriter sink((tmp_path / "test_duck_gray.png").string());
     REQUIRE(sink.is_open());
     sln::MessageLog messages_write;
-    bool status_write = sln::write_png(dyn_img.view(), comp_obj, sink, sln::PNGCompressionOptions(), &messages_write);
+    bool status_write = sln::write_png(dyn_img, comp_obj, sink, sln::PNGCompressionOptions(), &messages_write);
     REQUIRE(status_write);
     REQUIRE(messages_write.messages().empty());
   }
