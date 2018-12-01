@@ -8,12 +8,11 @@
 /// @file
 
 #include <selene/img/common/DataPtr.hpp>
+
+#include <selene/img/typed/ImageBaseTraits.hpp>
 #include <selene/img/typed/TypedLayout.hpp>
 
 namespace sln {
-
-template <typename Derived>
-struct ImageBaseTraits;
 
 template <typename Derived>
 class ImageBase

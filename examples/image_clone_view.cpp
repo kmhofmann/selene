@@ -4,21 +4,28 @@
 
 #include <selene/base/io/FileWriter.hpp>
 
-#include <selene/old_img/ImageTypeAliases.hpp>
-#include <selene/old_img/ImageToImageData.hpp>
-#include <selene/old_img_io/IO.hpp>
-#include <selene/old_img_ops/ImageConversions.hpp>
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/ImageTypeAliases.hpp>
+
+#include <selene/img/interop/ImageToDynImage.hpp>
+
+#include <selene/img_io/IO.hpp>
+
+#include <selene/img_ops/Clone.hpp>
+#include <selene/img_ops/ImageConversions.hpp>
+#include <selene/img_ops/View.hpp>
 
 #include <cassert>
 #include <iostream>
 #include <string>
 
-#include "Utils_old.hpp"
+#include "Utils.hpp"
 
 constexpr auto output_filename_clone_crop = "bike_duck_clone_crop.png";
 constexpr auto output_filename_view_crop = "bike_duck_clone_view.png";
 
-using namespace sln;  // Never outside of example code
+using namespace sln::literals;
 
 int main(int argc, char** argv)
 {
@@ -28,7 +35,7 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  auto img = sln_examples::read_example_image<PixelRGB_8u>("bike_duck.png", data_path);
+  auto img = sln_examples::read_example_image<sln::PixelRGB_8u>("bike_duck.png", data_path);
   assert(img.width() == 1024_px);
   assert(img.height() == 684_px);
 
@@ -36,39 +43,37 @@ int main(int argc, char** argv)
 
   // We can clone (copy) the complete image...
 
-  auto img_clone = clone(img);
-  assert(img_clone == img);
+  auto img_clone = sln::clone(img);
+  assert(sln::equal(img_clone, img));
 
   // ...or we can create a view onto the data of `old_img`.
 
-  auto img_view = view(img);
-  assert(img_view == img);
+  auto img_view = sln::view(img);
+  assert(sln::equal(img_view, img));
 
-  // Cloning a sub-region is as easy as this:
+  // Cloning a sub-region (from an image or image view) is as easy as this:
 
-  auto img_clone_crop = clone(img, 130_idx, 100_idx, 250_px, 220_px);
-  assert(!img_clone_crop.is_view());
+  auto img_clone_crop = sln::clone(img_view, {130_idx, 100_idx, 250_px, 220_px});
   assert(img_clone_crop.width() == 250_px);
   assert(img_clone_crop.height() == 220_px);
 
   // Similarly for a view onto a sub-region:
 
-  const auto img_view_crop = view(img, 130_idx, 100_idx, 250_px, 220_px);
-  assert(img_view_crop.is_view());
+  const auto img_view_crop = sln::view(img, {130_idx, 100_idx, 250_px, 220_px});
   assert(img_view_crop.width() == 250_px);
   assert(img_view_crop.height() == 220_px);
 
-  assert(img_clone_crop == img_view_crop);
+  assert(sln::equal(img_clone_crop, img_view_crop));
 
   // Let's still write both crops to disk.
 
   std::cout << "Writing the result to disk: '" << output_filename_clone_crop << "'...\n";
-  write_image(to_image_data_view(img_clone_crop), ImageFormat::PNG,
-              FileWriter(output_filename_clone_crop));
+  sln::write_image(sln::to_dyn_image_view(img_clone_crop), sln::ImageFormat::PNG,
+                   sln::FileWriter(output_filename_clone_crop));
 
   std::cout << "Writing the result to disk: '" << output_filename_view_crop << "'...\n";
-  write_image(to_image_data_view(img_view_crop), ImageFormat::PNG,
-              FileWriter(output_filename_view_crop));
+  sln::write_image(sln::to_dyn_image_view(img_view_crop), sln::ImageFormat::PNG,
+                   sln::FileWriter(output_filename_view_crop));
 
   return 0;
 }

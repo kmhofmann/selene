@@ -13,26 +13,7 @@
 
 #include <selene/img/typed/ImageView.hpp>
 
-#include <cstring>
-
 namespace sln {
-
-template <typename PixelType_>
-class Image;
-
-template <typename PixelType_>
-struct ImageBaseTraits<Image<PixelType_>>
-{
-  using PixelType = PixelType_;
-
-  constexpr static bool is_view = false;
-  constexpr static bool is_modifiable = true;
-
-  constexpr static ImageModifiability modifiability()
-  {
-    return ImageModifiability::Mutable;
-  }
-};
 
 template <typename PixelType_>
 class Image : public ImageBase<Image<PixelType_>>
@@ -132,11 +113,20 @@ private:
   void deallocate_memory();
 };
 
-template <typename PixelType>
-bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1);
+template <typename PixelType0, typename PixelType1>
+bool operator==(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
 
-template <typename PixelType>
-bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1);
+template <typename PixelType0, typename PixelType1>
+bool operator!=(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+
+template <typename PixelType0, typename PixelType1>
+bool equal(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+
+template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
+bool equal(const Image<PixelType0>& img_0, const ImageView<PixelType1, modifiability>& img_view_1);
+
+template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
+bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1);
 
 // ----------
 // Implementation:
@@ -339,45 +329,34 @@ void Image<PixelType_>::deallocate_memory()
 
 // -----
 
-template <typename PixelType>
-bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1)
+template <typename PixelType0, typename PixelType1>
+bool operator==(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1)
 {
-  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
-  if ((img0.width() == 0 || img0.height() == 0) && (img1.width() == 0 || img1.height() == 0))
-  {
-    return true;
-  }
-
-  if (img0.width() != img1.width() || img0.height() != img1.height())
-  {
-    return false;
-  }
-
-  for (auto y = 0_idx; y < img0.height(); ++y)
-  {
-    const auto end0 = img0.data_row_end(y);
-    const auto begin0 = img0.data(y);
-    const auto begin1 = img1.data(y);
-
-    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
-    // const bool equal_row = std::equal(begin0, end0, begin1);
-    // ...so let's just call std::memcmp directly:
-    const auto nr_bytes = std::distance(begin0, end0) * sizeof(PixelType);
-    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
-
-    if (!equal_row)
-    {
-      return false;
-    }
-  }
-
-  return true;
+  return equal(img_0.view(), img_1.view());
 }
 
-template <typename PixelType>
-bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1)
+template <typename PixelType0, typename PixelType1>
+bool operator!=(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1)
 {
-  return !(img0 == img1);
+  return !(img_0 == img_1);
+}
+
+template <typename PixelType0, typename PixelType1>
+bool equal(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1)
+{
+  return equal(img_0.view(), img_1.view());
+}
+
+template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
+bool equal(const Image<PixelType0>& img_0, const ImageView<PixelType1, modifiability>& img_view_1)
+{
+  return equal(img_0.view(), img_view_1);
+}
+
+template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
+bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1)
+{
+  return equal(img_view_0, img_1.view());
 }
 
 }  // namespace sln

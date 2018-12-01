@@ -177,7 +177,7 @@ private:
 };
 
 template <typename PixelType>
-bool operator==(const Image<PixelType>& img0, const Image<PixelType>& img1);
+bool operator==(const Image<PixelType>& img_0, const Image<PixelType>& img_1);
 
 template <typename PixelType>
 bool operator!=(const Image<PixelType>& img0, const Image<PixelType>& img1);

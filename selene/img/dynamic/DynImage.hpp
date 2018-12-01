@@ -13,8 +13,6 @@
 
 #include <selene/img/dynamic/DynImageView.hpp>
 
-#include <cstring>
-
 namespace sln {
 
 class DynImage
@@ -137,6 +135,14 @@ private:
 bool operator==(const DynImage& img0, const DynImage& img1);
 
 bool operator!=(const DynImage& img0, const DynImage& img1);
+
+inline bool equal(const DynImage& dyn_img_0, const DynImage& dyn_img_1);
+
+template <ImageModifiability modifiability>
+bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1);
+
+template <ImageModifiability modifiability>
+bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1);
 
 // ----------
 // Implementation:
@@ -330,41 +336,29 @@ inline void DynImage::deallocate_memory()
 
 inline bool operator==(const DynImage& img0, const DynImage& img1)
 {
-  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
-  if ((img0.width() == 0 || img0.height() == 0) && (img1.width() == 0 || img1.height() == 0))
-  {
-    return true;
-  }
-
-  if (img0.width() != img1.width() || img0.height() != img1.height())
-  {
-    return false;
-  }
-
-  for (auto y = 0_idx; y < img0.height(); ++y)
-  {
-    const auto end0 = img0.byte_ptr(static_cast<PixelIndex>(img0.width()), y);
-    const auto begin0 = img0.byte_ptr(y);
-    const auto begin1 = img1.byte_ptr(y);
-
-    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
-    // const bool equal_row = std::equal(begin0, end0, begin1);
-    // ...so let's just call std::memcmp directly:
-    const auto nr_bytes = std::distance(begin0, end0);
-    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
-
-    if (!equal_row)
-    {
-      return false;
-    }
-  }
-
-  return true;
+  return equal(img0.view(), img1.view());
 }
 
 inline bool operator!=(const DynImage& img0, const DynImage& img1)
 {
   return !(img0 == img1);
+}
+
+inline bool equal(const DynImage& dyn_img_0, const DynImage& dyn_img_1)
+{
+  return equal(dyn_img_0.view(), dyn_img_1.view());
+}
+
+template <ImageModifiability modifiability>
+bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1)
+{
+  return equal(dyn_img_0.view(), dyn_img_view_1);
+}
+
+template <ImageModifiability modifiability>
+bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1)
+{
+  return equal(dyn_img_view_0, dyn_img_1.view());
 }
 
 }  // namespace sln

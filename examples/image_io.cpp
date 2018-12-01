@@ -52,11 +52,11 @@ int main(int argc, char** argv)
   const auto img_data_0_height = img_data_0.height();
 #endif  // NDEBUG
 
-  // If the read image data has the correct properties, we can convert it to a strongly typed instance of
+  // If the read dynamic image has the correct properties, we can convert it to a strongly typed instance of
   // `Image<PixelRGB_8u>` to potentially perform further data manipulations.
   // In this case, `PixelRGB_8u` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  std::cout << "Converting the ImageData<> instance to a (strongly typed) Image<PixelRGB_8u>...\n";
+  std::cout << "Converting the DynImage instance to a (strongly typed) Image<PixelRGB_8u>...\n";
   const sln::Image<sln::PixelRGB_8u> img = sln::to_image<sln::PixelRGB_8u>(std::move(img_data_0));
 
   // Since the data was moved into the `Image<>` instance, the contents of `img_data_0` are now invalid!

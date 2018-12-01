@@ -15,24 +15,9 @@
 
 #include <selene/img/pixel/PixelTraits.hpp>
 
+#include <cstring>
+
 namespace sln {
-
-template <typename PixelType_, ImageModifiability modifiability_>
-class ImageView;
-
-template <typename PixelType_, ImageModifiability modifiability_>
-struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
-{
-  using PixelType = PixelType_;
-
-  constexpr static bool is_view = true;
-  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
-
-  constexpr static ImageModifiability modifiability()
-  {
-    return modifiability_;
-  }
-};
 
 template <typename PixelType_, ImageModifiability modifiability_>
 class ImageView : public ImageBase<ImageView<PixelType_, modifiability_>>
@@ -132,6 +117,58 @@ private:
 
 template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;
 template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;
+
+template <typename PixelType0, ImageModifiability modifiability_0,
+          typename PixelType1, ImageModifiability modifiability_1>
+bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<PixelType1, modifiability_1>& img_1)
+{
+  // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
+  // nr of channels, or be PixelFormat::Unknown in either source or target.
+  static_assert(std::is_same<typename PixelTraits<PixelType0>::Element,
+                    typename PixelTraits<PixelType1>::Element>::value,
+                "Incompatible pixel types for equality comparison");
+  static_assert(PixelTraits<PixelType0>::nr_channels == PixelTraits<PixelType1>::nr_channels,
+                "Incompatible pixel types for equality comparison");
+  static_assert(get_nr_channels(PixelTraits<PixelType0>::pixel_format)
+                == get_nr_channels(PixelTraits<PixelType1>::pixel_format)
+                || PixelTraits<PixelType0>::pixel_format == PixelFormat::Unknown
+                || PixelTraits<PixelType1>::pixel_format == PixelFormat::Unknown,
+                "Incompatible pixel types for equality comparison");
+
+  // The sizes should then also be the same
+  static_assert(sizeof(PixelType0) == sizeof(PixelType1), "Incompatible pixel types for equality comparison");
+
+  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
+  if ((img_0.width() == 0 || img_0.height() == 0) && (img_1.width() == 0 || img_1.height() == 0))
+  {
+    return true;
+  }
+
+  if (img_0.width() != img_1.width() || img_0.height() != img_1.height())
+  {
+    return false;
+  }
+
+  for (auto y = 0_idx; y < img_0.height(); ++y)
+  {
+    const auto end0 = img_0.data_row_end(y);
+    const auto begin0 = img_0.data(y);
+    const auto begin1 = img_1.data(y);
+
+    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
+    // const bool equal_row = std::equal(begin0, end0, begin1);
+    // ...so let's just call std::memcmp directly:
+    const auto nr_bytes = std::distance(begin0, end0) * sizeof(PixelType0);
+    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
+
+    if (!equal_row)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 }  // namespace sln
 

@@ -21,8 +21,8 @@ TEST_CASE("Image conversions", "[img]")
   const auto img_x = sln_test::make_3x3_test_image_8u1();
   const auto img_xxx = sln_test::make_3x3_test_image_8u3();
 
-  const auto img_y = sln::view<sln::Pixel_8u1, sln::PixelY_8u>(img_x);
-  const auto img_rgb = sln::view<sln::Pixel_8u3, sln::PixelRGB_8u>(img_xxx);
+  const auto img_y = sln::view<sln::PixelY_8u>(img_x);
+  const auto img_rgb = sln::view<sln::PixelRGB_8u>(img_xxx);
 
   // Just covering a few select conversions for now...
 
@@ -142,7 +142,7 @@ TEST_CASE("Image conversions", "[img]")
     REQUIRE(img_rgba(2_idx, 2_idx) == sln::PixelRGBA_8u(90, 91, 92, 255));
 
     sln::ImageRGBA_8u img_rgba_1 = sln::convert_image<sln::PixelFormat::RGB, sln::PixelFormat::RGBA>(img_xxx,
-                                                                                                  std::uint8_t{255});
+                                                                                                     std::uint8_t{255});
     REQUIRE(img_rgba_1 == img_rgba);
   }
 
@@ -162,7 +162,7 @@ TEST_CASE("Image conversions", "[img]")
     REQUIRE(img_rgba(2_idx, 2_idx) == sln::PixelRGBA_8u(90, 91, 92, 255));
 
     sln::ImageRGBA_8u img_rgba_1 = sln::convert_image<sln::PixelFormat::RGBA>(img_rgb,
-                                                                                                  std::uint8_t{255});
+                                                                              std::uint8_t{255});
     REQUIRE(img_rgba_1 == img_rgba);
   }
 }

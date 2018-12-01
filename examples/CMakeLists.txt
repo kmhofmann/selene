@@ -17,7 +17,7 @@ add_executable(image_clone_view
 target_compile_options(image_clone_view PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_clone_view PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_clone_view PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_clone_view selene_old ${SELENE_LINK_LIBRARY_FILESYSTEM})
+target_link_libraries(image_clone_view selene ${SELENE_LINK_LIBRARY_FILESYSTEM})
 
 add_executable(image_conversion
         ${CMAKE_CURRENT_LIST_DIR}/image_conversion.cpp)

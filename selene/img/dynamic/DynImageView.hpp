@@ -10,6 +10,7 @@
 #include <selene/img/dynamic/DynImageIterators.hpp>
 #include <selene/img/dynamic/UntypedLayout.hpp>
 
+#include <cstring>
 #include <type_traits>
 
 namespace sln {
@@ -128,6 +129,41 @@ private:
 
 using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;
 using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;
+
+template <ImageModifiability modifiability_0, ImageModifiability modifiability_1>
+bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<modifiability_1>& dyn_img_1)
+{
+  // Special case: if both images have a zero-length side, the shall be considered equal (both are invalid)
+  if ((dyn_img_0.width() == 0 || dyn_img_0.height() == 0) && (dyn_img_1.width() == 0 || dyn_img_1.height() == 0))
+  {
+    return true;
+  }
+
+  if (dyn_img_0.width() != dyn_img_1.width() || dyn_img_0.height() != dyn_img_1.height())
+  {
+    return false;
+  }
+
+  for (auto y = 0_idx; y < dyn_img_0.height(); ++y)
+  {
+    const auto end0 = dyn_img_0.byte_ptr(static_cast<PixelIndex>(dyn_img_0.width()), y);
+    const auto begin0 = dyn_img_0.byte_ptr(y);
+    const auto begin1 = dyn_img_1.byte_ptr(y);
+
+    // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
+    // const bool equal_row = std::equal(begin0, end0, begin1);
+    // ...so let's just call std::memcmp directly:
+    const auto nr_bytes = std::distance(begin0, end0);
+    const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
+
+    if (!equal_row)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 }  // namespace sln
 
