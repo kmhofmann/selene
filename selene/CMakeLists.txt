@@ -280,8 +280,13 @@ target_link_libraries(selene_old_img_ops PUBLIC selene_old_img)
 #------------------------------------------------------------------------------
 
 add_library(selene_img_ops
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageFunctions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageFunctions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_DUMMY.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
         )
 add_library(selene::selene_img_ops ALIAS selene_img_ops)
 

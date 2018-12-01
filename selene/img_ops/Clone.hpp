@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_OPS_IMAGE_FUNCTIONS_HPP
-#define SELENE_IMG_OPS_IMAGE_FUNCTIONS_HPP
+#ifndef SELENE_IMG_OPS_CLONE_HPP
+#define SELENE_IMG_OPS_CLONE_HPP
 
 /// @file
 
@@ -13,81 +13,12 @@
 #include <selene/img/typed/ImageBase.hpp>
 #include <selene/img/typed/ImageView.hpp>
 
-#include <stdexcept>
-#include <type_traits>
+#include <selene/img_ops/Allocate.hpp>
 
 namespace sln {
 
-template <typename Derived>
-bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout = false, bool shrink_to_fit = false)
-{
-  if (!force_layout && img_dst.width() == layout.width && img_dst.height() == layout.height)
-  {
-    return false;
-  }
+namespace impl {
 
-  if constexpr(ImageBase<Derived>::is_view)
-  {
-    throw std::runtime_error("Cannot resize image view.");
-  }
-  else
-  {
-    const bool did_reallocate = img_dst.derived().reallocate(layout, guess_row_alignment(reinterpret_cast<std::uintptr_t>(img_dst.byte_ptr()), img_dst.stride_bytes()), shrink_to_fit);
-    return did_reallocate;
-  }
-}
-
-template <typename PixelType, typename Derived>
-void fill(ImageBase<Derived>& img_dst, PixelType value)
-{
-  for (PixelIndex y = 0_idx; y < img_dst.height(); ++y)
-  {
-    std::fill(img_dst.data(y), img_dst.data_row_end(y), value);
-  }
-}
-
-// ---
-
-template <typename DerivedSrc>
-auto view(const ImageBase<DerivedSrc>& img)
-{
-  return img.view();
-}
-
-template <typename DerivedSrc>
-auto view(ImageBase<DerivedSrc>& img)
-{
-  return img.view();
-}
-
-template <typename DerivedSrc>
-auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
-{
-  using PixelType = typename ImageBase<DerivedSrc>::PixelType;
-
-  const auto data_offset = Bytes(img.stride_bytes() * region.y0() + PixelTraits<PixelType>::nr_bytes * region.x0());
-  const auto byte_ptr = img.byte_ptr() + data_offset;
-  const auto layout = TypedLayout{region.width(), region.height(), img.stride_bytes()};
-
-  return ImageView<PixelType, ImageModifiability::Constant>(byte_ptr, layout);
-}
-
-template <typename DerivedSrc>
-auto view(ImageBase<DerivedSrc>& img, const BoundingBox& region)
-{
-  using PixelType = typename ImageBase<DerivedSrc>::PixelType;
-  constexpr auto modifiability = ImageBase<DerivedSrc>::modifiability();
-
-  const auto data_offset = Bytes(img.stride_bytes() * region.y0() + PixelTraits<PixelType>::nr_bytes * region.x0());
-  const auto byte_ptr = img.byte_ptr() + data_offset;
-  const auto layout = TypedLayout{region.width(), region.height(), img.stride_bytes()};
-
-  return ImageView<PixelType, modifiability>(byte_ptr, layout);
-}
-
-// ---
-
-// TODO: make this an internal function
 template <typename DerivedSrc, typename DerivedDst>
 void static_check_copy_compatibility(const ImageBase<DerivedSrc>& /*img_src*/, ImageBase<DerivedDst>& /*img_dst*/)
 {
@@ -123,25 +54,26 @@ void copy_rows_from(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>&
   }
 }
 
-// ---
+}  // namespace impl
+
 
 template <typename DerivedSrc, typename DerivedDst>
 void clone(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst)
 {
-  static_check_copy_compatibility(img_src, img_dst);
+  impl::static_check_copy_compatibility(img_src, img_dst);
 
   allocate(img_dst, img_src.layout());
-  copy_rows_from(img_src, img_dst);
+  impl::copy_rows_from(img_src, img_dst);
 }
 
 template <typename DerivedSrc, typename DerivedDst>
 void clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src, ImageBase<DerivedDst>& img_dst)
 {
-  static_check_copy_compatibility(img_src, img_dst);
+  impl::static_check_copy_compatibility(img_src, img_dst);
 
   const auto view_src = view(img_src, region_src);
   allocate(img_dst, view_src.layout());
-  copy_rows_from(view_src, img_dst);
+  impl::copy_rows_from(view_src, img_dst);
 }
 
 template <typename DerivedSrc>
@@ -162,15 +94,6 @@ Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src
   return img_dst;
 }
 
-// ---
-
-template <typename DerivedSrcDst>
-void crop(ImageBase<DerivedSrcDst>& img, const BoundingBox& region)
-{
-  auto cropped_clone = clone(img, region);
-  img = std::move(cropped_clone);
-}
-
 }  // namespace sln
 
-#endif  // SELENE_IMG_OPS_IMAGE_FUNCTIONS_HPP
+#endif  // SELENE_IMG_OPS_CLONE_HPP

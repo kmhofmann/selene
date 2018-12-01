@@ -6,7 +6,7 @@
 
 #include <selene/img/typed/Image.hpp>
 
-#include <selene/img_ops/ImageFunctions.hpp>
+#include <selene/img_ops/Fill.hpp>
 
 //#include <test/selene/img/typed/Utils.hpp>
 

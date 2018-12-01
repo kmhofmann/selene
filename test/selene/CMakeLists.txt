@@ -97,6 +97,13 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_JPEG.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_PNG.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.cpp
         )
 
 target_compile_options(selene_tests PRIVATE
