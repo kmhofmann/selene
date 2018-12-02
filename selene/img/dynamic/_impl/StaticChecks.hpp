@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_DYNAMIC_STATIC_CHECKS_HPP
-#define SELENE_IMG_DYNAMIC_STATIC_CHECKS_HPP
+#ifndef SELENE_IMG_DYNAMIC_IMPL_STATIC_CHECKS_HPP
+#define SELENE_IMG_DYNAMIC_IMPL_STATIC_CHECKS_HPP
 
 /// @file
 
@@ -37,4 +37,4 @@ void static_check_is_dyn_image_or_mutable_view(const DynImageOrView&)
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_DYNAMIC_STATIC_CHECKS_HPP
+#endif  // SELENE_IMG_DYNAMIC_IMPL_STATIC_CHECKS_HPP

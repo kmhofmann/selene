@@ -17,6 +17,8 @@ class ImageView;
 template <typename PixelType_>
 class Image;
 
+namespace impl {
+
 template <typename Derived>
 struct ImageBaseTraits;
 
@@ -47,6 +49,8 @@ struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
     return modifiability_;
   }
 };
+
+}  // namespace impl
 
 }  // namespace sln
 

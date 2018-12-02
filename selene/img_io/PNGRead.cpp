@@ -7,7 +7,7 @@
 #include <png.h>
 
 #include <selene/img_io/PNGRead.hpp>
-#include <selene/img_io/impl/PNGDetail.hpp>
+#include <selene/img_io/_impl/PNGDetail.hpp>
 
 #include <array>
 #include <cstdint>

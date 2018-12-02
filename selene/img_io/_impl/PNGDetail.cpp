@@ -4,7 +4,7 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
-#include <selene/img_io/impl/PNGDetail.hpp>
+#include <selene/img_io/_impl/PNGDetail.hpp>
 
 #include <stdexcept>
 

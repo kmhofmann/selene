@@ -68,18 +68,18 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/StaticChecks.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/StaticChecks.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageBase.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageBaseTraits.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageViewTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageBaseTraits.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/BorderAccessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/ImageAccess.hpp
@@ -121,12 +121,12 @@ add_library(selene_img_io
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/Util.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
         )
 add_library(selene::selene_img_io ALIAS selene_img_io)
 

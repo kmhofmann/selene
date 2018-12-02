@@ -8,7 +8,8 @@
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/MessageLog.hpp>
-#include <selene/img_io/impl/JPEGCommon.hpp>
+
+#include <selene/img_io/_impl/JPEGCommon.hpp>
 
 #include <jpeglib.h>
 

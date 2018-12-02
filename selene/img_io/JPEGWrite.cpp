@@ -5,7 +5,7 @@
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img_io/JPEGWrite.hpp>
-#include <selene/img_io/impl/JPEGDetail.hpp>
+#include <selene/img_io/_impl/JPEGDetail.hpp>
 
 #include <jpeglib.h>
 

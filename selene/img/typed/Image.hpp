@@ -26,9 +26,9 @@ public:
   using iterator = ImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
 
-  constexpr static bool is_view = ImageBaseTraits<Image<PixelType>>::is_view;
-  constexpr static bool is_modifiable = ImageBaseTraits<Image<PixelType>>::is_modifiable;
-  constexpr static ImageModifiability modifiability() { return ImageBaseTraits<Image<PixelType>>::modifiability(); }
+  constexpr static bool is_view = impl::ImageBaseTraits<Image<PixelType>>::is_view;
+  constexpr static bool is_modifiable = impl::ImageBaseTraits<Image<PixelType>>::is_modifiable;
+  constexpr static ImageModifiability modifiability() { return impl::ImageBaseTraits<Image<PixelType>>::modifiability(); }
 
   Image() = default;
   explicit Image(TypedLayout layout);

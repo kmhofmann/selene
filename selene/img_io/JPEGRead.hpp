@@ -21,11 +21,11 @@
 #include <selene/img/common/RowPointers.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
-#include <selene/img/dynamic/StaticChecks.hpp>
+#include <selene/img/dynamic/_impl/StaticChecks.hpp>
 
 #include <selene/img_io/JPEGCommon.hpp>
-#include <selene/img_io/impl/JPEGCommon.hpp>
-#include <selene/img_io/impl/Util.hpp>
+#include <selene/img_io/_impl/JPEGCommon.hpp>
+#include <selene/img_io/_impl/Util.hpp>
 
 #include <array>
 #include <cstdio>

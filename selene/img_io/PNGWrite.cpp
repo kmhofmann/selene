@@ -9,7 +9,7 @@
 #include <selene/base/Utils.hpp>
 
 #include <selene/img_io/PNGWrite.hpp>
-#include <selene/img_io/impl/PNGDetail.hpp>
+#include <selene/img_io/_impl/PNGDetail.hpp>
 
 #include <algorithm>
 #include <array>

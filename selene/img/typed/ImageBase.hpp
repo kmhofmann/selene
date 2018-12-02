@@ -9,8 +9,8 @@
 
 #include <selene/img/common/DataPtr.hpp>
 
-#include <selene/img/typed/ImageBaseTraits.hpp>
 #include <selene/img/typed/TypedLayout.hpp>
+#include <selene/img/typed/_impl/ImageBaseTraits.hpp>
 
 namespace sln {
 
@@ -18,11 +18,11 @@ template <typename Derived>
 class ImageBase
 {
 public:
-  using PixelType = typename ImageBaseTraits<Derived>::PixelType;
+  using PixelType = typename impl::ImageBaseTraits<Derived>::PixelType;
 
-  constexpr static bool is_view = ImageBaseTraits<Derived>::is_view;
-  constexpr static bool is_modifiable = ImageBaseTraits<Derived>::is_modifiable;
-  constexpr static ImageModifiability modifiability() { return ImageBaseTraits<Derived>::modifiability(); }
+  constexpr static bool is_view = impl::ImageBaseTraits<Derived>::is_view;
+  constexpr static bool is_modifiable = impl::ImageBaseTraits<Derived>::is_modifiable;
+  constexpr static ImageModifiability modifiability() { return impl::ImageBaseTraits<Derived>::modifiability(); }
 
   Derived& derived() noexcept { return *static_cast<Derived*>(this); }
   const Derived& derived() const noexcept { return *static_cast<const Derived*>(this); }

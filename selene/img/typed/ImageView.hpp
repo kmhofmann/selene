@@ -34,9 +34,9 @@ public:
 //  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
 //  constexpr static ImageModifiability modifiability() { return modifiability_; }
 
-  constexpr static bool is_view = ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_view;
-  constexpr static bool is_modifiable = ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_modifiable;
-  constexpr static ImageModifiability modifiability() { return ImageBaseTraits<ImageView<PixelType_, modifiability_>>::modifiability(); }
+  constexpr static bool is_view = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_view;
+  constexpr static bool is_modifiable = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_modifiable;
+  constexpr static ImageModifiability modifiability() { return impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::modifiability(); }
 
   ImageView() = default;
   ImageView(DataPtr<modifiability_> ptr, TypedLayout layout)
