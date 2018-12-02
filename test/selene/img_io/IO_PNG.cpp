@@ -10,7 +10,8 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <filesystem>
+
+#include <boost/filesystem.hpp>
 
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/FileUtils.hpp>
@@ -35,7 +36,7 @@
 
 #include <test/selene/Utils.hpp>
 
-namespace fs = std::filesystem;
+namespace fs = boost::filesystem;
 using namespace sln::literals;
 
 constexpr auto ref_width = 1024;
@@ -59,7 +60,7 @@ fs::path test_suite_dir()
   return (env_var) ? fs::path(env_var) / "png_suite" : fs::path("../data/png_suite");
 }
 
-void check_write_read(sln::DynImage& dyn_img, const std::filesystem::path& tmp_path)
+void check_write_read(sln::DynImage& dyn_img, const fs::path& tmp_path)
 {
   // Write as PNG file...
   sln::FileWriter sink((tmp_path / "test_img.png").string());

@@ -7,7 +7,8 @@
 #include <catch2/catch.hpp>
 
 #include <cstdlib>
-#include <filesystem>
+
+#include <boost/filesystem.hpp>
 
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/FileUtils.hpp>
@@ -32,7 +33,7 @@
 
 #include <test/selene/Utils.hpp>
 
-namespace fs = std::filesystem;
+namespace fs = boost::filesystem;
 using namespace sln::literals;
 
 // clang-format off

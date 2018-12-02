@@ -14,9 +14,9 @@
 
 #include <test/selene/Utils.hpp>
 
-#include <filesystem>
+#include <boost/filesystem.hpp>
 
-namespace fs = std::filesystem;
+namespace fs = boost::filesystem;
 
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;

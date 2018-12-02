@@ -15,8 +15,9 @@
 #include <selene/img_ops/Transformations.hpp>
 #include <selene/img_ops/View.hpp>
 
+#include <boost/filesystem.hpp>
+
 #include <cassert>
-#include <filesystem>
 
 #include "Utils.hpp"
 

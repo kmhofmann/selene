@@ -7,15 +7,16 @@
 
 #include <selene/base/Promote.hpp>
 
-#include <filesystem>
+#include <boost/filesystem.hpp>
+
 #include <random>
 #include <type_traits>
 
 namespace sln_test {
 
-inline std::filesystem::path get_tmp_path()
+inline boost::filesystem::path get_tmp_path()
 {
-  namespace fs = std::filesystem;
+  namespace fs = boost::filesystem;
   const auto tmp_path = fs::temp_directory_path() / "selene_test";
 
   if (!fs::exists(tmp_path))

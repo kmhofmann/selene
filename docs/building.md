@@ -114,8 +114,9 @@ More fine-grained control can be achieved by the options right below.
 Building the tests is disabled by default, and can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake`
 command.
 
-The test suite depends on [Catch2](https://github.com/catchorg/Catch2) for building the tests.
-This library is bundled as a Git submodule and will be automatically cloned during execution of the `cmake` command.
+The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for building the tests.
+The former is bundled as a Git submodule and will be automatically cloned during execution of the `cmake` command.
+The latter is automatically searched for by a CMake `find_package` command; its presence is required to build the tests.
 
 The test suite can be run by executing `./test/selene_tests` from the `build` directory. `./test/selene_tests -h` lists
 available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
@@ -157,7 +158,7 @@ On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as fol
     apt-get install libjpeg-turbo8-dev libpng-dev
     
     # Dependencies for building tests & examples
-    apt-get install libopencv-dev
+    apt-get install libopencv-dev libboost-filesystem-dev
     
     # Note: There is no pre-built google-benchmark package in e.g. Ubuntu.
     #       Install from source instead, or use vcpkg.
@@ -170,7 +171,7 @@ Install [Homebrew](https://brew.sh/) to build and install the dependencies as fo
     brew install libjpeg-turbo libpng
     
     # Dependencies for building tests, examples, benchmarks
-    brew install opencv3 google-benchmark
+    brew install opencv3 boost google-benchmark
 
 #### Windows
 
@@ -179,8 +180,9 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
     .\vcpkg.exe install libjpeg-turbo
     .\vcpkg.exe install libpng
     
-    .\vcpkg.exe install opencv     # only for tests
-    .\vcpkg.exe install benchmark  # only for benchmarks
+    .\vcpkg.exe install opencv            # only for tests
+    .\vcpkg.exe install boost-filesystem  # only for tests
+    .\vcpkg.exe install benchmark         # only for benchmarks
 
 Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
 the 64-bit compiled versions instead of the 32-bit ones.
@@ -193,7 +195,7 @@ supported platforms.
 using Conan).
 See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
 
-Currently, `libjpeg-turbo` and `libpng` (for the tests) can be built using Conan.
+Currently, `libjpeg-turbo`, `libpng` and `boost` (for the tests) can be built using Conan.
 There are no stable, cross-platform Conan recipes available yet for `OpenCV` or Google's `benchmark` library.
 
 To use Conan, first install it, e.g. with `pip`:

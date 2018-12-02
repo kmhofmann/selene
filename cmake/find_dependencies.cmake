@@ -53,6 +53,12 @@ else()
     message(WARNING "Building without OpenCV support.")
 endif()
 
+# Boost
+
+if (SELENE_BUILD_TESTS OR SELENE_BUILD_EXAMPLES)
+    find_package(Boost REQUIRED filesystem system)
+endif()
+
 # Google Benchmark
 
 if (SELENE_BUILD_BENCHMARKS)
