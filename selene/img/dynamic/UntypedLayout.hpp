@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/** \brief The layout for a dynamically typed image, holding information about width, height, number of channels, the
+ * number of bytes per channel, and the image's row stride in bytes.
+ */
 class UntypedLayout
 {
 public:
@@ -46,44 +49,21 @@ public:
       , stride_bytes(stride_bytes_)
   { }
 
-  PixelLength width;
-  PixelLength height;
-  std::int16_t nr_channels;
-  std::int16_t nr_bytes_per_channel;
-  Stride stride_bytes;
+  PixelLength width;  ///< The image width in pixels.
+  PixelLength height;  ///< The image height in pixels.
+  std::int16_t nr_channels;  ///< The number of image channels
+  std::int16_t nr_bytes_per_channel;  ///< The number of bytes used for a channel value.
+  Stride stride_bytes;  ///< The image row stride in bytes. The layout may include additional padding bytes.
 
-  std::ptrdiff_t nr_bytes_per_pixel() const noexcept
-  {
-    return nr_channels * nr_bytes_per_channel;
-  }
-
-  std::ptrdiff_t row_bytes() const noexcept
-  {
-    return width * nr_bytes_per_pixel();
-  }
-
-  std::ptrdiff_t total_bytes() const noexcept
-  {
-    return stride_bytes * height;
-  }
-
-  bool is_packed() const noexcept
-  {
-    return stride_bytes == width * nr_channels * nr_bytes_per_channel;
-  }
+  std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
+  std::ptrdiff_t row_bytes() const noexcept;
+  std::ptrdiff_t total_bytes() const noexcept;
+  bool is_packed() const noexcept;
 };
 
-inline bool operator==(const UntypedLayout& l, const UntypedLayout& r)
-{
-  return l.width == r.width && l.height == r.height
-         && l.nr_channels == r.nr_channels && l.nr_bytes_per_channel == r.nr_bytes_per_channel
-         && l.stride_bytes == r.stride_bytes;
-}
+bool operator==(const UntypedLayout& l, const UntypedLayout& r);
 
-inline bool operator!=(const UntypedLayout& l, const UntypedLayout& r)
-{
-  return !(l == r);
-}
+bool operator!=(const UntypedLayout& l, const UntypedLayout& r);
 
 // -----------
 
@@ -105,15 +85,98 @@ public:
   SampleFormat sample_format;
 };
 
+bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
+
+bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
+
+// ----------
+// Implementation:
+
+/** \brief Returns the number of bytes per pixel.
+ *
+ * @return The number of bytes per pixel.
+ */
+inline std::ptrdiff_t UntypedLayout::nr_bytes_per_pixel() const noexcept
+{
+  return nr_channels * nr_bytes_per_channel;
+}
+
+/** \brief Returns the number of data bytes occupied by each image row.
+ *
+ *  The value returned is equal to `(width * nr_bytes_per_pixel())`.
+ * It follows that `stride_bytes >= row_bytes()`, since `stride_bytes` may include additional padding bytes.
+ *
+ * @return Number of data bytes occupied by each image row.
+ */
+inline std::ptrdiff_t UntypedLayout::row_bytes() const noexcept
+{
+  return width * nr_bytes_per_pixel();
+}
+
+/** \brief Returns the total number of bytes occupied by the image data in memory.
+ *
+ * @return Number of bytes occupied by the image data in memory.
+ */
+inline std::ptrdiff_t UntypedLayout::total_bytes() const noexcept
+{
+  return stride_bytes * height;
+}
+
+/** \brief Returns whether image data is stored packed in memory using this layout.
+ *
+ * @return True, if the image data is stored packed using this layout; false otherwise.
+ */
+inline bool UntypedLayout::is_packed() const noexcept
+{
+  return stride_bytes == width * nr_channels * nr_bytes_per_channel;
+}
+
+/** \brief Equality comparison for two untyped layouts.
+ *
+ * @param l The left-hand side layout to compare.
+ * @param r The right-hand side layout to compare.
+ * @return True, if the two layouts are identical; false otherwise.
+ */
+inline bool operator==(const UntypedLayout& l, const UntypedLayout& r)
+{
+  return l.width == r.width && l.height == r.height
+         && l.nr_channels == r.nr_channels && l.nr_bytes_per_channel == r.nr_bytes_per_channel
+         && l.stride_bytes == r.stride_bytes;
+}
+
+/** \brief Inequality comparison for two untyped layouts.
+ *
+ * @param l The left-hand side layout to compare.
+ * @param r The right-hand side layout to compare.
+ * @return True, if the two layouts are not equal; false otherwise.
+ */
+inline bool operator!=(const UntypedLayout& l, const UntypedLayout& r)
+{
+  return !(l == r);
+}
+
+/** \brief Equality comparison for two image semantics structures.
+ *
+ * @param l The left-hand side semantics structure to compare.
+ * @param r The right-hand side semantics structure to compare.
+ * @return True, if the two semantics structures are identical; false otherwise.
+ */
 inline bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r)
 {
   return l.pixel_format == r.pixel_format && l.sample_format == r.sample_format;
 }
 
+/** \brief Inequality comparison for two image semantics structures.
+ *
+ * @param l The left-hand side semantics structure to compare.
+ * @param r The right-hand side semantics structure to compare.
+ * @return True, if the two semantics structures are not equal; false otherwise.
+ */
 inline bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r)
 {
   return !(l == r);
 }
+
 
 }  // namespace sln
 

@@ -27,7 +27,7 @@ template <typename PixelType>
 ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
 template <typename PixelType, ImageModifiability modifiability>
-DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
+DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img_view, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
 // ----------
 
@@ -57,7 +57,27 @@ PixelFormat check_img_to_dyn_img_compatibility(const ImageView<PixelType, modifi
 
 }  // namespace impl
 
-// TODO: adapt documentation from old function
+/** \brief Converts a statically typed `Image<PixelType>` instance to a dynamically typed `DynImage` instance.
+ *
+ * Precondition: The supplied image `img` must be valid, i.e. `img.is_valid()` must return true. Otherwise this function
+ * will throw a `std::runtime_error` exception.
+ *
+ * The number of channels, the number of bytes per channel, the pixel format, and the sample format of the resulting
+ * `ImageData` instance are determined based on the `PixelTraits` of the `PixelType`.
+ *
+ * The `PixelFormat` may be overridden by specifying the `new_pixel_format` parameter as not `PixelFormat::Invalid`.
+ * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
+ * and desired number of channels. If this check is negative, this function will throw a `std::runtime_error` exception.
+ *
+ * The `Image<PixelType>` instance `img` is moved from, i.e. it will be in a valid but unspecified state after the
+ * function call.
+ *
+ * @tparam PixelType The pixel type of the `Image<PixelType>` instance.
+ * @param img The statically typed image.
+ * @param pixel_format The pixel format of the `DynImage` instance to be created. If unknown, can be
+ *                     `PixelFormat::Unknown`.
+ * @return A dynamically typed `DynImage` instance.
+ */
 template <typename PixelType>
 DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format)
 {
@@ -74,7 +94,27 @@ DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format)
                   {new_pixel_format, sample_format}};
 }
 
-// TODO: adapt documentation from old function
+/** \brief Creates a dynamically typed `MutableDynImageView` view from a statically typed `Image<PixelType>` instance.
+ *
+ * Precondition: The supplied image `img` must be valid, i.e. `img.is_valid()` must return true. Otherwise this function
+ * will throw a `std::runtime_error` exception.
+ *
+ * The number of channels, the number of bytes per channel, the pixel format, and the sample format of the resulting
+ * `MutableDynImageView` instance are determined based on the `PixelTraits` of the `PixelType`.
+ *
+ * The `PixelFormat` may be overridden by specifying the `new_pixel_format` parameter as not `PixelFormat::Invalid`.
+ * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
+ * and desired number of channels. If this check is negative, this function will throw a `std::runtime_error` exception.
+ *
+ * As the resulting `MutableDynImageView` is a non-owning view, the lifetime of the supplied `Image<PixelType>` instance
+ * must exceed the lifetime of the returned instance.
+ *
+ * @tparam PixelType The pixel type of the `Image<PixelType>` instance.
+ * @param img The statically typed image.
+ * @param pixel_format The pixel format of the `MutableDynImageView` instance to be created. If unknown, can be
+ *                     `PixelFormat::Unknown`.
+ * @return A dynamically typed `MutableDynImageView` instance.
+ */
 template <typename PixelType>
 MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pixel_format)
 {
@@ -89,7 +129,27 @@ MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pix
                              UntypedImageSemantics{new_pixel_format, sample_format}};
 }
 
-// TODO: adapt documentation from old function
+/** \brief Creates a dynamically typed `ConstantDynImageView` view from a statically typed `Image<PixelType>` instance.
+ *
+ * Precondition: The supplied image `img` must be valid, i.e. `img.is_valid()` must return true. Otherwise this function
+ * will throw a `std::runtime_error` exception.
+ *
+ * The number of channels, the number of bytes per channel, the pixel format, and the sample format of the resulting
+ * `ConstantDynImageView` instance are determined based on the `PixelTraits` of the `PixelType`.
+ *
+ * The `PixelFormat` may be overridden by specifying the `new_pixel_format` parameter as not `PixelFormat::Invalid`.
+ * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
+ * and desired number of channels. If this check is negative, this function will throw a `std::runtime_error` exception.
+ *
+ * As the resulting `ConstantDynImageView` is a non-owning view, the lifetime of the supplied `Image<PixelType>`
+ * instance must exceed the lifetime of the returned instance.
+ *
+ * @tparam PixelType The pixel type of the `Image<PixelType>` instance.
+ * @param img The statically typed image.
+ * @param pixel_format The pixel format of the `ConstantDynImageView` instance to be created. If unknown, can be
+ *                     `PixelFormat::Unknown`.
+ * @return A dynamically typed `ConstantDynImageView` instance.
+ */
 template <typename PixelType>
 ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat new_pixel_format)
 {
@@ -104,18 +164,39 @@ ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat 
                               UntypedImageSemantics{new_pixel_format, sample_format}};
 }
 
-// TODO: adapt documentation from old function
+/** \brief Creates a dynamically typed `DynImageView<modifiability>` view from a statically typed
+ * `ImageView<PixelType, modifiability>` instance.
+ *
+ * Precondition: The supplied image `img_view` must be valid, i.e. `img_view.is_valid()` must return true. Otherwise
+ * this function will throw a `std::runtime_error` exception.
+ *
+ * The number of channels, the number of bytes per channel, the pixel format, and the sample format of the resulting
+ * `DynImageView<modifiability>` instance are determined based on the `PixelTraits` of the `PixelType`.
+ *
+ * The `PixelFormat` may be overridden by specifying the `new_pixel_format` parameter as not `PixelFormat::Invalid`.
+ * If the desired `PixelFormat` is not `PixelFormat::Unknown`, a compatibility check will be performed between existing
+ * and desired number of channels. If this check is negative, this function will throw a `std::runtime_error` exception.
+ *
+ * As the resulting `DynImageView<modifiability>` is a non-owning view, the lifetime of the supplied
+ * `ImageView<PixelType, modifiability>` instance must exceed the lifetime of the returned instance.
+ *
+ * @tparam PixelType The pixel type of the `ImageView<PixelType, modifiability>` instance.
+ * @param img_view The statically typed image view.
+ * @param pixel_format The pixel format of the `DynImageView<modifiability>` instance to be created. If unknown, can be
+ *                     `PixelFormat::Unknown`.
+ * @return A dynamically typed `DynImageView<modifiability>` instance.
+ */
 template <typename PixelType, ImageModifiability modifiability>
-DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img, PixelFormat new_pixel_format)
+DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img_view, PixelFormat new_pixel_format)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
   constexpr auto sample_format = PixelTraits<PixelType>::sample_format;
 
-  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img, new_pixel_format);
+  new_pixel_format = impl::check_img_to_dyn_img_compatibility(img_view, new_pixel_format);
 
-  return DynImageView<modifiability>{img.byte_ptr(),
-                                     UntypedLayout{img.width(), img.height(), nr_channels, nr_bytes_per_channel, img.stride_bytes()},
+  return DynImageView<modifiability>{img_view.byte_ptr(),
+                                     UntypedLayout{img_view.width(), img_view.height(), nr_channels, nr_bytes_per_channel, img_view.stride_bytes()},
                                      UntypedImageSemantics{new_pixel_format, sample_format}};
 }
 
