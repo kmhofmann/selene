@@ -20,8 +20,7 @@ class DynImageView
 {
 public:
   using DataPtrType = typename DataPtr<modifiability_>::Type;
-  template <typename PixelType> using PixelTypePtr =
-      std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
+  template <typename PixelType> using PixelTypePtr = std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
 
   template <typename PixelType> using iterator = DynImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
   template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
@@ -74,10 +73,9 @@ public:
   template <typename PixelType> PixelTypePtr<PixelType> data_row_end(PixelIndex y) const noexcept;
   template <typename PixelType> PixelTypePtr<PixelType> data(PixelIndex x, PixelIndex y) const noexcept;
 
-  template <typename PixelType,
-            typename T = void,
-            typename = std::enable_if_t<modifiability_ == ImageModifiability::Mutable, T>>
-  PixelType& pixel(PixelIndex x, PixelIndex y) noexcept;
+  template <typename PixelType>
+  auto pixel(PixelIndex x, PixelIndex y) noexcept
+      -> std::conditional_t<modifiability_ == ImageModifiability::Mutable, PixelType&, const PixelType&>;
 
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept;
@@ -316,8 +314,7 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::begin() const noexcept -> const_iterator<PixelType>
 {
-  return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
+  return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -330,8 +327,7 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::cbegin() const noexcept -> const_iterator<PixelType>
 {
-  return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
+  return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
 /** \brief Returns an iterator to the row after the last row of the image.
@@ -477,8 +473,9 @@ auto DynImageView<modifiability_>::data(PixelIndex x, PixelIndex y) const noexce
  * @return Reference to the pixel element at location `(x, y)`.
  */
 template <ImageModifiability modifiability_>
-template <typename PixelType, typename, typename>
-PixelType& DynImageView<modifiability_>::pixel(PixelIndex x, PixelIndex y) noexcept
+template <typename PixelType>
+auto DynImageView<modifiability_>::pixel(PixelIndex x, PixelIndex y) noexcept
+    -> std::conditional_t<modifiability_ == ImageModifiability::Mutable, PixelType&, const PixelType&>
 {
   return *data<PixelType>(x, y);
 }
@@ -528,7 +525,7 @@ decltype(auto) DynImageView<modifiability_>::view() const noexcept
 template <ImageModifiability modifiability_>
 decltype(auto) DynImageView<modifiability_>::constant_view() const noexcept
 {
-  if constexpr(is_modifiable)
+  if constexpr (is_modifiable)
   {
     return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout(), this->semantics()};
   }
