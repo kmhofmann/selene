@@ -34,11 +34,7 @@ MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes) noe
  */
 void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
 {
-  if (data != nullptr)
-  {
-    std::free(data);
-  }
-
+  std::free(data);
   data = nullptr;
 }
 
@@ -61,32 +57,7 @@ MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t
   // Ensure that the alignment is a power of two
   alignment = static_cast<std::size_t>(sln::next_power_of_two(std::max(alignment, std::size_t{2})));
 
-  // TODO: C++17's aligned_alloc (http://en.cppreference.com/w/cpp/memory/c/aligned_alloc) would make life easier...
-
-  // Allocate extra space for storing the alignment offset, and to fit the alignment itself
-  const auto offset_ptr_storage = std::size_t{sizeof(void*)};
-  const auto offset_alignment = alignment;
-  void* const m_ptr = std::malloc(offset_ptr_storage + offset_alignment + nr_bytes);
-
-  if (m_ptr == nullptr)
-  {
-    return construct_memory_block_from_existing_memory<AlignedMallocAllocator>(nullptr, 0);
-  }
-
-  // Compute the aligned pointer
-  auto m_ptr_2 = reinterpret_cast<void*>(reinterpret_cast<std::uint8_t*>(m_ptr) + offset_ptr_storage);
-  std::size_t space = offset_alignment + nr_bytes;
-  void* const a_ptr = std::align(alignment, sizeof(std::uint8_t), m_ptr_2, space);
-
-  if (a_ptr == nullptr)
-  {
-    return construct_memory_block_from_existing_memory<AlignedMallocAllocator>(nullptr, 0);
-  }
-
-  // Store malloc'ed pointer before the aligned memory block
-  (reinterpret_cast<void**>(a_ptr))[-1] = m_ptr;
-
-  auto ptr = reinterpret_cast<std::uint8_t*>(a_ptr);
+  auto ptr = static_cast<std::uint8_t*>(std::aligned_alloc(alignment, nr_bytes));
   return construct_memory_block_from_existing_memory<AlignedMallocAllocator>(ptr, nr_bytes);
 }
 
@@ -96,14 +67,7 @@ MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t
  */
 void AlignedMallocAllocator::deallocate(std::uint8_t*& data) noexcept
 {
-  if (data != nullptr)
-  {
-    // Retrieve originally malloc'ed pointer from stored position
-    std::uint8_t* data_ptr = data;
-    void* m_ptr = (reinterpret_cast<void**>(data_ptr))[-1];
-    std::free(m_ptr);
-  }
-
+  std::free(data);
   data = nullptr;
 }
 
@@ -153,30 +117,7 @@ MemoryBlock<AlignedNewAllocator> AlignedNewAllocator::allocate(std::size_t nr_by
   // Ensure that the alignment is a power of two
   alignment = static_cast<std::size_t>(sln::next_power_of_two(std::max(alignment, std::size_t{2})));
 
-  // Allocate extra space for storing the alignment offset, and to fit the alignment itself
-  const auto offset_ptr_storage = std::size_t{sizeof(void*)};
-  const auto offset_alignment = alignment;
-  const auto n_ptr = ::new (std::nothrow) std::uint8_t[offset_ptr_storage + offset_alignment + nr_bytes];
-
-  if (n_ptr == nullptr)
-  {
-    return construct_memory_block_from_existing_memory<AlignedNewAllocator>(nullptr, 0);
-  }
-
-  // Compute the aligned pointer
-  auto m_ptr_2 = static_cast<void*>(n_ptr + offset_ptr_storage);
-  std::size_t space = offset_alignment + nr_bytes;
-  void* const a_ptr = std::align(alignment, sizeof(std::uint8_t), m_ptr_2, space);
-
-  if (a_ptr == nullptr)
-  {
-    return construct_memory_block_from_existing_memory<AlignedNewAllocator>(nullptr, 0);
-  }
-
-  // Store new'ed pointer before the aligned memory block
-  (reinterpret_cast<std::uint8_t**>(a_ptr))[-1] = n_ptr;
-
-  auto ptr = reinterpret_cast<std::uint8_t*>(a_ptr);
+  const auto ptr = ::new (std::align_val_t{alignment}, std::nothrow) std::uint8_t[nr_bytes];
   return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, nr_bytes);
 }
 
@@ -186,14 +127,7 @@ MemoryBlock<AlignedNewAllocator> AlignedNewAllocator::allocate(std::size_t nr_by
  */
 void AlignedNewAllocator::deallocate(std::uint8_t*& data) noexcept
 {
-  if (data != nullptr)
-  {
-    // Retrieve originally new'ed pointer from stored position
-    std::uint8_t* data_ptr = data;
-    std::uint8_t* n_ptr = (reinterpret_cast<std::uint8_t**>(data_ptr))[-1];
-    delete[] n_ptr;
-  }
-
+  ::delete[] data;
   data = nullptr;
 }
 
