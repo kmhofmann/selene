@@ -39,254 +39,85 @@ public:
 
   explicit DynImage(UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{});
 
-  DynImage(
-      UntypedLayout layout,
-      ImageRowAlignment row_alignment_bytes,
-      UntypedImageSemantics semantics = UntypedImageSemantics{});
+  DynImage(UntypedLayout layout,
+           ImageRowAlignment row_alignment_bytes,
+           UntypedImageSemantics semantics = UntypedImageSemantics{});
 
-  DynImage(
-      MemoryBlock<AlignedNewAllocator>&& memory,
-      UntypedLayout layout,
-      UntypedImageSemantics semantics = UntypedImageSemantics{});
+  DynImage(MemoryBlock<AlignedNewAllocator>&& memory,
+           UntypedLayout layout,
+           UntypedImageSemantics semantics = UntypedImageSemantics{});
 
   ~DynImage();
 
   DynImage(const DynImage&);
-
   DynImage& operator=(const DynImage&);
 
   DynImage(DynImage&&) noexcept;
-
   DynImage& operator=(DynImage&&) noexcept;
 
-  template <ImageModifiability modifiability>
-  explicit DynImage(const DynImageView<modifiability>&);
+  template <ImageModifiability modifiability> explicit DynImage(const DynImageView<modifiability>&);
 
-  template <ImageModifiability modifiability>
-  DynImage& operator=(const DynImageView<modifiability>&);
+  template <ImageModifiability modifiability> DynImage& operator=(const DynImageView<modifiability>&);
 
-  const UntypedLayout& layout() const noexcept
-  {
-    return view_.layout();
-  }
+  const UntypedLayout& layout() const noexcept;
+  const UntypedImageSemantics& semantics() const noexcept;
 
-  const UntypedImageSemantics& semantics() const noexcept
-  {
-    return view_.semantics();
-  }
+  PixelLength width() const noexcept;
+  PixelLength height() const noexcept;
+  std::int16_t nr_channels() const noexcept;
+  std::int16_t nr_bytes_per_channel() const noexcept;
+  Stride stride_bytes() const noexcept;
+  std::ptrdiff_t row_bytes() const noexcept;
+  std::ptrdiff_t total_bytes() const noexcept;
+  PixelFormat pixel_format() const noexcept;
+  SampleFormat sample_format() const noexcept;
 
-  PixelLength width() const noexcept
-  {
-    return view_.width();
-  }
+  bool is_packed() const noexcept;
+  bool is_empty() const noexcept;
+  bool is_valid() const noexcept;
 
-  PixelLength height() const noexcept
-  {
-    return view_.height();
-  }
+  template <typename PixelType> auto begin() noexcept -> iterator<PixelType>;
+  template <typename PixelType> auto begin() const noexcept -> const_iterator<PixelType>;
+  template <typename PixelType> auto cbegin() const noexcept -> const_iterator<PixelType>;
 
-  std::int16_t nr_channels() const noexcept
-  {
-    return view_.nr_channels();
-  }
+  template <typename PixelType> auto end() noexcept -> iterator<PixelType>;
+  template <typename PixelType> auto end() const noexcept -> const_iterator<PixelType>;
+  template <typename PixelType> auto cend() const noexcept -> const_iterator<PixelType>;
 
-  std::int16_t nr_bytes_per_channel() const noexcept
-  {
-    return view_.nr_bytes_per_channel();
-  }
+  DataPtrType byte_ptr() noexcept;
+  ConstDataPtrType byte_ptr() const noexcept;
 
-  Stride stride_bytes() const noexcept
-  {
-    return view_.stride_bytes();
-  }
+  DataPtrType byte_ptr(PixelIndex y) noexcept;
+  ConstDataPtrType byte_ptr(PixelIndex y) const noexcept;
 
-  std::ptrdiff_t row_bytes() const noexcept
-  {
-    return view_.row_bytes();
-  }
+  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept;
+  ConstDataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept;
 
-  std::ptrdiff_t total_bytes() const noexcept
-  {
-    return view_.total_bytes();
-  }
+  template <typename PixelType> PixelType* data() noexcept;
+  template <typename PixelType> const PixelType* data() const noexcept;
 
-  PixelFormat pixel_format() const noexcept
-  {
-    return view_.pixel_format();
-  }
+  template <typename PixelType> PixelType* data(PixelIndex y) noexcept;
+  template <typename PixelType> const PixelType* data(PixelIndex y) const noexcept;
 
-  SampleFormat sample_format() const noexcept
-  {
-    return view_.sample_format();
-  }
+  template <typename PixelType> PixelType* data_row_end(PixelIndex y) noexcept;
+  template <typename PixelType> const PixelType* data_row_end(PixelIndex y) const noexcept;
 
-  bool is_packed() const noexcept
-  {
-    return view_.is_packed();
-  }
+  template <typename PixelType> PixelType* data(PixelIndex x, PixelIndex y) noexcept;
+  template <typename PixelType> const PixelType* data(PixelIndex x, PixelIndex y) const noexcept;
 
-  bool is_empty() const noexcept
-  {
-    return view_.is_empty();
-  }
+  template <typename PixelType> PixelType& pixel(PixelIndex x, PixelIndex y) noexcept;
+  template <typename PixelType> const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept;
 
-  bool is_valid() const noexcept
-  {
-    return view_.is_valid();
-  }
+  DynImageView<ImageModifiability::Mutable>& view() noexcept;
+  DynImageView<ImageModifiability::Constant> view() const noexcept;
+  DynImageView<ImageModifiability::Constant> constant_view() const noexcept;
 
-  template <typename PixelType>
-  auto begin() noexcept -> iterator<PixelType>
-  {
-    return view_.begin<PixelType>();
-  }
+  void clear();
 
-  template <typename PixelType>
-  auto begin() const noexcept -> const_iterator<PixelType>
-  {
-    return view_.begin<PixelType>();
-  }
-
-  template <typename PixelType>
-  auto cbegin() const noexcept -> const_iterator<PixelType>
-  {
-    return view_.cbegin<PixelType>();
-  }
-
-  template <typename PixelType>
-  auto end() noexcept -> iterator<PixelType>
-  {
-    return view_.end<PixelType>();
-  }
-
-  template <typename PixelType>
-  auto end() const noexcept -> const_iterator<PixelType>
-  {
-    return view_.end<PixelType>();
-  }
-
-  template <typename PixelType>
-  auto cend() const noexcept -> const_iterator<PixelType>
-  {
-    return view_.cend<PixelType>();
-  }
-
-  auto byte_ptr() noexcept -> DataPtrType
-  {
-    return view_.byte_ptr();
-  }
-
-  auto byte_ptr() const noexcept -> ConstDataPtrType
-  {
-    return view_.byte_ptr();
-  }
-
-  auto byte_ptr(PixelIndex y) noexcept -> DataPtrType
-  {
-    return view_.byte_ptr(y);
-  }
-
-  auto byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
-  {
-    return view_.byte_ptr(y);
-  }
-
-  auto byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
-  {
-    return view_.byte_ptr(x, y);
-  }
-
-  auto byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
-  {
-    return view_.byte_ptr(x, y);
-  }
-
-  template <typename PixelType>
-  PixelType* data() noexcept
-  {
-    return view_.data<PixelType>();
-  }
-
-  template <typename PixelType>
-  const PixelType* data() const noexcept
-  {
-    return view_.data<PixelType>();
-  }
-
-  template <typename PixelType>
-  PixelType* data(PixelIndex y) noexcept
-  {
-    return view_.data<PixelType>(y);
-  }
-
-  template <typename PixelType>
-  const PixelType* data(PixelIndex y) const noexcept
-  {
-    return view_.data<PixelType>(y);
-  }
-
-  template <typename PixelType>
-  PixelType* data_row_end(PixelIndex y) noexcept
-  {
-    return view_.data_row_end<PixelType>(y);
-  }
-
-  template <typename PixelType>
-  const PixelType* data_row_end(PixelIndex y) const noexcept
-  {
-    return view_.data_row_end<PixelType>(y);
-  }
-
-  template <typename PixelType>
-  PixelType* data(PixelIndex x, PixelIndex y) noexcept
-  {
-    return view_.data<PixelType>(x, y);
-  }
-
-  template <typename PixelType>
-  const PixelType* data(PixelIndex x, PixelIndex y) const noexcept
-  {
-    return view_.data<PixelType>(x, y);
-  }
-
-  template <typename PixelType>
-  PixelType& pixel(PixelIndex x, PixelIndex y) noexcept
-  {
-    return view_.pixel<PixelType>(x, y);
-  }
-
-  template <typename PixelType>
-  const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept
-  {
-    return view_.pixel<PixelType>(x, y);
-  }
-
-  DynImageView<ImageModifiability::Mutable>& view() noexcept
-  {
-    return view_.view();
-  }
-
-  DynImageView<ImageModifiability::Constant> view() const noexcept
-  {
-    return view_.constant_view();
-  }
-
-  DynImageView<ImageModifiability::Constant> constant_view() const noexcept
-  {
-    return view_.constant_view();
-  }
-
-  void clear()
-  {
-    deallocate_memory();
-    view_.clear();
-  }
-
-  bool reallocate(
-      UntypedLayout layout,
-      ImageRowAlignment row_alignment_bytes,
-      UntypedImageSemantics semantics = UntypedImageSemantics{},
-      bool shrink_to_fit = true);
+  bool reallocate(UntypedLayout layout,
+                  ImageRowAlignment row_alignment_bytes,
+                  UntypedImageSemantics semantics = UntypedImageSemantics{},
+                  bool shrink_to_fit = true);
 
   MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
 
@@ -330,7 +161,6 @@ inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, semantics))
 {
 }
-
 
 inline DynImage::DynImage(
     MemoryBlock<AlignedNewAllocator>&& memory,
@@ -444,6 +274,223 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
   copy_rows_from(other);
 
   return * this;
+}
+
+inline const UntypedLayout& DynImage::layout() const noexcept
+{
+  return view_.layout();
+}
+
+inline const UntypedImageSemantics& DynImage::semantics() const noexcept
+{
+  return view_.semantics();
+}
+
+inline PixelLength DynImage::width() const noexcept
+{
+  return view_.width();
+}
+
+inline PixelLength DynImage::height() const noexcept
+{
+  return view_.height();
+}
+
+inline std::int16_t DynImage::nr_channels() const noexcept
+{
+  return view_.nr_channels();
+}
+
+inline std::int16_t DynImage::nr_bytes_per_channel() const noexcept
+{
+  return view_.nr_bytes_per_channel();
+}
+
+inline Stride DynImage::stride_bytes() const noexcept
+{
+  return view_.stride_bytes();
+}
+
+inline std::ptrdiff_t DynImage::row_bytes() const noexcept
+{
+  return view_.row_bytes();
+}
+
+inline std::ptrdiff_t DynImage::total_bytes() const noexcept
+{
+  return view_.total_bytes();
+}
+
+inline PixelFormat DynImage::pixel_format() const noexcept
+{
+  return view_.pixel_format();
+}
+
+inline SampleFormat DynImage::sample_format() const noexcept
+{
+  return view_.sample_format();
+}
+
+inline bool DynImage::is_packed() const noexcept
+{
+  return view_.is_packed();
+}
+
+inline bool DynImage::is_empty() const noexcept
+{
+  return view_.is_empty();
+}
+
+inline bool DynImage::is_valid() const noexcept
+{
+  return view_.is_valid();
+}
+
+template <typename PixelType>
+auto DynImage::begin() noexcept -> iterator<PixelType>
+{
+  return view_.begin<PixelType>();
+}
+
+template <typename PixelType>
+auto DynImage::begin() const noexcept -> const_iterator<PixelType>
+{
+  return view_.begin<PixelType>();
+}
+
+template <typename PixelType>
+auto DynImage::cbegin() const noexcept -> const_iterator<PixelType>
+{
+  return view_.cbegin<PixelType>();
+}
+
+template <typename PixelType>
+auto DynImage::end() noexcept -> iterator<PixelType>
+{
+  return view_.end<PixelType>();
+}
+
+template <typename PixelType>
+auto DynImage::end() const noexcept -> const_iterator<PixelType>
+{
+  return view_.end<PixelType>();
+}
+
+template <typename PixelType>
+auto DynImage::cend() const noexcept -> const_iterator<PixelType>
+{
+  return view_.cend<PixelType>();
+}
+
+inline auto DynImage::byte_ptr() noexcept -> DataPtrType
+{
+  return view_.byte_ptr();
+}
+
+inline auto DynImage::byte_ptr() const noexcept -> ConstDataPtrType
+{
+  return view_.byte_ptr();
+}
+
+inline auto DynImage::byte_ptr(PixelIndex y) noexcept -> DataPtrType
+{
+  return view_.byte_ptr(y);
+}
+
+inline auto DynImage::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
+{
+  return view_.byte_ptr(y);
+}
+
+inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
+{
+  return view_.byte_ptr(x, y);
+}
+
+inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
+{
+  return view_.byte_ptr(x, y);
+}
+
+template <typename PixelType>
+PixelType* DynImage::data() noexcept
+{
+  return view_.data<PixelType>();
+}
+
+template <typename PixelType>
+const PixelType* DynImage::data() const noexcept
+{
+  return view_.data<PixelType>();
+}
+
+template <typename PixelType>
+PixelType* DynImage::data(PixelIndex y) noexcept
+{
+  return view_.data<PixelType>(y);
+}
+
+template <typename PixelType>
+const PixelType* DynImage::data(PixelIndex y) const noexcept
+{
+  return view_.data<PixelType>(y);
+}
+
+template <typename PixelType>
+PixelType* DynImage::data_row_end(PixelIndex y) noexcept
+{
+  return view_.data_row_end<PixelType>(y);
+}
+
+template <typename PixelType>
+const PixelType* DynImage::data_row_end(PixelIndex y) const noexcept
+{
+  return view_.data_row_end<PixelType>(y);
+}
+
+template <typename PixelType>
+PixelType* DynImage::data(PixelIndex x, PixelIndex y) noexcept
+{
+  return view_.data<PixelType>(x, y);
+}
+
+template <typename PixelType>
+const PixelType* DynImage::data(PixelIndex x, PixelIndex y) const noexcept
+{
+  return view_.data<PixelType>(x, y);
+}
+
+template <typename PixelType>
+PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) noexcept
+{
+  return view_.pixel<PixelType>(x, y);
+}
+
+template <typename PixelType>
+const PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) const noexcept
+{
+  return view_.pixel<PixelType>(x, y);
+}
+
+inline DynImageView<ImageModifiability::Mutable>& DynImage::view() noexcept
+{
+  return view_.view();
+}
+
+inline DynImageView<ImageModifiability::Constant> DynImage::view() const noexcept
+{
+  return view_.constant_view();
+}
+
+inline DynImageView<ImageModifiability::Constant> DynImage::constant_view() const noexcept
+{
+  return view_.constant_view();
+}
+
+inline void DynImage::clear()
+{
+  deallocate_memory();
+  view_.clear();
 }
 
 inline bool DynImage::reallocate(
