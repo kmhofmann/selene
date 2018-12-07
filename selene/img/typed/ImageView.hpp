@@ -159,7 +159,7 @@ template <typename PixelType_, ImageModifiability modifiability_>
 bool ImageView<PixelType_, modifiability_>::is_valid() const noexcept
 {
   return !is_empty();
-};
+}
 
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::begin() noexcept -> iterator
