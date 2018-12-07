@@ -101,60 +101,138 @@ bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<
 // ----------
 // Implementation:
 
+/** \brief Constructs an image view onto the specified memory region, given the specified layout.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param ptr A pointer to the memory block representing the image data
+ * @param layout The image layout.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 ImageView<PixelType_, modifiability_>::ImageView(DataPtr<modifiability_> ptr, TypedLayout layout)
     : ptr_(ptr), layout_(layout)
 {
 }
 
+/** \brief Returns the image view layout.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The typed image view layout.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 const TypedLayout& ImageView<PixelType_, modifiability_>::layout() const noexcept
 {
   return layout_;
 }
 
+/** \brief Returns the image view width.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The image view width.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 PixelLength ImageView<PixelType_, modifiability_>::width() const noexcept
 {
   return layout_.width;
 }
 
+/** \brief Returns the image view height.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The image view height.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 PixelLength ImageView<PixelType_, modifiability_>::height() const noexcept
 {
   return layout_.height;
 }
 
+/** \brief Returns the row stride of the image view in bytes.
+ *
+ * The row stride is the number of bytes that a row occupies in memory.
+ * It has to be greater or equal to the width times the size of a pixel element:
+ * `(stride_bytes() >= width() * PixelTraits::nr_bytes)`.
+ * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The row stride of the image view in bytes.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 Stride ImageView<PixelType_, modifiability_>::stride_bytes() const noexcept
 {
   return layout_.stride_bytes;
 }
 
+/** \brief Returns the number of data bytes occupied by each image row.
+ *
+ * The value returned is equal to `(width() * PixelTraits::nr_bytes)`.
+ * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The number of data bytes occupied by each image row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 std::ptrdiff_t ImageView<PixelType_, modifiability_>::row_bytes() const noexcept
 {
   return layout_.row_bytes<PixelType>();
 }
 
+/** \brief Returns the total number of bytes occupied by the image data in memory.
+ *
+ * The value returned is equal to `(stride_bytes() * height())`.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The total number of bytes occupied by the image data in memory.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 std::ptrdiff_t ImageView<PixelType_, modifiability_>::total_bytes() const noexcept
 {
   return layout_.total_bytes<PixelType>();
 }
 
+/** \brief Returns whether the image view is stored packed in memory.
+ *
+ * Returns the boolean expression `(stride_bytes() == width() * PixelTraits::nr_bytes)`.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return True, if the image view data is stored packed; false otherwise.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 bool ImageView<PixelType_, modifiability_>::is_packed() const noexcept
 {
   return layout_.is_packed<PixelType>();
 }
 
+/** \brief Returns whether the image view is empty.
+ *
+ * An image [view] is considered empty if its internal data pointer points to `nullptr`, `width() == 0`,
+ * `height() == 0`, or any combination of these.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return True, if the image view is empty; false if it is non-empty.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 bool ImageView<PixelType_, modifiability_>::is_empty() const noexcept
 {
   return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0;
 }
 
+/** \brief Returns whether the image view is valid.
+ *
+ * Semantically equal to `!is_empty()`.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return True, if the image view is valid; false otherwise.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 bool ImageView<PixelType_, modifiability_>::is_valid() const noexcept
 {

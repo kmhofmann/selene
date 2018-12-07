@@ -35,11 +35,10 @@ public:
     return modifiability_;
   }
 
-  DynImageView() = default;
-  DynImageView(
-      DataPtr<modifiability_> ptr,
-      UntypedLayout layout,
-      UntypedImageSemantics semantics = UntypedImageSemantics{});
+  DynImageView() = default;  ///< Default constructor.
+  DynImageView(DataPtr<modifiability_> ptr,
+               UntypedLayout layout,
+               UntypedImageSemantics semantics = UntypedImageSemantics{});
 
   const UntypedLayout& layout() const noexcept;
   const UntypedImageSemantics& semantics() const noexcept;
@@ -107,93 +106,187 @@ bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<mo
 // ----------
 // Implementation:
 
+/** \brief Constructs a dynamic image view onto the specified memory region, given the specified layout and pixel
+ * semantics.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param ptr A pointer to the memory block representing the image data
+ * @param layout The image layout.
+ * @param semantics The pixel semantics.
+ */
 template <ImageModifiability modifiability_>
-DynImageView<modifiability_>::DynImageView(
-    DataPtr<modifiability_> ptr,
-    UntypedLayout layout,
-    UntypedImageSemantics semantics)
+DynImageView<modifiability_>::DynImageView(DataPtr<modifiability_> ptr,
+                                           UntypedLayout layout,
+                                           UntypedImageSemantics semantics)
     : ptr_(ptr), layout_(layout), semantics_(semantics)
 {
 }
 
+/** \brief Returns the dynamic image view layout.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The untyped image view layout.
+ */
 template <ImageModifiability modifiability_>
 const UntypedLayout& DynImageView<modifiability_>::layout() const noexcept
 {
   return layout_;
 }
 
+/** \brief Returns the pixel semantics for the dynamic image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The pixel semantics.
+ */
 template <ImageModifiability modifiability_>
 const UntypedImageSemantics& DynImageView<modifiability_>::semantics() const noexcept
 {
   return semantics_;
 }
 
+/** \brief Returns the image view width.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The image view width.
+ */
 template <ImageModifiability modifiability_>
 PixelLength DynImageView<modifiability_>::width() const noexcept
 {
   return layout_.width;
 }
 
+/** \brief Returns the image view height.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The image view height.
+ */
 template <ImageModifiability modifiability_>
 PixelLength DynImageView<modifiability_>::height() const noexcept
 {
   return layout_.height;
 }
 
+/** \brief Returns the number of channels for the image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The number of channels.
+ */
 template <ImageModifiability modifiability_>
 std::int16_t DynImageView<modifiability_>::nr_channels() const noexcept
 {
   return layout_.nr_channels;
 }
 
+/** \brief Returns the number of bytes per channel for the image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The number of bytes per channel.
+ */
 template <ImageModifiability modifiability_>
 std::int16_t DynImageView<modifiability_>::nr_bytes_per_channel() const noexcept
 {
   return layout_.nr_bytes_per_channel;
 }
 
+/** \brief Returns the row stride of the image view in bytes.
+ *
+ * The row stride is the number of bytes that a row occupies in memory.
+ * It has to be greater or equal to the width times the size of a pixel element:
+ * `(stride_bytes() >= width() * nr_channels() * nr_bytes_per_channel())`.
+ * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The row stride of the image view in bytes.
+ */
 template <ImageModifiability modifiability_>
 Stride DynImageView<modifiability_>::stride_bytes() const noexcept
 {
   return layout_.stride_bytes;
 }
 
+/** \brief Returns the number of data bytes occupied by each image row.
+ *
+ * The value returned is equal to `(width() * nr_channels() * nr_bytes_per_channel())`.
+ * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The number of data bytes occupied by each image row.
+ */
 template <ImageModifiability modifiability_>
 std::ptrdiff_t DynImageView<modifiability_>::row_bytes() const noexcept
 {
   return layout_.row_bytes();
 }
 
+/** \brief Returns the total number of bytes occupied by the image data in memory.
+ *
+ * The value returned is equal to `(stride_bytes() * height())`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The total number of bytes occupied by the image data in memory.
+ */
 template <ImageModifiability modifiability_>
 std::ptrdiff_t DynImageView<modifiability_>::total_bytes() const noexcept
 {
   return layout_.total_bytes();
 }
 
+/** \brief Returns the specified pixel format of the dynamic image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The pixel format.
+ */
 template <ImageModifiability modifiability_>
 PixelFormat DynImageView<modifiability_>::pixel_format() const noexcept
 {
   return semantics_.pixel_format;
 }
 
+/** \brief Returns the specified sample format of the dynamic image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The sample format.
+ */
 template <ImageModifiability modifiability_>
 SampleFormat DynImageView<modifiability_>::sample_format() const noexcept
 {
   return semantics_.sample_format;
 }
 
+/** \brief Returns whether the image view is stored packed in memory.
+ *
+ * Returns the boolean expression `(stride_bytes() == width() * nr_channels() * nr_bytes_per_channel())`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return True, if the image view data is stored packed; false otherwise.
+ */
 template <ImageModifiability modifiability_>
 bool DynImageView<modifiability_>::is_packed() const noexcept
 {
   return layout_.is_packed();
 }
 
+/** \brief Returns whether the image view is empty.
+ *
+ * An image [view] is considered empty if its internal data pointer points to `nullptr`, `width() == 0`,
+ * `height() == 0`, or any combination of these.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return True, if the image view is empty; false if it is non-empty.
+ */
 template <ImageModifiability modifiability_>
 bool DynImageView<modifiability_>::is_empty() const noexcept
 {
   return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0;
 }
 
+/** \brief Returns whether the image view is valid.
+ *
+ * Semantically equal to `!is_empty()`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return True, if the image view is valid; false otherwise.
+ */
 template <ImageModifiability modifiability_>
 bool DynImageView<modifiability_>::is_valid() const noexcept
 {

@@ -35,7 +35,7 @@ public:
     return impl::ImageBaseTraits<Image<PixelType>>::modifiability();
   }
 
-  Image() = default;
+  Image() = default;  ///< Default constructor.
 
   explicit Image(TypedLayout layout);
 
@@ -145,43 +145,76 @@ bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<P
 // ----------
 // Implementation:
 
+/** \brief Constructs an image with the specified layout.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param layout The image layout.
+ */
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0))
 {
 }
 
+/** \brief Constructs an image with the specified layout and row alignment.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param layout The image layout.
+ * @param row_alignment_bytes The row alignment in bytes.
+ */
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes))
 {
 }
 
+/** \brief Constructs an image with the specified layout, from an existing block of memory.
+ *
+ * On construction, the memory will be owned by the image instance.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param memory The memory block representing the image.
+ * @param layout The image layout.
+ */
 template <typename PixelType_>
 Image<PixelType_>::Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout layout)
     : view_(memory.transfer_data(), layout)
 {
 }
 
+/** \brief Destructor.
+ *
+ * All owned memory will be deallocated.
+ *
+ * @tparam PixelType_ The pixel type.
+ */
 template <typename PixelType_>
 Image<PixelType_>::~Image()
 {
   this->deallocate_memory();
 }
 
+/** \brief Copy constructor.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param other The image to be copied from.
+ */
 template <typename PixelType_>
 Image<PixelType_>::Image(const Image<PixelType>& other)
-    : view_(
-    allocate_memory(
-        other.layout(),
-        default_base_alignment_bytes,
-        impl::guess_row_alignment(
-            reinterpret_cast<std::uintptr_t>(other.data()),
-            other.stride_bytes())))
+    : view_(allocate_memory(other.layout(),
+                            default_base_alignment_bytes,
+                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
+                                                      other.stride_bytes())))
 {
   copy_rows_from(other);
 }
 
+/** \brief Copy assignment operator.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param other The image to be assigned from.
+ * @return A reference to this image.
+ */
 template <typename PixelType_>
 Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
 {
@@ -212,6 +245,11 @@ Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
   return * this;
 }
 
+/** \brief Move constructor.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param other The image to be moved from.
+ */
 template <typename PixelType_>
 Image<PixelType_>::Image(Image<PixelType>&& other) noexcept
     : view_(other.view_)
@@ -220,6 +258,12 @@ Image<PixelType_>::Image(Image<PixelType>&& other) noexcept
                                                                   {PixelLength{0}, PixelLength{0}, Stride{0}}};
 }
 
+/** \brief Move assignment operator.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param other The image to be move-assigned from.
+ * @return A reference to this image.
+ */
 template <typename PixelType_>
 Image<PixelType_>& Image<PixelType_>::operator=(Image<PixelType>&& other) noexcept
 {
@@ -239,20 +283,29 @@ Image<PixelType_>& Image<PixelType_>::operator=(Image<PixelType>&& other) noexce
   return * this;
 }
 
+/** \brief Copy constructor taking an `ImageView` of arbitrary modifiability.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ The modifiability value of the other image.
+ * @param other The image to be copied from.
+ */
 template <typename PixelType_>
 template <ImageModifiability modifiability_>
 Image<PixelType_>::Image(const ImageView<PixelType, modifiability_>& other)
-    : view_(
-    allocate_memory(
-        other.layout(),
-        default_base_alignment_bytes,
-        impl::guess_row_alignment(
-            reinterpret_cast<std::uintptr_t>(other.data()),
-            other.stride_bytes())))
+    : view_(allocate_memory(other.layout(),
+                            default_base_alignment_bytes,
+                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
+                                                      other.stride_bytes())))
 {
   copy_rows_from(other);
 }
 
+/** \brief Copy assignment operator taking an `ImageView` of arbitrary modifiability.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ The modifiability value of the other image.
+ * @param other The image to be assigned from.
+ */
 template <typename PixelType_>
 template <ImageModifiability modifiability_>
 Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modifiability_>& other)
@@ -284,54 +337,117 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
   return * this;
 }
 
+/** \brief Returns the image layout.
+ *
+ * @tparam PixelType The pixel type.
+ * @return The typed image layout.
+ */
 template <typename PixelType_>
 const TypedLayout& Image<PixelType_>::layout() const noexcept
 {
   return view_.layout();
 }
 
+/** \brief Returns the image width.
+ *
+ * @tparam PixelType The pixel type.
+ * @return The image width.
+ */
 template <typename PixelType_>
 PixelLength Image<PixelType_>::width() const noexcept
 {
   return view_.width();
 }
 
+/** \brief Returns the image height.
+ *
+ * @tparam PixelType The pixel type.
+ * @return The image height.
+ */
 template <typename PixelType_>
 PixelLength Image<PixelType_>::height() const noexcept
 {
   return view_.height();
 }
 
+/** \brief Returns the row stride of the image in bytes.
+ *
+ * The row stride is the number of bytes that a row occupies in memory.
+ * It has to be greater or equal to the width times the size of a pixel element:
+ * `(stride_bytes() >= width() * PixelTraits::nr_bytes)`.
+ * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
+ *
+ * @tparam PixelType The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The row stride of the image in bytes.
+ */
 template <typename PixelType_>
 Stride Image<PixelType_>::stride_bytes() const noexcept
 {
   return view_.stride_bytes();
 }
 
+/** \brief Returns the number of data bytes occupied by each image row.
+ *
+ * The value returned is equal to `(width() * PixelTraits::nr_bytes)`.
+ * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
+ *
+ * @tparam PixelType The pixel type.
+ * @return The number of data bytes occupied by each image row.
+ */
 template <typename PixelType_>
 std::ptrdiff_t Image<PixelType_>::row_bytes() const noexcept
 {
   return view_.row_bytes();
 }
 
+/** \brief Returns the total number of bytes occupied by the image data in memory.
+ *
+ * The value returned is equal to `(stride_bytes() * height())`.
+ *
+ * @tparam PixelType The pixel type.
+ * @return The total number of bytes occupied by the image data in memory.
+ */
 template <typename PixelType_>
 std::ptrdiff_t Image<PixelType_>::total_bytes() const noexcept
 {
   return view_.total_bytes();
 }
 
+/** \brief Returns whether the image is stored packed in memory.
+ *
+ * Returns the boolean expression `(stride_bytes() == width() * PixelTraits::nr_bytes)`.
+ *
+ * @tparam PixelType The pixel type.
+ * @return True, if the image data is stored packed; false otherwise.
+ */
 template <typename PixelType_>
 bool Image<PixelType_>::is_packed() const noexcept
 {
   return view_.is_packed();
 }
 
+/** \brief Returns whether the image is empty.
+ *
+ * An image [view] is considered empty if its internal data pointer points to `nullptr`, `width() == 0`,
+ * `height() == 0`, or any combination of these.
+ *
+ * @tparam PixelType The pixel type.
+ * @return True, if the image is empty; false if it is non-empty.
+ */
 template <typename PixelType_>
 bool Image<PixelType_>::is_empty() const noexcept
 {
   return view_.is_empty();
 }
 
+/** \brief Returns whether the image is valid.
+ *
+ * Semantically equal to `!is_empty()`.
+ *
+ * @tparam PixelType The pixel type.
+ * @return True, if the image is valid; false otherwise.
+ */
 template <typename PixelType_>
 bool Image<PixelType_>::is_valid() const noexcept
 {
@@ -507,9 +623,7 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
   }
 
   layout.stride_bytes = impl::compute_stride_bytes(
-      std::max(
-          layout.stride_bytes,
-          Stride(PixelTraits<PixelType>::nr_bytes * layout.width)),
+      std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)),
       row_alignment_bytes);
   const auto nr_bytes_to_allocate = layout.stride_bytes * layout.height;
   const auto nr_currently_allocated_bytes = this->stride_bytes() * this->height();
@@ -558,11 +672,7 @@ ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_m
     std::ptrdiff_t row_alignment_bytes)
 {
   const auto stride_bytes = impl::compute_stride_bytes(
-      std::max(
-          layout.stride_bytes,
-          Stride(
-              PixelTraits<PixelType>::nr_bytes * layout.width)),
-      row_alignment_bytes);
+      std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)), row_alignment_bytes);
   const auto nr_bytes_to_allocate = stride_bytes * layout.height;
 
   base_alignment_bytes = std::max(row_alignment_bytes, base_alignment_bytes);

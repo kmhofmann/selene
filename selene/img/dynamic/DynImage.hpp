@@ -35,7 +35,7 @@ public:
     return ImageModifiability::Mutable;
   }
 
-  DynImage() = default;
+  DynImage() = default;  ///< Default constructor.
 
   explicit DynImage(UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{});
 
@@ -152,16 +152,35 @@ bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dy
 // ----------
 // Implementation:
 
+/** \brief Constructs a dynamic image with the specified layout and pixel semantics.
+ *
+ * @param layout The image layout.
+ * @param semantics The pixel semantics.
+ */
 inline DynImage::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0, semantics))
 {
 }
 
+/** \brief Constructs a dynamic image with the specified layout, row alignment, and pixel semantics.
+ *
+ * @param layout The image layout.
+ * @param row_alignment_bytes The row alignment in bytes.
+ * @param semantics The pixel semantics.
+ */
 inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, UntypedImageSemantics semantics)
     : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, semantics))
 {
 }
 
+/** \brief Constructs a dynamic image with the specified layout and pixel semantics, from an existing block of memory.
+ *
+ * On construction, the memory will be owned by the image instance.
+ *
+ * @param memory The memory block representing the image.
+ * @param layout The image layout.
+ * @param semantics The pixel semantics.
+ */
 inline DynImage::DynImage(
     MemoryBlock<AlignedNewAllocator>&& memory,
     UntypedLayout layout,
@@ -170,28 +189,40 @@ inline DynImage::DynImage(
 {
 }
 
+/** \brief Destructor.
+ *
+ * All owned memory will be deallocated.
+ */
 inline DynImage::~DynImage()
 {
   this->deallocate_memory();
 }
 
+/** \brief Copy constructor.
+ *
+ * @param other The image to be copied from.
+ */
 inline DynImage::DynImage(const DynImage& other)
-    : view_(
-    allocate_memory(
-        other.layout(),
-        default_base_alignment_bytes,
-        impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()), other.stride_bytes()),
-        other.semantics()))
+    : view_(allocate_memory(other.layout(),
+                            default_base_alignment_bytes,
+                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+                                                      other.stride_bytes()),
+                            other.semantics()))
 {
   copy_rows_from(other);
 }
 
+/** \brief Copy assignment operator.
+ *
+ * @param other The image to be assigned from.
+ * @return A reference to this image.
+ */
 inline DynImage& DynImage::operator=(const DynImage& other)
 {
   // Check for self-assignment
   if (this == & other)
   {
-    return * this;
+    return *this;
   }
 
   const auto equal_size = (total_bytes() == other.total_bytes());
@@ -213,12 +244,21 @@ inline DynImage& DynImage::operator=(const DynImage& other)
   return * this;
 }
 
+/** \brief Move constructor.
+ *
+ * @param other The image to be moved from.
+ */
 inline DynImage::DynImage(DynImage&& other) noexcept
     : view_(other.view_)
 {
   other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
 }
 
+/** \brief Move assignment operator.
+ *
+ * @param other The image to be move-assigned from.
+ * @return A reference to this image.
+ */
 inline DynImage& DynImage::operator=(DynImage&& other) noexcept
 {
   // Check for self-assignment
@@ -236,18 +276,27 @@ inline DynImage& DynImage::operator=(DynImage&& other) noexcept
   return * this;
 }
 
+/** \brief Copy constructor taking a `DynImageView` of arbitrary modifiability.
+ *
+ * @tparam modifiability_ The modifiability value of the other image.
+ * @param other The image to be copied from.
+ */
 template <ImageModifiability modifiability_>
 DynImage::DynImage(const DynImageView<modifiability_>& other)
-    : view_(
-    allocate_memory(
-        other.layout(),
-        default_base_alignment_bytes,
-        impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()), other.stride_bytes()),
-        other.semantics()))
+    : view_(allocate_memory(other.layout(),
+                            default_base_alignment_bytes,
+                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+                                                      other.stride_bytes()),
+                            other.semantics()))
 {
   copy_rows_from(other);
 }
 
+/** \brief Copy assignment operator taking a `DynImageView` of arbitrary modifiability.
+ *
+ * @tparam modifiability_ The modifiability value of the other image.
+ * @param other The image to be copied from.
+ */
 template <ImageModifiability modifiability_>
 DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
 {
@@ -276,71 +325,148 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
   return * this;
 }
 
+/** \brief Returns the dynamic image layout.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The untyped image layout.
+ */
 inline const UntypedLayout& DynImage::layout() const noexcept
 {
   return view_.layout();
 }
 
+/** \brief Returns the pixel semantics for the dynamic image.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The pixel semantics.
+ */
 inline const UntypedImageSemantics& DynImage::semantics() const noexcept
 {
   return view_.semantics();
 }
 
+/** \brief Returns the image width.
+ *
+ * @return The image width.
+ */
 inline PixelLength DynImage::width() const noexcept
 {
   return view_.width();
 }
 
+/** \brief Returns the image height.
+ *
+ * @return The image height.
+ */
 inline PixelLength DynImage::height() const noexcept
 {
   return view_.height();
 }
 
+/** \brief Returns the number of channels for the image.
+ *
+ * @return The number of channels.
+ */
 inline std::int16_t DynImage::nr_channels() const noexcept
 {
   return view_.nr_channels();
 }
 
+/** \brief Returns the number of bytes per channel for the image.
+ *
+ * @return The number of bytes per channel.
+ */
 inline std::int16_t DynImage::nr_bytes_per_channel() const noexcept
 {
   return view_.nr_bytes_per_channel();
 }
 
+/** \brief Returns the row stride of the image in bytes.
+ *
+ * The row stride is the number of bytes that a row occupies in memory.
+ * It has to be greater or equal to the width times the size of a pixel element:
+ * `(stride_bytes() >= width() * nr_channels() * nr_bytes_per_channel())`.
+ * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
+ *
+ * @return The row stride of the image in bytes.
+ */
 inline Stride DynImage::stride_bytes() const noexcept
 {
   return view_.stride_bytes();
 }
 
+/** \brief Returns the number of data bytes occupied by each image row.
+ *
+ * The value returned is equal to `(width() * nr_channels() * nr_bytes_per_channel())`.
+ * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
+ *
+ * @return The number of data bytes occupied by each image row.
+ */
 inline std::ptrdiff_t DynImage::row_bytes() const noexcept
 {
   return view_.row_bytes();
 }
 
+/** \brief Returns the total number of bytes occupied by the image data in memory.
+ *
+ * The value returned is equal to `(stride_bytes() * height())`.
+ *
+ * @return The total number of bytes occupied by the image data in memory.
+ */
 inline std::ptrdiff_t DynImage::total_bytes() const noexcept
 {
   return view_.total_bytes();
 }
 
+/** \brief Returns the specified pixel format of the dynamic image.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The pixel format.
+ */
 inline PixelFormat DynImage::pixel_format() const noexcept
 {
   return view_.pixel_format();
 }
 
+/** \brief Returns the specified sample format of the dynamic image.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return The sample format.
+ */
 inline SampleFormat DynImage::sample_format() const noexcept
 {
   return view_.sample_format();
 }
 
+/** \brief Returns whether the image view is stored packed in memory.
+ *
+ * Returns the boolean expression `(stride_bytes() == width() * nr_channels() * nr_bytes_per_channel())`.
+ *
+ * @return True, if the image view data is stored packed; false otherwise.
+ */
 inline bool DynImage::is_packed() const noexcept
 {
   return view_.is_packed();
 }
 
+/** \brief Returns whether the image is empty.
+ *
+ * An image [view] is considered empty if its internal data pointer points to `nullptr`, `width() == 0`,
+ * `height() == 0`, or any combination of these.
+ *
+ * @return True, if the image is empty; false if it is non-empty.
+ */
 inline bool DynImage::is_empty() const noexcept
 {
   return view_.is_empty();
 }
 
+/** \brief Returns whether the image is valid.
+ *
+ * Semantically equal to `!is_empty()`.
+ *
+ * @return True, if the image is valid; false otherwise.
+ */
 inline bool DynImage::is_valid() const noexcept
 {
   return view_.is_valid();
