@@ -8,7 +8,7 @@
 /// @file
 
 #include <selene/base/Assert.hpp>
-#include <selene/base/ExplicitType.hpp>
+#include <selene/base/_impl/ExplicitType.hpp>
 
 namespace sln {
 
@@ -31,7 +31,7 @@ class BytesTag;
 
 }  // namespace impl
 
-using Bytes = ExplicitType<std::ptrdiff_t, impl::BytesTag>;  ///< Type representing a number of bytes.
+using Bytes = sln::impl::ExplicitType<std::ptrdiff_t, sln::impl::BytesTag>;  ///< Type representing a number of bytes.
 
 inline namespace literals {
 

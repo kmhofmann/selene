@@ -25,18 +25,20 @@ class ImageRowAlignmentTag;
 
 }  // namespace impl
 
-using PixelIndex = sln::ExplicitType<std::int32_t, impl::PixelIndexTag>;  ///< Type representing a signed integral
-                                                                       ///< scalar as part of an image coordinate
-                                                                       ///< (x or y).
+using PixelIndex = sln::impl::ExplicitType<std::int32_t, sln::impl::PixelIndexTag>;  ///< Type representing a signed
+                                                                                     ///< integral scalar as part of an
+                                                                                     ///< image coordinate (x or y).
 
-using PixelLength = sln::ExplicitType<std::int32_t, impl::PixelLengthTag>;  ///< Type representing a length in
-                                                                         ///< x or y-direction.
+using PixelLength = sln::impl::ExplicitType<std::int32_t, sln::impl::PixelLengthTag>;  ///< Type representing a length in
+                                                                                       ///< x or y-direction.
 
-using Stride = sln::ExplicitType<std::ptrdiff_t, impl::StrideTag>;  ///< Type representing an image stride
-                                                               ///< (nr of bytes per row).
+using Stride = sln::impl::ExplicitType<std::ptrdiff_t, sln::impl::StrideTag>;  ///< Type representing an image stride
+                                                                               ///< (nr of bytes per row).
 
-using ImageRowAlignment = sln::ExplicitType<std::ptrdiff_t, impl::ImageRowAlignmentTag>;  ///< Type representing an image row
-                                                                                     ///< alignment.
+using ImageRowAlignment = sln::impl::ExplicitType<std::ptrdiff_t,sln::impl::ImageRowAlignmentTag>;  ///< Type
+                                                                                                    ///< representing an
+                                                                                                    ///< image row
+                                                                                                    ///< alignment.
 
 /** \brief Explicitly converts the provided value to `PixelIndex` type.
  *

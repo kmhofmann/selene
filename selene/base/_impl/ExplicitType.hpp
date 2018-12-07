@@ -11,10 +11,11 @@
 #include <utility>
 
 namespace sln {
+namespace impl {
 
 /** \brief Utility class, representing a value type as an explicit, "strong" typedef.
  *
- * Mostly intended for internal library use.
+ * Intended for internal library use.
  *
  * Note that conversions from an instantiation of ExplicitType<> to the underlying value type are implicit.
  *
@@ -70,6 +71,7 @@ private:
   /// \endcond
 };
 
+}  // namespace impl
 }  // namespace sln
 
 #endif  // SELENE_BASE_STRONG_TYPE_HPP

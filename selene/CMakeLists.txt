@@ -11,11 +11,11 @@ add_library(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/ExplicitType.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Promote.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Round.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/ExplicitType.hpp
         )
 add_library(selene::selene_base ALIAS selene_base)
 
