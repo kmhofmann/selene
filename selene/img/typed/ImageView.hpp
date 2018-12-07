@@ -130,84 +130,49 @@ public:
             PixelIndex{this->height()}));
   }
 
-  DataPtrType byte_ptr() noexcept
+  DataPtrType byte_ptr() const noexcept
   {
     return ptr_.data();
   }
 
-  const DataPtrType byte_ptr() const noexcept
-  {
-    return ptr_.data();
-  }
-
-  DataPtrType byte_ptr(PixelIndex y) noexcept
+  DataPtrType byte_ptr(PixelIndex y) const noexcept
   {
     return ptr_.data() + this->compute_data_offset(y);
   }
 
-  const DataPtrType byte_ptr(PixelIndex y) const noexcept
-  {
-    return ptr_.data() + this->compute_data_offset(y);
-  }
-
-  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept
+  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
   {
     return ptr_.data() + this->compute_data_offset(x, y);
   }
 
-  const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
-  {
-    return ptr_.data() + this->compute_data_offset(x, y);
-  }
-
-  PixelTypePtr data() noexcept
+  PixelTypePtr data() const noexcept
   {
     return reinterpret_cast<PixelTypePtr>(this->byte_ptr());
   }
 
-  const PixelTypePtr data() const noexcept
-  {
-    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr());
-  }
-
-  PixelTypePtr data(PixelIndex y) noexcept
+  PixelTypePtr data(PixelIndex y) const noexcept
   {
     return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y));
   }
 
-  const PixelTypePtr data(PixelIndex y) const noexcept
-  {
-    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y));
-  }
-
-  PixelTypePtr data_row_end(PixelIndex y) noexcept
+  PixelTypePtr data_row_end(PixelIndex y) const noexcept
   {
     return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width);
   }
 
-  const PixelTypePtr data_row_end(PixelIndex y) const noexcept
-  {
-    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width);
-  }
-
-  PixelTypePtr data(PixelIndex x, PixelIndex y) noexcept
+  PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept
   {
     return reinterpret_cast<PixelTypePtr>(this->byte_ptr(x, y));
   }
 
-  const PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept
-  {
-    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(x, y));
-  }
-
   auto& operator()(PixelIndex x, PixelIndex y) noexcept
   {
-    return * this->data(x, y);
+    return *this->data(x, y);
   }
 
   const auto& operator()(PixelIndex x, PixelIndex y) const noexcept
   {
-    return * this->data(x, y);
+    return *this->data(x, y);
   }
 
   ImageView<PixelType, modifiability_>& view() noexcept
@@ -217,13 +182,15 @@ public:
 
   ImageView<PixelType, ImageModifiability::Constant> view() const noexcept
   {
+    // TODO: optimize
     return constant_view();
-  }  // TODO: optimize
+  }
 
   ImageView<PixelType, ImageModifiability::Constant> constant_view() const noexcept
   {
+    // TODO: optimize
     return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()};
-  }  // TODO: optimize
+  }
 
   void clear()
   {

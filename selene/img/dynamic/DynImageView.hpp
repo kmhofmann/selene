@@ -20,7 +20,8 @@ class DynImageView
 {
 public:
   using DataPtrType = typename DataPtr<modifiability_>::Type;
-  using ConstDataPtrType = typename DataPtr<ImageModifiability::Constant>::Type;
+  template <typename PixelType> using PixelTypePtr =
+      std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
 
   template <typename PixelType> using iterator = DynImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
   template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
@@ -166,115 +167,75 @@ public:
             PixelIndex{this->height()}));
   }
 
-  DataPtrType byte_ptr() noexcept
+  DataPtrType byte_ptr() const noexcept
   {
     return ptr_.data();
   }
 
-  const DataPtrType byte_ptr() const noexcept
-  {
-    return ptr_.data();
-  }
-
-  DataPtrType byte_ptr(PixelIndex y) noexcept
+  DataPtrType byte_ptr(PixelIndex y) const noexcept
   {
     return ptr_.data() + this->compute_data_offset(y);
   }
 
-  const DataPtrType byte_ptr(PixelIndex y) const noexcept
-  {
-    return ptr_.data() + this->compute_data_offset(y);
-  }
-
-  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept
+  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
   {
     return ptr_.data() + this->compute_data_offset(x, y);
   }
 
-  const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+  template <typename PixelType>
+  auto data() const noexcept -> PixelTypePtr<PixelType>
   {
-    return ptr_.data() + this->compute_data_offset(x, y);
-  }
-
-  template <typename PixelType, typename T = void, typename = std::enable_if_t<
-      modifiability_ == ImageModifiability::Mutable, T>>
-  PixelType* data() noexcept
-  {
-    return reinterpret_cast<PixelType*>(this->byte_ptr());
+    return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr());
   }
 
   template <typename PixelType>
-  const PixelType* data() const noexcept
+  auto data(PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
   {
-    return reinterpret_cast<const PixelType*>(this->byte_ptr());
-  }
-
-  template <typename PixelType, typename T = void, typename = std::enable_if_t<
-      modifiability_ == ImageModifiability::Mutable, T>>
-  PixelType* data(PixelIndex y) noexcept
-  {
-    return reinterpret_cast<PixelType*>(this->byte_ptr(y));
+    return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(y));
   }
 
   template <typename PixelType>
-  const PixelType* data(PixelIndex y) const noexcept
+  auto data_row_end(PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
   {
-    return reinterpret_cast<const PixelType*>(this->byte_ptr(y));
-  }
-
-  template <typename PixelType, typename T = void, typename = std::enable_if_t<
-      modifiability_ == ImageModifiability::Mutable, T>>
-  PixelType* data_row_end(PixelIndex y) noexcept
-  {
-    return reinterpret_cast<PixelType*>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width);
+    return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width);
   }
 
   template <typename PixelType>
-  const PixelType* data_row_end(PixelIndex y) const noexcept
+  auto data(PixelIndex x, PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
   {
-    return reinterpret_cast<const PixelType*>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width);
-  }
-
-  template <typename PixelType, typename T = void, typename = std::enable_if_t<
-      modifiability_ == ImageModifiability::Mutable, T>>
-  PixelType* data(PixelIndex x, PixelIndex y) noexcept
-  {
-    return reinterpret_cast<PixelType*>(this->byte_ptr(x, y));
-  }
-
-  template <typename PixelType>
-  const PixelType* data(PixelIndex x, PixelIndex y) const noexcept
-  {
-    return reinterpret_cast<const PixelType*>(this->byte_ptr(x, y));
+    return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(x, y));
   }
 
   template <typename PixelType, typename T = void, typename = std::enable_if_t<
       modifiability_ == ImageModifiability::Mutable, T>>
   PixelType& pixel(PixelIndex x, PixelIndex y) noexcept
   {
-    return * data<PixelType>(x, y);
+    return *data<PixelType>(x, y);
   }
 
   template <typename PixelType>
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept
   {
-    return * data<PixelType>(x, y);
+    return *data<PixelType>(x, y);
   }
 
   DynImageView<modifiability_>& view() noexcept
   {
-    return * this;
+    return *this;
   }
 
   DynImageView<ImageModifiability::Constant> view() const noexcept
   {
+    // TODO: optimize
     return constant_view();
-  }  // TODO: optimize
+  }
+
 
   DynImageView<ImageModifiability::Constant> constant_view() const noexcept
   {
+    // TODO: optimize
     return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout(), this->semantics()};
-  }  // TODO: optimize
+  }
 
   void clear()
   {

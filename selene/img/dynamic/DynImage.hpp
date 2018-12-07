@@ -23,11 +23,8 @@ public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
-  template <typename PixelType>
-  using iterator = DynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
-  template <typename PixelType>
-  using const_iterator =
-  ConstDynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
+  template <typename PixelType> using iterator = DynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
+  template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
 
   constexpr static bool is_view = false;
   constexpr static bool is_owning = true;
@@ -174,32 +171,32 @@ public:
     return view_.cend<PixelType>();
   }
 
-  DataPtrType byte_ptr() noexcept
+  auto byte_ptr() noexcept -> DataPtrType
   {
     return view_.byte_ptr();
   }
 
-  ConstDataPtrType byte_ptr() const noexcept
+  auto byte_ptr() const noexcept -> ConstDataPtrType
   {
     return view_.byte_ptr();
   }
 
-  DataPtrType byte_ptr(PixelIndex y) noexcept
+  auto byte_ptr(PixelIndex y) noexcept -> DataPtrType
   {
     return view_.byte_ptr(y);
   }
 
-  ConstDataPtrType byte_ptr(PixelIndex y) const noexcept
+  auto byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
   {
     return view_.byte_ptr(y);
   }
 
-  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept
+  auto byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
   {
     return view_.byte_ptr(x, y);
   }
 
-  ConstDataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+  auto byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
   {
     return view_.byte_ptr(x, y);
   }

@@ -134,32 +134,32 @@ public:
     return view_.cend();
   }
 
-  DataPtrType byte_ptr() noexcept
+  auto byte_ptr() noexcept -> DataPtrType
   {
     return view_.byte_ptr();
   }
 
-  ConstDataPtrType byte_ptr() const noexcept
+  auto byte_ptr() const noexcept -> ConstDataPtrType
   {
     return view_.byte_ptr();
   }
 
-  DataPtrType byte_ptr(PixelIndex y) noexcept
+  auto byte_ptr(PixelIndex y) noexcept -> DataPtrType
   {
     return view_.byte_ptr(y);
   }
 
-  ConstDataPtrType byte_ptr(PixelIndex y) const noexcept
+  auto byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
   {
     return view_.byte_ptr(y);
   }
 
-  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept
+  auto byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
   {
     return view_.byte_ptr(x, y);
   }
 
-  ConstDataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+  auto byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
   {
     return view_.byte_ptr(x, y);
   }
