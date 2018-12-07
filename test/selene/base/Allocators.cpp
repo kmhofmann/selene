@@ -35,7 +35,7 @@ TEST_CASE("Allocators", "[base]")
       const auto nr_bytes_to_allocate = dist_bytes(rng);
       const auto alignment = sln::power(std::size_t{2}, dist_alignment(rng));
       auto memory_block = sln::AlignedMallocAllocator::allocate(nr_bytes_to_allocate, alignment);
-      REQUIRE(memory_block.size() == nr_bytes_to_allocate);
+      REQUIRE(memory_block.size() >= nr_bytes_to_allocate);
       REQUIRE(reinterpret_cast<std::uintptr_t>(memory_block.data()) % alignment == 0);
     }
   }
@@ -57,7 +57,7 @@ TEST_CASE("Allocators", "[base]")
       const auto nr_bytes_to_allocate = dist_bytes(rng);
       const auto alignment = sln::power(std::size_t{2}, dist_alignment(rng));
       auto memory_block = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, alignment);
-      REQUIRE(memory_block.size() == nr_bytes_to_allocate);
+      REQUIRE(memory_block.size() >= nr_bytes_to_allocate);
       REQUIRE(reinterpret_cast<std::uintptr_t>(memory_block.data()) % alignment == 0);
     }
   }

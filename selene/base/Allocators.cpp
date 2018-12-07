@@ -41,6 +41,8 @@ void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
 
 /** \brief Allocates the specified number of bytes via `std::malloc` and returns a MemoryBlock.
  *
+ * This function may overallocate.
+ *
  * \param nr_bytes The number of bytes to allocate.
  * \param alignment The required byte alignment. Needs to be a power of two (e.g. 8, 16, 32, ...).
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
@@ -103,6 +105,8 @@ void NewAllocator::deallocate(std::uint8_t*& data) noexcept
 
 
 /** \brief Allocates the specified number of bytes via (non-throwing) `new` and returns a MemoryBlock.
+ *
+ * This function may overallocate.
  *
  * \param nr_bytes The number of bytes to allocate.
  * \param alignment The required byte alignment. Needs to be a power of two (e.g. 8, 16, 32, ...).
