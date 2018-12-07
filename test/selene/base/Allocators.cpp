@@ -16,7 +16,7 @@ TEST_CASE("Allocators", "[base]")
 
   std::mt19937 rng(500);
   std::uniform_int_distribution<std::size_t> dist_bytes(1, 1024 * 1024);
-  std::uniform_int_distribution<std::size_t> dist_alignment(4, 8);
+  std::uniform_int_distribution<std::size_t> dist_alignment(3, 8);
 
   SECTION("Malloc allocator")
   {

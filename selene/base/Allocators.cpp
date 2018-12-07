@@ -56,6 +56,8 @@ MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t
 
   // Ensure that the alignment is a power of two
   alignment = static_cast<std::size_t>(sln::next_power_of_two(std::max(alignment, std::size_t{2})));
+  // Ensure that the nr of bytes reserved is a multiple of the alignment
+  nr_bytes = (nr_bytes % alignment == 0) ? nr_bytes : (nr_bytes + alignment - (nr_bytes % alignment));
 
   auto ptr = static_cast<std::uint8_t*>(std::aligned_alloc(alignment, nr_bytes));
   return construct_memory_block_from_existing_memory<AlignedMallocAllocator>(ptr, nr_bytes);
