@@ -52,7 +52,7 @@ void check_dyn_img_to_img_compatibility(const DynImageView<modifiability>& dyn_i
   }
 
   if (dyn_img.pixel_format() != PixelFormat::Unknown
-      && pixel_format != PixelFormat::Unknown  // TODO: should conversion to Unknown be allowed?
+      && pixel_format != PixelFormat::Unknown
       && dyn_img.pixel_format() != pixel_format)
   {
     throw std::runtime_error("Cannot convert ImageData to desired Image<> format: incompatible pixel formats.");

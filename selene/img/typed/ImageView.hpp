@@ -75,8 +75,8 @@ public:
   const auto& operator()(PixelIndex x, PixelIndex y) const noexcept;
 
   ImageView<PixelType, modifiability_>& view() noexcept;
-  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept;
-  ImageView<PixelType, ImageModifiability::Constant> constant_view() const noexcept;
+  decltype(auto) view() const noexcept;
+  decltype(auto) constant_view() const noexcept;
 
   void clear();
 
@@ -453,10 +453,8 @@ auto ImageView<PixelType_, modifiability_>::view() noexcept
  * @return A constant image view.
  */
 template <typename PixelType_, ImageModifiability modifiability_>
-auto ImageView<PixelType_, modifiability_>::view() const noexcept
-    -> ImageView<PixelType, ImageModifiability::Constant>
+decltype(auto) ImageView<PixelType_, modifiability_>::view() const noexcept
 {
-  // TODO: optimize
   return constant_view();
 }
 
@@ -467,11 +465,16 @@ auto ImageView<PixelType_, modifiability_>::view() const noexcept
  * @return A constant image view.
  */
 template <typename PixelType_, ImageModifiability modifiability_>
-auto ImageView<PixelType_, modifiability_>::constant_view() const noexcept
-    -> ImageView<PixelType, ImageModifiability::Constant>
+decltype(auto) ImageView<PixelType_, modifiability_>::constant_view() const noexcept
 {
-  // TODO: optimize
-  return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()};
+  if constexpr(is_modifiable)
+  {
+    return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()};
+  }
+  else
+  {
+    return static_cast<ImageView<PixelType, ImageModifiability::Constant>&>(*this);
+  }
 }
 
 /** \brief Clears the image view; i.e. resets the internal state to the image view state after default construction.

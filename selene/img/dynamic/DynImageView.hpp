@@ -83,8 +83,8 @@ public:
   const PixelType& pixel(PixelIndex x, PixelIndex y) const noexcept;
 
   DynImageView<modifiability_>& view() noexcept;
-  DynImageView<ImageModifiability::Constant> view() const noexcept;
-  DynImageView<ImageModifiability::Constant> constant_view() const noexcept;
+  decltype(auto) view() const noexcept;
+  decltype(auto) constant_view() const noexcept;
 
   void clear();
 
@@ -515,9 +515,8 @@ DynImageView<modifiability_>& DynImageView<modifiability_>::view() noexcept
  * @return A constant image view.
  */
 template <ImageModifiability modifiability_>
-DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::view() const noexcept
+decltype(auto) DynImageView<modifiability_>::view() const noexcept
 {
-  // TODO: optimize
   return constant_view();
 }
 
@@ -527,10 +526,16 @@ DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::view() 
  * @return A constant image view.
  */
 template <ImageModifiability modifiability_>
-DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::constant_view() const noexcept
+decltype(auto) DynImageView<modifiability_>::constant_view() const noexcept
 {
-  // TODO: optimize
-  return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout(), this->semantics()};
+  if constexpr(is_modifiable)
+  {
+    return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout(), this->semantics()};
+  }
+  else
+  {
+    return static_cast<DynImageView<ImageModifiability::Constant>&>(*this);
+  }
 }
 
 /** \brief Clears the dynamic image view; i.e. resets the internal state to the dynamic image view state after default
