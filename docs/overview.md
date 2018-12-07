@@ -25,7 +25,7 @@ It currently contains, among other things
   	* [DynImageView](../selene/img/dynamic/DynImageView.hpp):
   	Dynamically typed class representing a 2-D image view.
   	Can be either mutable or constant.
-  	* Interoperability with [OpenCV](https://opencv.org/) `cv::Mat` matrices:
+  	* [Interoperability](../selene/img/interop/OpenCV.hpp) with [OpenCV](https://opencv.org/) `cv::Mat` matrices:
   	both wrapping (as view) or copying is supported, in both directions. 
 
   * Functions for reading and writing image data in JPEG and PNG formats (from/to files or memory). The implementation

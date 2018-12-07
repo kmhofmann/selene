@@ -2,8 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMAGEACCESS_HPP
-#define SELENE_IMG_IMAGEACCESS_HPP
+#ifndef SELENE_IMG_ACCESS_GET_PIXEL_HPP
+#define SELENE_IMG_ACCESS_GET_PIXEL_HPP
 
 /// @file
 
@@ -87,4 +87,4 @@ inline decltype(auto) get(const ImageType& img, PixelIndex x, PixelIndex y) noex
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_IMAGEACCESS_HPP
+#endif  // SELENE_IMG_ACCESS_GET_PIXEL_HPP
