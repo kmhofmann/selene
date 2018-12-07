@@ -22,8 +22,8 @@
 #include <selene/img/pixel/PixelTypeAliases.hpp>
 
 #include <selene/img/typed/Image.hpp>
-#include <selene/img/typed/ImageView.hpp>
 #include <selene/img/typed/ImageTypeAliases.hpp>
+#include <selene/img/typed/ImageView.hpp>
 
 #include <selene/img/interop/DynImageToImage.hpp>
 #include <selene/img/interop/ImageToDynImage.hpp>
@@ -228,8 +228,7 @@ TEST_CASE("JPEG image writing, reusing compression object", "[img]")
 
   // First, read an image
   sln::MessageLog message_log_read;
-  auto img_data = sln::read_jpeg(sln::FileReader(in_filename().string()),
-                                 sln::JPEGDecompressionOptions(),
+  auto img_data = sln::read_jpeg(sln::FileReader(in_filename().string()), sln::JPEGDecompressionOptions(),
                                  &message_log_read);
   REQUIRE(img_data.is_valid());
   REQUIRE(message_log_read.messages().empty());

@@ -4,7 +4,7 @@
 
 #if defined(SELENE_WITH_LIBPNG)
 
-#include <png.h> // to check PNG_LIBPNG_VER_MAJOR and PNG_LIBPNG_VER_MINOR below
+#include <png.h>  // to check PNG_LIBPNG_VER_MAJOR and PNG_LIBPNG_VER_MINOR below
 
 #include <catch2/catch.hpp>
 
@@ -25,8 +25,8 @@
 #include <selene/img/pixel/PixelTypeAliases.hpp>
 
 #include <selene/img/typed/Image.hpp>
-#include <selene/img/typed/ImageView.hpp>
 #include <selene/img/typed/ImageTypeAliases.hpp>
+#include <selene/img/typed/ImageView.hpp>
 
 #include <selene/img/interop/DynImageToImage.hpp>
 #include <selene/img/interop/ImageToDynImage.hpp>
@@ -245,8 +245,7 @@ TEST_CASE("PNG image writing, reusing compression object", "[img]")
 
   // First, read an image
   sln::MessageLog message_log_read;
-  auto dyn_img = sln::read_png(sln::FileReader(in_filename().string()),
-                               sln::PNGDecompressionOptions(),
+  auto dyn_img = sln::read_png(sln::FileReader(in_filename().string()), sln::PNGDecompressionOptions(),
                                &message_log_read);
   REQUIRE(dyn_img.is_valid());
   REQUIRE(message_log_read.messages().empty());

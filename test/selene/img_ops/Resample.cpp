@@ -37,6 +37,7 @@ TEST_CASE("Image resampling", "[img]")
     REQUIRE(img_r.width() == 6);
     REQUIRE(img_r.height() == 6);
 
+    // clang-format off
     std::array<std::uint8_t, 36> values = {{
         10, 15, 20, 25, 30, 30,
         25, 30, 35, 40, 45, 45,
@@ -44,6 +45,7 @@ TEST_CASE("Image resampling", "[img]")
         55, 60, 65, 70, 75, 75,
         70, 75, 80, 85, 90, 90,
         70, 75, 80, 85, 90, 90}};
+    // clang-format on
 
     for (auto y = 0_idx; y < img_r.height(); ++y)
     {

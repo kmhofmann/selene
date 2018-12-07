@@ -21,7 +21,7 @@ std::vector<std::uint8_t> generate_random_data(std::size_t nr_bytes)
 {
   std::independent_bits_engine<std::default_random_engine, 16, std::uint16_t> bytes_engine;
   std::vector<std::uint8_t> data(nr_bytes);
-  std::for_each(data.begin(), data.end(), [&bytes_engine](auto& x){ x = static_cast<std::uint8_t>(bytes_engine()); });
+  std::for_each(data.begin(), data.end(), [&bytes_engine](auto& x) { x = static_cast<std::uint8_t>(bytes_engine()); });
   return data;
 }
 

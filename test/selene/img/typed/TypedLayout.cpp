@@ -57,4 +57,3 @@ TEST_CASE("Typed layout", "[img]")
     REQUIRE(ul0 != ul1);
   }
 }
-

@@ -19,7 +19,7 @@ using namespace sln::literals;
 TEST_CASE("Image transformations", "[img]")
 {
   std::mt19937 rng(100);
-//  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_size(0, 64);
+  //  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_size(0, 64);
   std::uniform_int_distribution<sln::PixelIndex::value_type> dist_size(2, 4);
 
   for (std::size_t count = 0; count < 32; ++count)

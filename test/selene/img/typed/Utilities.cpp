@@ -4,8 +4,8 @@
 
 #include <catch2/catch.hpp>
 
-#include <selene/img/typed/Utilities.hpp>
 #include <selene/img/typed/ImageTypeAliases.hpp>
+#include <selene/img/typed/Utilities.hpp>
 
 using namespace sln::literals;
 

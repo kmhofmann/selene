@@ -21,10 +21,10 @@ void test_nn_8u1(ImageType& img)
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::NearestNeighbor>::interpolate(img, 1.8, 1.6) == 90);
 
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::NearestNeighbor,
-      sln::BorderAccessMode::Replicated>::interpolate(img, -2.0, 1.0)
+                                 sln::BorderAccessMode::Replicated>::interpolate(img, -2.0, 1.0)
           == 40);
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::NearestNeighbor,
-      sln::BorderAccessMode::Replicated>::interpolate(img, 0.0, 3.0)
+                                 sln::BorderAccessMode::Replicated>::interpolate(img, 0.0, 3.0)
           == 70);
 }
 
@@ -41,10 +41,10 @@ void test_nn_8u3(ImageType& img)
           == sln::Pixel_8u3(90, 91, 92));
 
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::NearestNeighbor,
-      sln::BorderAccessMode::Replicated>::interpolate(img, -2.0, 1.0)
+                                 sln::BorderAccessMode::Replicated>::interpolate(img, -2.0, 1.0)
           == sln::Pixel_8u3(40, 41, 42));
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::NearestNeighbor,
-      sln::BorderAccessMode::Replicated>::interpolate(img, 0.0, 3.0)
+                                 sln::BorderAccessMode::Replicated>::interpolate(img, 0.0, 3.0)
           == sln::Pixel_8u3(70, 71, 72));
 }
 
@@ -53,8 +53,7 @@ void test_bilinear_8u1(ImageType& img)
 {
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 0.0, 0.0) == Approx(10.0));
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 0.51, 0.0) == Approx(15.1));
-  REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 1.11, 0.88)
-          == Approx(47.5));
+  REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 1.11, 0.88) == Approx(47.5));
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 1.8, 1.6) == Approx(76.0));
 }
 
@@ -71,8 +70,7 @@ void test_bilinear_8u3(ImageType& img)
   REQUIRE(px_interp_1[1] == Approx(16.1));
   REQUIRE(px_interp_1[2] == Approx(17.1));
 
-  const auto px_interp_2 = sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 1.11,
-                                                                                                      0.88);
+  const auto px_interp_2 = sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(img, 1.11, 0.88);
   REQUIRE(px_interp_2[0] == Approx(47.5));
   REQUIRE(px_interp_2[1] == Approx(48.5));
   REQUIRE(px_interp_2[2] == Approx(49.5));
@@ -94,8 +92,7 @@ void test_bilinear_relative_8u1(ImageType& img)
           == Approx(15.1));
   REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, 0.11, -0.12)
           == Approx(47.5));
-  REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, 0.8, 0.6)
-          == Approx(76.0));
+  REQUIRE(sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, 0.8, 0.6) == Approx(76.0));
 }
 
 template <typename ImageType>
@@ -122,8 +119,7 @@ void test_bilinear_relative_8u3(ImageType& img)
   REQUIRE(px_interp_2[1] == Approx(48.5));
   REQUIRE(px_interp_2[2] == Approx(49.5));
 
-  const auto px_interp_3 = sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, 0.8,
-                                                                                                      0.6);
+  const auto px_interp_3 = sln::ImageInterpolator<sln::ImageInterpolationMode::Bilinear>::interpolate(r_img, 0.8, 0.6);
   REQUIRE(px_interp_3[0] == Approx(76.0));
   REQUIRE(px_interp_3[1] == Approx(77.0));
   REQUIRE(px_interp_3[2] == Approx(78.0));

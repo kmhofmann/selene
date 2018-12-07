@@ -41,10 +41,9 @@ void check_channels(const Img& img, const std::array<std::uint8_t, N>& values)
       }
     }
   }
-
 }
 
-} // namespace
+}  // namespace
 
 
 TEST_CASE("Channel injection", "[old_img]")
@@ -64,7 +63,6 @@ TEST_CASE("Channel injection", "[old_img]")
     sln::inject_channels(img_b, img_rgb, 2);
     check_channels(img_rgb, values_rgb);
   }
-
 }
 
 TEST_CASE("Channel stacking", "[old_img]")

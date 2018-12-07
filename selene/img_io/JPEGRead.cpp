@@ -21,7 +21,10 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
-JPEGImageInfo::JPEGImageInfo(PixelLength width_, PixelLength height_, std::int16_t nr_channels_, JPEGColorSpace color_space_)
+JPEGImageInfo::JPEGImageInfo(PixelLength width_,
+                             PixelLength height_,
+                             std::int16_t nr_channels_,
+                             JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }

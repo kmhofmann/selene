@@ -7,8 +7,8 @@
 #if defined(SELENE_WITH_OPENCV)
 
 #include <selene/img/interop/OpenCV.hpp>
-#include <selene/img/typed/ImageTypeAliases.hpp>
 #include <selene/img/pixel/PixelTypeAliases.hpp>
+#include <selene/img/typed/ImageTypeAliases.hpp>
 
 using namespace sln::literals;
 

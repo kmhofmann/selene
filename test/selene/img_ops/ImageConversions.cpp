@@ -44,9 +44,8 @@ TEST_CASE("Image conversions", "[img]")
 
   SECTION("Convert Y to RGBA (known source pixel format)")
   {
-    const auto img_rgba = sln::transform_pixels<sln::PixelRGBA_8u>(img_y, [](const auto& px) {
-      return sln::convert_pixel<sln::PixelFormat::RGBA>(px, std::uint8_t{0});
-    });
+    const auto img_rgba = sln::transform_pixels<sln::PixelRGBA_8u>(
+        img_y, [](const auto& px) { return sln::convert_pixel<sln::PixelFormat::RGBA>(px, std::uint8_t{0}); });
     REQUIRE(img_rgba(0_idx, 0_idx) == sln::PixelRGBA_8u(10, 10, 10, 0));
     REQUIRE(img_rgba(1_idx, 0_idx) == sln::PixelRGBA_8u(20, 20, 20, 0));
     REQUIRE(img_rgba(2_idx, 0_idx) == sln::PixelRGBA_8u(30, 30, 30, 0));
@@ -161,8 +160,7 @@ TEST_CASE("Image conversions", "[img]")
     REQUIRE(img_rgba(1_idx, 2_idx) == sln::PixelRGBA_8u(80, 81, 82, 255));
     REQUIRE(img_rgba(2_idx, 2_idx) == sln::PixelRGBA_8u(90, 91, 92, 255));
 
-    sln::ImageRGBA_8u img_rgba_1 = sln::convert_image<sln::PixelFormat::RGBA>(img_rgb,
-                                                                              std::uint8_t{255});
+    sln::ImageRGBA_8u img_rgba_1 = sln::convert_image<sln::PixelFormat::RGBA>(img_rgb, std::uint8_t{255});
     REQUIRE(img_rgba_1 == img_rgba);
   }
 }

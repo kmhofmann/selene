@@ -46,48 +46,6 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   REQUIRE(img1.is_packed());
   REQUIRE(!img1.is_empty());
 
-//  sln::ImageView<T> img3{{img.byte_ptr()}, {img.width(), img.height(), img.stride_bytes()}};
-//  REQUIRE(img3.width() == img.width());
-//  REQUIRE(img3.height() == img.height());
-//  REQUIRE(img3.stride_bytes() == img.stride_bytes());
-//  REQUIRE(img3.is_packed());
-//  REQUIRE(!img3.is_empty());
-
-  //img3.maybe_allocate(img3.width(), img3.height(),
-  //                    sln::Stride{img3.stride_bytes() + 1000});  // stride should be ignored
-  //REQUIRE(img3.width() == img.width());
-  //REQUIRE(img3.height() == img.height());
-  //REQUIRE(img3.stride_bytes() == img.stride_bytes());
-  //REQUIRE(img3.is_packed());
-  //REQUIRE(img3.is_view());
-  //REQUIRE(!img3.is_empty());
-
-  //REQUIRE_THROWS(img3.maybe_allocate(sln::PixelLength{img3.width() + 1}, sln::PixelLength{img3.height() + 1}));
-
-  //REQUIRE_NOTHROW(
-  //    img.maybe_allocate(img.width(), sln::PixelLength{img.height() + 1}, sln::Stride{img.stride_bytes() + 16}));
-  //REQUIRE(img.width() == img.width());
-  //REQUIRE(img.height() == img.height() + 1);
-  //REQUIRE(img.stride_bytes() == img.stride_bytes() + 16);
-  //REQUIRE(!img.is_packed());
-  //REQUIRE(!img.is_view());
-  //REQUIRE(!img.is_empty());
-
-  //constexpr auto test_width = sln::PixelLength{16};
-  //constexpr auto test_height = sln::PixelLength{20};
-  //constexpr auto test_stride_offset = 8;
-  //constexpr auto test_stride_bytes = sln::Stride(test_width * sln::PixelTraits<T>::nr_bytes + test_stride_offset);
-  //const auto nr_bytes_to_allocate = test_stride_bytes * test_height;
-  //auto memory_block = sln::AlignedNewAllocator::allocate(nr_bytes_to_allocate, 16);
-  //img.set_data(std::move(memory_block), test_width, test_height, test_stride_bytes);
-
-  //REQUIRE(img.width() == test_width);
-  //REQUIRE(img.height() == test_height);
-  //REQUIRE(img.stride_bytes() == test_stride_bytes);
-  //REQUIRE(!img.is_packed());
-  //REQUIRE(!img.is_view());
-  //REQUIRE(!img.is_empty());
-
   for (std::ptrdiff_t alignment = 1; alignment <= 128; alignment <<= 1)
   {
     sln::Image<T> img({width, height}, sln::ImageRowAlignment{alignment});
@@ -136,36 +94,3 @@ TEST_CASE("Image construction", "[img]")
     }
   }
 }
-
-//TEST_CASE("Image comparison", "[img]")
-//{
-//  const auto img_x = sln_test::make_3x3_test_image_8u1();
-//  const auto img_x_2 = clone(img_x);
-//  REQUIRE(img_x_2.width() == img_x.width());
-//  REQUIRE(img_x_2.height() == img_x.height());
-//  REQUIRE(img_x_2 == img_x);
-
-//  const auto img_xxx = sln_test::make_3x3_test_image_8u3();
-//  const auto img_xxx_2 = clone(img_xxx);
-//  REQUIRE(img_xxx_2.width() == img_xxx.width());
-//  REQUIRE(img_xxx_2.height() == img_xxx.height());
-//  REQUIRE(img_xxx_2 == img_xxx);
-//}
-
-//TEST_CASE("Image view creation", "[img]")
-//{
-//  auto img0 = sln_test::make_3x3_test_image_8u1();
-//  auto img0_view = sln::view(img0);
-
-//  REQUIRE(img0(1_idx, 1_idx) == 50);
-//  img0_view(1_idx, 1_idx) = 42;
-//  REQUIRE(img0(1_idx, 1_idx) == 42);
-
-//  const auto img1 = sln_test::make_3x3_test_image_8u1();
-//  auto img1_view = sln::view(img1);
-
-//  REQUIRE(img1(1_idx, 1_idx) == 50);
-//  //img1_view(1_idx, 1_idx) = 42;
-//  //REQUIRE(img1(1_idx, 1_idx) == 42);
-//}
-
