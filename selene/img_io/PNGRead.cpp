@@ -442,7 +442,7 @@ PNGImageInfo PNGDecompressionCycle::get_output_info() const
                       static_cast<std::int16_t>(nr_channels), static_cast<std::int16_t>(bit_depth)};
 }
 
-bool PNGDecompressionCycle::decompress(std::vector<DynImage::DataPtrType>& row_pointers)
+bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
   auto png_ptr = obj_.impl_->png_ptr;
   auto end_info = obj_.impl_->end_info;

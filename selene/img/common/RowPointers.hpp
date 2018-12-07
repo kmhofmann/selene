@@ -11,20 +11,27 @@
 
 #include <cstdint>
 #include <memory>
+#include <type_traits>
 #include <vector>
 
 namespace sln {
 
+using RowPointers = std::vector<std::uint8_t*>;
+using ConstRowPointers = std::vector<const std::uint8_t*>;
+
 /** \brief Extracts a list of consecutive pointers to each image row from an image.
+ *
+ * Overload for modifiable images/views.
  *
  * @tparam ImageType The image type.
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
 template <typename ImageType>
-auto get_row_pointers(ImageType& img) -> std::vector<typename ImageType::DataPtrType>
+auto get_row_pointers(ImageType& img)
 {
-  std::vector<typename ImageType::DataPtrType> row_pointers(img.height());
+  using RowPointerType = std::conditional_t<ImageType::is_modifiable, RowPointers, ConstRowPointers>;
+  RowPointerType row_pointers(img.height());
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
@@ -41,9 +48,9 @@ auto get_row_pointers(ImageType& img) -> std::vector<typename ImageType::DataPtr
  * @return List of row pointers.
  */
 template <typename ImageType>
-auto get_const_row_pointers(const ImageType& img) -> std::vector<typename ImageType::ConstDataPtrType>
+auto get_const_row_pointers(const ImageType& img) -> ConstRowPointers
 {
-  std::vector<typename ImageType::ConstDataPtrType> row_pointers(img.height());
+  ConstRowPointers row_pointers(img.height());
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {

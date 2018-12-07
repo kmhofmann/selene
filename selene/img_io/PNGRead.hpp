@@ -282,7 +282,7 @@ public:
 
   bool error_state() const;
   PNGImageInfo get_output_info() const;
-  bool decompress(std::vector<DynImage::DataPtrType>& row_pointers);
+  bool decompress(RowPointers& row_pointers);
 
 private:
   PNGDecompressionObject& obj_;

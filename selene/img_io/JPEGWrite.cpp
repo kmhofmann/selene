@@ -154,7 +154,7 @@ JPEGCompressionCycle::~JPEGCompressionCycle()
   obj_.impl_->needs_reset = true;
 }
 
-void JPEGCompressionCycle::compress(const std::vector<DynImage::ConstDataPtrType>& row_pointers)
+void JPEGCompressionCycle::compress(const ConstRowPointers& row_pointers)
 {
   auto& cinfo = obj_.impl_->cinfo;
   std::array<JSAMPLE*, 1> row_ptr = {{nullptr}};

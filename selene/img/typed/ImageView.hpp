@@ -20,7 +20,8 @@
 namespace sln {
 
 template <typename PixelType_, ImageModifiability modifiability_>
-class ImageView : public ImageBase<ImageView<PixelType_, modifiability_>>
+class ImageView
+    : public ImageBase<ImageView<PixelType_, modifiability_>>
 {
 public:
   using PixelType = PixelType_;
@@ -30,66 +31,199 @@ public:
   using iterator = ImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
   using const_iterator = ConstImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
 
-//  constexpr static bool is_view = true;
-//  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
-//  constexpr static ImageModifiability modifiability() { return modifiability_; }
-
   constexpr static bool is_view = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_view;
   constexpr static bool is_modifiable = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_modifiable;
-  constexpr static ImageModifiability modifiability() { return impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::modifiability(); }
+
+  constexpr static ImageModifiability modifiability()
+  {
+    return impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::modifiability();
+  }
 
   ImageView() = default;
+
   ImageView(DataPtr<modifiability_> ptr, TypedLayout layout)
       : ptr_(ptr), layout_(layout)
-  { }
+  {
+  }
 
-  const TypedLayout& layout() const noexcept { return layout_; }
+  const TypedLayout& layout() const noexcept
+  {
+    return layout_;
+  }
 
-  PixelLength width() const noexcept { return layout_.width; }
-  PixelLength height() const noexcept { return layout_.height; }
-  Stride stride_bytes() const noexcept { return layout_.stride_bytes; }
-  std::ptrdiff_t row_bytes() const noexcept { return layout_.row_bytes<PixelType>(); }
-  std::ptrdiff_t total_bytes() const noexcept { return layout_.total_bytes<PixelType>(); }
-  bool is_packed() const noexcept { return layout_.is_packed<PixelType>(); }
+  PixelLength width() const noexcept
+  {
+    return layout_.width;
+  }
 
-  bool is_empty() const noexcept { return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0; }
-  bool is_valid() const noexcept { return !is_empty(); };
+  PixelLength height() const noexcept
+  {
+    return layout_.height;
+  }
 
-  iterator begin() noexcept              { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, 0_idx)); }
-  const_iterator begin() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
-  const_iterator cbegin() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx)); }
+  Stride stride_bytes() const noexcept
+  {
+    return layout_.stride_bytes;
+  }
 
-  iterator end() noexcept              { return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
-  const_iterator end() const noexcept  { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
-  const_iterator cend() const noexcept { return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()})); }
+  std::ptrdiff_t row_bytes() const noexcept
+  {
+    return layout_.row_bytes<PixelType>();
+  }
 
-  DataPtrType byte_ptr() noexcept             { return ptr_.data(); }
-  const DataPtrType byte_ptr() const noexcept { return ptr_.data(); }
+  std::ptrdiff_t total_bytes() const noexcept
+  {
+    return layout_.total_bytes<PixelType>();
+  }
 
-  DataPtrType byte_ptr(PixelIndex y) noexcept             { return ptr_.data() + this->compute_data_offset(y); }
-  const DataPtrType byte_ptr(PixelIndex y) const noexcept { return ptr_.data() + this->compute_data_offset(y); }
+  bool is_packed() const noexcept
+  {
+    return layout_.is_packed<PixelType>();
+  }
 
-  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept             { return ptr_.data() + this->compute_data_offset(x, y); }
-  const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept { return ptr_.data() + this->compute_data_offset(x, y); }
+  bool is_empty() const noexcept
+  {
+    return ptr_.data() == nullptr || layout_.width == 0 || layout_.height == 0;
+  }
 
-  PixelTypePtr data() noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr()); }
-  const PixelTypePtr data() const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr()); }
+  bool is_valid() const noexcept
+  {
+    return !is_empty();
+  };
 
-  PixelTypePtr data(PixelIndex y) noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y)); }
-  const PixelTypePtr data(PixelIndex y) const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y)); }
+  auto begin() noexcept -> iterator
+  {
+    return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, 0_idx));
+  }
 
-  PixelTypePtr data_row_end(PixelIndex y) noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width); }
-  const PixelTypePtr data_row_end(PixelIndex y) const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width); }
+  auto begin() const noexcept -> const_iterator
+  {
+    return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx));
+  }
 
-  PixelTypePtr data(PixelIndex x, PixelIndex y) noexcept             { return reinterpret_cast<PixelTypePtr>(this->byte_ptr(x, y)); }
-  const PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept { return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(x, y)); }
+  auto cbegin() const noexcept -> const_iterator
+  {
+    return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx));
+  }
 
-  auto& operator()(PixelIndex x, PixelIndex y) noexcept             { return *this->data(x, y); }
-  const auto& operator()(PixelIndex x, PixelIndex y) const noexcept { return *this->data(x, y); }
+  auto end() noexcept -> iterator
+  {
+    return ImageRowIterator<PixelType, modifiability_>(
+        ImageRow<PixelType, modifiability_>(
+            this,
+            PixelIndex{this->height()}));
+  }
 
-  ImageView<PixelType, modifiability_>& view() noexcept { return *this; }
-  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept { return constant_view(); }  // TODO: optimize
-  ImageView<PixelType, ImageModifiability::Constant> constant_view() const noexcept { return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()}; }  // TODO: optimize
+  auto end() const noexcept -> const_iterator
+  {
+    return ConstImageRowIterator<PixelType, modifiability_>(
+        ConstImageRow<PixelType, modifiability_>(
+            this,
+            PixelIndex{this->height()}));
+  }
+
+  auto cend() const noexcept -> const_iterator
+  {
+    return ConstImageRowIterator<PixelType, modifiability_>(
+        ConstImageRow<PixelType, modifiability_>(
+            this,
+            PixelIndex{this->height()}));
+  }
+
+  DataPtrType byte_ptr() noexcept
+  {
+    return ptr_.data();
+  }
+
+  const DataPtrType byte_ptr() const noexcept
+  {
+    return ptr_.data();
+  }
+
+  DataPtrType byte_ptr(PixelIndex y) noexcept
+  {
+    return ptr_.data() + this->compute_data_offset(y);
+  }
+
+  const DataPtrType byte_ptr(PixelIndex y) const noexcept
+  {
+    return ptr_.data() + this->compute_data_offset(y);
+  }
+
+  DataPtrType byte_ptr(PixelIndex x, PixelIndex y) noexcept
+  {
+    return ptr_.data() + this->compute_data_offset(x, y);
+  }
+
+  const DataPtrType byte_ptr(PixelIndex x, PixelIndex y) const noexcept
+  {
+    return ptr_.data() + this->compute_data_offset(x, y);
+  }
+
+  PixelTypePtr data() noexcept
+  {
+    return reinterpret_cast<PixelTypePtr>(this->byte_ptr());
+  }
+
+  const PixelTypePtr data() const noexcept
+  {
+    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr());
+  }
+
+  PixelTypePtr data(PixelIndex y) noexcept
+  {
+    return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y));
+  }
+
+  const PixelTypePtr data(PixelIndex y) const noexcept
+  {
+    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y));
+  }
+
+  PixelTypePtr data_row_end(PixelIndex y) noexcept
+  {
+    return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width);
+  }
+
+  const PixelTypePtr data_row_end(PixelIndex y) const noexcept
+  {
+    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width);
+  }
+
+  PixelTypePtr data(PixelIndex x, PixelIndex y) noexcept
+  {
+    return reinterpret_cast<PixelTypePtr>(this->byte_ptr(x, y));
+  }
+
+  const PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept
+  {
+    return reinterpret_cast<const PixelTypePtr>(this->byte_ptr(x, y));
+  }
+
+  auto& operator()(PixelIndex x, PixelIndex y) noexcept
+  {
+    return * this->data(x, y);
+  }
+
+  const auto& operator()(PixelIndex x, PixelIndex y) const noexcept
+  {
+    return * this->data(x, y);
+  }
+
+  ImageView<PixelType, modifiability_>& view() noexcept
+  {
+    return * this;
+  }
+
+  ImageView<PixelType, ImageModifiability::Constant> view() const noexcept
+  {
+    return constant_view();
+  }  // TODO: optimize
+
+  ImageView<PixelType, ImageModifiability::Constant> constant_view() const noexcept
+  {
+    return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()};
+  }  // TODO: optimize
 
   void clear()
   {
@@ -119,21 +253,24 @@ template <typename PixelType> using MutableImageView = ImageView<PixelType, Imag
 template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;
 
 template <typename PixelType0, ImageModifiability modifiability_0,
-          typename PixelType1, ImageModifiability modifiability_1>
+    typename PixelType1, ImageModifiability modifiability_1>
 bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<PixelType1, modifiability_1>& img_1)
 {
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
-  static_assert(std::is_same<typename PixelTraits<PixelType0>::Element,
-                    typename PixelTraits<PixelType1>::Element>::value,
-                "Incompatible pixel types for equality comparison");
-  static_assert(PixelTraits<PixelType0>::nr_channels == PixelTraits<PixelType1>::nr_channels,
-                "Incompatible pixel types for equality comparison");
-  static_assert(get_nr_channels(PixelTraits<PixelType0>::pixel_format)
-                == get_nr_channels(PixelTraits<PixelType1>::pixel_format)
-                || PixelTraits<PixelType0>::pixel_format == PixelFormat::Unknown
-                || PixelTraits<PixelType1>::pixel_format == PixelFormat::Unknown,
-                "Incompatible pixel types for equality comparison");
+  static_assert(
+      std::is_same<typename PixelTraits<PixelType0>::Element,
+          typename PixelTraits<PixelType1>::Element>::value,
+      "Incompatible pixel types for equality comparison");
+  static_assert(
+      PixelTraits<PixelType0>::nr_channels == PixelTraits<PixelType1>::nr_channels,
+      "Incompatible pixel types for equality comparison");
+  static_assert(
+      get_nr_channels(PixelTraits<PixelType0>::pixel_format)
+      == get_nr_channels(PixelTraits<PixelType1>::pixel_format)
+      || PixelTraits<PixelType0>::pixel_format == PixelFormat::Unknown
+      || PixelTraits<PixelType1>::pixel_format == PixelFormat::Unknown,
+      "Incompatible pixel types for equality comparison");
 
   // The sizes should then also be the same
   static_assert(sizeof(PixelType0) == sizeof(PixelType1), "Incompatible pixel types for equality comparison");

@@ -153,7 +153,7 @@ public:
   explicit JPEGCompressionCycle(JPEGCompressionObject& obj);
   ~JPEGCompressionCycle();
 
-  void compress(const std::vector<DynImage::ConstDataPtrType>& row_pointers);
+  void compress(const ConstRowPointers& row_pointers);
 
 private:
   JPEGCompressionObject& obj_;

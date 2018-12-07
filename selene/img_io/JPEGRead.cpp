@@ -154,7 +154,7 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
   return JPEGImageInfo{width, height, static_cast<std::int16_t>(cinfo.out_color_components), out_color_space};
 }
 
-bool JPEGDecompressionCycle::decompress(std::vector<DynImage::DataPtrType>& row_pointers)
+bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
   auto& cinfo = obj_.impl_->cinfo;
 

@@ -156,7 +156,7 @@ public:
   ~PNGCompressionCycle();
 
   bool error_state() const;
-  void compress(const std::vector<DynImage::ConstDataPtrType>& row_pointers);
+  void compress(const ConstRowPointers& row_pointers);
 
 private:
   PNGCompressionObject& obj_;

@@ -229,7 +229,7 @@ bool PNGCompressionCycle::error_state() const
   return error_state_;
 }
 
-void PNGCompressionCycle::compress(const std::vector<DynImage::ConstDataPtrType>& row_pointers)
+void PNGCompressionCycle::compress(const ConstRowPointers& row_pointers)
 {
   auto png_ptr = obj_.impl_->png_ptr;
   auto info_ptr = obj_.impl_->info_ptr;
