@@ -4,7 +4,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <selene/img/typed/access/ImageAccess.hpp>
+#include <selene/img/typed/access/GetPixel.hpp>
 
 #include <test/selene/img/typed/_Utils.hpp>
 

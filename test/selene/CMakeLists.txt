@@ -33,7 +33,7 @@ add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/_Utils.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/BorderAccessors.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/ImageAccess.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/GetPixel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/Interpolators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/RelativeAccessor.cpp
 

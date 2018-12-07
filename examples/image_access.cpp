@@ -7,7 +7,7 @@
 #include <selene/img/pixel/PixelTypeAliases.hpp>
 
 #include <selene/img/typed/ImageTypeAliases.hpp>
-#include <selene/img/typed/access/ImageAccess.hpp>
+#include <selene/img/typed/access/GetPixel.hpp>
 
 #include <selene/img/interop/ImageToDynImage.hpp>
 
