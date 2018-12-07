@@ -21,16 +21,34 @@ using ConstRowPointers = std::vector<const std::uint8_t*>;
 
 /** \brief Extracts a list of consecutive pointers to each image row from an image.
  *
- * Overload for modifiable images/views.
+ * @tparam ImageType The image type.
+ * @param img An image to extract the row pointers from.
+ * @return List of row pointers.
+ */
+template <typename ImageType>
+auto get_row_pointers(ImageType& img) -> std::conditional_t<ImageType::is_modifiable, RowPointers, ConstRowPointers>
+{
+  using RowPointerType = std::conditional_t<ImageType::is_modifiable, RowPointers, ConstRowPointers>;
+  RowPointerType row_pointers(img.height());
+
+  for (PixelIndex y = 0_idx; y < img.height(); ++y)
+  {
+    row_pointers[y] = img.byte_ptr(y);
+  }
+
+  return row_pointers;
+}
+
+/** \brief Extracts a list of consecutive pointers to each image row from an image.
  *
  * @tparam ImageType The image type.
  * @param img An image to extract the row pointers from.
  * @return List of row pointers.
  */
 template <typename ImageType>
-auto get_row_pointers(ImageType& img)
+auto get_row_pointers(const ImageType& img) -> std::conditional_t<ImageType::is_modifiable && ImageType::is_view, RowPointers, ConstRowPointers>
 {
-  using RowPointerType = std::conditional_t<ImageType::is_modifiable, RowPointers, ConstRowPointers>;
+  using RowPointerType = std::conditional_t<ImageType::is_modifiable && ImageType::is_view, RowPointers, ConstRowPointers>;
   RowPointerType row_pointers(img.height());
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
@@ -45,7 +63,7 @@ auto get_row_pointers(ImageType& img)
  *
  * @tparam ImageType The image type.
  * @param img An image to extract the row pointers from.
- * @return List of row pointers.
+ * @return List of constant row pointers.
  */
 template <typename ImageType>
 auto get_const_row_pointers(const ImageType& img) -> ConstRowPointers
