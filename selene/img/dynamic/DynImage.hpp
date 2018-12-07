@@ -472,153 +472,300 @@ inline bool DynImage::is_valid() const noexcept
   return view_.is_valid();
 }
 
+/** \brief Returns an iterator to the first row.
+ *
+ * @return Iterator to the first image row.
+ */
 template <typename PixelType>
 auto DynImage::begin() noexcept -> iterator<PixelType>
 {
   return view_.begin<PixelType>();
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the first image row.
+ */
 template <typename PixelType>
 auto DynImage::begin() const noexcept -> const_iterator<PixelType>
 {
   return view_.begin<PixelType>();
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the first image row.
+ */
 template <typename PixelType>
 auto DynImage::cbegin() const noexcept -> const_iterator<PixelType>
 {
   return view_.cbegin<PixelType>();
 }
 
+/** \brief Returns an iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Iterator to the image row after the last row.
+ */
 template <typename PixelType>
 auto DynImage::end() noexcept -> iterator<PixelType>
 {
   return view_.end<PixelType>();
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <typename PixelType>
 auto DynImage::end() const noexcept -> const_iterator<PixelType>
 {
   return view_.end<PixelType>();
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <typename PixelType>
 auto DynImage::cend() const noexcept -> const_iterator<PixelType>
 {
   return view_.cend<PixelType>();
 }
 
+/** \brief Returns a pointer to the first byte storing image data (in row 0).
+ *
+ * @return Pointer to the first image data byte.
+ */
 inline auto DynImage::byte_ptr() noexcept -> DataPtrType
 {
   return view_.byte_ptr();
 }
 
+/** \brief Returns a constant pointer to the first byte storing image data (in row 0).
+ *
+ * @return Constant pointer to the first image data byte.
+ */
 inline auto DynImage::byte_ptr() const noexcept -> ConstDataPtrType
 {
   return view_.byte_ptr();
 }
 
+/** \brief Returns a pointer to the first byte storing image data in row `y`.
+ *
+ * @param y Row index.
+ * @return Pointer to the first image data byte of row `y`.
+ */
 inline auto DynImage::byte_ptr(PixelIndex y) noexcept -> DataPtrType
 {
   return view_.byte_ptr(y);
 }
 
+/** \brief Returns a constant pointer to the first byte storing image data in row `y`.
+ *
+ * @param y Row index.
+ * @return Constant pointer to the first image data byte of row `y`.
+ */
 inline auto DynImage::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
 {
   return view_.byte_ptr(y);
 }
 
+/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
 {
   return view_.byte_ptr(x, y);
 }
 
+/** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
 {
   return view_.byte_ptr(x, y);
 }
 
+/** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam PixelType The pixel type.
+ * @return Pointer to the first pixel element.
+ */
 template <typename PixelType>
 PixelType* DynImage::data() noexcept
 {
   return view_.data<PixelType>();
 }
 
+/** \brief Returns a constant pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam PixelType The pixel type.
+ * @return Constant pointer to the first pixel element.
+ */
 template <typename PixelType>
 const PixelType* DynImage::data() const noexcept
 {
   return view_.data<PixelType>();
 }
 
+/** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType>
 PixelType* DynImage::data(PixelIndex y) noexcept
 {
   return view_.data<PixelType>(y);
 }
 
+/** \brief Returns a constant pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType>
 const PixelType* DynImage::data(PixelIndex y) const noexcept
 {
   return view_.data<PixelType>(y);
 }
 
+/** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType>
 PixelType* DynImage::data_row_end(PixelIndex y) noexcept
 {
   return view_.data_row_end<PixelType>(y);
 }
 
+/** \brief Returns a constant pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType>
 const PixelType* DynImage::data_row_end(PixelIndex y) const noexcept
 {
   return view_.data_row_end<PixelType>(y);
 }
 
+/** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType>
 PixelType* DynImage::data(PixelIndex x, PixelIndex y) noexcept
 {
   return view_.data<PixelType>(x, y);
 }
 
+/** \brief Returns a constant pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType>
 const PixelType* DynImage::data(PixelIndex x, PixelIndex y) const noexcept
 {
   return view_.data<PixelType>(x, y);
 }
 
+/** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType>
 PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) noexcept
 {
   return view_.pixel<PixelType>(x, y);
 }
 
+/** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType>
 const PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) const noexcept
 {
   return view_.pixel<PixelType>(x, y);
 }
 
+/** \brief Returns the underlying (mutable) dynamic image view.
+ *
+ * @return The underlying (mutable) dynamic image view.
+ */
 inline DynImageView<ImageModifiability::Mutable>& DynImage::view() noexcept
 {
   return view_.view();
 }
 
+/** \brief Returns a constant image view on the underlying data.
+ *
+ * @return A constant image view.
+ */
 inline DynImageView<ImageModifiability::Constant> DynImage::view() const noexcept
 {
   return view_.constant_view();
 }
 
+/** \brief Returns a constant image view on the underlying data.
+ *
+ * @return A constant image view.
+ */
 inline DynImageView<ImageModifiability::Constant> DynImage::constant_view() const noexcept
 {
   return view_.constant_view();
 }
 
+/** \brief Clears the dynamic image; i.e. resets the internal state to the image state after default construction.
+ *
+ * All allocated memory will be deallocated.
+ */
 inline void DynImage::clear()
 {
   deallocate_memory();
   view_.clear();
 }
 
+/** \brief Reallocates the image data according to the specified layout and alignment.
+ *
+ * @param layout The layout for reallocation.
+ * @param row_alignment_bytes The desired row alignment in bytes.
+ * @param semantics The new image semantics.
+ * @param shrink_to_fit If true, then a reallocation will also take place if the required memory is less than already
+ *                      allocated. If false, then the already allocated memory will be kept, if the required memory is
+ *                      less than already allocated.
+ * @return True, if a memory reallocation took place; false otherwise.
+ */
 inline bool DynImage::reallocate(
     UntypedLayout layout,
     ImageRowAlignment row_alignment_bytes,
@@ -650,6 +797,12 @@ inline bool DynImage::reallocate(
   return true;
 }
 
+/** \brief Releases the owned memory from the dynamic image instance and returns it.
+ *
+ * As a result, the dynamic image will be empty, and no memory will be owned.
+ *
+ * @return The owned memory block.
+ */
 inline MemoryBlock<AlignedNewAllocator> DynImage::relinquish_data_ownership()
 {
   const auto ptr = this->byte_ptr();

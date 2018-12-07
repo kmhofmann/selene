@@ -324,12 +324,10 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
     this->deallocate_memory();
 
     // Allocate new memory
-    view_ = allocate_memory(
-        other.layout(),
-        default_base_alignment_bytes,
-        impl::guess_row_alignment(
-            reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-            other.stride_bytes()));
+    view_ = allocate_memory(other.layout(),
+                            default_base_alignment_bytes,
+                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
+                                                      other.stride_bytes()));
   }
 
   copy_rows_from(other);
@@ -339,7 +337,7 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
 
 /** \brief Returns the image layout.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return The typed image layout.
  */
 template <typename PixelType_>
@@ -350,7 +348,7 @@ const TypedLayout& Image<PixelType_>::layout() const noexcept
 
 /** \brief Returns the image width.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return The image width.
  */
 template <typename PixelType_>
@@ -361,7 +359,7 @@ PixelLength Image<PixelType_>::width() const noexcept
 
 /** \brief Returns the image height.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return The image height.
  */
 template <typename PixelType_>
@@ -377,7 +375,7 @@ PixelLength Image<PixelType_>::height() const noexcept
  * `(stride_bytes() >= width() * PixelTraits::nr_bytes)`.
  * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The row stride of the image in bytes.
  */
@@ -392,7 +390,7 @@ Stride Image<PixelType_>::stride_bytes() const noexcept
  * The value returned is equal to `(width() * PixelTraits::nr_bytes)`.
  * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return The number of data bytes occupied by each image row.
  */
 template <typename PixelType_>
@@ -405,7 +403,7 @@ std::ptrdiff_t Image<PixelType_>::row_bytes() const noexcept
  *
  * The value returned is equal to `(stride_bytes() * height())`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return The total number of bytes occupied by the image data in memory.
  */
 template <typename PixelType_>
@@ -418,7 +416,7 @@ std::ptrdiff_t Image<PixelType_>::total_bytes() const noexcept
  *
  * Returns the boolean expression `(stride_bytes() == width() * PixelTraits::nr_bytes)`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return True, if the image data is stored packed; false otherwise.
  */
 template <typename PixelType_>
@@ -432,7 +430,7 @@ bool Image<PixelType_>::is_packed() const noexcept
  * An image [view] is considered empty if its internal data pointer points to `nullptr`, `width() == 0`,
  * `height() == 0`, or any combination of these.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return True, if the image is empty; false if it is non-empty.
  */
 template <typename PixelType_>
@@ -445,7 +443,7 @@ bool Image<PixelType_>::is_empty() const noexcept
  *
  * Semantically equal to `!is_empty()`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @return True, if the image is valid; false otherwise.
  */
 template <typename PixelType_>
@@ -454,138 +452,271 @@ bool Image<PixelType_>::is_valid() const noexcept
   return view_.is_valid();
 }
 
+/** \brief Returns an iterator to the first row.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Iterator to the first image row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::begin() noexcept -> iterator
 {
   return view_.begin();
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Constant iterator to the first image row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::begin() const noexcept -> const_iterator
 {
   return view_.begin();
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Constant iterator to the first image row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::cbegin() const noexcept -> const_iterator
 {
   return view_.cbegin();
 }
 
+/** \brief Returns an iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Iterator to the image row after the last row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::end() noexcept -> iterator
 {
   return view_.end();
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::end() const noexcept -> const_iterator
 {
   return view_.end();
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::cend() const noexcept -> const_iterator
 {
   return view_.cend();
 }
 
+/** \brief Returns a pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Pointer to the first image data byte.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::byte_ptr() noexcept -> DataPtrType
 {
   return view_.byte_ptr();
 }
 
+/** \brief Returns a constant pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Constant pointer to the first image data byte.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::byte_ptr() const noexcept -> ConstDataPtrType
 {
   return view_.byte_ptr();
 }
 
+/** \brief Returns a pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first image data byte of row `y`.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::byte_ptr(PixelIndex y) noexcept -> DataPtrType
 {
   return view_.byte_ptr(y);
 }
 
+/** \brief Returns a constant pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first image data byte of row `y`.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
 {
   return view_.byte_ptr(y);
 }
 
+/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
 {
   return view_.byte_ptr(x, y);
 }
 
+/** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
 {
   return view_.byte_ptr(x, y);
 }
 
+/** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Pointer to the first pixel element.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data() noexcept -> PixelType*
 {
   return view_.data();
 }
 
+/** \brief Returns a constant pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return Constant pointer to the first pixel element.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data() const noexcept -> const PixelType*
 {
   return view_.data();
 }
 
+/** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data(PixelIndex y) noexcept -> PixelType*
 {
   return view_.data(y);
 }
 
+/** \brief Returns a constant pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data(PixelIndex y) const noexcept -> const PixelType*
 {
   return view_.data(y);
 }
 
+/** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param y Row index.
+ * @return Pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data_row_end(PixelIndex y) noexcept -> PixelType*
 {
   return view_.data_row_end(y);
 }
 
+/** \brief Returns a constant pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param y Row index.
+ * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data_row_end(PixelIndex y) const noexcept -> const PixelType*
 {
   return view_.data_row_end(y);
 }
 
+/** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data(PixelIndex x, PixelIndex y) noexcept -> PixelType*
 {
   return view_.data(x, y);
 }
 
+/** \brief Returns a constant pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::data(PixelIndex x, PixelIndex y) const noexcept -> const PixelType*
 {
   return view_.data(x, y);
 }
 
+/** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::operator()(PixelIndex x, PixelIndex y) noexcept -> PixelType&
 {
   return view_.operator()(x, y);
 }
 
+/** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::operator()(PixelIndex x, PixelIndex y) const noexcept -> const PixelType&
 {
   return view_.operator()(x, y);
 }
 
+/** \brief Returns the underlying (mutable) image view.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return The underlying (mutable) image view.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::view() noexcept
     -> ImageView<PixelType, ImageModifiability::Mutable>&
@@ -593,13 +724,23 @@ auto Image<PixelType_>::view() noexcept
   return view_.view();
 }
 
+/** \brief Returns a constant image view on the underlying data.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return A constant image view.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::view() const noexcept
--> ImageView<PixelType, ImageModifiability::Constant>
+    -> ImageView<PixelType, ImageModifiability::Constant>
 {
   return view_.constant_view();
 }
 
+/** \brief Returns a constant image view on the underlying data.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return A constant image view.
+ */
 template <typename PixelType_>
 auto Image<PixelType_>::constant_view() const noexcept
     -> ImageView<PixelType, ImageModifiability::Constant>
@@ -607,6 +748,12 @@ auto Image<PixelType_>::constant_view() const noexcept
   return view_.constant_view();
 }
 
+/** \brief Clears the image; i.e. resets the internal state to the image state after default construction.
+ *
+ * All allocated memory will be deallocated.
+ *
+ * @tparam PixelType_ The pixel type.
+ */
 template <typename PixelType_>
 void Image<PixelType_>::clear()
 {
@@ -614,6 +761,16 @@ void Image<PixelType_>::clear()
   view_.clear();
 }
 
+/** \brief Reallocates the image data according to the specified layout and alignment.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @param layout The layout for reallocation.
+ * @param row_alignment_bytes The desired row alignment in bytes.
+ * @param shrink_to_fit If true, then a reallocation will also take place if the required memory is less than already
+ *                      allocated. If false, then the already allocated memory will be kept, if the required memory is
+ *                      less than already allocated.
+ * @return True, if a memory reallocation took place; false otherwise.
+ */
 template <typename PixelType_>
 bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit)
 {
@@ -642,6 +799,13 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
   return true;
 }
 
+/** \brief Releases the owned memory from the image instance and returns it.
+ *
+ * As a result, the image will be empty, and no memory will be owned.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @return The owned memory block.
+ */
 template <typename PixelType_>
 MemoryBlock<AlignedNewAllocator> Image<PixelType_>::relinquish_data_ownership()
 {

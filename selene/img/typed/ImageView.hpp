@@ -103,7 +103,7 @@ bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<
 
 /** \brief Constructs an image view onto the specified memory region, given the specified layout.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @param ptr A pointer to the memory block representing the image data
  * @param layout The image layout.
@@ -116,7 +116,7 @@ ImageView<PixelType_, modifiability_>::ImageView(DataPtr<modifiability_> ptr, Ty
 
 /** \brief Returns the image view layout.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The typed image view layout.
  */
@@ -128,7 +128,7 @@ const TypedLayout& ImageView<PixelType_, modifiability_>::layout() const noexcep
 
 /** \brief Returns the image view width.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The image view width.
  */
@@ -140,7 +140,7 @@ PixelLength ImageView<PixelType_, modifiability_>::width() const noexcept
 
 /** \brief Returns the image view height.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The image view height.
  */
@@ -157,7 +157,7 @@ PixelLength ImageView<PixelType_, modifiability_>::height() const noexcept
  * `(stride_bytes() >= width() * PixelTraits::nr_bytes)`.
  * If it is equal, then `is_packed()` returns `true`, otherwise `is_packed()` returns `false`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The row stride of the image view in bytes.
  */
@@ -172,7 +172,7 @@ Stride ImageView<PixelType_, modifiability_>::stride_bytes() const noexcept
  * The value returned is equal to `(width() * PixelTraits::nr_bytes)`.
  * It follows that `stride_bytes() >= row_bytes()`, since `stride_bytes()` may include additional padding bytes.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The number of data bytes occupied by each image row.
  */
@@ -186,7 +186,7 @@ std::ptrdiff_t ImageView<PixelType_, modifiability_>::row_bytes() const noexcept
  *
  * The value returned is equal to `(stride_bytes() * height())`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The total number of bytes occupied by the image data in memory.
  */
@@ -200,7 +200,7 @@ std::ptrdiff_t ImageView<PixelType_, modifiability_>::total_bytes() const noexce
  *
  * Returns the boolean expression `(stride_bytes() == width() * PixelTraits::nr_bytes)`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return True, if the image view data is stored packed; false otherwise.
  */
@@ -215,7 +215,7 @@ bool ImageView<PixelType_, modifiability_>::is_packed() const noexcept
  * An image [view] is considered empty if its internal data pointer points to `nullptr`, `width() == 0`,
  * `height() == 0`, or any combination of these.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return True, if the image view is empty; false if it is non-empty.
  */
@@ -229,7 +229,7 @@ bool ImageView<PixelType_, modifiability_>::is_empty() const noexcept
  *
  * Semantically equal to `!is_empty()`.
  *
- * @tparam PixelType The pixel type.
+ * @tparam PixelType_ The pixel type.
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return True, if the image view is valid; false otherwise.
  */
@@ -239,112 +239,219 @@ bool ImageView<PixelType_, modifiability_>::is_valid() const noexcept
   return !is_empty();
 }
 
+/** \brief Returns an iterator to the first row.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Iterator to the first image row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::begin() noexcept -> iterator
 {
   return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Constant iterator to the first image row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::begin() const noexcept -> const_iterator
 {
   return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Constant iterator to the first image row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::cbegin() const noexcept -> const_iterator
 {
   return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
+/** \brief Returns an iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Iterator to the image row after the last row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::end() noexcept -> iterator
 {
   return ImageRowIterator<PixelType, modifiability_>(
-      ImageRow<PixelType, modifiability_>(
-          this,
-          PixelIndex{this->height()}));
+      ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::end() const noexcept -> const_iterator
 {
   return ConstImageRowIterator<PixelType, modifiability_>(
-      ConstImageRow<PixelType, modifiability_>(
-          this,
-          PixelIndex{this->height()}));
+      ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::cend() const noexcept -> const_iterator
 {
   return ConstImageRowIterator<PixelType, modifiability_>(
-      ConstImageRow<PixelType, modifiability_>(
-          this,
-          PixelIndex{this->height()}));
+      ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
 }
 
+/** \brief Returns a pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Pointer to the first image data byte.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::byte_ptr() const noexcept -> DataPtrType
 {
   return ptr_.data();
 }
 
+/** \brief Returns a pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param y Row index.
+ * @return Pointer to the first image data byte of row `y`.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::byte_ptr(PixelIndex y) const noexcept -> DataPtrType
 {
   return ptr_.data() + this->compute_data_offset(y);
 }
 
+/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> DataPtrType
 {
   return ptr_.data() + this->compute_data_offset(x, y);
 }
 
+/** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Pointer to the first pixel element.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data() const noexcept -> PixelTypePtr
 {
   return reinterpret_cast<PixelTypePtr>(this->byte_ptr());
 }
 
+/** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param y Row index.
+ * @return Pointer to the first pixel element of the y-th row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data(PixelIndex y) const noexcept -> PixelTypePtr
 {
   return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y));
 }
 
+/** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param y Row index.
+ * @return Pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data_row_end(PixelIndex y) const noexcept -> PixelTypePtr
 {
   return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width);
 }
 
+/** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data(PixelIndex x, PixelIndex y) const noexcept -> PixelTypePtr
 {
   return reinterpret_cast<PixelTypePtr>(this->byte_ptr(x, y));
 }
 
+/** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto& ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex y) noexcept
 {
   return *this->data(x, y);
 }
 
+/** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant reference to the pixel element at location `(x, y)`.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 const auto& ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex y) const noexcept
 {
   return *this->data(x, y);
 }
 
+/** \brief Returns the image view.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Returns the image view itself; i.e. a reference to `this`.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::view() noexcept
     -> ImageView<PixelType, modifiability_>&
 {
-  return * this;
+  return *this;
 }
 
+/** \brief Returns a constant image view.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return A constant image view.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::view() const noexcept
     -> ImageView<PixelType, ImageModifiability::Constant>
@@ -353,6 +460,12 @@ auto ImageView<PixelType_, modifiability_>::view() const noexcept
   return constant_view();
 }
 
+/** \brief Returns a constant image view.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return A constant image view.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::constant_view() const noexcept
     -> ImageView<PixelType, ImageModifiability::Constant>
@@ -361,6 +474,11 @@ auto ImageView<PixelType_, modifiability_>::constant_view() const noexcept
   return ImageView<PixelType, ImageModifiability::Constant>{this->byte_ptr(), this->layout()};
 }
 
+/** \brief Clears the image view; i.e. resets the internal state to the image view state after default construction.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 void ImageView<PixelType_, modifiability_>::clear()
 {

@@ -293,6 +293,12 @@ bool DynImageView<modifiability_>::is_valid() const noexcept
   return !is_empty();
 }
 
+/** \brief Returns an iterator to the first row.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Iterator to the first image row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::begin() noexcept -> iterator<PixelType>
@@ -300,74 +306,118 @@ auto DynImageView<modifiability_>::begin() noexcept -> iterator<PixelType>
   return DynImageRowIterator<PixelType, modifiability_>(DynImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the first image row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::begin() const noexcept -> const_iterator<PixelType>
 {
   return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(
-          this,
-          0_idx));
+      ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
+/** \brief Returns a constant iterator to the first row.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the first image row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::cbegin() const noexcept -> const_iterator<PixelType>
 {
   return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(
-          this,
-          0_idx));
+      ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
 }
 
+/** \brief Returns an iterator to the row after the last row of the image.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Iterator to the image row after the last row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::end() noexcept -> iterator<PixelType>
 {
   return DynImageRowIterator<PixelType, modifiability_>(
-      DynImageRow<PixelType, modifiability_>(
-          this,
-          PixelIndex{this->height()}));
+      DynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::end() const noexcept -> const_iterator<PixelType>
 {
   return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(
-          this,
-          PixelIndex{this->height()}));
+      ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
 }
 
+/** \brief Returns a constant iterator to the row after the last row of the image.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Constant iterator to the image row after the last row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::cend() const noexcept -> const_iterator<PixelType>
 {
   return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(
-          this,
-          PixelIndex{this->height()}));
+      ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
 }
 
+/** \brief Returns a pointer to the first byte storing image data (in row 0).
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Pointer to the first image data byte.
+ */
 template <ImageModifiability modifiability_>
 auto DynImageView<modifiability_>::byte_ptr() const noexcept -> DataPtrType
 {
   return ptr_.data();
 }
 
+/** \brief Returns a pointer to the first byte storing image data in row `y`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param y Row index.
+ * @return Pointer to the first image data byte of row `y`.
+ */
 template <ImageModifiability modifiability_>
 auto DynImageView<modifiability_>::byte_ptr(PixelIndex y) const noexcept -> DataPtrType
 {
   return ptr_.data() + this->compute_data_offset(y);
 }
 
+/** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the first byte of the pixel element at location `(x, y)`.
+ */
 template <ImageModifiability modifiability_>
 auto DynImageView<modifiability_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> DataPtrType
 {
   return ptr_.data() + this->compute_data_offset(x, y);
 }
 
+/** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @return Pointer to the first pixel element.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data() const noexcept -> PixelTypePtr<PixelType>
@@ -375,6 +425,13 @@ auto DynImageView<modifiability_>::data() const noexcept -> PixelTypePtr<PixelTy
   return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr());
 }
 
+/** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the first pixel element of the y-th row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data(PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
@@ -382,6 +439,13 @@ auto DynImageView<modifiability_>::data(PixelIndex y) const noexcept -> PixelTyp
   return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(y));
 }
 
+/** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @param y Row index.
+ * @return Pointer to the one-past-the-last pixel element of the y-th row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data_row_end(PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
@@ -389,6 +453,14 @@ auto DynImageView<modifiability_>::data_row_end(PixelIndex y) const noexcept -> 
   return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width);
 }
 
+/** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Pointer to the x-th pixel element of the y-th row.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data(PixelIndex x, PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
@@ -396,6 +468,14 @@ auto DynImageView<modifiability_>::data(PixelIndex x, PixelIndex y) const noexce
   return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(x, y));
 }
 
+/** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Reference to the pixel element at location `(x, y)`.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType, typename, typename>
 PixelType& DynImageView<modifiability_>::pixel(PixelIndex x, PixelIndex y) noexcept
@@ -403,6 +483,14 @@ PixelType& DynImageView<modifiability_>::pixel(PixelIndex x, PixelIndex y) noexc
   return *data<PixelType>(x, y);
 }
 
+/** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam PixelType The pixel type.
+ * @param x Column index.
+ * @param y Row index.
+ * @return Constant reference to the pixel element at location `(x, y)`.
+ */
 template <ImageModifiability modifiability_>
 template <typename PixelType>
 const PixelType& DynImageView<modifiability_>::pixel(PixelIndex x, PixelIndex y) const noexcept
@@ -410,12 +498,22 @@ const PixelType& DynImageView<modifiability_>::pixel(PixelIndex x, PixelIndex y)
   return *data<PixelType>(x, y);
 }
 
+/** \brief Returns the dynamic image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return Returns the dynamic image view itself; i.e. a reference to `this`.
+ */
 template <ImageModifiability modifiability_>
 DynImageView<modifiability_>& DynImageView<modifiability_>::view() noexcept
 {
   return *this;
 }
 
+/** \brief Returns a constant dynamic image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return A constant image view.
+ */
 template <ImageModifiability modifiability_>
 DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::view() const noexcept
 {
@@ -423,6 +521,11 @@ DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::view() 
   return constant_view();
 }
 
+/** \brief Returns a constant dynamic image view.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @return A constant image view.
+ */
 template <ImageModifiability modifiability_>
 DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::constant_view() const noexcept
 {
@@ -430,6 +533,11 @@ DynImageView<ImageModifiability::Constant> DynImageView<modifiability_>::constan
   return DynImageView<ImageModifiability::Constant>{this->byte_ptr(), this->layout(), this->semantics()};
 }
 
+/** \brief Clears the dynamic image view; i.e. resets the internal state to the dynamic image view state after default
+ * construction.
+ *
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ */
 template <ImageModifiability modifiability_>
 void DynImageView<modifiability_>::clear()
 {
