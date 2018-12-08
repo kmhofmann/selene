@@ -177,8 +177,8 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto x_floor = static_cast<PixelIndex::value_type>(x);
   const auto y_floor = static_cast<PixelIndex::value_type>(y);
 
-  const auto rx = ScalarOutputElement{x - x_floor};
-  const auto ry = ScalarOutputElement{y - y_floor};
+  const auto rx = ScalarOutputElement(x - x_floor);
+  const auto ry = ScalarOutputElement(y - y_floor);
 
 //  const auto dx = (rx == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
 //  const auto dy = (ry == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
@@ -248,8 +248,8 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto x_floor = static_cast<PixelIndex::value_type>(x);
   const auto y_floor = static_cast<PixelIndex::value_type>(y);
 
-  const auto rx = ScalarOutputElement{x - x_floor};
-  const auto ry = ScalarOutputElement{y - y_floor};
+  const auto rx = ScalarOutputElement(x - x_floor);
+  const auto ry = ScalarOutputElement(y - y_floor);
 
 //  const auto dx = (rx == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
 //  const auto dy = (ry == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
@@ -299,8 +299,8 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   const auto x_floor = static_cast<PixelIndex::value_type>(x);
   const auto y_floor = static_cast<PixelIndex::value_type>(y);
 
-  const auto rx = ScalarOutputElement{x - x_floor};
-  const auto ry = ScalarOutputElement{y - y_floor};
+  const auto rx = ScalarOutputElement(x - x_floor);
+  const auto ry = ScalarOutputElement(y - y_floor);
 
 //  const auto dx = (rx == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
 //  const auto dy = (ry == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};

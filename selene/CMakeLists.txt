@@ -23,6 +23,10 @@ target_compile_options(selene_base PRIVATE ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_base PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
+if (SELENE_USE_DEFAULT_SINGLE_PRECISION)
+    target_compile_definitions(selene_base PUBLIC SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
+endif()
+
 target_include_directories(selene_base PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
