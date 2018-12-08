@@ -71,8 +71,9 @@ public:
   PixelTypePtr data_row_end(PixelIndex y) const noexcept;
   PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept;
 
-  auto& operator()(PixelIndex x, PixelIndex y) noexcept;
-  const auto& operator()(PixelIndex x, PixelIndex y) const noexcept;
+  auto operator()(PixelIndex x, PixelIndex y) noexcept
+      -> std::conditional_t<modifiability_ == ImageModifiability::Mutable, PixelType&, const PixelType&>;
+  const PixelType& operator()(PixelIndex x, PixelIndex y) const noexcept;
 
   ImageView<PixelType, modifiability_>& view() noexcept;
   decltype(auto) view() const noexcept;
@@ -414,7 +415,8 @@ auto ImageView<PixelType_, modifiability_>::data(PixelIndex x, PixelIndex y) con
  * @return Reference to the pixel element at location `(x, y)`.
  */
 template <typename PixelType_, ImageModifiability modifiability_>
-auto& ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex y) noexcept
+auto ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex y) noexcept
+    -> std::conditional_t<modifiability_ == ImageModifiability::Mutable, PixelType&, const PixelType&>
 {
   return *this->data(x, y);
 }
@@ -428,7 +430,7 @@ auto& ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex
  * @return Constant reference to the pixel element at location `(x, y)`.
  */
 template <typename PixelType_, ImageModifiability modifiability_>
-const auto& ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex y) const noexcept
+auto ImageView<PixelType_, modifiability_>::operator()(PixelIndex x, PixelIndex y) const noexcept -> const PixelType&
 {
   return *this->data(x, y);
 }
