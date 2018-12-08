@@ -8,6 +8,7 @@
 /// @file
 
 #include <selene/base/Assert.hpp>
+#include <selene/base/Promote.hpp>
 #include <selene/base/Types.hpp>
 
 #include <selene/img/common/PixelFormat.hpp>
@@ -157,6 +158,14 @@ struct IsPixelType<PixelType, std::void_t<typename PixelType::value_type,
 
 template <typename PixelType>
 inline constexpr bool is_pixel_type_v = IsPixelType<PixelType>::value;
+
+// -----
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+struct promote<Pixel<T, nr_channels_, pixel_format_>>
+{
+  using type = Pixel<promote_t<T>, nr_channels_, pixel_format_>;  ///< The promoted type.
+};
 
 // ----------
 // Implementation:

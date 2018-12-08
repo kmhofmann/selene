@@ -75,6 +75,9 @@ struct ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>
   template <typename ImageType, typename ScalarAccess = default_float_t, typename ScalarOutputElement = default_float_t>
   static auto interpolate(const ImageType& img, ScalarAccess x, ScalarAccess y) noexcept;
 
+  template <typename DerivedSrc, typename ScalarAccess = default_float_t, typename ScalarOutputElement = default_float_t>
+  static auto interpolate(const ImageBase<DerivedSrc>& img, ScalarAccess x, ScalarAccess y) noexcept;
+
   template <typename T,
             std::size_t nr_channels,
             PixelFormat pixel_format,
@@ -171,19 +174,48 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   static_assert(std::is_floating_point<ScalarOutputElement>::value,
                 "Output pixel channel values must be floating point.");
 
-  const auto xf = static_cast<PixelIndex::value_type>(x);
-  const auto yf = static_cast<PixelIndex::value_type>(y);
+  const auto x_floor = static_cast<PixelIndex::value_type>(x);
+  const auto y_floor = static_cast<PixelIndex::value_type>(y);
 
-  const auto dx = ScalarOutputElement{x - xf};
-  const auto dy = ScalarOutputElement{y - yf};
+  const auto rx = ScalarOutputElement{x - x_floor};
+  const auto ry = ScalarOutputElement{y - y_floor};
 
-  const auto& a = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 0});
-  const auto& b = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 0});
-  const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 1});
-  const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 1});
+//  const auto dx = (rx == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
+//  const auto dy = (ry == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
+  constexpr auto dx = PixelIndex::value_type{1};
+  constexpr auto dy = PixelIndex::value_type{1};
 
-  const auto result = a + ((b - a) * dx) + ((c - a) * dy) + ((a - b - c + d) * dx * dy);
+  const auto& a = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor +  0}, PixelIndex{y_floor +  0});
+  const auto& b = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor + dx}, PixelIndex{y_floor +  0});
+  const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor +  0}, PixelIndex{y_floor + dy});
+  const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor + dx}, PixelIndex{y_floor + dy});
+
+  const auto result = a + ((b - a) * rx) + ((c - a) * ry) + ((a - b - c + d) * rx * ry);
   return result;
+}
+
+/** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
+ * `ImageInterpolationMode::Bilinear` and the specified `BorderAccessMode`.
+ *
+ * This is an overload for inputs of type `ImageBase<Derived>`; it will delegate to the respective `ImageView` or
+ * `Image` overload.
+ *
+ * @tparam AccessMode The border access mode (`BorderAccessMode`) to use.
+ * @tparam DerivedSrc The derived image type (CRTP).
+ * @tparam ScalarAccess The floating point type for specifying the location (x, y).
+ * @tparam ScalarOutputElement The floating point type for each pixel element; i.e. the type for each channel element.
+ * @param img The image to access.
+ * @param x The x-coordinate.
+ * @param y The y-coordinate.
+ * @return The pixel value at (x, y), using `ImageInterpolationMode::NearestNeighbor`. Will be of type `PixelType`.
+ */
+template <BorderAccessMode AccessMode>
+template <typename DerivedSrc, typename ScalarAccess, typename ScalarOutputElement>
+inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(const ImageBase<DerivedSrc>& img,
+                                                                                         ScalarAccess x,
+                                                                                         ScalarAccess y) noexcept
+{
+  return ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::interpolate(img.derived(), x, y);
 }
 
 /** \brief Accesses the pixel value of `img` at floating point location (x, y) using the interpolation mode
@@ -213,22 +245,27 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   static_assert(std::is_floating_point<ScalarOutputElement>::value,
                 "Output pixel channel values must be floating point.");
 
-  const auto xf = static_cast<PixelIndex::value_type>(x);
-  const auto yf = static_cast<PixelIndex::value_type>(y);
+  const auto x_floor = static_cast<PixelIndex::value_type>(x);
+  const auto y_floor = static_cast<PixelIndex::value_type>(y);
 
-  const auto dx = ScalarOutputElement{x - xf};
-  const auto dy = ScalarOutputElement{y - yf};
+  const auto rx = ScalarOutputElement{x - x_floor};
+  const auto ry = ScalarOutputElement{y - y_floor};
 
-  const auto& a = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 0});
-  const auto& b = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 0});
-  const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 1});
-  const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 1});
+//  const auto dx = (rx == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
+//  const auto dy = (ry == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
+  constexpr auto dx = PixelIndex::value_type{1};
+  constexpr auto dy = PixelIndex::value_type{1};
+
+  const auto& a = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor +  0}, PixelIndex{y_floor +  0});
+  const auto& b = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor + dx}, PixelIndex{y_floor +  0});
+  const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor +  0}, PixelIndex{y_floor + dy});
+  const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor + dx}, PixelIndex{y_floor + dy});
 
   Pixel<ScalarOutputElement, nr_channels, pixel_format> dst;
   for (std::size_t i = 0; i < nr_channels; ++i)  // nr_channels is known at compile-time
   {
-    dst[i] = ScalarOutputElement(a[i]) + ((b[i] - a[i]) * dx) + ((c[i] - a[i]) * dy)
-             + ((a[i] - b[i] - c[i] + d[i]) * dx * dy);
+    dst[i] = ScalarOutputElement(a[i]) + ((b[i] - a[i]) * rx) + ((c[i] - a[i]) * ry)
+             + ((a[i] - b[i] - c[i] + d[i]) * rx * ry);
   }
   return dst;
 }
@@ -246,7 +283,7 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
  * @param img The image to access.
  * @param x The x-coordinate.
  * @param y The y-coordinate.
- * @return The pixel value at (x, y), using `ImageInterpolationMode::NearestNeighbor`. Will be of type
+ * @return The pixel value at (x, y), using `ImageInterpolationMode::Bilinear`. Will be of type
  * `Pixel<ScalarOutputElement, nr_channels>`.
  */
 template <BorderAccessMode AccessMode>
@@ -259,22 +296,27 @@ inline auto ImageInterpolator<ImageInterpolationMode::Bilinear, AccessMode>::int
   static_assert(std::is_floating_point<ScalarOutputElement>::value,
                 "Output pixel channel values must be floating point.");
 
-  const auto xf = static_cast<PixelIndex::value_type>(x);
-  const auto yf = static_cast<PixelIndex::value_type>(y);
+  const auto x_floor = static_cast<PixelIndex::value_type>(x);
+  const auto y_floor = static_cast<PixelIndex::value_type>(y);
 
-  const auto dx = ScalarOutputElement{x - xf};
-  const auto dy = ScalarOutputElement{y - yf};
+  const auto rx = ScalarOutputElement{x - x_floor};
+  const auto ry = ScalarOutputElement{y - y_floor};
 
-  const auto& a = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 0});
-  const auto& b = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 0});
-  const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 0}, PixelIndex{yf + 1});
-  const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{xf + 1}, PixelIndex{yf + 1});
+//  const auto dx = (rx == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
+//  const auto dy = (ry == 0) ? PixelIndex::value_type{0} : PixelIndex::value_type{1};
+  constexpr auto dx = PixelIndex::value_type{1};
+  constexpr auto dy = PixelIndex::value_type{1};
+
+  const auto& a = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor +  0}, PixelIndex{y_floor +  0});
+  const auto& b = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor + dx}, PixelIndex{y_floor +  0});
+  const auto& c = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor +  0}, PixelIndex{y_floor + dy});
+  const auto& d = ImageBorderAccessor<AccessMode>::access(img, PixelIndex{x_floor + dx}, PixelIndex{y_floor + dy});
 
   Pixel<ScalarOutputElement, nr_channels, pixel_format> dst;
   for (std::size_t i = 0; i < nr_channels; ++i)  // nr_channels is known at compile-time
   {
-    dst[i] = ScalarOutputElement(a[i]) + ((b[i] - a[i]) * dx) + ((c[i] - a[i]) * dy)
-             + ((a[i] - b[i] - c[i] + d[i]) * dx * dy);
+    dst[i] = ScalarOutputElement(a[i]) + ((b[i] - a[i]) * rx) + ((c[i] - a[i]) * ry)
+             + ((a[i] - b[i] - c[i] + d[i]) * rx * ry);
   }
   return dst;
 }

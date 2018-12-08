@@ -10,6 +10,8 @@
 
 #include <test/selene/img/typed/_Utils.hpp>
 
+#include <random>
+
 using namespace sln::literals;
 
 TEST_CASE("Image resampling", "[img]")
@@ -54,6 +56,18 @@ TEST_CASE("Image resampling", "[img]")
         const auto i = y * img_r.width() + x;
         REQUIRE(img_r(x, y) == values[i]);
       }
+    }
+  }
+
+  SECTION("Bilinear, random")
+  {
+    std::mt19937 rng{42};
+    for (int i = 0; i < 100; ++i)
+    {
+      const auto rand_img = sln_test::construct_random_image<sln::Pixel<std::uint8_t, 3>>(10_px, 10_px, rng);
+      const auto img_r = sln::resample<sln::ImageInterpolationMode::Bilinear>(img, 21_px, 33_px);
+      REQUIRE(img_r.width() == 21_px);
+      REQUIRE(img_r.height() == 33_px);
     }
   }
 }
