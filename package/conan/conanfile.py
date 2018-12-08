@@ -4,10 +4,10 @@ from conans import ConanFile, CMake
 
 class SeleneConan(ConanFile):
     name = "selene"
-    version = "0.1.1"
+    version = "0.2"
     license = "MIT"
     url = "https://github.com/kmhofmann/selene"
-    description = "A C++14 image representation, processing and I/O library."
+    description = "A C++17 image representation, processing and I/O library."
 
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}

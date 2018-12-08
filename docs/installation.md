@@ -19,11 +19,11 @@ used to host the **Selene** package:
 
 This has to be done once per Conan installation.
 
-Then install the actual package; the current library version provided is `0.1.1`.
+Then install the actual package; the current library version provided is `0.2`.
 
-    conan install selene/0.1.1@selene/testing -r kmhofmann
+    conan install selene/0.2@selene/testing -r kmhofmann
 
-Alternatively, just specify `selene/0.1.1@selene/testing` in a project's `conanfile.txt`.
+Alternatively, just specify `selene/0.2@selene/testing` in a project's `conanfile.txt`.
 
 Please refer to the [Conan documentation](http://docs.conan.io/) on how to make use of the installed package. 
 
@@ -31,7 +31,7 @@ Please refer to the [Conan documentation](http://docs.conan.io/) on how to make 
 
 Please ensure that your installed version of [vcpkg](https://github.com/Microsoft/vcpkg) is up to date.
 
-Then, the most recent release of **Selene** can be installed with:
+Then, the most recent release of **Selene** (that is represented in the *vcpkg* repository) can be installed with:
 
     vcpkg install selene
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(selene VERSION 0.1.1 LANGUAGES CXX)
+project(selene VERSION 0.2 LANGUAGES CXX)
 
 option(SELENE_BUILD_TESTS "Build Selene tests" OFF)
 option(SELENE_BUILD_EXAMPLES "Build Selene examples" OFF)
