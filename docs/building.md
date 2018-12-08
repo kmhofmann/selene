@@ -4,7 +4,7 @@
 
 ### General
 
-**Selene** uses [CMake](https://cmake.org/) for building.
+**Selene** requires a compiler supporting C++17 and uses [CMake](https://cmake.org/) for building.
 
 Follow the usual instructions for CMake projects on UNIX-like systems.
 First, clone the project and create a `build` directory (or use another name).
@@ -66,48 +66,16 @@ The CMake invocation also adds a reference to the build tree location to the use
 This means that the `find_package()` call can also work without installation, and will find then find the build tree
 itself. 
 
-### Dependencies
+### CMake options
 
-**Selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
-
-  - [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) or [libjpeg](http://www.ijg.org/):
-    - Optional, but recommended.
-    - Required for the JPEG reading and writing API.
-    - `libjpeg-turbo` is the preferred version of the library.
-  - [libpng](http://www.libpng.org/pub/png/libpng.html):
-    - Optional, but recommended.
-    - Required for the PNG reading and writing API.
-  - [OpenCV](https://opencv.org/):
-    - Optional, if needed.
-    - For OpenCV interoperability (e.g. copying or wrapping image data).
-    - **Not required** for building the library, since OpenCV interoperability is implemented in a header file only.
-
-The presence (or lack of) these dependencies should be detected automatically by CMake.
-
-If [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) is present on the system (as opposed to IJG *libjpeg*),
-some of its additional capabilities (such as partial JPEG image decoding and extended color spaces) will be taken into
-account and are enabled by the API.
-
-[OpenCV](https://opencv.org/) is only needed for converting between `sln::Image<T>` and OpenCV's `cv::Mat` structure, if
-so desired.
-It is by no means a requirement for using **Selene**.
-
-To point CMake to custom library installation locations, set the `CMAKE_PREFIX_PATH` environment variable accordingly.
-For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/libpng`. 
-
-The use of [Conan](https://conan.io/) or [vcpkg](https://github.com/Microsoft/vcpkg) as dependency package managers is
-also supported; see below.
-
-### Building and running tests, examples, and benchmarks
-
-#### Everything
+#### Building everything
 
     -DSELENE_BUILD_ALL=ON
     
 This is a convenience option to enable building tests, examples, and benchmarks.
 More fine-grained control can be achieved by the options right below.
 
-#### Tests
+#### Building tests
 
     -DSELENE_BUILD_TESTS=ON
 
@@ -122,7 +90,7 @@ The test suite can be run by executing `./test/selene_tests` from the `build` di
 available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
 for more information.
 
-#### Examples
+#### Building examples
 
     -DSELENE_BUILD_EXAMPLES=ON
 
@@ -130,7 +98,7 @@ The repository also contains commented examples which can be optionally compiled
 This can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake` command.
 The examples can then be found in the `./examples/` folder in the build directory.
 
-#### Benchmarks
+#### Building benchmarks
 
     -DSELENE_BUILD_BENCHMARKS=ON
 
@@ -143,82 +111,3 @@ The code for these can be found in the `./benchmark/` folder, and depends on Goo
 In case some tests or examples are failing because auxiliary data files can not be found automatically, specify the path
 to the `data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or
 similar).
-
-### Installing dependencies
-
-The following are recommendations for installation of dependencies on various platforms.
-Of course any dependency can alternatively also be built and installed from source, as long as it can be found by the
-CMake `find_package` command.
-
-#### Linux
-
-On Debian-like systems (e.g. Ubuntu), you should be able to use `apt-get` as follows:
-
-    # Dependencies for building the library
-    apt-get install libjpeg-turbo8-dev libpng-dev
-    
-    # Dependencies for building tests & examples
-    apt-get install libopencv-dev libboost-filesystem-dev
-    
-    # Note: There is no pre-built google-benchmark package in e.g. Ubuntu.
-    #       Install from source instead, or use vcpkg.
-
-#### MacOS
-
-Install [Homebrew](https://brew.sh/) to build and install the dependencies as follows:
-
-    # Dependencies for building the library
-    brew install libjpeg-turbo libpng
-    
-    # Dependencies for building tests, examples, benchmarks
-    brew install opencv3 boost google-benchmark
-
-#### Windows
-
-By far the easiest way is to install and then use the [vcpkg](https://github.com/Microsoft/vcpkg) package manager:
-
-    .\vcpkg.exe install libjpeg-turbo
-    .\vcpkg.exe install libpng
-    
-    .\vcpkg.exe install opencv            # only for tests
-    .\vcpkg.exe install boost-filesystem  # only for tests
-    .\vcpkg.exe install benchmark         # only for benchmarks
-
-Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
-the 64-bit compiled versions instead of the 32-bit ones.
-
-#### Using Conan
-
-**Selene** supports optional use of [Conan](https://conan.io/) (version >= 1.4.1) as a dependency manager on all
-supported platforms.
-(It is also possible to install [a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene)
-using Conan).
-See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
-
-Currently, `libjpeg-turbo`, `libpng` and `boost` (for the tests) can be built using Conan.
-There are no stable, cross-platform Conan recipes available yet for `OpenCV` or Google's `benchmark` library.
-
-To use Conan, first install it, e.g. with `pip`:
-
-    pip install --user --upgrade conan
-
-(On MacOS, you might prefer an installation with `brew` instead.)
-
-The `conan-center` remote should be present with a default installation.
-This can be checked by the `conan remote list` command.
-If so, no further action is necessary; if not, add it with:
-
-    conan remote add conan-center https://conan.bintray.com
-
-From your (clean) build directory, call Conan before the CMake invocation (as follows, or similar):
-
-    conan install .. --build missing
-    
-This will build the supported dependencies.
-This step can take a while during its first call, but for future builds, all outputs should be cached.
-
-By default, Conan builds static libraries.
-If you want Conan to build shared libraries instead, add `-o *:shared=True` to the above Conan call.
-
-Now you can invoke CMake as usual (see above), and it should find the respective Conan builds of the supported
-dependencies.

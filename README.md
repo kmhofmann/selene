@@ -6,13 +6,18 @@
 **Selene** is a C++17 image representation, processing, and I/O library, focusing on ease of use and a clean, modern,
 type-safe API.
 
-  * [Overview](docs/overview.md): Brief summary of the current feature set
+  * [Overview](docs/overview.md): Brief summary of the current feature set.
   * [Rationale](docs/rationale.md): Why implement a new library for image representation, processing, and I/O?
-  * [Installation](docs/installation.md): Installation using package managers
-  * [Building the library](docs/building.md): How to build from source, and description of dependencies
-  * [API documentation and status](docs/documentation.md): API documentation, examples, supported compilers
-  * [Known issues](docs/known_issues.md): Known issues and possible workarounds
-  * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library
+
+
+  * [Building the library](docs/building.md): How to build from source.
+  * [Dependencies](docs/dependencies.md): Description of optional dependencies.
+  * [Installation](docs/installation.md): Installation using package managers.
+
+
+  * [API documentation and status](docs/documentation.md): API documentation, examples, supported compilers.
+  * [Known issues](docs/known_issues.md): Known issues and possible workarounds.
+  * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library.
 
 ### Summary
 
@@ -76,7 +81,7 @@ But the library is also available as a
 
 **Selene**'s own dependencies can be installed using
 
-  * [Conan](https://conan.io/) (some)
-  * [vcpkg](https://github.com/Microsoft/vcpkg) (all)
+  * [Conan](https://conan.io/)
+  * [vcpkg](https://github.com/Microsoft/vcpkg)
 
 besides OS level package managers or from source.

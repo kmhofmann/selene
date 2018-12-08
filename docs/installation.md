@@ -12,13 +12,18 @@ See [here](building.md) for detailed instructions.
 
 ### Using Conan
 
+To use Conan, first install it, e.g. with `pip`:
+
+    pip install --user --upgrade conan
+
+(On MacOS, you might prefer an installation with `brew` instead.)
+
 Assuming that [Conan](https://conan.io/) is set up on the target machine, the first step is to set up the remote
 used to host the **Selene** package:
 
     conan remote add kmhofmann https://api.bintray.com/conan/kmhofmann/conan-repo
 
 This has to be done once per Conan installation.
-
 Then install the actual package; the current library version provided is `0.2`.
 
     conan install selene/0.2@selene/testing -r kmhofmann
@@ -26,11 +31,16 @@ Then install the actual package; the current library version provided is `0.2`.
 Alternatively, just specify `selene/0.2@selene/testing` in a project's `conanfile.txt`.
 
 Please refer to the [Conan documentation](http://docs.conan.io/) on how to make use of the installed package. 
+See also the Bintray website for Selene: https://bintray.com/kmhofmann/conan-repo/selene%3Aselene.
 
 ### Using vcpkg
 
-Please ensure that your installed version of [vcpkg](https://github.com/Microsoft/vcpkg) is up to date.
+Install [vcpkg](https://github.com/Microsoft/vcpkg) by cloning (or updating) the repository, and running the
+bootstrapping script from the *vcpkg* directory:
 
+    ./bootstrap-vcpkg.sh
+
+Please ensure that your installed version of *vcpkg* is up to date.
 Then, the most recent release of **Selene** (that is represented in the *vcpkg* repository) can be installed with:
 
     vcpkg install selene

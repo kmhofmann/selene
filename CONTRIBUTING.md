@@ -50,6 +50,6 @@ A respective `.clang-format` file is [provided](.clang-format) in the repository
 guidelines) serves as implicit documentation for the formatting conventions.
 * General coding guidelines and conventions that this project follows are given
 [here](https://github.com/kmhofmann/cpp_coding_guidelines).
-* All code should be written in conforming, platform-independent C++14.
-* The project should always compile using GCC (version 5+), Clang (version 4+), and the Visual C++ compiler
-(Visual Studio 2017+).
+* All code should be written in conforming, platform-independent C++17.
+* The project should always compile using GCC (version 8+), Clang (version 7+), and the Visual C++ compiler
+(recent version of Visual Studio 2017+).
