@@ -2,12 +2,12 @@
 
 ## Rationale
 
-#### Why a new library?
+### Why a new library?
 
 Why implement a library for image representation, I/O and basic processing?
 It seems that popular existing solutions are somewhat lacking.
 
-##### OpenCV's shortcomings
+#### OpenCV's shortcomings
 
 Many C++ developers who quickly want to read or write image data for processing purposes, in particular in research,
 fall back to using [OpenCV](https://opencv.org/).
@@ -26,7 +26,7 @@ each point of access and is not trivial to determine from a read image. Making a
 These are actually the same type, masking an abstraction with a `void*` somewhere at the end of it.
 Good-bye type safety!
 
-##### libjpeg's/libpng's non-typesafe interfaces
+#### libjpeg's/libpng's non-typesafe interfaces
 
 Another option for C++ developers to read or write image data is to use the reference implementations for common formats
 directly; e.g. [libjpeg](http://www.ijg.org/) or [libpng](http://www.libpng.org/pub/png/libpng.html).
@@ -38,7 +38,7 @@ Error handling even needs to be implemented using `setjmp` and `longjmp`!
 And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
 image representation class.
 
-##### GIL - unmaintained (until recently)
+#### GIL - unmaintained (until recently)
 
 Other C++ image representation libraries include GIL, available either
 [from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
@@ -59,7 +59,7 @@ See the [repository on GitHub](https://github.com/boostorg/gil).
 Boost.GIL is written in C++11, as opposed to a more modern standard version, and depends on many other Boost libraries.
 Depending on the Boost usage policy, this may be quite undesirable.
 
-#### What does Selene aim to provide?
+### What does Selene aim to provide?
 
 **Selene** aims to fill this gap by providing **lightweight components** with an **easy to use API** for the most common image I/O and processing needs.
 See also the [feature set](overview.md).
