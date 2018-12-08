@@ -19,6 +19,24 @@
 
 namespace sln {
 
+/** \brief Statically typed image view class, i.e. non-owning.
+ *
+ * An instance of `ImageView<PixelType, modifiability>` represents a statically typed image view with pixel elements of
+ * type `PixelType`.
+ * Since the number of channels is determined by the pixel type (e.g. `Pixel<U, N>`), the storage of multiple
+ * channels/samples is always interleaved, as opposed to planar.
+ * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
+ *
+ * The memory of an `ImageView<PixelType>` instance is never owned by the instance.
+ * To express an owning relation to the underlying data, use an `Image<PixelType>`.
+ *
+ * A view can either be created to point to constant data (`ImageModifiability::Constant`), or to modifiable (mutable)
+ * data (`ImageModifiability::Mutable`); this is determined by the respective non-type template parameter.
+ *
+ * @tparam PixelType_ The pixel type. Usually of type `Pixel<>`.
+ * @tparam modifiability_ Expresses whether the view contents can be modified (`ImageModifiability::Mutable`) or not
+ *                        (`ImageModifiability::Constant`).
+ */
 template <typename PixelType_, ImageModifiability modifiability_>
 class ImageView
     : public ImageBase<ImageView<PixelType_, modifiability_>>
@@ -92,8 +110,8 @@ private:
   sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 };
 
-template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;
-template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;
+template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;  ///< An image view pointing to mutable data.
+template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;  ///< An image view pointing to constant data.
 
 template <typename PixelType0, ImageModifiability modifiability_0,
     typename PixelType1, ImageModifiability modifiability_1>

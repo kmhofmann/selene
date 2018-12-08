@@ -15,6 +15,18 @@
 
 namespace sln {
 
+/** \brief Statically typed image class.
+ *
+ * An instance of `Image<PixelType>` represents a statically typed image with pixel elements of type `PixelType`.
+ * Since the number of channels is determined by the pixel type (e.g. `Pixel<U, N>`), the storage of multiple
+ * channels/samples is always interleaved, as opposed to planar.
+ * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
+ *
+ * The memory of an `Image<PixelType>` instance is always owned by the instance.
+ * To express a non-owning relation to the underlying data, use an `ImageView<PixelType, modifiability>`.
+ *
+ * @tparam PixelType_ The pixel type. Usually of type `Pixel<>`.
+ */
 template <typename PixelType_>
 class Image
     : public ImageBase<Image<PixelType_>>

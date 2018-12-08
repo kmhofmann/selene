@@ -17,6 +17,20 @@
 
 namespace sln {
 
+/** \brief Dynamically typed image class.
+ *
+ * An instance of `DynImage` represents a dynamically typed image with pixel elements in interleaved storage.
+ * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
+ *
+ * Each image pixel can have an arbitrary number of channels, and each channel/sample in a pixel can have an arbitrary
+ * number of bytes.
+ *
+ * Optionally, an image can have be tagged with a particular `PixelFormat` or a particular `SampleType`.
+ * This is mostly a semantic tag and has little influence on the data content.
+ *
+ * The memory of a `DynImage` instance is always owned by the instance.
+ * To express a non-owning relation to the underlying data, use a `DynImageView<modifiability>`.
+ */
 class DynImage
 {
 public:

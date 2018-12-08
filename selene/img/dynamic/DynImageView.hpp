@@ -15,6 +15,27 @@
 
 namespace sln {
 
+/** \brief Dynamically typed image view class, i.e. non-owning.
+ *
+ * An instance of `DynImageView<modifiability>` represents a dynamically typed image view with pixel elements in
+ * interleaved storage.
+ * Images are stored row-wise contiguous, with additional space after each row due to a custom stride in bytes.
+ *
+ * Each image pixel can have an arbitrary number of channels, and each channel/sample in a pixel can have an arbitrary
+ * number of bytes.
+ *
+ * Optionally, an image can have be tagged with a particular `PixelFormat` or a particular `SampleType`.
+ * This is mostly a semantic tag and has little influence on the data content.
+ *
+ * The memory of a `DynImage` instance is never owned by the instance.
+ * To express an owning relation to the underlying data, use a `DynImage`.
+ *
+ * A view can either be created to point to constant data (`ImageModifiability::Constant`), or to modifiable (mutable)
+ * data (`ImageModifiability::Mutable`); this is determined by the respective non-type template parameter.
+ *
+ * @tparam modifiability_ Expresses whether the view contents can be modified (`ImageModifiability::Mutable`) or not
+ *                        (ImageModifiability::Constant`).
+ */
 template <ImageModifiability modifiability_ = ImageModifiability::Constant>
 class DynImageView
 {
@@ -95,8 +116,8 @@ private:
   sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 };
 
-using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;
-using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;
+using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;  ///< A dynamic image view pointing to mutable data.
+using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;  ///< A dynamic image view pointing to constant data.
 
 template <ImageModifiability modifiability_0, ImageModifiability modifiability_1>
 bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<modifiability_1>& dyn_img_1);
