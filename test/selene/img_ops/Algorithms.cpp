@@ -2,20 +2,23 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
-#include <selene/img/Image.hpp>
-#include <selene/img/ImageTypeAliases.hpp>
 #include <selene/img_ops/Algorithms.hpp>
 
-#include <random>
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/Image.hpp>
+#include <selene/img/typed/ImageTypeAliases.hpp>
+
+#include <selene/img_ops/Fill.hpp>
 
 using namespace sln::literals;
 
 TEST_CASE("Image algorithms", "[img]")
 {
-  sln::Image_8u1 img(64_px, 64_px);
-  img.fill(42);
+  sln::Image_8u1 img({64_px, 64_px});
+  sln::fill(img, 42);
 
   SECTION("Test for_each_pixel()")
   {

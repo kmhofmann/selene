@@ -38,24 +38,26 @@ Error handling even needs to be implemented using `setjmp` and `longjmp`!
 And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
 image representation class.
 
-##### GIL - unmaintained
+##### GIL - unmaintained (until recently)
 
 Other C++ image representation libraries include GIL, available either
 [from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
 
 GIL is quite well designed and shares many of its design goals with **Selene**.
-It distinguishes between images and views as separate types.
-This requires a lot of templated code, if a function should be agnostic to whether an image representation is a
-view or owns its data. **Selene**, on the other hand, has one (statically typed) image type that can be either (at the
-expense of one byte per instantiation).
+However, the maintenance situation around GIL is confusing.
 
-GIL offers image I/O routines only as an extension; overall, the reading and writing routines are quite rudimentary
-and do not allow for any finer control of parameters.
+(Adobe) GIL offers image I/O routines as an extension.
+Overall, the reading and writing routines are quite rudimentary and do not allow for any finer control of parameters.
 Reading and writing from/to memory also does not seem to be supported.
 
-Most problematically, the last update to GIL was [made in 2007](https://stlab.adobe.com/gil/). It is quite fair to
-assume that the code base is not maintained anymore. This means that no new features or bug fixes are likely to be
-developed.
+More problematically, the last update to GIL by the original implementer Adobe was
+[made in 2007](https://stlab.adobe.com/gil/).
+
+Maintenance of the code base as part of Boost, i.e. "Boost.GIL" has only been recently picked up by a single maintainer.
+See the [repository on GitHub](https://github.com/boostorg/gil).
+
+Boost.GIL is written in C++11, as opposed to a more modern standard version, and depends on many other Boost libraries.
+Depending on the Boost usage policy, this may be quite undesirable.
 
 #### What does Selene aim to provide?
 

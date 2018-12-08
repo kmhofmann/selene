@@ -5,7 +5,7 @@
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img_io/JPEGRead.hpp>
-#include <selene/img_io/impl/JPEGDetail.hpp>
+#include <selene/img_io/_impl/JPEGDetail.hpp>
 
 #include <jpeglib.h>
 
@@ -21,7 +21,10 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
-JPEGImageInfo::JPEGImageInfo(PixelLength width_, PixelLength height_, std::uint16_t nr_channels_, JPEGColorSpace color_space_)
+JPEGImageInfo::JPEGImageInfo(PixelLength width_,
+                             PixelLength height_,
+                             std::int16_t nr_channels_,
+                             JPEGColorSpace color_space_)
     : width(width_), height(height_), nr_channels(nr_channels_), color_space(color_space_)
 {
 }
@@ -151,7 +154,7 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
   const auto width = PixelLength(cinfo.output_width);
   const auto height = region_.empty() ? PixelLength(cinfo.output_height) : PixelLength(region_.height());
   const auto out_color_space = impl::color_space_lib_to_pub(cinfo.out_color_space);
-  return JPEGImageInfo{width, height, static_cast<std::uint16_t>(cinfo.out_color_components), out_color_space};
+  return JPEGImageInfo{width, height, static_cast<std::int16_t>(cinfo.out_color_components), out_color_space};
 }
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
@@ -160,7 +163,7 @@ bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
 
   const auto region_valid = !region_.empty();
   const auto skip_lines_top = region_valid ? region_.y0() : 0;
-  const auto skip_lines_bottom = region_valid ? cinfo.output_height - region_.y_end() : 0;
+  const auto skip_lines_bottom = region_valid ? cinfo.output_height - region_.y1() : 0;
 
   if (setjmp(obj_.impl_->error_manager.setjmp_buffer))
   {

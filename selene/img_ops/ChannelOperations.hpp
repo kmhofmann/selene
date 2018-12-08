@@ -2,16 +2,19 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_CHANNELOPERATIONS_HPP
-#define SELENE_IMG_CHANNELOPERATIONS_HPP
+#ifndef SELENE_IMG_OPS_CHANNEL_OPERATIONS_HPP
+#define SELENE_IMG_OPS_CHANNEL_OPERATIONS_HPP
 
 /// @file
 
 #include <selene/base/Assert.hpp>
 
-#include <selene/img/Image.hpp>
-#include <selene/img/PixelTraits.hpp>
-#include <selene/img/Utilities.hpp>
+#include <selene/img/pixel/PixelTraits.hpp>
+
+#include <selene/img/typed/Image.hpp>
+#include <selene/img/typed/Utilities.hpp>
+
+#include <selene/img_ops/Clone.hpp>
 
 namespace sln {
 
@@ -35,11 +38,14 @@ auto stack_images(Imgs... imgs);
  * @tparam ImgDst The image type of the target image.
  * @param src The source image.
  * @param dst The target image.
- * @param dst_start_channel The channel where to start inserting the source channels. 
+ * @param dst_start_channel The channel where to start inserting the source channels.
  */
 template <typename ImgSrc, typename ImgDst>
 void inject_channels(const ImgSrc& src, ImgDst& dst, std::size_t dst_start_channel)
 {
+  static_assert(is_image_type_v<ImgSrc> && is_image_type_v<ImgDst>,
+                "Need to supply a typed image (owning or view) as input/output argument to inject_channels");
+
   constexpr auto nr_channels_src = sln::PixelTraits<typename ImgSrc::PixelType>::nr_channels;
   constexpr auto nr_channels_dst = sln::PixelTraits<typename ImgDst::PixelType>::nr_channels;
 
@@ -116,7 +122,6 @@ namespace impl
   void inject_channels_rec(ImgDst& img_dst, std::size_t dst_start_channel, const ImgSrc& img_src)
   {
     inject_channels(img_src, img_dst, dst_start_channel);
-
   }
 
   template <typename ImgSrc, typename... ImgsSrc, typename ImgDst>
@@ -166,7 +171,8 @@ auto stack_images(Imgs... imgs)
   const auto width = impl::apply_max([](const auto& img){ return img.width(); }, imgs...);
   const auto height = impl::apply_max([](const auto& img){ return img.height(); }, imgs...);
   using PixelType = sln::Pixel<T, nr_channels, pixel_format>;
-  sln::Image<PixelType> img_dst(width, height);
+
+  sln::Image<PixelType> img_dst({width, height});
 
   if (width > min_width || height > min_height)
   {
@@ -179,5 +185,5 @@ auto stack_images(Imgs... imgs)
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_CHANNELOPERATIONS_HPP
+#endif  // SELENE_IMG_OPS_CHANNEL_OPERATIONS_HPP
 

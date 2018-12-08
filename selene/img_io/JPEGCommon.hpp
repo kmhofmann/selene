@@ -13,7 +13,7 @@
 
 namespace sln {
 
-/** \brief The color space used JPEG image data.
+/** \brief The color space used by JPEG image data.
  */
 enum class JPEGColorSpace : std::uint8_t
 {

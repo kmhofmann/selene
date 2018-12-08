@@ -1,8 +1,10 @@
 *.swp
 .idea/
 .vscode/
+.vs/
 _build*/
 build*/
 cmake-build-*/
 compile_commands.json
 doc_gen/
+CMakeSettings.json

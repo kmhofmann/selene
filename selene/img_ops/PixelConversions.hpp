@@ -2,16 +2,17 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_PIXEL_CONVERSIONS_HPP
-#define SELENE_IMG_PIXEL_CONVERSIONS_HPP
+#ifndef SELENE_IMG_OPS_PIXEL_CONVERSIONS_HPP
+#define SELENE_IMG_OPS_PIXEL_CONVERSIONS_HPP
 
 /// @file
 
 #include <selene/base/Utils.hpp>
 
-#include <selene/img/Pixel.hpp>
-#include <selene/img/PixelFormat.hpp>
-#include <selene/img/PixelTraits.hpp>
+#include <selene/img/common/PixelFormat.hpp>
+
+#include <selene/img/pixel/Pixel.hpp>
+#include <selene/img/pixel/PixelTraits.hpp>
 
 #include <array>
 #include <limits>
@@ -967,4 +968,4 @@ constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_PIXEL_CONVERSIONS_HPP
+#endif  // SELENE_IMG_OPS_PIXEL_CONVERSIONS_HPP

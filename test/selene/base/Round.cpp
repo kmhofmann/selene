@@ -2,7 +2,7 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <selene/base/Round.hpp>
 
@@ -110,7 +110,7 @@ void run_tests()
   REQUIRE(sln::round_half_down<IT>(T(2)) == 2);
 }
 
-}  // namespace _
+}  // namespace
 
 TEST_CASE("Rounding", "[base]")
 {

@@ -55,7 +55,7 @@ endif()
 
 # Boost
 
-if (SELENE_BUILD_TESTS OR SELENE_BUILD_EXAMPLES OR SELENE_BUILD_BENCHMARKS)
+if (SELENE_BUILD_TESTS OR SELENE_BUILD_EXAMPLES)
     find_package(Boost REQUIRED filesystem system)
 endif()
 

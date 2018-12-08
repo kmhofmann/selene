@@ -8,14 +8,14 @@
 /// @file
 
 #include <selene/base/Assert.hpp>
-#include <selene/base/ExplicitType.hpp>
+#include <selene/base/_impl/ExplicitType.hpp>
 
 namespace sln {
 
 using float32_t = float;  ///< 32-bit floating point type.
 using float64_t = double;  ///< 64-bit floating point type.
 
-// TODO: Expose way to set this via CMake
+// This can be set via a CMake option inside the library.
 #if defined(SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
 using default_float_t = float32_t;  ///< Default floating point type: single precision.
 #else
@@ -31,7 +31,7 @@ class BytesTag;
 
 }  // namespace impl
 
-using Bytes = ExplicitType<std::size_t, impl::BytesTag>;  ///< Type representing a number of bytes.
+using Bytes = sln::impl::ExplicitType<std::ptrdiff_t, sln::impl::BytesTag>;  ///< Type representing a number of bytes.
 
 inline namespace literals {
 
@@ -40,9 +40,8 @@ inline namespace literals {
  * @param nr_bytes Number of bytes.
  * @return A `Bytes` instance.
  */
-constexpr inline Bytes operator"" _b(unsigned long long nr_bytes)
+constexpr inline Bytes operator"" _b(unsigned long long nr_bytes) noexcept
 {
-  //  SELENE_ASSERT(nr_bytes <= std::numeric_limits<Bytes::value_type>::max());
   return Bytes(static_cast<Bytes::value_type>(nr_bytes));
 }
 

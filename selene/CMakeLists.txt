@@ -11,11 +11,11 @@ add_library(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/ExplicitType.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Promote.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Round.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/ExplicitType.hpp
         )
 add_library(selene::selene_base ALIAS selene_base)
 
@@ -23,35 +23,76 @@ target_compile_options(selene_base PRIVATE ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_base PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
+if (SELENE_USE_DEFAULT_SINGLE_PRECISION)
+    target_compile_definitions(selene_base PUBLIC SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
+endif()
+
 target_include_directories(selene_base PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<INSTALL_INTERFACE:include>)
 
 #------------------------------------------------------------------------------
 
+add_library(selene_base_io
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/WriterMode.hpp
+        )
+add_library(selene::selene_base_io ALIAS selene_base_io)
+
+target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILER_OPTIONS})
+
+target_compile_definitions(selene_base_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+
+target_include_directories(selene_base_io PUBLIC
+        $<BUILD_INTERFACE:${SELENE_DIR}>
+        $<INSTALL_INTERFACE:include>)
+
+target_link_libraries(selene_base_io PUBLIC selene_base)
+
+#------------------------------------------------------------------------------
+
 add_library(selene_img
-        ${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/BoundingBox.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Image.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageAccess.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageData.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataBase.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataStorage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageIterators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageTypeAliases.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PixelFormat.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PixelTraits.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/PixelTypeAliases.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/RelativeAccessor.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/RowPointers.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Types.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/DataPtr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/Types.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/Pixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/PixelTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/PixelTypeAliases.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/StaticChecks.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageBase.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageIterators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageViewTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageBaseTraits.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/BorderAccessors.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/GetPixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/Interpolators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/RelativeAccessor.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/DynImageToImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/ImageToDynImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.hpp
         )
 add_library(selene::selene_img ALIAS selene_img)
 
@@ -84,12 +125,12 @@ add_library(selene_img_io
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/impl/Util.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
         )
 add_library(selene::selene_img_io ALIAS selene_img_io)
 
@@ -120,18 +161,23 @@ if (PNG_FOUND)
     target_link_libraries(selene_img_io PUBLIC PNG::PNG)
 endif()
 
-target_link_libraries(selene_img_io PUBLIC selene_img)
+target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
 
 #------------------------------------------------------------------------------
 
 add_library(selene_img_ops
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
         )
 add_library(selene::selene_img_ops ALIAS selene_img_ops)
 
@@ -147,29 +193,6 @@ target_link_libraries(selene_img_ops PUBLIC selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_io
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileUtils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileUtils.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/FileWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/MemoryReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/MemoryWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/VectorReader.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/VectorWriter.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/WriterMode.hpp
-        )
-add_library(selene::selene_io ALIAS selene_io)
-
-target_compile_options(selene_io PRIVATE ${SELENE_COMPILER_OPTIONS})
-
-target_compile_definitions(selene_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_io PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
-
-#------------------------------------------------------------------------------
-
 add_library(selene INTERFACE)
 add_library(selene::selene ALIAS selene)
 
@@ -179,10 +202,10 @@ target_include_directories(selene INTERFACE
 
 target_link_libraries(selene INTERFACE
         selene_base
+        selene_base_io
         selene_img
         selene_img_io
-        selene_img_ops
-        selene_io)
+        selene_img_ops)
 
 #------------------------------------------------------------------------------
 
@@ -206,7 +229,7 @@ configure_package_config_file(
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install library files
-install(TARGETS selene_base selene_img selene_img_io selene_img_ops selene_io selene
+install(TARGETS selene_base selene_base_io selene_img selene_img_io selene_img_ops selene
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -2,43 +2,33 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <selene/img_ops/Transformations.hpp>
 
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img_ops/Clone.hpp>
+
 #include <random>
 
-#include <test/selene/img/_TestImages.hpp>
+#include <test/selene/img/typed/_Utils.hpp>
 
 using namespace sln::literals;
 
 TEST_CASE("Image transformations", "[img]")
 {
   std::mt19937 rng(100);
-  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_size(0, 64);
+  //  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_size(0, 64);
+  std::uniform_int_distribution<sln::PixelIndex::value_type> dist_size(2, 4);
 
   for (std::size_t count = 0; count < 32; ++count)
   {
     const auto width = sln::PixelLength{dist_size(rng)};
     const auto height = sln::PixelLength{dist_size(rng)};
-    const auto img = sln_test::make_random_image<sln::Pixel_8u3>(width, height, rng);
+    const auto img = sln_test::construct_random_image<sln::Pixel_8u3>(width, height, rng);
     REQUIRE(img.width() == width);
     REQUIRE(img.height() == height);
-
-    // transpose
-
-    const auto img_transp = sln::transpose(img);
-    REQUIRE(sln::transpose(img_transp) == img);
-    REQUIRE(img_transp.width() == img.height());
-    REQUIRE(img_transp.height() == img.width());
-
-    for (auto y = 0_idx; y < img_transp.height(); ++y)
-    {
-      for (auto x = 0_idx; x < img_transp.width(); ++x)
-      {
-        REQUIRE(img_transp(x, y) == img(y, x));
-      }
-    }
 
     // flip horizontal
 
@@ -56,7 +46,7 @@ TEST_CASE("Image transformations", "[img]")
       }
     }
 
-    auto img_flip_h_in_place = clone(img);
+    auto img_flip_h_in_place = sln::clone(img);
     sln::flip_horizontally_in_place(img_flip_h_in_place);
     REQUIRE(img_flip_h_in_place == img_flip_h);
 
@@ -76,7 +66,7 @@ TEST_CASE("Image transformations", "[img]")
       }
     }
 
-    auto img_flip_v_in_place = clone(img);
+    auto img_flip_v_in_place = sln::clone(img);
     sln::flip_vertically_in_place(img_flip_v_in_place);
     REQUIRE(img_flip_v_in_place == img_flip_v);
 
@@ -94,6 +84,21 @@ TEST_CASE("Image transformations", "[img]")
         const auto px = sln::PixelIndex{img.width() - x - 1};
         const auto py = sln::PixelIndex{img.height() - y - 1};
         REQUIRE(img_flip_b(x, y) == img(px, py));
+      }
+    }
+
+    // transpose
+
+    const auto img_transp = sln::transpose(img);
+    REQUIRE(img_transp.width() == img.height());
+    REQUIRE(img_transp.height() == img.width());
+    REQUIRE(sln::transpose(img_transp) == img);
+
+    for (auto y = 0_idx; y < img_transp.height(); ++y)
+    {
+      for (auto x = 0_idx; x < img_transp.width(); ++x)
+      {
+        REQUIRE(img_transp(x, y) == img(y, x));
       }
     }
 

@@ -14,14 +14,17 @@
 #include <selene/base/MessageLog.hpp>
 #include <selene/base/Utils.hpp>
 
-#include <selene/img/BoundingBox.hpp>
-#include <selene/img/ImageData.hpp>
-#include <selene/img/PixelFormat.hpp>
-#include <selene/img/RowPointers.hpp>
-#include <selene/img_io/impl/Util.hpp>
+#include <selene/base/io/FileReader.hpp>
+#include <selene/base/io/MemoryReader.hpp>
 
-#include <selene/io/FileReader.hpp>
-#include <selene/io/MemoryReader.hpp>
+#include <selene/img/common/BoundingBox.hpp>
+#include <selene/img/common/PixelFormat.hpp>
+#include <selene/img/common/RowPointers.hpp>
+
+#include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/_impl/StaticChecks.hpp>
+
+#include <selene/img_io/_impl/Util.hpp>
 
 #include <array>
 #include <cstdio>
@@ -50,16 +53,16 @@ class PNGImageInfo
 public:
   const PixelLength width;  ///< Image width.
   const PixelLength height;  ///< Image height.
-  const std::uint16_t nr_channels;  ///< Number of image channels.
-  const std::uint16_t bit_depth;  ///< Image bit depth (8 or 16).
+  const std::int16_t nr_channels;  ///< Number of image channels.
+  const std::int16_t bit_depth;  ///< Image bit depth (8 or 16).
 
   explicit PNGImageInfo(PixelLength width_ = 0_px,
                         PixelLength height_ = 0_px,
-                        std::uint16_t nr_channels_ = 0,
-                        std::uint16_t bit_depth_ = 0);
+                        std::int16_t nr_channels_ = 0,
+                        std::int16_t bit_depth_ = 0);
 
   bool is_valid() const;
-  std::uint16_t nr_bytes_per_channel() const { return bit_depth / uint16_t{8}; }
+  std::int16_t nr_bytes_per_channel() const { return bit_depth / int16_t{8}; }
 
   std::size_t required_bytes() const { return (width * nr_channels * nr_bytes_per_channel()) * height; }
 };
@@ -185,13 +188,13 @@ PNGImageInfo read_png_header(PNGDecompressionObject& obj,
  * @param source Input source instance.
  * @param options The decompression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return An `ImageData` instance. Reading the PNG stream was successful, if `is_valid() == true`, and unsuccessful
+ * @return A `DynImage` instance. Reading the PNG stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
 template <typename SourceType>
-ImageData<> read_png(SourceType&& source,
-                     PNGDecompressionOptions options = PNGDecompressionOptions(),
-                     MessageLog* messages = nullptr);
+DynImage read_png(SourceType&& source,
+                  PNGDecompressionOptions options = PNGDecompressionOptions(),
+                  MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a PNG image data stream.
  *
@@ -207,15 +210,15 @@ ImageData<> read_png(SourceType&& source,
  * @param options The decompression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @param provided_header_info Optional PNG header information, obtained through a call to img::read_png_header.
- * @return An `ImageData` instance. Reading the PNG stream was successful, if `is_valid() == true`, and unsuccessful
+ * @return A `DynImage` instance. Reading the PNG stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
 template <typename SourceType>
-ImageData<> read_png(PNGDecompressionObject& obj,
-                     SourceType&& source,
-                     PNGDecompressionOptions options = PNGDecompressionOptions(),
-                     MessageLog* messages = nullptr,
-                     const PNGImageInfo* provided_header_info = nullptr);
+DynImage read_png(PNGDecompressionObject& obj,
+                  SourceType&& source,
+                  PNGDecompressionOptions options = PNGDecompressionOptions(),
+                  MessageLog* messages = nullptr,
+                  const PNGImageInfo* provided_header_info = nullptr);
 
 /** Class with functionality to read header and data of a PNG image data stream.
  *
@@ -223,8 +226,8 @@ ImageData<> read_png(PNGDecompressionObject& obj,
  *
  * read_png(), however, does not allow reading of the decompressed image data into pre-allocated memory.
  * This is enabled by calling `get_output_image_info()` on an instance of this class, then allocating the respective
- * `ImageData<>` instance (which can be itself a view to pre-allocated memory), and finally calling
- * `read_image_data(ImageData<>&)`.
+ * `DynImage` instance (or by providing a `DynImageView` into pre-allocated memory), and finally calling
+ * `read_image_data(DynImage&)` or `read_image_data(MutableDynImageView&)`.
  *
  * A PNGReader<> instance is stateful:
  * Calling of `read_header()`, `set_decompression_options()`, or `get_output_image_info()` is optional.
@@ -249,8 +252,8 @@ public:
   void set_decompression_options(PNGDecompressionOptions options);
 
   PNGImageInfo get_output_image_info();
-  ImageData<> read_image_data();
-  bool read_image_data(ImageData<>& img_data);
+  DynImage read_image_data();
+  template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
 
   MessageLog& message_log();
 
@@ -325,7 +328,7 @@ PNGImageInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, b
 }
 
 template <typename SourceType>
-ImageData<> read_png(SourceType&& source, PNGDecompressionOptions options, MessageLog* messages)
+DynImage read_png(SourceType&& source, PNGDecompressionOptions options, MessageLog* messages)
 {
   PNGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
@@ -333,11 +336,11 @@ ImageData<> read_png(SourceType&& source, PNGDecompressionOptions options, Messa
 }
 
 template <typename SourceType>
-ImageData<> read_png(PNGDecompressionObject& obj,
-                     SourceType&& source,
-                     PNGDecompressionOptions options,
-                     MessageLog* messages,
-                     const PNGImageInfo* provided_header_info)
+DynImage read_png(PNGDecompressionObject& obj,
+                  SourceType&& source,
+                  PNGDecompressionOptions options,
+                  MessageLog* messages,
+                  const PNGImageInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -346,7 +349,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
     if (obj.error_state())
     {
       impl::assign_message_log(obj, messages);
-      return ImageData<>();
+      return DynImage();
     }
   }
 
@@ -355,7 +358,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
   if (!header_info.is_valid())
   {
     impl::assign_message_log(obj, messages);
-    return ImageData<>();
+    return DynImage();
   }
 
   const bool pars_set = obj.set_decompression_parameters(
@@ -366,7 +369,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
   if (!pars_set)
   {
     impl::assign_message_log(obj, messages);
-    return ImageData<>();
+    return DynImage();
   }
 
   impl::PNGDecompressionCycle cycle(obj);
@@ -374,7 +377,7 @@ ImageData<> read_png(PNGDecompressionObject& obj,
   if (cycle.error_state())
   {
     impl::assign_message_log(obj, messages);
-    return ImageData<>();
+    return DynImage();
   }
 
   const auto output_info = cycle.get_output_info();
@@ -387,19 +390,19 @@ ImageData<> read_png(PNGDecompressionObject& obj,
   const auto output_pixel_format = obj.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  ImageData<> img(output_width, output_height, static_cast<std::uint16_t>(output_nr_channels),
-                  static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_stride_bytes, output_pixel_format,
-                  output_sample_format);
-  auto row_pointers = get_row_pointers(img);
+  DynImage dyn_img({output_width, output_height, static_cast<std::int16_t>(output_nr_channels),
+                   static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_stride_bytes},
+                   {output_pixel_format, output_sample_format});
+  auto row_pointers = get_row_pointers(dyn_img);
   const auto dec_success = cycle.decompress(row_pointers);
 
   if (!dec_success)
   {
-    img.clear();  // invalidates image data
+    dyn_img.clear();  // invalidates image data
   }
 
   impl::assign_message_log(obj, messages);
-  return img;
+  return dyn_img;
 }
 
 
@@ -487,16 +490,19 @@ PNGImageInfo PNGReader<SourceType>::get_output_image_info()
 }
 
 template <typename SourceType>
-ImageData<> PNGReader<SourceType>::read_image_data()
+DynImage PNGReader<SourceType>::read_image_data()
 {
-  ImageData<> img_data;
-  read_image_data(img_data);
-  return img_data;
+  DynImage dyn_img;
+  read_image_data(dyn_img);
+  return dyn_img;
 }
 
 template <typename SourceType>
-bool PNGReader<SourceType>::read_image_data(ImageData<>& img_data)
+template <typename DynImageOrView>
+bool PNGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 {
+  impl::static_check_is_dyn_image_or_mutable_view(dyn_img_or_view);
+
   if (!header_read_)
   {
     read_header();
@@ -522,9 +528,12 @@ bool PNGReader<SourceType>::read_image_data(ImageData<>& img_data)
   const auto output_pixel_format = obj_.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  img_data.maybe_allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
-                          output_stride_bytes, output_pixel_format, output_sample_format);
-  auto row_pointers = get_row_pointers(img_data);
+  dyn_img_or_view.reallocate({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                              output_stride_bytes},
+                             ImageRowAlignment{0},
+                             {output_pixel_format, output_sample_format},
+                             false);
+  auto row_pointers = get_row_pointers(dyn_img_or_view);
   const auto dec_success = cycle_->decompress(row_pointers);
 
   reset();

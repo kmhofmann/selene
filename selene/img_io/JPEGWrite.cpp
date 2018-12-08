@@ -5,10 +5,11 @@
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/img_io/JPEGWrite.hpp>
-#include <selene/img_io/impl/JPEGDetail.hpp>
+#include <selene/img_io/_impl/JPEGDetail.hpp>
 
 #include <jpeglib.h>
 
+#include <algorithm>
 #include <csetjmp>
 #include <cstdio>
 #include <stdexcept>
@@ -64,8 +65,8 @@ bool JPEGCompressionObject::valid() const
   return impl_->valid;
 }
 
-bool JPEGCompressionObject::set_image_info(int width, int height, int nr_channels, int nr_bytes_per_channel,
-                                           JPEGColorSpace in_color_space)
+bool JPEGCompressionObject::set_image_info(
+    int width, int height, int nr_channels, int nr_bytes_per_channel, JPEGColorSpace in_color_space)
 {
   if (setjmp(impl_->error_manager.setjmp_buffer))
   {
@@ -101,7 +102,7 @@ failure_state:
 bool JPEGCompressionObject::set_compression_parameters(int quality, JPEGColorSpace color_space, bool optimize_coding)
 {
   const auto force_baseline = TRUE;
-  quality = clamp(quality, 0, 100);
+  quality = std::clamp(quality, 0, 100);
 
   if (setjmp(impl_->error_manager.setjmp_buffer))
   {

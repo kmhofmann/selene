@@ -14,15 +14,19 @@
 #include <selene/base/MessageLog.hpp>
 #include <selene/base/Utils.hpp>
 
-#include <selene/img/BoundingBox.hpp>
-#include <selene/img/ImageData.hpp>
-#include <selene/img/RowPointers.hpp>
-#include <selene/img_io/JPEGCommon.hpp>
-#include <selene/img_io/impl/JPEGCommon.hpp>
-#include <selene/img_io/impl/Util.hpp>
+#include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/VectorWriter.hpp>
 
-#include <selene/io/FileWriter.hpp>
-#include <selene/io/VectorWriter.hpp>
+#include <selene/img/common/BoundingBox.hpp>
+#include <selene/img/common/RowPointers.hpp>
+
+#include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/DynImageView.hpp>
+#include <selene/img/dynamic/_impl/StaticChecks.hpp>
+
+#include <selene/img_io/JPEGCommon.hpp>
+#include <selene/img_io/_impl/JPEGCommon.hpp>
+#include <selene/img_io/_impl/Util.hpp>
 
 #include <array>
 #include <cstdio>
@@ -113,8 +117,8 @@ private:
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <ImageDataStorage storage_type, typename SinkType>
-bool write_jpeg(const ImageData<storage_type>& img_data,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(),
                 MessageLog* messages = nullptr);
@@ -131,8 +135,8 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <ImageDataStorage storage_type, typename SinkType>
-bool write_jpeg(const ImageData<storage_type>& img_data,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 JPEGCompressionObject& obj,
                 SinkType&& sink,
                 JPEGCompressionOptions options = JPEGCompressionOptions(),
@@ -158,24 +162,26 @@ private:
 }  // namespace impl
 
 
-template <ImageDataStorage storage_type, typename SinkType>
-bool write_jpeg(const ImageData<storage_type>& img_data,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
   JPEGCompressionObject obj;
   SELENE_ASSERT(obj.valid());
-  return write_jpeg(img_data, obj, std::forward<SinkType>(sink), options, messages);
+  return write_jpeg(dyn_img_or_view, obj, std::forward<SinkType>(sink), options, messages);
 }
 
-template <ImageDataStorage storage_type, typename SinkType>
-bool write_jpeg(const ImageData<storage_type>& img_data,
+template <typename DynImageOrView, typename SinkType>
+bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 JPEGCompressionObject& obj,
                 SinkType&& sink,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
+  impl::static_check_is_dyn_image_or_view(dyn_img_or_view);
+
   impl::set_destination(obj, sink);
 
   if (obj.error_state())
@@ -184,14 +190,16 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
     return false;
   }
 
-  const auto nr_channels = img_data.nr_channels();
-  const auto nr_bytes_per_channel = img_data.nr_bytes_per_channel();
+  const auto nr_channels = dyn_img_or_view.nr_channels();
+  const auto nr_bytes_per_channel = dyn_img_or_view.nr_bytes_per_channel();
   const auto in_color_space = (options.in_color_space == JPEGColorSpace::Auto)
-                                  ? impl::pixel_format_to_color_space(img_data.pixel_format())
+                                  ? impl::pixel_format_to_color_space(dyn_img_or_view.pixel_format())
                                   : options.in_color_space;
 
-  const auto img_info_set = obj.set_image_info(static_cast<int>(img_data.width()), static_cast<int>(img_data.height()),
-                                               static_cast<int>(nr_channels), static_cast<int>(nr_bytes_per_channel),
+  const auto img_info_set = obj.set_image_info(static_cast<int>(dyn_img_or_view.width()),
+                                               static_cast<int>(dyn_img_or_view.height()),
+                                               static_cast<int>(nr_channels),
+                                               static_cast<int>(nr_bytes_per_channel),
                                                in_color_space);
 
   if (!img_info_set)
@@ -211,7 +219,7 @@ bool write_jpeg(const ImageData<storage_type>& img_data,
 
   {
     impl::JPEGCompressionCycle cycle(obj);
-    const auto row_pointers = get_row_pointers(img_data);
+    const auto row_pointers = get_const_row_pointers(dyn_img_or_view);
     cycle.compress(row_pointers);
     // Destructor of JPEGCompressionCycle calls jpeg_finish_compress(), which updates internal state
   }

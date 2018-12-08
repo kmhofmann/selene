@@ -5,10 +5,10 @@
 #ifndef SELENE_EXAMPLES_UTILS_HPP
 #define SELENE_EXAMPLES_UTILS_HPP
 
-#include <selene/img/ImageDataToImage.hpp>
-#include <selene/img_io/IO.hpp>
+#include <selene/base/io/FileReader.hpp>
 
-#include <selene/io/FileReader.hpp>
+#include <selene/img/interop/DynImageToImage.hpp>
+#include <selene/img_io/IO.hpp>
 
 #include <boost/filesystem.hpp>
 

@@ -4,23 +4,30 @@
 
 #if defined(SELENE_WITH_LIBJPEG)
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <cstdlib>
 
 #include <boost/filesystem.hpp>
 
-#include <selene/io/FileReader.hpp>
-#include <selene/io/FileUtils.hpp>
-#include <selene/io/FileWriter.hpp>
-#include <selene/io/MemoryReader.hpp>
-#include <selene/io/VectorWriter.hpp>
+#include <selene/base/io/FileReader.hpp>
+#include <selene/base/io/FileUtils.hpp>
+#include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/MemoryReader.hpp>
+#include <selene/base/io/VectorWriter.hpp>
 
-#include <selene/img/Image.hpp>
-#include <selene/img/ImageData.hpp>
-#include <selene/img/ImageDataToImage.hpp>
-#include <selene/img/ImageToImageData.hpp>
-#include <selene/img/ImageTypeAliases.hpp>
+#include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/DynImageView.hpp>
+
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/Image.hpp>
+#include <selene/img/typed/ImageTypeAliases.hpp>
+#include <selene/img/typed/ImageView.hpp>
+
+#include <selene/img/interop/DynImageToImage.hpp>
+#include <selene/img/interop/ImageToDynImage.hpp>
+
 #include <selene/img_io/JPEGRead.hpp>
 #include <selene/img_io/JPEGWrite.hpp>
 
@@ -57,23 +64,22 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
-  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);
+  auto dyn_img = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(img_data.width() == ref_width);
-  REQUIRE(img_data.height() == ref_height);
-  REQUIRE(img_data.stride_bytes() == ref_width * 3);
-  REQUIRE(img_data.nr_channels() == 3);
-  REQUIRE(img_data.nr_bytes_per_channel() == 1);
-  REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
-  REQUIRE(img_data.is_packed());
-  REQUIRE(!img_data.is_view());
-  REQUIRE(!img_data.is_empty());
-  REQUIRE(img_data.is_valid());
+  REQUIRE(dyn_img.width() == ref_width);
+  REQUIRE(dyn_img.height() == ref_height);
+  REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+  REQUIRE(dyn_img.nr_channels() == 3);
+  REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+  REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+  REQUIRE(dyn_img.is_packed());
+  REQUIRE(!dyn_img.is_empty());
+  REQUIRE(dyn_img.is_valid());
 
-  auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u3>(std::move(dyn_img));
 
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
@@ -89,7 +95,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   sln::FileWriter sink((tmp_path / "test_duck.jpg").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
-  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
+  bool status_write = sln::write_jpeg(sln::to_dyn_image_view(img, sln::PixelFormat::RGB), sink,
                                       sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -106,23 +112,22 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   sln::FileReader source(in_filename().string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
-  auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Grayscale), &messages_read);
+  auto dyn_img = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Grayscale), &messages_read);
   source.close();
   REQUIRE(!source.is_open());
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(img_data.width() == ref_width);
-  REQUIRE(img_data.height() == ref_height);
-  REQUIRE(img_data.stride_bytes() == ref_width * 1);
-  REQUIRE(img_data.nr_channels() == 1);
-  REQUIRE(img_data.nr_bytes_per_channel() == 1);
-  REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
-  REQUIRE(img_data.is_packed());
-  REQUIRE(!img_data.is_view());
-  REQUIRE(!img_data.is_empty());
-  REQUIRE(img_data.is_valid());
+  REQUIRE(dyn_img.width() == ref_width);
+  REQUIRE(dyn_img.height() == ref_height);
+  REQUIRE(dyn_img.stride_bytes() == ref_width * 1);
+  REQUIRE(dyn_img.nr_channels() == 1);
+  REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+  REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+  REQUIRE(dyn_img.is_packed());
+  REQUIRE(!dyn_img.is_empty());
+  REQUIRE(dyn_img.is_valid());
 
-  auto img = sln::to_image<sln::Pixel_8u1>(std::move(img_data));
+  auto img = sln::to_image<sln::Pixel_8u1>(std::move(dyn_img));
 
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
@@ -138,7 +143,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   sln::FileWriter sink((tmp_path / "test_duck_gray.jpg").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
-  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::Y), sink,
+  bool status_write = sln::write_jpeg(sln::to_dyn_image_view(img, sln::PixelFormat::Y), sink,
                                       sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -150,21 +155,20 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   sln::FileReader source_2((tmp_path / "test_duck_gray.jpg").string());
   REQUIRE(source_2.is_open());
   sln::MessageLog messages_read_2;
-  auto img_data_2 = sln::read_jpeg(source_2, sln::JPEGDecompressionOptions(), &messages_read_2);
+  auto dyn_img_2 = sln::read_jpeg(source_2, sln::JPEGDecompressionOptions(), &messages_read_2);
   source_2.close();
   REQUIRE(!source_2.is_open());
 
   REQUIRE(messages_read_2.messages().empty());
-  REQUIRE(img_data_2.width() == ref_width);
-  REQUIRE(img_data_2.height() == ref_height);
-  REQUIRE(img_data_2.stride_bytes() == ref_width * 1);
-  REQUIRE(img_data_2.nr_channels() == 1);
-  REQUIRE(img_data_2.nr_bytes_per_channel() == 1);
-  REQUIRE(img_data_2.total_bytes() == img_data_2.stride_bytes() * img_data_2.height());
-  REQUIRE(img_data_2.is_packed());
-  REQUIRE(!img_data_2.is_view());
-  REQUIRE(!img_data_2.is_empty());
-  REQUIRE(img_data_2.is_valid());
+  REQUIRE(dyn_img_2.width() == ref_width);
+  REQUIRE(dyn_img_2.height() == ref_height);
+  REQUIRE(dyn_img_2.stride_bytes() == ref_width * 1);
+  REQUIRE(dyn_img_2.nr_channels() == 1);
+  REQUIRE(dyn_img_2.nr_bytes_per_channel() == 1);
+  REQUIRE(dyn_img_2.total_bytes() == dyn_img_2.stride_bytes() * dyn_img_2.height());
+  REQUIRE(dyn_img_2.is_packed());
+  REQUIRE(!dyn_img_2.is_empty());
+  REQUIRE(dyn_img_2.is_valid());
 }
 
 TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
@@ -201,7 +205,6 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
     REQUIRE(img_data.nr_bytes_per_channel() == 1);
     REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
     REQUIRE(img_data.is_packed());
-    REQUIRE(!img_data.is_view());
     REQUIRE(!img_data.is_empty());
     REQUIRE(img_data.is_valid());
 
@@ -225,8 +228,7 @@ TEST_CASE("JPEG image writing, reusing compression object", "[img]")
 
   // First, read an image
   sln::MessageLog message_log_read;
-  auto img_data = sln::read_jpeg(sln::FileReader(in_filename().string()),
-                                 sln::JPEGDecompressionOptions(),
+  auto img_data = sln::read_jpeg(sln::FileReader(in_filename().string()), sln::JPEGDecompressionOptions(),
                                  &message_log_read);
   REQUIRE(img_data.is_valid());
   REQUIRE(message_log_read.messages().empty());
@@ -272,7 +274,6 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(img_data.stride_bytes() == expected_width * 3);
   REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
   REQUIRE(img_data.is_packed());
-  REQUIRE(!img_data.is_view());
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
@@ -286,7 +287,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   sln::FileWriter sink((tmp_path / "test_duck_crop.jpg").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
-  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
+  bool status_write = sln::write_jpeg(sln::to_dyn_image_view(img, sln::PixelFormat::RGB), sink,
                                       sln::JPEGCompressionOptions(compression_factor), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -310,7 +311,6 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(img_data_2.nr_bytes_per_channel() == 1);
   REQUIRE(img_data_2.total_bytes() == img_data_2.stride_bytes() * img_data_2.height());
   REQUIRE(img_data_2.is_packed());
-  REQUIRE(!img_data_2.is_view());
   REQUIRE(!img_data_2.is_empty());
   REQUIRE(img_data_2.is_valid());
 }
@@ -338,7 +338,6 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(img_data.nr_bytes_per_channel() == 1);
   REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
   REQUIRE(img_data.is_packed());
-  REQUIRE(!img_data.is_view());
   REQUIRE(!img_data.is_empty());
   REQUIRE(img_data.is_valid());
 
@@ -361,7 +360,7 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
 
   // Test writing of RGB image
   sln::MessageLog messages_write;
-  bool status_write = sln::write_jpeg(sln::to_image_data_view(img, sln::PixelFormat::RGB), sink,
+  bool status_write = sln::write_jpeg(sln::to_dyn_image_view(img, sln::PixelFormat::RGB), sink,
                                       sln::JPEGCompressionOptions(95), &messages_write);
   sink.close();
   REQUIRE(!sink.is_open());
@@ -386,8 +385,8 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
     REQUIRE(!header.is_valid());
     const auto info = jpeg_reader.get_output_image_info();
     REQUIRE(!info.is_valid());
-    sln::ImageData<> img_data;
-    const auto res = jpeg_reader.read_image_data(img_data);
+    sln::DynImage dyn_img;
+    const auto res = jpeg_reader.read_image_data(dyn_img);
     REQUIRE(!res);
   }
 
@@ -411,22 +410,20 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
     REQUIRE(info.nr_channels == 3);
     REQUIRE(info.color_space == sln::JPEGColorSpace::RGB);
 
-    auto memory_block = sln::AlignedNewAllocator::allocate(info.required_bytes(), 16);
-    sln::ImageData<> img_data(memory_block.data(), info.width, info.height, info.nr_channels, info.nr_bytes_per_channel());
-    auto res = jpeg_reader.read_image_data(img_data);
+    sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    auto res = jpeg_reader.read_image_data(dyn_img);
     REQUIRE(res);
 
     REQUIRE(jpeg_reader.message_log().messages().empty());
-    REQUIRE(img_data.width() == ref_width);
-    REQUIRE(img_data.height() == ref_height);
-    REQUIRE(img_data.stride_bytes() == ref_width * 3);
-    REQUIRE(img_data.nr_channels() == 3);
-    REQUIRE(img_data.nr_bytes_per_channel() == 1);
-    REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
-    REQUIRE(img_data.is_packed());
-    REQUIRE(img_data.is_view());
-    REQUIRE(!img_data.is_empty());
-    REQUIRE(img_data.is_valid());
+    REQUIRE(dyn_img.width() == ref_width);
+    REQUIRE(dyn_img.height() == ref_height);
+    REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+    REQUIRE(dyn_img.nr_channels() == 3);
+    REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+    REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+    REQUIRE(dyn_img.is_packed());
+    REQUIRE(!dyn_img.is_empty());
+    REQUIRE(dyn_img.is_valid());
   }
 
   source.close();

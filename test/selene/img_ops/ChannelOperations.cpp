@@ -2,11 +2,15 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
-
-#include <selene/img/ImageTypeAliases.hpp>
-#include <selene/img/PixelTraits.hpp>
+#include <catch2/catch.hpp>
 #include <selene/img_ops/ChannelOperations.hpp>
+
+#include <selene/img/pixel/PixelTraits.hpp>
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <selene/img/typed/ImageTypeAliases.hpp>
+
+#include <selene/img_ops/Fill.hpp>
 
 using namespace sln::literals;
 
@@ -37,40 +41,38 @@ void check_channels(const Img& img, const std::array<std::uint8_t, N>& values)
       }
     }
   }
-
 }
 
-} // namespace
+}  // namespace
 
 
-TEST_CASE("Channel injection", "[img]")
+TEST_CASE("Channel injection", "[old_img]")
 {
-  sln::Image_8u1 img_r(w_test, h_test);
-  sln::Image_8u1 img_g(w_test, h_test);
-  sln::Image_8u1 img_b(w_test, h_test);
-  img_r.fill(val_r);
-  img_g.fill(val_g);
-  img_b.fill(val_b);
+  sln::Image_8u1 img_r({w_test, h_test});
+  sln::Image_8u1 img_g({w_test, h_test});
+  sln::Image_8u1 img_b({w_test, h_test});
+  sln::fill(img_r, val_r);
+  sln::fill(img_g, val_g);
+  sln::fill(img_b, val_b);
 
   SECTION("Inject in RGB image")
   {
-    sln::ImageRGB_8u img_rgb(w_test, h_test);
+    sln::ImageRGB_8u img_rgb({w_test, h_test});
     sln::inject_channels(img_r, img_rgb, 0);
     sln::inject_channels(img_g, img_rgb, 1);
     sln::inject_channels(img_b, img_rgb, 2);
     check_channels(img_rgb, values_rgb);
   }
-
 }
 
-TEST_CASE("Channel stacking", "[img]")
+TEST_CASE("Channel stacking", "[old_img]")
 {
-  sln::Image_8u1 img_r(w_test, h_test);
-  sln::Image_8u1 img_g(w_test, h_test);
-  sln::Image_8u1 img_b(w_test, h_test);
-  img_r.fill(val_r);
-  img_g.fill(val_g);
-  img_b.fill(val_b);
+  sln::Image_8u1 img_r({w_test, h_test});
+  sln::Image_8u1 img_g({w_test, h_test});
+  sln::Image_8u1 img_b({w_test, h_test});
+  sln::fill(img_r, val_r);
+  sln::fill(img_g, val_g);
+  sln::fill(img_b, val_b);
 
   SECTION("Stack to RGB image")
   {

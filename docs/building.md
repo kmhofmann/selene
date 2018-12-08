@@ -114,8 +114,7 @@ More fine-grained control can be achieved by the options right below.
 Building the tests is disabled by default, and can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake`
 command.
 
-The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for
-building the tests.
+The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for building the tests.
 The former is bundled as a Git submodule and will be automatically cloned during execution of the `cmake` command.
 The latter is automatically searched for by a CMake `find_package` command; its presence is required to build the tests.
 
@@ -181,9 +180,9 @@ By far the easiest way is to install and then use the [vcpkg](https://github.com
     .\vcpkg.exe install libjpeg-turbo
     .\vcpkg.exe install libpng
     
-    .\vcpkg.exe install opencv     # only for tests
-    .\vcpkg.exe install boost      # only for tests
-    .\vcpkg.exe install benchmark  # only for benchmarks
+    .\vcpkg.exe install opencv            # only for tests
+    .\vcpkg.exe install boost-filesystem  # only for tests
+    .\vcpkg.exe install benchmark         # only for benchmarks
 
 Set the system environment variable `VCPKG_DEFAULT_TRIPLET=x64-windows` before installing the above packages to install
 the 64-bit compiled versions instead of the 32-bit ones.

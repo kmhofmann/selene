@@ -7,32 +7,55 @@ endif()
 add_executable(selene_tests
         ${CMAKE_CURRENT_LIST_DIR}/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp
+
         ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Round.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/Utils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/_TestImages.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/BorderAccessors.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Image.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageAccess.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageData.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageDataToImage.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/ImageToImageData.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Interpolators.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/OpenCV.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Pixel.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/Utilities.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_Utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/IO.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/RowPointers.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/Types.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/Pixel.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/Utils.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageIterators.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_Utils.hpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/BorderAccessors.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/GetPixel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/Interpolators.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/RelativeAccessor.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/DynImageToImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/ImageToDynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.cpp
+
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_JPEG.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO_PNG.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/io/IO.cpp
+
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.cpp
         )
 
 target_compile_options(selene_tests PRIVATE

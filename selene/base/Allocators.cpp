@@ -34,16 +34,14 @@ MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes) noe
  */
 void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
 {
-  if (data != nullptr)
-  {
-    std::free(data);
-  }
-
+  std::free(data);
   data = nullptr;
 }
 
 
 /** \brief Allocates the specified number of bytes via `std::malloc` and returns a MemoryBlock.
+ *
+ * This function may overallocate.
  *
  * \param nr_bytes The number of bytes to allocate.
  * \param alignment The required byte alignment. Needs to be a power of two (e.g. 8, 16, 32, ...).
@@ -60,29 +58,28 @@ MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t
 
   // Ensure that the alignment is a power of two
   alignment = static_cast<std::size_t>(sln::next_power_of_two(std::max(alignment, std::size_t{2})));
+  // Ensure that the nr of bytes reserved is a multiple of the alignment
+  nr_bytes = (nr_bytes % alignment == 0) ? nr_bytes : (nr_bytes + alignment - (nr_bytes % alignment));
 
   // TODO: C++17's aligned_alloc (http://en.cppreference.com/w/cpp/memory/c/aligned_alloc) would make life easier...
+  // Does not seem to be well supported on MacOS or Windows (VC++) yet [2018-12-07].
 
   // Allocate extra space for storing the alignment offset, and to fit the alignment itself
   const auto offset_ptr_storage = std::size_t{sizeof(void*)};
   const auto offset_alignment = alignment;
   void* const m_ptr = std::malloc(offset_ptr_storage + offset_alignment + nr_bytes);
-
   if (m_ptr == nullptr)
   {
     return construct_memory_block_from_existing_memory<AlignedMallocAllocator>(nullptr, 0);
   }
-
   // Compute the aligned pointer
   auto m_ptr_2 = reinterpret_cast<void*>(reinterpret_cast<std::uint8_t*>(m_ptr) + offset_ptr_storage);
   std::size_t space = offset_alignment + nr_bytes;
   void* const a_ptr = std::align(alignment, sizeof(std::uint8_t), m_ptr_2, space);
-
   if (a_ptr == nullptr)
   {
     return construct_memory_block_from_existing_memory<AlignedMallocAllocator>(nullptr, 0);
   }
-
   // Store malloc'ed pointer before the aligned memory block
   (reinterpret_cast<void**>(a_ptr))[-1] = m_ptr;
 
@@ -137,6 +134,8 @@ void NewAllocator::deallocate(std::uint8_t*& data) noexcept
 
 
 /** \brief Allocates the specified number of bytes via (non-throwing) `new` and returns a MemoryBlock.
+ *
+ * This function may overallocate.
  *
  * \param nr_bytes The number of bytes to allocate.
  * \param alignment The required byte alignment. Needs to be a power of two (e.g. 8, 16, 32, ...).

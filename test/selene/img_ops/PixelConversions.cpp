@@ -2,19 +2,22 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
+
+#include <selene/img_ops/PixelConversions.hpp>
 
 #include <selene/base/Utils.hpp>
 
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
 #include <selene/img_ops/Algorithms.hpp>
-#include <selene/img_ops/PixelConversions.hpp>
 
 #include <limits>
 #include <random>
 #include <type_traits>
 
 #include <test/selene/Utils.hpp>
-#include <test/selene/img/_TestImages.hpp>
+#include <test/selene/img/typed/_Utils.hpp>
 
 using namespace sln::literals;
 
@@ -38,7 +41,7 @@ void check_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
     REQUIRE(static_cast<std::uint64_t>(dst_rgba_to_y) == static_cast<std::uint64_t>(x));
 
     const auto dst_bgra_to_y = sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::Y>(src_xxxa);
-    REQUIRE(static_cast<std::uint64_t>(dst_rgba_to_y) == static_cast<std::uint64_t>(x));
+    REQUIRE(static_cast<std::uint64_t>(dst_bgra_to_y) == static_cast<std::uint64_t>(x));
 
     const auto dst_argb_to_y = sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::Y>(src_axxx);
     REQUIRE(static_cast<std::uint64_t>(dst_argb_to_y) == static_cast<std::uint64_t>(x));
@@ -56,7 +59,7 @@ void check_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
     REQUIRE(dst_rgba_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_bgra_to_ya = sln::convert_pixel<sln::PixelFormat::BGRA, sln::PixelFormat::YA>(src_xxxa);
-    REQUIRE(dst_rgba_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
+    REQUIRE(dst_bgra_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
 
     const auto dst_argb_to_ya = sln::convert_pixel<sln::PixelFormat::ARGB, sln::PixelFormat::YA>(src_axxx);
     REQUIRE(dst_argb_to_ya == sln::Pixel<T, 2, sln::PixelFormat::YA>(x, 0));
@@ -72,9 +75,9 @@ void check_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
     REQUIRE(static_cast<std::uint64_t>(dst2[2]) == static_cast<std::uint64_t>(x / 1));
 
     const auto dst3 = sln::convert_pixel<sln::PixelFormat::BGR, sln::PixelFormat::RGB>(src1);
-    REQUIRE(static_cast<std::uint64_t>(dst2[0]) == static_cast<std::uint64_t>(x / 3));
-    REQUIRE(static_cast<std::uint64_t>(dst2[1]) == static_cast<std::uint64_t>(x / 2));
-    REQUIRE(static_cast<std::uint64_t>(dst2[2]) == static_cast<std::uint64_t>(x / 1));
+    REQUIRE(static_cast<std::uint64_t>(dst3[0]) == static_cast<std::uint64_t>(x / 3));
+    REQUIRE(static_cast<std::uint64_t>(dst3[1]) == static_cast<std::uint64_t>(x / 2));
+    REQUIRE(static_cast<std::uint64_t>(dst3[2]) == static_cast<std::uint64_t>(x / 1));
   }
 }
 

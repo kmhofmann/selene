@@ -22,7 +22,7 @@ let g:ale_c_gcc_options = join(s:c_opts + s:c_clang_opts, ' ')
 
 " Set options for ALE's C++ linters
 let s:cpp_opts = [
-  \ '-std=c++14',
+  \ '-std=c++17',
   \ '-Wall',
   \ '-Wextra',
   \ '-Werror',

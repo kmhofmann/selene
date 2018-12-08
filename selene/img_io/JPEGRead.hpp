@@ -14,15 +14,18 @@
 #include <selene/base/MessageLog.hpp>
 #include <selene/base/Utils.hpp>
 
-#include <selene/img/BoundingBox.hpp>
-#include <selene/img/ImageData.hpp>
-#include <selene/img/RowPointers.hpp>
-#include <selene/img_io/JPEGCommon.hpp>
-#include <selene/img_io/impl/JPEGCommon.hpp>
-#include <selene/img_io/impl/Util.hpp>
+#include <selene/base/io/FileReader.hpp>
+#include <selene/base/io/MemoryReader.hpp>
 
-#include <selene/io/FileReader.hpp>
-#include <selene/io/MemoryReader.hpp>
+#include <selene/img/common/BoundingBox.hpp>
+#include <selene/img/common/RowPointers.hpp>
+
+#include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/_impl/StaticChecks.hpp>
+
+#include <selene/img_io/JPEGCommon.hpp>
+#include <selene/img_io/_impl/JPEGCommon.hpp>
+#include <selene/img_io/_impl/Util.hpp>
 
 #include <array>
 #include <cstdio>
@@ -47,16 +50,16 @@ struct JPEGImageInfo
 {
   const PixelLength width;  ///< Image width.
   const PixelLength height;  ///< Image height.
-  const std::uint16_t nr_channels;  ///< Number of image channels.
+  const std::int16_t nr_channels;  ///< Number of image channels.
   const JPEGColorSpace color_space;  ///< Image data color space.
 
   explicit JPEGImageInfo(PixelLength width_ = 0_px,
                          PixelLength height_ = 0_px,
-                         std::uint16_t nr_channels_ = 0,
+                         std::int16_t nr_channels_ = 0,
                          JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
   bool is_valid() const;
-  std::uint16_t nr_bytes_per_channel() const { return 1; }
+  std::int16_t nr_bytes_per_channel() const { return 1; }
 
   std::size_t required_bytes() const { return (width * nr_channels) * height; }
 };
@@ -157,13 +160,13 @@ JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj,
  * @param source Input source instance.
  * @param options The decompression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @return An `ImageData` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
+ * @return A `DynImage` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
 template <typename SourceType>
-ImageData<> read_jpeg(SourceType&& source,
-                      JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-                      MessageLog* messages = nullptr);
+DynImage read_jpeg(SourceType&& source,
+                   JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                   MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a JPEG image data stream.
  *
@@ -179,15 +182,15 @@ ImageData<> read_jpeg(SourceType&& source,
  * @param options The decompression options.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @param provided_header_info Optional JPEG header information, obtained through a call to img::read_jpeg_header.
- * @return An `ImageData` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
+ * @return A `DynImage` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
 template <typename SourceType>
-ImageData<> read_jpeg(JPEGDecompressionObject& obj,
-                      SourceType&& source,
-                      JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-                      MessageLog* messages = nullptr,
-                      const JPEGImageInfo* provided_header_info = nullptr);
+DynImage read_jpeg(JPEGDecompressionObject& obj,
+                   SourceType&& source,
+                   JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                   MessageLog* messages = nullptr,
+                   const JPEGImageInfo* provided_header_info = nullptr);
 
 /** Class with functionality to read header and data of a JPEG image data stream.
  *
@@ -195,8 +198,8 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
  *
  * read_jpeg(), however, does not allow reading of the decompressed image data into pre-allocated memory.
  * This is enabled by calling `get_output_image_info()` on an instance of this class, then allocating the respective
- * `ImageData<>` instance (which can be itself a view to pre-allocated memory), and finally calling
- * `read_image_data(ImageData<>&)`.
+ * `DynImage` instance (or by providing a `DynImageView` into pre-allocated memory), and finally calling
+ * `read_image_data(DynImage&)` or `read_image_data(MutableDynImageView&)`.
  *
  * A JPEGReader<> instance is stateful:
  * Calling of `read_header()`, `set_decompression_options()`, or `get_output_image_info()` is optional.
@@ -221,8 +224,8 @@ public:
   void set_decompression_options(JPEGDecompressionOptions options);
 
   JPEGImageInfo get_output_image_info();
-  ImageData<> read_image_data();
-  bool read_image_data(ImageData<>& img_data);
+  DynImage read_image_data();
+  template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
 
   MessageLog& message_log();
 
@@ -296,7 +299,7 @@ JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source
 }
 
 template <typename SourceType>
-ImageData<> read_jpeg(SourceType&& source, JPEGDecompressionOptions options, MessageLog* messages)
+DynImage read_jpeg(SourceType&& source, JPEGDecompressionOptions options, MessageLog* messages)
 {
   JPEGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
@@ -304,11 +307,11 @@ ImageData<> read_jpeg(SourceType&& source, JPEGDecompressionOptions options, Mes
 }
 
 template <typename SourceType>
-ImageData<> read_jpeg(JPEGDecompressionObject& obj,
-                      SourceType&& source,
-                      JPEGDecompressionOptions options,
-                      MessageLog* messages,
-                      const JPEGImageInfo* provided_header_info)
+DynImage read_jpeg(JPEGDecompressionObject& obj,
+                   SourceType&& source,
+                   JPEGDecompressionOptions options,
+                   MessageLog* messages,
+                   const JPEGImageInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -317,7 +320,7 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
     if (obj.error_state())
     {
       impl::assign_message_log(obj, messages);
-      return ImageData<>();
+      return DynImage();
     }
   }
 
@@ -326,7 +329,7 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
   if (!header_info.is_valid())
   {
     impl::assign_message_log(obj, messages);
-    return ImageData<>();
+    return DynImage();
   }
 
   obj.set_decompression_parameters(options.out_color_space);
@@ -336,24 +339,24 @@ ImageData<> read_jpeg(JPEGDecompressionObject& obj,
   const auto output_info = cycle.get_output_info();
   const auto output_width = output_info.width;
   const auto output_height = output_info.height;
-  const auto output_nr_channels = output_info.nr_channels;
-  const auto output_nr_bytes_per_channel = 1;
+  const auto output_nr_channels = static_cast<std::int16_t>(output_info.nr_channels);
+  const auto output_nr_bytes_per_channel = std::int16_t{1};
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
   const auto output_pixel_format = impl::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  ImageData<> img(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_stride_bytes,
-                  output_pixel_format, output_sample_format);
-  auto row_pointers = get_row_pointers(img);
+  DynImage dyn_img({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_stride_bytes},
+                   {output_pixel_format, output_sample_format});
+  auto row_pointers = get_row_pointers(dyn_img);
   const auto dec_success = cycle.decompress(row_pointers);
 
   if (!dec_success)
   {
-    img.clear();  // invalidates image data
+    dyn_img.clear();  // invalidates image data
   }
 
   impl::assign_message_log(obj, messages);
-  return img;
+  return dyn_img;
 }
 
 
@@ -432,11 +435,11 @@ JPEGImageInfo JPEGReader<SourceType>::get_output_image_info()
 }
 
 template <typename SourceType>
-ImageData<> JPEGReader<SourceType>::read_image_data()
+DynImage JPEGReader<SourceType>::read_image_data()
 {
-  ImageData<> img_data;
-  read_image_data(img_data);
-  return img_data;
+  DynImage dyn_img;
+  read_image_data(dyn_img);
+  return dyn_img;
 }
 
 /** \brief XXX
@@ -446,8 +449,11 @@ ImageData<> JPEGReader<SourceType>::read_image_data()
  * @return True, if reading the image data was successful; false otherwise.
  */
 template <typename SourceType>
-bool JPEGReader<SourceType>::read_image_data(ImageData<>& img_data)
+template <typename DynImageOrView>
+bool JPEGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 {
+  impl::static_check_is_dyn_image_or_mutable_view(dyn_img_or_view);
+
   if (!header_read_)
   {
     read_header();
@@ -468,14 +474,17 @@ bool JPEGReader<SourceType>::read_image_data(ImageData<>& img_data)
   const auto output_width = output_info.width;
   const auto output_height = output_info.height;
   const auto output_nr_channels = output_info.nr_channels;
-  const auto output_nr_bytes_per_channel = 1;
+  const auto output_nr_bytes_per_channel = std::int16_t{1};
   const auto output_stride_bytes = Stride{0};  // will be chosen s.t. image content is tightly packed
   const auto output_pixel_format = impl::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  img_data.maybe_allocate(output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
-                          output_stride_bytes, output_pixel_format, output_sample_format);
-  auto row_pointers = get_row_pointers(img_data);
+  dyn_img_or_view.reallocate({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                              output_stride_bytes},
+                             ImageRowAlignment{0},
+                             {output_pixel_format, output_sample_format},
+                             false);
+  auto row_pointers = get_row_pointers(dyn_img_or_view);
   const auto dec_success = cycle_->decompress(row_pointers);
 
   reset();

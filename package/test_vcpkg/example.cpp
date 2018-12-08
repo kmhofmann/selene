@@ -1,5 +1,5 @@
 #include "selene/base/Allocators.hpp"
-#include "selene/img/Image.hpp"
+#include "selene/img/typed/Image.hpp"
 #include "selene/img_ops/ImageConversions.hpp"
 
 int main() {

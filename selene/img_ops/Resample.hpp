@@ -2,31 +2,34 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_RESAMPLE_HPP
-#define SELENE_IMG_RESAMPLE_HPP
+#ifndef SELENE_IMG_OPS_RESAMPLE_HPP
+#define SELENE_IMG_OPS_RESAMPLE_HPP
 
 /// @file
 
-#include <selene/img/Image.hpp>
-#include <selene/img/Interpolators.hpp>
-#include <selene/img/Types.hpp>
+#include <selene/img/typed/Image.hpp>
+#include <selene/img/typed/access/Interpolators.hpp>
+
+#include <selene/img_ops/Allocate.hpp>
+#include <selene/img_ops/Clone.hpp>
 
 #include <cmath>
 
 namespace sln {
 
-template <ImageInterpolationMode interpolation_mode = ImageInterpolationMode::Bilinear, typename PixelType>
-Image<PixelType> resample(const Image<PixelType>& img, PixelLength new_width, PixelLength new_height);
+template <ImageInterpolationMode interpolation_mode = ImageInterpolationMode::Bilinear, typename DerivedSrc>
+auto resample(const ImageBase<DerivedSrc>& img, PixelLength new_width, PixelLength new_height)
+    -> Image<typename ImageBase<DerivedSrc>::PixelType>;
 
-template <ImageInterpolationMode interpolation_mode = ImageInterpolationMode::Bilinear, typename PixelType>
-void resample(const Image<PixelType>& img_src, PixelLength new_width, PixelLength new_height, Image<PixelType>& img_dst);
+template <ImageInterpolationMode interpolation_mode = ImageInterpolationMode::Bilinear, typename DerivedSrcDst>
+void resample(const ImageBase<DerivedSrcDst>& img_src, PixelLength new_width, PixelLength new_height, ImageBase<DerivedSrcDst>& img_dst);
 
 // ----------
 // Implementation:
 
 namespace impl {
 
-template <typename Func, typename FuncSafe, typename PixelType>
+template <typename Func, typename FuncSafe, typename DerivedDst>
 void apply_resample_functions(Func func, FuncSafe func_safe,
                               default_float_t dst_to_src_factor_x,
                               default_float_t dst_to_src_factor_y,
@@ -34,7 +37,7 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
                               PixelLength safe_boundary_right,
                               PixelLength safe_boundary_top,
                               PixelLength safe_boundary_bottom,
-                              Image<PixelType>& img_dst)
+                              ImageBase<DerivedDst>& img_dst)
 {
   const auto dst_width = img_dst.width();
   const auto dst_height = img_dst.height();
@@ -105,16 +108,17 @@ void apply_resample_functions(Func func, FuncSafe func_safe,
  * frequency range; therefore, aliasing may occur when shrinking the image dimensions.
  *
  * @tparam interpolation_mode The interpolation mode to use.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrc The typed source image type.
  * @param img The input image to be resampled
  * @param new_width The width of the target image.
  * @param new_height The height of the target image
  * @return The sampled target image.
  */
-template <ImageInterpolationMode interpolation_mode, typename PixelType>
-Image<PixelType> resample(const Image<PixelType>& img, PixelLength new_width, PixelLength new_height)
+template <ImageInterpolationMode interpolation_mode, typename DerivedSrc>
+auto resample(const ImageBase<DerivedSrc>& img, PixelLength new_width, PixelLength new_height)
+    -> Image<typename ImageBase<DerivedSrc>::PixelType>
 {
-  Image<PixelType> img_dst;
+  Image<typename ImageBase<DerivedSrc>::PixelType> img_dst;
   resample<interpolation_mode>(img, new_width, new_height, img_dst);
   return img_dst;
 }
@@ -125,16 +129,27 @@ Image<PixelType> resample(const Image<PixelType>& img, PixelLength new_width, Pi
  * frequency range; therefore, aliasing may occur when shrinking the image dimensions.
  *
  * @tparam interpolation_mode The interpolation mode to use.
- * @tparam PixelType The pixel type.
+ * @tparam DerivedSrcDst The typed source/target image type.
  * @param img_src The input image to be resampled.
  * @param img_dst The sampled target image.
  * @param new_width The width of the target image.
  * @param new_height The height of the target image
  */
-template <ImageInterpolationMode interpolation_mode, typename PixelType>
-void resample(const Image<PixelType>& img_src, PixelLength new_width, PixelLength new_height, Image<PixelType>& img_dst)
+template <ImageInterpolationMode interpolation_mode, typename DerivedSrcDst>
+void resample(const ImageBase<DerivedSrcDst>& img_src, PixelLength new_width, PixelLength new_height, ImageBase<DerivedSrcDst>& img_dst)
 {
-  img_dst.maybe_allocate(new_width, new_height);
+  if (&img_src == &img_dst)
+  {
+    return;
+  }
+
+  if (new_width == img_src.width() && new_height == img_src.height())
+  {
+    clone(img_src, img_dst);
+    return;
+  }
+
+  allocate(img_dst, {new_width, new_height});
 
   const auto dst_to_src_factor_x = img_src.width() / static_cast<default_float_t>(new_width);
   const auto dst_to_src_factor_y = img_src.height() / static_cast<default_float_t>(new_height);
@@ -163,4 +178,4 @@ void resample(const Image<PixelType>& img_src, PixelLength new_width, PixelLengt
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_RESAMPLE_HPP
+#endif  // SELENE_IMG_OPS_RESAMPLE_HPP

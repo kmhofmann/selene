@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/kmhofmann/selene.svg?branch=master)](https://travis-ci.org/kmhofmann/selene)
 [![Build status](https://ci.appveyor.com/api/projects/status/7usv92g9ot12v656?svg=true)](https://ci.appveyor.com/project/kmhofmann/selene)
 
-**Selene** is a C++14 image representation, processing, and I/O library, focusing on ease of use and a clean, modern,
+**Selene** is a C++17 image representation, processing, and I/O library, focusing on ease of use and a clean, modern,
 type-safe API.
 
   * [Overview](docs/overview.md): Brief summary of the current feature set
@@ -27,7 +27,7 @@ A first impression of the API:
 
 ```
 // Decode JPEG image data from disk
-ImageData<> img_data = read_image(FileReader(example_img_path.string()));
+DynImage img_data = read_image(FileReader(example_img_path.string()));
 assert(img_data.nr_channels() == 3 && img_data.nr_bytes_per_channel() == 1);
 
 // Convert to strongly typed RGB image
@@ -35,7 +35,7 @@ Image<PixelRGB_8u> img_rgb = to_image<PixelRGB_8u>(std::move(img_data));
 assert(img_rgb.width() > 400_px && img_rgb.height() > 350_px);
 
 // Create non-owning view on part of the image
-Image<PixelRGB_8u> img_part = view(img_rgb, 100_idx, 100_idx, 300_px, 250_px);
+MutableImageView<PixelRGB_8u> img_part = view(img_rgb, {100_idx, 100_idx, 300_px, 250_px});
 
 // Darken this part
 for_each_pixel(img_part, [](auto& px){ px /= 4; });
@@ -45,17 +45,17 @@ flip_horizontally_in_place(img_part);
 
 // Convert whole image to RGBA, adding semi-transparent alpha channel
 const Image<PixelRGBA_8u> img_rgba =
-    convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{128});
+  convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{128});
 
 // Encode in-memory to PNG
 std::vector<std::uint8_t> encoded_png_data;
-write_image(to_image_data_view(img_rgba), ImageFormat::PNG,
-            VectorWriter(encoded_png_data));
+write_image(to_dyn_image_view(img_rgba), ImageFormat::PNG,
+          VectorWriter(encoded_png_data));
 
 // Write encoded binary data to disk (or do something else with it...)
 write_data_contents("example_out.png", encoded_png_data);
 ```
-
+<!---
 ### Introductory presentation
 
 Here is a [PDF format presentation](https://selene-lib.org/selene_presentation_20180524.pdf) that introduces Selene
@@ -63,6 +63,7 @@ Here is a [PDF format presentation](https://selene-lib.org/selene_presentation_2
 [Dutch C++ Group](https://www.meetup.com/The-Dutch-Cpp-Group/).
 
 [![Selene: Image representation and I/O in C++14](docs/selene_presentation_preview_small.png)](https://selene-lib.org/selene_presentation_20180524.pdf)
+--->
 
 ### Package managed
 
