@@ -5,14 +5,6 @@
 # (test_vcpkg). These Docker images are based on 'ubuntu:rolling' (currently
 # Ubuntu 18.10), to provide GCC 8 and Clang 7 out of the box.
 
-trigger:
-  batch: true
-  paths:
-    exclude:
-      - docs/*
-      - package/*
-      - scripts/*
-
 jobs:
   - job: Docker_Ubuntu_apt_Clang_ASAN
     pool:
