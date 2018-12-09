@@ -847,7 +847,7 @@ struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::ABGR>
  * @return A pixel value in the target format.
  */
 template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename, typename>
-inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
+constexpr auto convert_pixel(const PixelSrc& px) noexcept
 {
   static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
                 "Incorrect source pixel format.");
@@ -883,7 +883,7 @@ inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
  * @return A pixel value in the target format.
  */
 template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename, typename>
-inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept
+constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept
 {
   static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
                 "Incorrect source pixel format.");
@@ -916,7 +916,7 @@ inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value)
  * @return A pixel value in the target format.
  */
 template <PixelFormat pixel_format_dst, typename PixelSrc, typename, typename>
-inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
+constexpr auto convert_pixel(const PixelSrc& px) noexcept
 {
   constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
   return impl::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px);
@@ -946,7 +946,7 @@ inline constexpr auto convert_pixel(const PixelSrc& px) noexcept
  * @return A pixel value in the target format.
  */
 template <PixelFormat pixel_format_dst, typename PixelSrc, typename ElementType, typename, typename>
-inline constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept
+constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexcept
 {
   constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
   return impl::PixelConversion<pixel_format_src, pixel_format_dst>::apply(px, alpha_value);

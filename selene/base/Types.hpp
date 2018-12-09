@@ -40,7 +40,7 @@ inline namespace literals {
  * @param nr_bytes Number of bytes.
  * @return A `Bytes` instance.
  */
-constexpr inline Bytes operator"" _b(unsigned long long nr_bytes) noexcept
+constexpr Bytes operator"" _b(unsigned long long nr_bytes) noexcept
 {
   return Bytes(static_cast<Bytes::value_type>(nr_bytes));
 }

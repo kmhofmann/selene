@@ -91,7 +91,7 @@ struct IsImageType<ImageType, std::void_t<typename ImageType::PixelType,
 { };
 
 template <typename ImageType>
-inline constexpr bool is_image_type_v = IsImageType<ImageType>::value;
+constexpr bool is_image_type_v = IsImageType<ImageType>::value;
 
 }  // namespace sln
 

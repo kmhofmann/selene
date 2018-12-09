@@ -157,7 +157,7 @@ struct IsPixelType<PixelType, std::void_t<typename PixelType::value_type,
 { };
 
 template <typename PixelType>
-inline constexpr bool is_pixel_type_v = IsPixelType<PixelType>::value;
+constexpr bool is_pixel_type_v = IsPixelType<PixelType>::value;
 
 // -----
 

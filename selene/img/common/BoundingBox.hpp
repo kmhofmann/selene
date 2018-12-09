@@ -44,7 +44,7 @@ private:
 
 /** Default constructor. Constructs a bounding box of size (0, 0) top-left corner (0, 0).
  */
-inline constexpr BoundingBox::BoundingBox() noexcept
+constexpr BoundingBox::BoundingBox() noexcept
     : x0_(PixelIndex{0}), y0_(PixelIndex{0}), width_(PixelLength{0}), height_(PixelLength{0})
 {
 }
@@ -56,7 +56,7 @@ inline constexpr BoundingBox::BoundingBox() noexcept
  * \param width Box width.
  * \param height Box height.
  */
-inline constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept
+constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept
     : x0_(x0), y0_(y0), width_(width), height_(height)
 {
   SELENE_ASSERT(width_ > 0);
@@ -74,7 +74,7 @@ inline constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLen
  * \param x1 x-coordinate of the bottom-right box corner.
  * \param y1 y-coordinate of the bottom-right box corner.
  */
-inline constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelIndex x1, PixelIndex y1) noexcept
+constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelIndex x1, PixelIndex y1) noexcept
     : x0_(x0), y0_(y0), width_(x1 - x0), height_(y1 - y0)
 {
   SELENE_ASSERT(width_ > 0);
@@ -85,7 +85,7 @@ inline constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelInd
  *
  * \return x-coordinate of the top-left corner.
  */
-inline constexpr PixelIndex BoundingBox::x0() const noexcept
+constexpr PixelIndex BoundingBox::x0() const noexcept
 {
   return x0_;
 }
@@ -94,7 +94,7 @@ inline constexpr PixelIndex BoundingBox::x0() const noexcept
  *
  * \return y-coordinate of the top-left corner.
  */
-inline constexpr PixelIndex BoundingBox::y0() const noexcept
+constexpr PixelIndex BoundingBox::y0() const noexcept
 {
   return y0_;
 }
@@ -103,7 +103,7 @@ inline constexpr PixelIndex BoundingBox::y0() const noexcept
  *
  * \return Box width.
  */
-inline constexpr PixelLength BoundingBox::width() const noexcept
+constexpr PixelLength BoundingBox::width() const noexcept
 {
   return width_;
 }
@@ -112,7 +112,7 @@ inline constexpr PixelLength BoundingBox::width() const noexcept
  *
  * \return Box height.
  */
-inline constexpr PixelLength BoundingBox::height() const noexcept
+constexpr PixelLength BoundingBox::height() const noexcept
 {
   return height_;
 }
@@ -123,7 +123,7 @@ inline constexpr PixelLength BoundingBox::height() const noexcept
  *
  * \return x-coordinate of the bottom-right corner.
  */
-inline constexpr PixelIndex BoundingBox::x1() const noexcept
+constexpr PixelIndex BoundingBox::x1() const noexcept
 {
   return PixelIndex{x0_ + width_};
 }
@@ -134,7 +134,7 @@ inline constexpr PixelIndex BoundingBox::x1() const noexcept
  *
  * \return y-coordinate of the bottom-right corner.
  */
-inline constexpr PixelIndex BoundingBox::y1() const noexcept
+constexpr PixelIndex BoundingBox::y1() const noexcept
 {
   return PixelIndex{y0_ + height_};
 }
@@ -143,7 +143,7 @@ inline constexpr PixelIndex BoundingBox::y1() const noexcept
  *
  * \return True, if box is empty, false otherwise.
  */
-inline constexpr bool BoundingBox::empty() const noexcept
+constexpr bool BoundingBox::empty() const noexcept
 {
   return width_ == PixelLength{0} || height_ == PixelLength{0};
 }
@@ -156,7 +156,7 @@ inline constexpr bool BoundingBox::empty() const noexcept
  * @param max_img_width Maximum image width.
  * @param max_img_height Maximum image height.
  */
-inline constexpr void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept
+constexpr void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept
 {
   x0_ = std::max(x0_, PixelIndex{0});
   y0_ = std::max(y0_, PixelIndex{0});

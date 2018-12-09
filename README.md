@@ -8,13 +8,9 @@ type-safe API.
 
   * [Overview](docs/overview.md): Brief summary of the current feature set.
   * [Rationale](docs/rationale.md): Why implement a new library for image representation, processing, and I/O?
-
-
   * [Building the library](docs/building.md): How to build from source.
   * [Dependencies](docs/dependencies.md): Description of optional dependencies.
   * [Installation](docs/installation.md): Installation using package managers.
-
-
   * [API documentation and status](docs/documentation.md): API documentation, examples, supported compilers.
   * [Known issues](docs/known_issues.md): Known issues and possible workarounds.
   * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library.

@@ -27,7 +27,7 @@ namespace sln {
  * @return `base` raised to the power of `exponent`.
  */
 template <typename T, typename U>
-inline constexpr T power(T base, U exponent) noexcept
+constexpr T power(T base, U exponent) noexcept
 {
   static_assert(std::is_integral<U>::value, "Exponent needs to be integral");
   static_assert(std::is_unsigned<U>::value, "Exponent needs to be unsigned");
@@ -39,7 +39,7 @@ inline constexpr T power(T base, U exponent) noexcept
  * @param x An unsigned integer value.
  * @return The next largest power of two.
  */
-inline constexpr std::uint64_t next_power_of_two(std::uint64_t x)
+constexpr std::uint64_t next_power_of_two(std::uint64_t x)
 {
   // from https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
   --x;
@@ -60,7 +60,7 @@ inline constexpr std::uint64_t next_power_of_two(std::uint64_t x)
  * @return A `std::array<T, N>`, where each entry has value `value`.
  */
 template <typename T, std::uint32_t N>
-inline constexpr std::array<T, N> make_array_n_equal(T value)
+constexpr std::array<T, N> make_array_n_equal(T value)
 {
   ::std::array<T, N> arr = {{value}};
 
@@ -82,7 +82,7 @@ inline constexpr std::array<T, N> make_array_n_equal(T value)
  * @return A `std::array<T, N>` with the respective content.
  */
 template <typename T, std::size_t N, typename Func>
-inline constexpr auto make_array_from_function(Func func) noexcept
+constexpr auto make_array_from_function(Func func) noexcept
 {
   ::std::array<T, N> arr = {};
 
@@ -99,7 +99,7 @@ inline constexpr auto make_array_from_function(Func func) noexcept
 namespace impl {
 
 template <typename PT, typename Coeff, PT shift>
-inline constexpr PT rounded_linear_combination_coeff_func(std::size_t i)
+constexpr PT rounded_linear_combination_coeff_func(std::size_t i)
 {
   using UT = std::make_unsigned_t<PT>;
   return constexpr_round_half_up<PT>(Coeff::values[i] * PT(power(UT{2}, UT{shift})));
@@ -124,7 +124,7 @@ inline constexpr PT rounded_linear_combination_coeff_func(std::size_t i)
  * @return A linear combination of the input array with the provided coefficients.
  */
 template <typename T, std::size_t N, typename Coeff, typename PromotedType = promote_t<T>, typename Array>
-inline constexpr T approximate_linear_combination(const Array& src) noexcept
+constexpr T approximate_linear_combination(const Array& src) noexcept
 {
   static_assert(std::is_integral<T>::value, "Conversion type has to be integral");
 
@@ -160,7 +160,7 @@ inline constexpr T approximate_linear_combination(const Array& src) noexcept
  * @return A linear combination of the input array with the provided coefficients.
  */
 template <typename T, std::size_t N, typename Coeff, typename Array>
-inline constexpr T linear_combination(const Array& src) noexcept
+constexpr T linear_combination(const Array& src) noexcept
 {
   static_assert(std::is_floating_point<T>::value, "Conversion type has to be floating point");
 

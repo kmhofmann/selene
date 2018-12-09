@@ -24,7 +24,7 @@ namespace sln {
  * @return The number of set bits.
  */
 template <typename T>
-inline constexpr std::size_t bit_count(T x)
+constexpr std::size_t bit_count(T x)
 {
   // from http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
   x = static_cast<T>(x - ((x >> 1) & static_cast<T>(~T{0}) / 3));
@@ -109,7 +109,7 @@ inline std::size_t bit_count(unsigned __int64 x)
  * @param x The input value.
  * @return The number of set bits.
  */
-inline constexpr std::size_t bit_count(std::uint32_t x)
+constexpr std::size_t bit_count(std::uint32_t x)
 {
   // from http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
   x = x - ((x >> 1) & 0x55555555);

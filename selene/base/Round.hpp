@@ -52,7 +52,7 @@ constexpr Result constexpr_round(Value val) noexcept;
  * @return The output value after applying the "floor" operation.
  */
 template <typename Result, typename Value>
-inline constexpr Result constexpr_floor(Value val) noexcept
+constexpr Result constexpr_floor(Value val) noexcept
 {
   const auto ival = static_cast<Result>(val);
 
@@ -75,7 +75,7 @@ inline constexpr Result constexpr_floor(Value val) noexcept
  * @return The output value after applying the "ceil" operation.
  */
 template <typename Result, typename Value>
-inline constexpr Result constexpr_ceil(Value val) noexcept
+constexpr Result constexpr_ceil(Value val) noexcept
 {
   const auto ival = static_cast<Result>(val);
 
@@ -117,7 +117,7 @@ inline Result round_half_up(Value val) noexcept
  * @return The rounded output value.
  */
 template <typename Result, typename Value>
-inline constexpr Result constexpr_round_half_up(Value val) noexcept
+constexpr Result constexpr_round_half_up(Value val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
@@ -154,7 +154,7 @@ inline Result round_half_down(Value val) noexcept
  * @return The rounded output value.
  */
 template <typename Result, typename Value>
-inline constexpr Result constexpr_round_half_down(Value val) noexcept
+constexpr Result constexpr_round_half_down(Value val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
@@ -190,7 +190,7 @@ inline Result round(Value val) noexcept
  * @return The rounded output value.
  */
 template <typename Result, typename Value>
-inline constexpr Result constexpr_round(Value val) noexcept
+constexpr Result constexpr_round(Value val) noexcept
 {
   return (val >= 0) ? constexpr_round_half_up<Result>(val) : constexpr_round_half_down<Result>(val);
 }
@@ -199,77 +199,77 @@ inline constexpr Result constexpr_round(Value val) noexcept
 /// \cond INTERNAL
 
 template <typename Result>
-inline constexpr Result round(char val) noexcept
+constexpr Result round(char val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(signed char val) noexcept
+constexpr Result round(signed char val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned char val) noexcept
+constexpr Result round(unsigned char val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(short val) noexcept
+constexpr Result round(short val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned short val) noexcept
+constexpr Result round(unsigned short val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(int val) noexcept
+constexpr Result round(int val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned int val) noexcept
+constexpr Result round(unsigned int val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(long val) noexcept
+constexpr Result round(long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned long val) noexcept
+constexpr Result round(unsigned long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(long long val) noexcept
+constexpr Result round(long long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
-inline constexpr Result round(unsigned long long val) noexcept
+constexpr Result round(unsigned long long val) noexcept
 {
   static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
   return static_cast<Result>(val);
