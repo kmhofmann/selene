@@ -36,7 +36,7 @@ cmake --build .
 export SELENE_DATA_PATH=../data
 
 # Run tests
-./test/selene/selene_tests -d yes
+./test/selene_tests -d yes
 
 # Run all example binaries
 # https://stackoverflow.com/questions/4458120/unix-find-search-for-executable-files
