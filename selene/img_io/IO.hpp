@@ -65,7 +65,8 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst);
  * otherwise.
  */
 template <typename SourceType>
-DynImage read_image(SourceType&& source, MessageLog* messages)
+DynImage read_image(SourceType&& source,
+                    [[maybe_unused]] MessageLog* messages)
 {
   bool reading_attempted = false;
   const auto source_pos = source.position();
@@ -149,11 +150,11 @@ bool write_image(const DynImage& dyn_img,
  * @return True, if the write operation was successful; false otherwise.
  */
 template <ImageModifiability modifiability, typename SinkType>
-bool write_image(const DynImageView<modifiability>& dyn_img_view,
+bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_view,
                  ImageFormat format,
-                 SinkType&& sink,
-                 MessageLog* messages,
-                 int jpeg_quality)
+                 [[maybe_unused]] SinkType&& sink,
+                 [[maybe_unused]] MessageLog* messages,
+                 [[maybe_unused]] int jpeg_quality)
 {
   if (format == ImageFormat::JPEG)
   {

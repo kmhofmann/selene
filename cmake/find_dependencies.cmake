@@ -2,10 +2,12 @@
 
 # libjpeg-turbo (or libjpeg)
 
-find_package(JPEG)
+if (NOT SELENE_NO_LIBJPEG)
+    find_package(JPEG)
+endif()
 
 if (JPEG_FOUND)
-    message("Building with libjpeg support.")
+    message(STATUS "Building with libjpeg support.")
     # Detect some features provided by libjpeg-turbo: partial image decoding and extended colorspaces
     set(JPEG_PARTIAL_DECODING OFF)
     set(JPEG_EXTENDED_COLORSPACES OFF)
@@ -24,33 +26,37 @@ if (JPEG_FOUND)
         unset(jpeg_supports_jcs_ext)
     endif()
     if (JPEG_PARTIAL_DECODING)
-        message("libjpeg-turbo supports partial decoding.")
+        message(STATUS "libjpeg-turbo supports partial decoding.")
     endif()
     if (JPEG_EXTENDED_COLORSPACES)
-        message("libjpeg-turbo supports extended color spaces.")
+        message(STATUS "libjpeg-turbo supports extended color spaces.")
     endif()
 else()
-    message(WARNING "Building without libjpeg support.")
+    message(STATUS "Building without libjpeg support.")
 endif()
 
 # libpng
 
-find_package(PNG)
+if (NOT SELENE_NO_LIBPNG)
+    find_package(PNG)
+endif()
 
 if (PNG_FOUND)
-    message("Building with libpng support.")
+    message(STATUS "Building with libpng support.")
 else()
-    message(WARNING "Building without libpng support.")
+    message(STATUS "Building without libpng support.")
 endif()
 
 # OpenCV
 
-find_package(OpenCV)
+if (NOT SELENE_NO_OPENCV)
+    find_package(OpenCV)
+endif()
 
 if (OPENCV_CORE_FOUND)
-    message("Building with OpenCV support.")
+    message(STATUS "Building with OpenCV support.")
 else()
-    message(WARNING "Building without OpenCV support.")
+    message(STATUS "Building without OpenCV support.")
 endif()
 
 # Boost

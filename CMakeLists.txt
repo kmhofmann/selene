@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(selene VERSION 0.2 LANGUAGES CXX)
 
+# User-settable options
 option(SELENE_BUILD_TESTS "Build Selene tests" OFF)
 option(SELENE_BUILD_EXAMPLES "Build Selene examples" OFF)
 option(SELENE_BUILD_BENCHMARKS "Build Selene benchmarks" OFF)
@@ -10,7 +11,11 @@ if (SELENE_BUILD_ALL)
     set(SELENE_BUILD_EXAMPLES ON)
     set(SELENE_BUILD_BENCHMARKS ON)
 endif()
-option(SELENE_USE_DEFAULT_SINGLE_PRECISION "Use single precision for floating point calculations by default" OFF)
+option(SELENE_USE_DEFAULT_SINGLE_PRECISION "Use single precision for floating point calculations by default (instead of double precision)" OFF)
+
+option(SELENE_NO_LIBJPEG "Disable looking for libjpeg" OFF)
+option(SELENE_NO_LIBPNG "Disable looking for libpng" OFF)
+option(SELENE_NO_OPENCV "Disable looking for OpenCV" OFF)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard whose features are requested to build this target.")
@@ -34,7 +39,7 @@ include(cmake/compiler_options.cmake)
 add_subdirectory(selene)
 
 if (SELENE_BUILD_TESTS)
-    add_subdirectory(test/selene)
+    add_subdirectory(test)
 endif()
 
 if (SELENE_BUILD_EXAMPLES)
