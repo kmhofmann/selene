@@ -24,7 +24,7 @@ function build_everything {
 }
 
 function run_all_binaries {
-  ./test/selene/selene_tests -d yes
+  ./test/selene_tests -d yes
 
   # https://stackoverflow.com/questions/4458120/unix-find-search-for-executable-files
   EXAMPLE_BINARIES=$(find -L ./examples/ -maxdepth 1 -type f \( -perm -u=x -o -perm -g=x -o -perm -o=x \))
