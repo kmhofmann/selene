@@ -1,6 +1,6 @@
 # Selene
 
-[![Build Status](https://travis-ci.org/kmhofmann/selene.svg?branch=master)](https://travis-ci.org/kmhofmann/selene)
+[![Build Status](https://dev.azure.com/kmhofmann/selene/_apis/build/status/kmhofmann.selene?branchName=master)](https://dev.azure.com/kmhofmann/selene/_build/latest?definitionId=1)
 [![Build status](https://ci.appveyor.com/api/projects/status/7usv92g9ot12v656?svg=true)](https://ci.appveyor.com/project/kmhofmann/selene)
 
 **Selene** is a C++17 image representation, processing, and I/O library, focusing on ease of use and a clean, modern,
