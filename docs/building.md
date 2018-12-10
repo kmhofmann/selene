@@ -6,6 +6,9 @@
 
 **Selene** requires a compiler supporting C++17 and uses [CMake](https://cmake.org/) for building.
 
+See the [Dependencies](dependencies.md) page for more information on its required and optional dependencies.
+These need to be installed before attempting to build the respective parts.
+
 Follow the usual instructions for CMake projects on UNIX-like systems.
 First, clone the project and create a `build` directory (or use another name).
 
@@ -21,7 +24,8 @@ Then call `cmake` and build the project.
 Additional options may be passed to the respective build tool, e.g. `cmake --build . -- -j8`.
 
 On Windows, the CMake command might look similar to the following, in order to generate Visual Studio 2017 project
-files for a 64-bit build (see below for more info on [vcpkg](https://github.com/Microsoft/vcpkg)):
+files for a 64-bit build (see [here](dependencies.md) for more info on using 
+[vcpkg](https://github.com/Microsoft/vcpkg) for installation of dependencies):
 
     cmake -G "Visual Studio 15 2017 Win64" -T "host=x64" \
         -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>\scripts\buildsystems\vcpkg.cmake \
@@ -38,11 +42,41 @@ The default CMake settings will build a set of static libraries.
 
 If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to the `cmake` command.
 
-### Usage/Installation
+### Installation/Usage
 
-* The easiest option is to use the library as a submodule within your project.
-  No actual installation is needed then, and Selene will be built from source together with your project.
-  Integrating the library into own CMake projects can be as easy as:
+* **Selene** can be installed using the following `cmake` invocation:
+
+      cmake --build . --target install
+
+  Alternatively, the respective command provided by the build system can be used; e.g. `make install` for GNU Make,
+or `ninja install` for ninja.
+
+  Selene can then be found by other CMake projects using the `find_package` command:
+  
+        find_package(selene)
+        # ...
+        target_link_libraries(<target_name> selene::selene)
+
+* By default, above installation will be system-wide (e.g. to `/usr/local`) and likely requires administrator rights.
+  Since this is an intrusive operation, and may result in file level conflicts (due to the single directory for all
+  libraries and applications), it is generally *not* recommended.
+  
+  To perform a user-local installation instead, change the CMake prefix path by adding
+  `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the *initial* CMake invocation.
+  For example: `cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local/selene ..`.
+
+  Note how this approach can easily provide a much cleaner separation of library/application files on a
+  library/application level on the filesystem.
+
+* Even *without* explicit installation, CMake adds a reference to the build tree location to the user-level CMake cache.
+This means that the above `find_package()` call will also work without user-level or system-level installation, and will
+then find the build tree itself.
+**Selene** just needs to have been successfully built. 
+
+* Another option is to keep the library as a submodule within your project.
+  This enables Selene to be built from source *together* with your project, i.e. enabling a true "one-command" build.
+  However, you won't be able to use the idiomatic `find_package` command, but need to use `add_subdirectory`
+  instead:
 
       add_subdirectory(selene)  # assuming the library is cloned as submodule in a directory named 'selene'
       # ...
@@ -50,23 +84,12 @@ If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to t
 
   Advantages of this approach are greatly decreased risk of inconsistent dependencies (in case you upgrade libraries),
   and IDEs more easily picking up the Selene source code (as opposed to, say, just the installed headers).
-  This can be particularly useful when developing on Selene itself.
-
-* Alternatively, you can install Selene (e.g. using `make install`) and then declare as dependency in a CMake project
-  as follows:
-
-      find_package(selene)
-      # ...
-      target_link_libraries(<target_name> selene::selene)
-
-  To provide a custom installation location, add `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the CMake invocation.
-  The default is an intrusive, system-wide `/usr/local` on UNIX-like systems; it is recommended to change this.
-
-The CMake invocation also adds a reference to the build tree location to the user-level CMake cache.
-This means that the `find_package()` call can also work without installation, and will find then find the build tree
-itself. 
+  The main disadvantage is the non-idiomatic approach to package management (or, rather, the lack of it).
 
 ### CMake options
+
+**Selene** provides a number of options that can be either passed to the `cmake` command line invocation, or
+alternatively set in a helper tool like `ccmake`.
 
 #### Building everything
 
@@ -105,6 +128,18 @@ The examples can then be found in the `./examples/` folder in the build director
 A few micro-benchmarks can be optionally compiled by adding `-DSELENE_BUILD_BENCHMARKS=ON` to the `cmake` command line.
 The code for these can be found in the `./benchmark/` folder, and depends on Google's
 [benchmark](https://github.com/google/benchmark) library to be installed.
+
+#### Excluding dependencies
+
+By default, the **Selene** CMake build instructions will automatically detect library [dependencies](dependencies.md)
+present on the system and make use of these.
+If desired, this can be explicitly disabled by one or more of the following CMake options:
+
+    -DSELENE_NO_LIBJPEG
+    -DSELENE_NO_LIBPNG
+    -DSELENE_NO_OPENCV
+
+### Running tests & examples
 
 #### Specifying the data path
 

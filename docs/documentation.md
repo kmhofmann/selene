@@ -22,7 +22,7 @@ There are no obvious reasons why **Selene** could not be compiled on other platf
 However, these platforms are not within the testing scope.
 
 Continuous integration tests are currently being run on:
-- Ubuntu Linux 18.10  (via [Azure DevOps](https://dev.azure.com), using the following compilers:
+- Ubuntu Linux 18.10  (via [Azure DevOps](https://dev.azure.com)), using the following compilers:
     - GCC 8.2
     - Clang 7.0 (with and without AddressSanitizer)
 - Windows, using Visual Studio 2017 (via [Appveyor](https://www.appveyor.com/)).

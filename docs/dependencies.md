@@ -1,6 +1,6 @@
 # Selene
 
-## Library dependencies
+## Dependencies
 
 **Selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
 
@@ -62,7 +62,8 @@ See below for instructions on how to install dependencies using [Conan](https://
 
 ### Linux
 
-On Debian-like systems (e.g. Ubuntu), you should be able to use `apt` as follows:
+On sufficiently recent Debian-like systems (e.g. Ubuntu), one can install the necessary dependencies using `apt` as
+follows:
 
     # Dependencies for building the library
     apt install libjpeg-turbo8-dev libpng-dev
@@ -72,6 +73,9 @@ On Debian-like systems (e.g. Ubuntu), you should be able to use `apt` as follows
     
     # Note: There is no pre-built google-benchmark package in e.g. Ubuntu.
     #       Install from source instead, or use vcpkg.
+
+(Some distributions supply broken packages; e.g. there are issues with `libopencv-dev` on Ubuntu 16.04. Good luck with
+such an old distribution anyway.)
 
 ### MacOS
 
@@ -107,6 +111,12 @@ Then, install packages as follows
     ./vcpkg install benchmark         # only for benchmarks
 
 (Windows users call `.\vcpkg.exe` instead of `./vcpkg`.)
+
+To use the installed libraries in a CMake-based setup, just specify the toolchain file during the `cmake` invocation:
+
+     ... -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake ...
+
+For more details, please refer to the [vcpkg documentation](https://vcpkg.readthedocs.io/).
 
 Selene itself can also be [installed using *vcpkg*](installation.md).
 
