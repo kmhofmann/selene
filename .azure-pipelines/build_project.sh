@@ -8,9 +8,12 @@ echo "COMMIT $(git rev-parse HEAD)"
 echo "--------------------------------------------------"
 echo "CC = ${CC}"
 echo "CXX = ${CXX}"
+echo "CXXFLAGS = ${CXXFLAGS}"
+echo "LDFLAGS = ${LDFLAGS}"
+echo ""
+echo "VCPKG_DIR = ${VCPKG_DIR}"
+echo "BUILD_TYPE = " ${BUILD_TYPE}
 echo "ASAN = ${ASAN}"
-echo "RELEASE = " ${RELEASE}
-echo "VCPKG = ${VCPKG}"
 echo "--------------------------------------------------"
 cmake --version;
 echo "--------------------------------------------------"
@@ -19,21 +22,21 @@ echo "--------------------------------------------------"
 ${CXX} --version;
 echo "--------------------------------------------------"
 
+if [ -n "${VCPKG_DIR}" ]; then
+  echo "Building using vcpkg..."
+  export LOCAL_VCPKG_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=/home/${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake"
+fi
+
+if [ -n "${BUILD_TYPE}" ]; then
+  echo "Build type: ${BUILD_TYPE}"
+  export LOCAL_BUILD_TYPE="-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
+fi
+
 if [ -n "${ASAN}" ]; then
   echo "Building with AddressSanitizer enabled..."
   SAN_FLAGS="-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fno-optimize-sibling-calls -g -O1"
-  export CXXFLAGS=${SAN_FLAGS}
-  export LDFLAGS=${SAN_FLAGS}
-fi
-
-if [ -n "${VCPKG}" ]; then
-  echo "Building using vcpkg..."
-  export LOCAL_VCPKG_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=/home/vcpkg/scripts/buildsystems/vcpkg.cmake"
-fi
-
-export LOCAL_BUILD_TYPE="-DCMAKE_BUILD_TYPE=Debug"
-if [ -n "${RELEASE}" ]; then
-  export LOCAL_BUILD_TYPE="-DCMAKE_BUILD_TYPE=Release"
+  export CXXFLAGS="${SAN_FLAGS} ${CXXFLAGS}"
+  export LDFLAGS="${SAN_FLAGS} ${LDFLAGS}"
 fi
 
 # CMake invocation
