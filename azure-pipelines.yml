@@ -12,10 +12,10 @@ jobs:
     steps:
       - script: |
           docker pull kmhofmann/selene:test_apt
-        displayName: Pull Docker image
+        displayName: 'Pull Docker image'
       - script: |
           docker run --cap-add SYS_PTRACE -v$(pwd):/home/selene/ -e "CC=clang" -e "CXX=clang++" -e "ASAN=1" kmhofmann/selene:test_apt bash -c "./selene/.azure-pipelines/build_project.sh"
-        displayName: Run Docker image
+        displayName: 'Run Docker image'
 
   - job: Docker_Ubuntu_apt_Clang
     pool:
@@ -23,11 +23,11 @@ jobs:
     steps:
       - script: |
           docker pull kmhofmann/selene:test_apt
-        displayName: Pull Docker image
+        displayName: 'Pull Docker image'
       - script: |
           docker run -v$(pwd):/home/selene/ -e "CC=clang" -e "CXX=clang++" kmhofmann/selene:test_apt bash -c "./selene/.azure-pipelines/build_project.sh"
           docker run -v$(pwd):/home/selene/ -e "CC=clang" -e "CXX=clang++" -e "RELEASE=1" kmhofmann/selene:test_apt bash -c "./selene/.azure-pipelines/build_project.sh"
-        displayName: Run Docker image
+        displayName: 'Run Docker image'
 
   - job: Docker_Ubuntu_apt_GCC
     pool:
@@ -35,11 +35,11 @@ jobs:
     steps:
       - script: |
           docker pull kmhofmann/selene:test_apt
-        displayName: Pull Docker image
+        displayName: 'Pull Docker image'
       - script: |
           docker run -v$(pwd):/home/selene/ -e "CC=gcc" -e "CXX=g++" kmhofmann/selene:test_apt bash -c "./selene/.azure-pipelines/build_project.sh"
           docker run -v$(pwd):/home/selene/ -e "CC=gcc" -e "CXX=g++" -e "RELEASE=1" kmhofmann/selene:test_apt bash -c "./selene/.azure-pipelines/build_project.sh"
-        displayName: Run Docker image
+        displayName: 'Run Docker image'
 
   - job: Docker_Ubuntu_vcpkg_GCC
     pool:
@@ -47,43 +47,103 @@ jobs:
     steps:
       - script: |
           docker pull kmhofmann/selene:test_vcpkg
-        displayName: Pull Docker image
+        displayName: 'Pull Docker image'
       - script: |
           docker run -v$(pwd):/home/selene/ -e "CC=gcc" -e "CXX=g++" -e "VCPKG=1" kmhofmann/selene:test_vcpkg bash -c "./selene/.azure-pipelines/build_project.sh"
           docker run -v$(pwd):/home/selene/ -e "CC=gcc" -e "CXX=g++" -e "RELEASE=1" -e "VCPKG=1" kmhofmann/selene:test_vcpkg bash -c "./selene/.azure-pipelines/build_project.sh"
-        displayName: Run Docker image
+        displayName: 'Run Docker image'
 
+  - job: Windows_vcpkg_VS2017_x64
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+    - script: |
+        git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
+        ..\vcpkg\bootstrap-vcpkg.bat
+      displayName: 'Bootstrap vcpkg'
+    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng boost-filesystem --triplet x64-windows
+      displayName: 'Install vcpkg dependencies'
+    - script: |
+        mkdir build
+      displayName: 'Create build directory'
+    - task: CMake@1
+      inputs:
+        workingDirectory: 'build'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        displayName: 'Run CMake'
+    - task: MSBuild@1
+      inputs:
+        solution: 'build/ALL_BUILD.vcxproj'
+        maximumCpuCount: true
+        platform: 'x64'
+        displayName: 'Build, debug'
+    - script: |
+        cd build
+        .\test\Debug\selene_tests.exe -d yes
+      displayName: 'Run tests, debug'
+    - task: CMake@1
+      inputs:
+        workingDirectory: 'build'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        displayName: 'Run CMake, release'
+    - task: MSBuild@1
+      inputs:
+        solution: 'build/ALL_BUILD.vcxproj'
+        maximumCpuCount: true
+        platform: 'x64'
+        configuration: 'Release'
+        displayName: 'Build, release'
+    - script: |
+        cd build
+        .\test\Release\selene_tests.exe -d yes
+      displayName: 'Run tests, release'
 
-
+  - job: Windows_vcpkg_VS2017_x86
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+    - script: |
+        git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
+        ..\vcpkg\bootstrap-vcpkg.bat
+      displayName: 'Bootstrap vcpkg'
+    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng boost-filesystem
+      displayName: 'Install vcpkg dependencies'
+    - script: |
+        mkdir build
+      displayName: 'Create build directory'
+    - task: CMake@1
+      inputs:
+        workingDirectory: 'build'
+        cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        displayName: 'Run CMake'
+    - task: MSBuild@1
+      inputs:
+        solution: 'build/ALL_BUILD.vcxproj'
+        maximumCpuCount: true
+        platform: 'x86'
+        displayName: 'Build, debug'
+    - script: |
+        cd build
+        .\test\Debug\selene_tests.exe -d yes
+      displayName: 'Run tests, debug'
+    - task: CMake@1
+      inputs:
+        workingDirectory: 'build'
+        cmakeArgs: '--DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        displayName: 'Run CMake, release'
+    - task: MSBuild@1
+      inputs:
+        solution: 'build/ALL_BUILD.vcxproj'
+        maximumCpuCount: true
+        platform: 'x86'
+        configuration: 'Release'
+        displayName: 'Build, release'
+    - script: |
+        cd build
+        .\test\Release\selene_tests.exe -d yes
+      displayName: 'Run tests, release'
 
 # These jobs don't work yet; work in progress...
-
-
-#  - job: Windows_VS2017_x64
-#    pool:
-#      vmImage: 'vs2017-win2016'
-#    steps:
-#    - script: |
-#        git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
-#        ..\vcpkg\bootstrap-vcpkg.bat
-#      displayName: Bootstrap vcpkg
-#    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng boost-filesystem --triplet x64-windows
-#      displayName: Install vcpkg dependencies
-#    - script: mkdir build
-#      displayName: Create build directory
-#    - task: CMake@1
-#      inputs:
-#        workingDirectory: 'build'
-#        cmakeArgs: '-A x64 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
-#    - task: MSBuild@1
-#      inputs:
-#        solution: 'build/ALL_BUILD.vcxproj'
-#        maximumCpuCount: true
-#        platform: 'x64'
-#    - script: |
-#        cd build\Release\Binaries\Debug
-#        .\test\selene_tests.exe -d yes
-#      displayName: 'Run tests'
 
 #  - job: MacOS_vcpkg
 #    pool:
@@ -91,22 +151,43 @@ jobs:
 #    steps:
 #    - script: |
 #        brew install gcc ninja
+#      displayName: 'Install brew dependencies'
+#    - script: |
 #        git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
 #        ../vcpkg/bootstrap-vcpkg.sh
-#        ../vcpkg/vcpkg install libjpeg-turbo libpng boost-filesystem
-#      displayName: Install vcpkg dependencies
+#      displayName: 'Bootstrap vcpkg'
 #    - script: |
-#        mkdir build
-#      displayName: Create build directory
-#    - task: CMake@1
-#      inputs:
-#        workingDirectory: 'build'
-#        cmakeArgs: '-G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+#        ../vcpkg/vcpkg install libjpeg-turbo libpng boost-system boost-filesystem
+#      displayName: 'Install vcpkg dependencies'
 #    - script: |
-#        cd build
-#        ninja
+#        mkdir build && cd build
+#        cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+#      displayName: 'Run CMake'
+#    - script: |
+#        cd build && ninja
 #      displayName: 'Run ninja'
 #    - script: |
-#        cd build
-#        .\test\selene_tests.exe -d yes
+#        cd build && ./test/selene_tests -d yes
+#      displayName: 'Run tests'
+#
+#
+#  - job: MacOS_brew
+#    pool:
+#      vmImage: 'macOS-10.13'
+#    steps:
+#    - script: |
+#        brew install ninja libjpeg-turbo libpng boost
+#        brew link libjpeg-turbo
+#      displayName: Install brew dependencies
+#    - script: |
+#        mkdir build && cd build
+#        export LDFLAGS="-L/usr/local/opt/jpeg-turbo/lib"
+#        export CPPFLAGS="-I/usr/local/opt/jpeg-turbo/include"
+#        cmake --debug-output -G Ninja -DCMAKE_BUILD_TYPE=Debug -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+#      displayName: 'Run CMake'
+#    - script: |
+#        cd build && ninja
+#      displayName: 'Run ninja'
+#    - script: |
+#        cd build && ./test/selene_tests -d yes
 #      displayName: 'Run tests'
