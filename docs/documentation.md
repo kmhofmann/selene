@@ -21,19 +21,20 @@ As such, it can be built on the usual major plaforms: **Linux**, **MacOS**, **Wi
 There are no obvious reasons why **Selene** could not be compiled on other platforms, such as **Android** or **iOS**.
 However, these platforms are not within the testing scope.
 
-Continuous integration tests are currently being run on:
-- Ubuntu Linux 18.10  (via [Azure DevOps](https://dev.azure.com)), using the following compilers:
+Continuous integration tests are currently being run on the following platforms, via [Azure DevOps](https://dev.azure.com):
+- Ubuntu Linux 18.10, using the following compilers:
     - GCC 8.2
     - Clang 7.0 (with and without AddressSanitizer)
-- Windows, using Visual Studio 2017 (via [Appveyor](https://www.appveyor.com/)).
+- Windows 10
+    - Visual Studio 2017.
 
 ## Work in progress
 
-The library is work-in-progress and released as an early preview, and shall be considerably extended and modified in
+**Selene** is work-in-progress and released as an early preview, and shall be considerably extended and modified in
 the future; in particular by providing further image processing capabilities.
 
 Therefore, no API or ABI stability guarantees are currently given.
-Changes in API for versions less than `1.0` may occur at any time and break backwards compatibility.
+API changes for versions less than `1.0` may occur at any time and break backwards compatibility.
 
 However, the code is fairly well-tested and assumed to be not too far from production-level quality.
-Adoption and usage are explicitly encouraged.
+Adoption and usage are explicitly encouraged, bearing in mind that changes in code that uses **Selene** may be necessary.
