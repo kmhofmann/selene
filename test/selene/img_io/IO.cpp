@@ -2,6 +2,8 @@
 // Copyright 2017-2018 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#if defined(SELENE_WITH_LIBJPEG) && defined(SELENE_WITH_LIBPNG)
+
 #include <catch2/catch.hpp>
 
 #include <selene/base/MessageLog.hpp>
@@ -104,3 +106,5 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
     REQUIRE(messages_write.messages().empty());
   }
 }
+
+#endif // defined(SELENE_WITH_LIBJPEG) && defined(SELENE_WITH_LIBPNG)

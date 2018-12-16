@@ -1,6 +1,7 @@
 #include <selene/base/io/FileUtils.hpp>
 
 #include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/VectorWriter.hpp>
 
 #include <selene/img/pixel/PixelTypeAliases.hpp>
 
