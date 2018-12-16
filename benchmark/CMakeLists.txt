@@ -4,7 +4,8 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_executable(benchmark_image_access
+add_executable(benchmark_image_access "")
+target_sources(benchmark_image_access PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/image_access.cpp)
 target_compile_options(benchmark_image_access PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(benchmark_image_access PRIVATE ${SELENE_COMPILER_DEFINITIONS})

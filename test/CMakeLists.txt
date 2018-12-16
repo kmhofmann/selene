@@ -4,7 +4,9 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_executable(selene_tests
+add_executable(selene_tests "")
+
+target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/Utils.hpp
 

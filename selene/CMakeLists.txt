@@ -4,7 +4,10 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_library(selene_base
+add_library(selene_base "")
+add_library(selene::selene_base ALIAS selene_base)
+
+target_sources(selene_base PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Assert.hpp
@@ -17,7 +20,6 @@ add_library(selene_base
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/_impl/ExplicitType.hpp
         )
-add_library(selene::selene_base ALIAS selene_base)
 
 target_compile_options(selene_base PRIVATE ${SELENE_COMPILER_OPTIONS})
 
@@ -33,7 +35,10 @@ target_include_directories(selene_base PUBLIC
 
 #------------------------------------------------------------------------------
 
-add_library(selene_base_io
+add_library(selene_base_io "")
+add_library(selene::selene_base_io ALIAS selene_base_io)
+
+target_sources(selene_base_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/io/FileReader.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.hpp
@@ -44,7 +49,6 @@ add_library(selene_base_io
         ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorWriter.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/WriterMode.hpp
         )
-add_library(selene::selene_base_io ALIAS selene_base_io)
 
 target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILER_OPTIONS})
 
@@ -58,7 +62,10 @@ target_link_libraries(selene_base_io PUBLIC selene_base)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img
+add_library(selene_img "")
+add_library(selene::selene_img ALIAS selene_img)
+
+target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/DataPtr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
@@ -94,7 +101,6 @@ add_library(selene_img
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/ImageToDynImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.hpp
         )
-add_library(selene::selene_img ALIAS selene_img)
 
 target_compile_options(selene_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
@@ -113,7 +119,10 @@ target_link_libraries(selene_img PUBLIC selene_base)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img_io
+add_library(selene_img_io "")
+add_library(selene::selene_img_io ALIAS selene_img_io)
+
+target_sources(selene_img_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGCommon.hpp
@@ -132,7 +141,6 @@ add_library(selene_img_io
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
         )
-add_library(selene::selene_img_io ALIAS selene_img_io)
 
 target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
@@ -165,7 +173,10 @@ target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img_ops
+add_library(selene_img_ops "")
+add_library(selene::selene_img_ops ALIAS selene_img_ops)
+
+target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.hpp
@@ -179,7 +190,6 @@ add_library(selene_img_ops
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
         )
-add_library(selene::selene_img_ops ALIAS selene_img_ops)
 
 target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
