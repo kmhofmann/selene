@@ -2,9 +2,10 @@
 .idea/
 .vscode/
 .vs/
-_build*/
-build*/
-cmake-build-*/
+/_build*/
+/build*/
+/cmake-build-*/
 compile_commands.json
-doc_gen/
+/doc_gen/
 CMakeSettings.json
+/vcpkg/
