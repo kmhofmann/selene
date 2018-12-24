@@ -131,6 +131,8 @@ template <typename PixelType_, ImageModifiability modifiability_>
 ImageView<PixelType_, modifiability_>::ImageView(DataPtr<modifiability_> ptr, TypedLayout layout)
     : ptr_(ptr), layout_(layout)
 {
+  // adjust stride_bytes (may have been set to 0 in TypedLayout constructor)
+  layout_.stride_bytes = std::max(layout_.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout_.width));
 }
 
 /** \brief Returns the image view layout.
