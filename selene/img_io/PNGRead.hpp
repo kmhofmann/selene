@@ -62,9 +62,9 @@ public:
                         std::int16_t bit_depth_ = 0);
 
   bool is_valid() const;
-  std::int16_t nr_bytes_per_channel() const { return bit_depth / int16_t{8}; }
+  std::int16_t nr_bytes_per_channel() const { return int16_t(bit_depth / 8); }
 
-  std::size_t required_bytes() const { return (width * nr_channels * nr_bytes_per_channel()) * height; }
+  std::size_t required_bytes() const { return std::size_t((width * nr_channels * nr_bytes_per_channel()) * height); }
 };
 
 /** \brief PNG decompression options.

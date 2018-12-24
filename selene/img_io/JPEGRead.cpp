@@ -79,9 +79,11 @@ bool JPEGDecompressionObject::valid() const
 
 JPEGImageInfo JPEGDecompressionObject::get_header_info() const
 {
+  const auto width = to_pixel_length(impl_->cinfo.image_width);
+  const auto height = to_pixel_length(impl_->cinfo.image_height);
+  const auto num_components = std::int16_t(impl_->cinfo.num_components);
   const auto color_space = impl::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
-  return JPEGImageInfo(PixelLength(impl_->cinfo.image_width), PixelLength(impl_->cinfo.image_height),
-                       static_cast<std::uint16_t>(impl_->cinfo.num_components), color_space);
+  return JPEGImageInfo(width, height, num_components, color_space);
 }
 
 void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)
@@ -121,7 +123,9 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
 
   if (!region_.empty())
   {
-    region_.sanitize(PixelLength(cinfo.output_width), PixelLength(cinfo.output_height));
+    const auto width = to_pixel_length(cinfo.output_width);
+    const auto height = to_pixel_length(cinfo.output_height);
+    region_.sanitize(width, height);
   }
 
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
@@ -151,10 +155,11 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
   auto& cinfo = obj_.impl_->cinfo;
   SELENE_FORCED_ASSERT(cinfo.out_color_components == cinfo.output_components);
 
-  const auto width = PixelLength(cinfo.output_width);
-  const auto height = region_.empty() ? PixelLength(cinfo.output_height) : PixelLength(region_.height());
+  const auto width = to_pixel_length(cinfo.output_width);
+  const auto height = region_.empty() ? to_pixel_length(cinfo.output_height) : to_pixel_length(region_.height());
+  const auto color_components = static_cast<std::int16_t>(cinfo.out_color_components);
   const auto out_color_space = impl::color_space_lib_to_pub(cinfo.out_color_space);
-  return JPEGImageInfo{width, height, static_cast<std::int16_t>(cinfo.out_color_components), out_color_space};
+  return JPEGImageInfo{width, height, color_components, out_color_space};
 }
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)

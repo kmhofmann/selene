@@ -566,11 +566,12 @@ operator+(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
                 || pixel_format_0 == PixelFormat::Unknown
                 || pixel_format_1 == PixelFormat::Unknown, "Pixel addition not allowed: different pixel formats");
 
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] + rhs[i];
+    result[i] = CommonType(lhs[i] + rhs[i]);
   }
 
   return result;
@@ -594,11 +595,12 @@ operator-(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
                 || pixel_format_0 == PixelFormat::Unknown
                 || pixel_format_1 == PixelFormat::Unknown, "Pixel subtraction not allowed: different pixel formats");
 
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] - rhs[i];
+    result[i] = CommonType(lhs[i] - rhs[i]);
   }
 
   return result;
@@ -622,11 +624,12 @@ operator*(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
                 || pixel_format_0 == PixelFormat::Unknown
                 || pixel_format_1 == PixelFormat::Unknown, "Pixel multiplication not allowed: different pixel formats");
 
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] * rhs[i];
+    result[i] = CommonType(lhs[i] * rhs[i]);
   }
 
   return result;
@@ -650,11 +653,12 @@ operator/(Pixel<T, nr_channels_, pixel_format_0> lhs, const Pixel<U, nr_channels
                 || pixel_format_0 == PixelFormat::Unknown
                 || pixel_format_1 == PixelFormat::Unknown, "Pixel division not allowed: different pixel formats");
 
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_1 == PixelFormat::Unknown ? pixel_format_0 : pixel_format_1> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] / rhs[i];
+    result[i] = CommonType(lhs[i] / rhs[i]);
   }
 
   return result;
@@ -674,11 +678,12 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+(
     Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] + rhs;
+    result[i] = CommonType(lhs[i] + rhs);
   }
 
   return result;
@@ -698,11 +703,12 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator+(
     T lhs, Pixel<U, nr_channels_, pixel_format_> rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs + rhs[i];
+    result[i] = CommonType(lhs + rhs[i]);
   }
 
   return result;
@@ -722,11 +728,12 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator-(
     Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] - rhs;
+    result[i] = CommonType(lhs[i] - rhs);
   }
 
   return result;
@@ -746,11 +753,12 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*(
     Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] * rhs;
+    result[i] = CommonType(lhs[i] * rhs);
   }
 
   return result;
@@ -770,11 +778,12 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator*(
     T lhs, Pixel<U, nr_channels_, pixel_format_> rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs * rhs[i];
+    result[i] = CommonType(lhs * rhs[i]);
   }
 
   return result;
@@ -794,11 +803,12 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/(
     Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept
 {
-  Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> result{};
+  using CommonType = std::common_type_t<T, U>;
+  Pixel<CommonType, nr_channels_, pixel_format_> result{};
 
   for (std::size_t i = 0; i < nr_channels_; ++i)
   {
-    result[i] = lhs[i] / rhs;
+    result[i] = CommonType(lhs[i] / rhs);
   }
 
   return result;

@@ -1,6 +1,6 @@
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 
-    set(SELENE_COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
+    set(SELENE_COMPILER_OPTIONS -Wall -Wextra -Wpedantic -Wconversion)
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(SELENE_IMG_COMPILER_OPTIONS -Wno-clobbered)
         set(SELENE_TEST_COMPILER_OPTIONS -Wno-unused-but-set-variable)

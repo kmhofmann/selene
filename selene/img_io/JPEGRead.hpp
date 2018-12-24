@@ -61,7 +61,7 @@ struct JPEGImageInfo
   bool is_valid() const;
   std::int16_t nr_bytes_per_channel() const { return 1; }
 
-  std::size_t required_bytes() const { return (width * nr_channels) * height; }
+  std::size_t required_bytes() const { return std::size_t((width * nr_channels) * height); }
 };
 
 /** \brief JPEG decompression options.

@@ -141,7 +141,7 @@ constexpr T approximate_linear_combination(const Array& src) noexcept
   auto sum = PT{0};
   for (std::size_t i = 0; i < N; ++i)  // N is known at compile time
   {
-    sum += static_cast<PT>(c[i] * src[i]);
+    sum = PT(sum + c[i] * src[i]);
   }
 
   return static_cast<T>((sum + half) >> shift);
