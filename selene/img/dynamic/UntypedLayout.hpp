@@ -18,7 +18,7 @@ namespace sln {
 class UntypedLayout
 {
 public:
-  UntypedLayout() noexcept
+  constexpr UntypedLayout() noexcept
       : width{PixelLength{0}}
       , height{PixelLength{0}}
       , nr_channels{0}
@@ -26,10 +26,10 @@ public:
       , stride_bytes{Stride{0}}
   { }
 
-  UntypedLayout(PixelLength width_,
-                PixelLength height_,
-                std::int16_t nr_channels_,
-                std::int16_t nr_bytes_per_channel_) noexcept
+  constexpr UntypedLayout(PixelLength width_,
+                          PixelLength height_,
+                          std::int16_t nr_channels_,
+                          std::int16_t nr_bytes_per_channel_) noexcept
       : width(width_)
       , height(height_)
       , nr_channels(nr_channels_)
@@ -37,11 +37,11 @@ public:
       , stride_bytes(width_ * nr_channels_ * nr_bytes_per_channel_)
   { }
 
-  UntypedLayout(PixelLength width_,
-                PixelLength height_,
-                std::int16_t nr_channels_,
-                std::int16_t nr_bytes_per_channel_,
-                Stride stride_bytes_) noexcept
+  constexpr UntypedLayout(PixelLength width_,
+                          PixelLength height_,
+                          std::int16_t nr_channels_,
+                          std::int16_t nr_bytes_per_channel_,
+                          Stride stride_bytes_) noexcept
       : width(width_)
       , height(height_)
       , nr_channels(nr_channels_)
@@ -55,28 +55,28 @@ public:
   std::int16_t nr_bytes_per_channel;  ///< The number of bytes used for a channel value.
   Stride stride_bytes;  ///< The image row stride in bytes. The layout may include additional padding bytes.
 
-  std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
-  std::ptrdiff_t row_bytes() const noexcept;
-  std::ptrdiff_t total_bytes() const noexcept;
-  bool is_packed() const noexcept;
+  constexpr std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
+  constexpr std::ptrdiff_t row_bytes() const noexcept;
+  constexpr std::ptrdiff_t total_bytes() const noexcept;
+  constexpr bool is_packed() const noexcept;
 };
 
-bool operator==(const UntypedLayout& l, const UntypedLayout& r);
+constexpr bool operator==(const UntypedLayout& l, const UntypedLayout& r);
 
-bool operator!=(const UntypedLayout& l, const UntypedLayout& r);
+constexpr bool operator!=(const UntypedLayout& l, const UntypedLayout& r);
 
 // -----------
 
 class UntypedImageSemantics
 {
 public:
-  UntypedImageSemantics() noexcept
+  constexpr UntypedImageSemantics() noexcept
       : pixel_format(PixelFormat::Unknown)
       , sample_format(SampleFormat::Unknown)
   { }
 
-  UntypedImageSemantics(PixelFormat pixel_format_,
-                        SampleFormat sample_format_)
+  constexpr UntypedImageSemantics(PixelFormat pixel_format_,
+                                  SampleFormat sample_format_)
       : pixel_format(pixel_format_)
       , sample_format(sample_format_)
   { }
@@ -85,9 +85,9 @@ public:
   SampleFormat sample_format;
 };
 
-bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
+constexpr bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
 
-bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
+constexpr bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
 
 // ----------
 // Implementation:
@@ -96,7 +96,7 @@ bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
  *
  * @return The number of bytes per pixel.
  */
-inline std::ptrdiff_t UntypedLayout::nr_bytes_per_pixel() const noexcept
+constexpr std::ptrdiff_t UntypedLayout::nr_bytes_per_pixel() const noexcept
 {
   return nr_channels * nr_bytes_per_channel;
 }
@@ -108,7 +108,7 @@ inline std::ptrdiff_t UntypedLayout::nr_bytes_per_pixel() const noexcept
  *
  * @return Number of data bytes occupied by each image row.
  */
-inline std::ptrdiff_t UntypedLayout::row_bytes() const noexcept
+constexpr std::ptrdiff_t UntypedLayout::row_bytes() const noexcept
 {
   return width * nr_bytes_per_pixel();
 }
@@ -117,7 +117,7 @@ inline std::ptrdiff_t UntypedLayout::row_bytes() const noexcept
  *
  * @return Number of bytes occupied by the image data in memory.
  */
-inline std::ptrdiff_t UntypedLayout::total_bytes() const noexcept
+constexpr std::ptrdiff_t UntypedLayout::total_bytes() const noexcept
 {
   return stride_bytes * height;
 }
@@ -126,7 +126,7 @@ inline std::ptrdiff_t UntypedLayout::total_bytes() const noexcept
  *
  * @return True, if the image data is stored packed using this layout; false otherwise.
  */
-inline bool UntypedLayout::is_packed() const noexcept
+constexpr bool UntypedLayout::is_packed() const noexcept
 {
   return stride_bytes == width * nr_channels * nr_bytes_per_channel;
 }
@@ -137,7 +137,7 @@ inline bool UntypedLayout::is_packed() const noexcept
  * @param r The right-hand side layout to compare.
  * @return True, if the two layouts are identical; false otherwise.
  */
-inline bool operator==(const UntypedLayout& l, const UntypedLayout& r)
+constexpr bool operator==(const UntypedLayout& l, const UntypedLayout& r)
 {
   return l.width == r.width && l.height == r.height
          && l.nr_channels == r.nr_channels && l.nr_bytes_per_channel == r.nr_bytes_per_channel
@@ -150,7 +150,7 @@ inline bool operator==(const UntypedLayout& l, const UntypedLayout& r)
  * @param r The right-hand side layout to compare.
  * @return True, if the two layouts are not equal; false otherwise.
  */
-inline bool operator!=(const UntypedLayout& l, const UntypedLayout& r)
+constexpr bool operator!=(const UntypedLayout& l, const UntypedLayout& r)
 {
   return !(l == r);
 }
@@ -161,7 +161,7 @@ inline bool operator!=(const UntypedLayout& l, const UntypedLayout& r)
  * @param r The right-hand side semantics structure to compare.
  * @return True, if the two semantics structures are identical; false otherwise.
  */
-inline bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r)
+constexpr bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r)
 {
   return l.pixel_format == r.pixel_format && l.sample_format == r.sample_format;
 }
@@ -172,7 +172,7 @@ inline bool operator==(const UntypedImageSemantics& l, const UntypedImageSemanti
  * @param r The right-hand side semantics structure to compare.
  * @return True, if the two semantics structures are not equal; false otherwise.
  */
-inline bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r)
+constexpr bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r)
 {
   return !(l == r);
 }

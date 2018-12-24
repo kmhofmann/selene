@@ -21,22 +21,22 @@ namespace sln {
 class TypedLayout
 {
 public:
-  TypedLayout() noexcept
+  constexpr TypedLayout() noexcept
       : width{PixelLength{0}}
       , height{PixelLength{0}}
       , stride_bytes{Stride{0}}
   { }
 
-  TypedLayout(PixelLength width_,
-              PixelLength height_) noexcept
+  constexpr TypedLayout(PixelLength width_,
+                        PixelLength height_) noexcept
       : width(width_)
       , height(height_)
       , stride_bytes(Stride{0})  // special value: to be set later
   { }
 
-  TypedLayout(PixelLength width_,
-              PixelLength height_,
-              Stride stride_bytes_) noexcept
+  constexpr TypedLayout(PixelLength width_,
+                        PixelLength height_,
+                        Stride stride_bytes_) noexcept
       : width(width_)
       , height(height_)
       , stride_bytes(stride_bytes_)
@@ -46,15 +46,15 @@ public:
   PixelLength height;  ///< The image height in pixels.
   Stride stride_bytes;  ///< The image row stride in bytes. The layout may include additional padding bytes.
 
-  template <typename PixelType> std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
-  template <typename PixelType> std::ptrdiff_t row_bytes() const noexcept;
-  template <typename PixelType> std::ptrdiff_t total_bytes() const noexcept;
-  template <typename PixelType> bool is_packed() const noexcept;
+  template <typename PixelType> constexpr std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
+  template <typename PixelType> constexpr std::ptrdiff_t row_bytes() const noexcept;
+  template <typename PixelType> constexpr std::ptrdiff_t total_bytes() const noexcept;
+  template <typename PixelType> constexpr bool is_packed() const noexcept;
 };
 
-bool operator==(const TypedLayout& l, const TypedLayout& r);
+constexpr bool operator==(const TypedLayout& l, const TypedLayout& r);
 
-bool operator!=(const TypedLayout& l, const TypedLayout& r);
+constexpr bool operator!=(const TypedLayout& l, const TypedLayout& r);
 
 // ----------
 // Implementation:
@@ -64,7 +64,7 @@ bool operator!=(const TypedLayout& l, const TypedLayout& r);
  * @tparam PixelType The pixel type.
  * @return The number of bytes per pixel.
  */
-template <typename PixelType> std::ptrdiff_t TypedLayout::nr_bytes_per_pixel() const noexcept
+template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::nr_bytes_per_pixel() const noexcept
 {
   return PixelTraits<PixelType>::nr_bytes;
 }
@@ -77,7 +77,7 @@ template <typename PixelType> std::ptrdiff_t TypedLayout::nr_bytes_per_pixel() c
  * @tparam PixelType The pixel type.
  * @return Number of data bytes occupied by each image row.
  */
-template <typename PixelType> std::ptrdiff_t TypedLayout::row_bytes() const noexcept
+template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::row_bytes() const noexcept
 {
   return width * nr_bytes_per_pixel<PixelType>();
 }
@@ -87,7 +87,7 @@ template <typename PixelType> std::ptrdiff_t TypedLayout::row_bytes() const noex
  * @tparam PixelType The pixel type.
  * @return Number of bytes occupied by the image data in memory.
  */
-template <typename PixelType> std::ptrdiff_t TypedLayout::total_bytes() const noexcept
+template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::total_bytes() const noexcept
 {
   SELENE_ASSERT(stride_bytes >= PixelTraits<PixelType>::nr_bytes * width);
   return stride_bytes * height;
@@ -98,7 +98,7 @@ template <typename PixelType> std::ptrdiff_t TypedLayout::total_bytes() const no
  * @tparam PixelType The pixel type.
  * @return True, if the image data is stored packed using this layout; false otherwise.
  */
-template <typename PixelType> bool TypedLayout::is_packed() const noexcept
+template <typename PixelType> constexpr bool TypedLayout::is_packed() const noexcept
 {
   SELENE_ASSERT(stride_bytes >= PixelTraits<PixelType>::nr_bytes * width);
   return stride_bytes == PixelTraits<PixelType>::nr_bytes * width;
@@ -111,7 +111,7 @@ template <typename PixelType> bool TypedLayout::is_packed() const noexcept
  * @param r The right-hand side layout to compare.
  * @return True, if the two layouts are identical; false otherwise.
  */
-inline bool operator==(const TypedLayout& l, const TypedLayout& r)
+constexpr  bool operator==(const TypedLayout& l, const TypedLayout& r)
 {
   return l.width == r.width && l.height == r.height && l.stride_bytes == r.stride_bytes;
 }
@@ -123,7 +123,7 @@ inline bool operator==(const TypedLayout& l, const TypedLayout& r)
  * @param r The right-hand side layout to compare.
  * @return True, if the two layouts are not equal; false otherwise.
  */
-inline bool operator!=(const TypedLayout& l, const TypedLayout& r)
+constexpr  bool operator!=(const TypedLayout& l, const TypedLayout& r)
 {
   return !(l == r);
 }
