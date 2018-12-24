@@ -439,7 +439,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data() const noexcept -> PixelTypePtr<PixelType>
 {
-  return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr());
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr<PixelType>>(static_cast<VoidPtrType>(this->byte_ptr()));
 }
 
 /** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
@@ -453,7 +454,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data(PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
 {
-  return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(y));
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr<PixelType>>(static_cast<VoidPtrType>(this->byte_ptr(y)));
 }
 
 /** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
@@ -467,7 +469,9 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data_row_end(PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
 {
-  return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width);
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr<PixelType>>(static_cast<VoidPtrType>(
+      this->byte_ptr(y) + layout_.nr_bytes_per_pixel() * layout_.width));
 }
 
 /** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
@@ -482,7 +486,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::data(PixelIndex x, PixelIndex y) const noexcept -> PixelTypePtr<PixelType>
 {
-  return reinterpret_cast<PixelTypePtr<PixelType>>(this->byte_ptr(x, y));
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr<PixelType>>(static_cast<VoidPtrType>(this->byte_ptr(x, y)));
 }
 
 /** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.

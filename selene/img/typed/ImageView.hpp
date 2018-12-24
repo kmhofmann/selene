@@ -383,7 +383,8 @@ auto ImageView<PixelType_, modifiability_>::byte_ptr(PixelIndex x, PixelIndex y)
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data() const noexcept -> PixelTypePtr
 {
-  return reinterpret_cast<PixelTypePtr>(this->byte_ptr());
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr>(static_cast<VoidPtrType>(this->byte_ptr()));
 }
 
 /** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
@@ -396,7 +397,8 @@ auto ImageView<PixelType_, modifiability_>::data() const noexcept -> PixelTypePt
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data(PixelIndex y) const noexcept -> PixelTypePtr
 {
-  return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y));
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr>(static_cast<VoidPtrType>(this->byte_ptr(y)));
 }
 
 /** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
@@ -409,7 +411,9 @@ auto ImageView<PixelType_, modifiability_>::data(PixelIndex y) const noexcept ->
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data_row_end(PixelIndex y) const noexcept -> PixelTypePtr
 {
-  return reinterpret_cast<PixelTypePtr>(this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width);
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr>(static_cast<VoidPtrType>(
+      this->byte_ptr(y) + PixelTraits<PixelType>::nr_bytes * layout_.width));
 }
 
 /** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
@@ -423,7 +427,8 @@ auto ImageView<PixelType_, modifiability_>::data_row_end(PixelIndex y) const noe
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::data(PixelIndex x, PixelIndex y) const noexcept -> PixelTypePtr
 {
-  return reinterpret_cast<PixelTypePtr>(this->byte_ptr(x, y));
+  using VoidPtrType = std::conditional_t<modifiability_ == ImageModifiability::Constant, const void*, void*>;
+  return static_cast<PixelTypePtr>(static_cast<VoidPtrType>(this->byte_ptr(x, y)));
 }
 
 /** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
