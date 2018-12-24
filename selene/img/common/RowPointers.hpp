@@ -29,11 +29,12 @@ template <typename ImageType>
 auto get_row_pointers(ImageType& img) -> std::conditional_t<ImageType::is_modifiable, RowPointers, ConstRowPointers>
 {
   using RowPointerType = std::conditional_t<ImageType::is_modifiable, RowPointers, ConstRowPointers>;
-  RowPointerType row_pointers(img.height());
+  using size_type = typename RowPointerType::size_type;
+  RowPointerType row_pointers(static_cast<size_type>(img.height()));
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
-    row_pointers[y] = img.byte_ptr(y);
+    row_pointers[static_cast<size_type>(y)] = img.byte_ptr(y);
   }
 
   return row_pointers;
@@ -49,11 +50,12 @@ template <typename ImageType>
 auto get_row_pointers(const ImageType& img) -> std::conditional_t<ImageType::is_modifiable && ImageType::is_view, RowPointers, ConstRowPointers>
 {
   using RowPointerType = std::conditional_t<ImageType::is_modifiable && ImageType::is_view, RowPointers, ConstRowPointers>;
-  RowPointerType row_pointers(img.height());
+  using size_type = typename RowPointerType::size_type;
+  RowPointerType row_pointers(static_cast<size_type>(img.height()));
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
-    row_pointers[y] = img.byte_ptr(y);
+    row_pointers[static_cast<size_type>(y)] = img.byte_ptr(y);
   }
 
   return row_pointers;
@@ -68,11 +70,12 @@ auto get_row_pointers(const ImageType& img) -> std::conditional_t<ImageType::is_
 template <typename ImageType>
 auto get_const_row_pointers(const ImageType& img) -> ConstRowPointers
 {
-  ConstRowPointers row_pointers(img.height());
+  using size_type = typename ConstRowPointers::size_type;
+  ConstRowPointers row_pointers(static_cast<size_type>(img.height()));
 
   for (PixelIndex y = 0_idx; y < img.height(); ++y)
   {
-    row_pointers[y] = img.byte_ptr(y);
+    row_pointers[static_cast<size_type>(y)] = img.byte_ptr(y);
   }
 
   return row_pointers;

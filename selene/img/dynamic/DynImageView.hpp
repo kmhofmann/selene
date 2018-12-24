@@ -609,7 +609,7 @@ bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<mo
     // std::equal may not be optimized to std::memcmp, even though we're dealing with a POD-type here...
     // const bool equal_row = std::equal(begin0, end0, begin1);
     // ...so let's just call std::memcmp directly:
-    const auto nr_bytes = std::distance(begin0, end0);
+    const auto nr_bytes = static_cast<std::size_t>(std::distance(begin0, end0));
     const bool equal_row = (std::memcmp(begin0, begin1, nr_bytes) == 0);
 
     if (!equal_row)

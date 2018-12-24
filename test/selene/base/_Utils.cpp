@@ -21,7 +21,7 @@ namespace {
 template <typename T, int N>
 void test_array_n_equal(const std::array<T, N>& arr, T value)
 {
-  for (auto i = 0; i < N; ++i)
+  for (auto i = std::size_t{0}; i < N; ++i)
   {
     REQUIRE(arr[i] == value);
   }
@@ -50,7 +50,7 @@ void test_array_from_function(std::uint32_t seed)
 {
   Generator gen(seed, N);
   auto arr = sln::make_array_from_function<std::uint64_t, N>([&](std::size_t i) { return gen(i); });
-  for (std::size_t i = 0; i < N; ++i)
+  for (auto i = std::size_t{0}; i < N; ++i)
   {
     REQUIRE(arr[i] == gen.sequence[i]);
   }

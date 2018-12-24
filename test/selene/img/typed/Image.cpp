@@ -55,7 +55,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
     REQUIRE(!img.is_empty());
     for (auto y = 0_idx; y < img.height(); ++y)
     {
-      REQUIRE(reinterpret_cast<std::uintptr_t>(img.data(y)) % alignment == 0);
+      REQUIRE(reinterpret_cast<std::uintptr_t>(img.data(y)) % std::uintptr_t(alignment) == 0);
     }
 
     const auto alignment2 = alignment / 2;
@@ -66,7 +66,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
     REQUIRE(!img.is_empty());
     for (auto y = 0_idx; y < img.height(); ++y)
     {
-      REQUIRE((alignment2 == 0 || reinterpret_cast<std::uintptr_t>(img.data(y)) % alignment2 == 0));
+      REQUIRE((alignment2 == 0 || reinterpret_cast<std::uintptr_t>(img.data(y)) % std::uintptr_t(alignment2) == 0));
     }
   }
 }

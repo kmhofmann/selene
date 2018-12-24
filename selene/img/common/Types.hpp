@@ -68,6 +68,20 @@ constexpr PixelLength to_pixel_length(T value) noexcept
   return PixelLength{static_cast<PixelLength::value_type>(value)};
 }
 
+/** \brief Explicitly converts the provided value to `Stride` type.
+ *
+ * This operation should usually be optimized away, but provides stronger type safety.
+ *
+ * @tparam T The value type.
+ * @param value The value.
+ * @return The value as `Stride`.
+ */
+template <typename T>
+constexpr Stride to_stride(T value) noexcept
+{
+  return Stride{static_cast<Stride::value_type>(value)};
+}
+
 inline namespace literals {
 
  /** \brief User-defined literal representing a pixel index

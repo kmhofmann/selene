@@ -141,9 +141,9 @@ inline MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv)
   SELENE_ASSERT(impl::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<PixelType>::is_unsigned);
 
   const auto data = img_cv.data;
-  const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
-  const auto height = PixelLength(static_cast<PixelLength::value_type>(img_cv.rows));
-  const auto stride_bytes = Stride(img_cv.step);
+  const auto width = to_pixel_length(img_cv.cols);
+  const auto height = to_pixel_length(img_cv.rows);
+  const auto stride_bytes = to_stride(img_cv.step);
   return MutableImageView<PixelType>(data, {width, height, stride_bytes});
 }
 
@@ -168,9 +168,9 @@ inline ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv)
   SELENE_ASSERT(impl::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<PixelType>::is_unsigned);
 
   const auto data = img_cv.data;
-  const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
-  const auto height = PixelLength(static_cast<PixelLength::value_type>(img_cv.rows));
-  const auto stride_bytes = Stride(img_cv.step);
+  const auto width = to_pixel_length(img_cv.cols);
+  const auto height = to_pixel_length(img_cv.rows);
+  const auto stride_bytes = to_stride(img_cv.step);
   return ConstantImageView<PixelType>(data, {width, height, stride_bytes});
 }
 
@@ -194,9 +194,9 @@ Image<PixelType> copy_opencv_mat(const cv::Mat& img_cv)
   SELENE_ASSERT(impl::opencv_mat_type_is_floating_point(img_cv) == PixelTraits<PixelType>::is_floating_point);
   SELENE_ASSERT(impl::opencv_mat_type_is_unsigned(img_cv) == PixelTraits<PixelType>::is_unsigned);
 
-  const auto width = PixelLength(static_cast<PixelLength::value_type>(img_cv.cols));
-  const auto height = PixelLength(static_cast<PixelLength::value_type>(img_cv.rows));
-  const auto stride_bytes = Stride(img_cv.step);
+  const auto width = to_pixel_length(img_cv.cols);
+  const auto height = to_pixel_length(img_cv.rows);
+  const auto stride_bytes = to_stride(img_cv.step);
 
   const auto nr_bytes_per_row = width * PixelTraits<PixelType>::nr_bytes;
 
@@ -232,7 +232,7 @@ inline cv::Mat wrap_in_opencv_mat(ImageBase<DerivedSrc>& img)
   const auto type = impl::PixelToOpenCVType<PixelType>::type;
   const auto data = static_cast<void*>(img.byte_ptr());
 
-  return cv::Mat(height, width, type, data, stride_bytes);
+  return cv::Mat(height, width, type, data, static_cast<std::size_t>(stride_bytes));
 }
 
 /** \brief Copies an `Image<PixelType>` to an OpenCV cv::Mat.

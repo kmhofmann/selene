@@ -89,7 +89,7 @@ cv::Mat create_test_image_cv(sln::PixelLength width, sln::PixelLength height)
 
       for (int channel = 0; channel < img_cv.channels(); ++channel)
       {
-        Element el = pixel[channel];
+        Element el = pixel[static_cast<std::size_t>(channel)];
         pixel_cv[channel] = el;
       }
 
@@ -120,10 +120,10 @@ void compare_images(const sln::ImageBase<DerivedSrc>& img, const cv::Mat& img_cv
     {
       const auto pixel = img(sln::PixelIndex(col), sln::PixelIndex(row));
 
-      for (std::uint32_t channel = 0; channel < nr_channels; ++channel)
+      for (std::int32_t channel = 0; channel < nr_channels; ++channel)
       {
         const auto element_cv = img_cv.at<cv::Vec<Element, nr_channels>>(row, col)[channel];
-        REQUIRE(element_cv == pixel[channel]);
+        REQUIRE(element_cv == pixel[static_cast<std::size_t>(channel)]);
       }
     }
   }

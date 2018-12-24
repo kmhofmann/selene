@@ -54,7 +54,7 @@ void test_dyn_image_construction(std::mt19937& rng)
     REQUIRE(dyn_img.is_valid() == (width * height > 0));
 
     // Generate some random data, and copy it as image data
-    const auto data = generate_random_data(dyn_img.total_bytes());
+    const auto data = generate_random_data(static_cast<std::size_t>(dyn_img.total_bytes()));
     std::copy(data.cbegin(), data.cend(), dyn_img.byte_ptr());
 
     // Create a view onto the same data

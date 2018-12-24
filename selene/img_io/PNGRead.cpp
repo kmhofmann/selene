@@ -428,18 +428,19 @@ bool PNGDecompressionCycle::error_state() const
 
 PNGImageInfo PNGDecompressionCycle::get_output_info() const
 {
+  using value_type = PixelLength::value_type;
+
   auto png_ptr = obj_.impl_->png_ptr;
   auto info_ptr = obj_.impl_->info_ptr;
 
-  const auto width = png_get_image_width(png_ptr, info_ptr);
-  const auto height = png_get_image_height(png_ptr, info_ptr);
-  const auto nr_channels = png_get_channels(png_ptr, info_ptr);
-  const auto bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+  const auto width = to_pixel_length(png_get_image_width(png_ptr, info_ptr));
+  const auto height = to_pixel_length(png_get_image_height(png_ptr, info_ptr));
+  const auto nr_channels = static_cast<std::int16_t>(png_get_channels(png_ptr, info_ptr));
+  const auto bit_depth = static_cast<std::int16_t>(png_get_bit_depth(png_ptr, info_ptr));
 
-  SELENE_FORCED_ASSERT(png_get_rowbytes(png_ptr, info_ptr) == width * nr_channels * (bit_depth / 8));
+  SELENE_FORCED_ASSERT(static_cast<value_type>(png_get_rowbytes(png_ptr, info_ptr)) == width * nr_channels * (bit_depth / 8));
 
-  return PNGImageInfo{static_cast<PixelLength>(width), static_cast<PixelLength>(height),
-                      static_cast<std::int16_t>(nr_channels), static_cast<std::int16_t>(bit_depth)};
+  return PNGImageInfo{width, height, nr_channels, bit_depth};
 }
 
 bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)
@@ -536,8 +537,8 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
 
   PixelLength width = 0_px;
   PixelLength height = 0_px;
-  int bit_depth = 0;
-  int nr_channels = 0;
+  std::int16_t bit_depth = 0;
+  std::int16_t nr_channels = 0;
 
   if (error)
   {
@@ -552,12 +553,12 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
 
   png_read_info(png_ptr, info_ptr);
 
-  width = static_cast<PixelLength>(png_get_image_width(png_ptr, info_ptr));
-  height = static_cast<PixelLength>(png_get_image_height(png_ptr, info_ptr));
-  bit_depth = static_cast<int>(png_get_bit_depth(png_ptr, info_ptr));
-  nr_channels = static_cast<int>(png_get_channels(png_ptr, info_ptr));
+  width = to_pixel_length(png_get_image_width(png_ptr, info_ptr));
+  height = to_pixel_length(png_get_image_height(png_ptr, info_ptr));
+  bit_depth = static_cast<std::int16_t>(png_get_bit_depth(png_ptr, info_ptr));
+  nr_channels = static_cast<std::int16_t>(png_get_channels(png_ptr, info_ptr));
 
-  return PNGImageInfo(width, height, static_cast<std::uint16_t>(nr_channels), static_cast<std::uint16_t>(bit_depth));
+  return PNGImageInfo(width, height, nr_channels, bit_depth);
 
 failure_state:
   obj.impl_->needs_reset = true;

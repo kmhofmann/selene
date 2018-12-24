@@ -94,7 +94,7 @@ void check_write_read(sln::DynImage& dyn_img, const fs::path& tmp_path)
   const auto nr_bytes_per_row = dyn_img_2.width() * dyn_img_2.nr_channels() * dyn_img_2.nr_bytes_per_channel();
   for (auto y = 0_idx; y < dyn_img_2.height(); ++y)
   {
-    REQUIRE(std::memcmp(dyn_img_2.byte_ptr(y), dyn_img.byte_ptr(y), nr_bytes_per_row) == 0);
+    REQUIRE(std::memcmp(dyn_img_2.byte_ptr(y), dyn_img.byte_ptr(y), static_cast<std::size_t>(nr_bytes_per_row)) == 0);
   }
 }
 
@@ -126,10 +126,10 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
-  for (int i = 0; i < 3; ++i)
+  for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(pix[i][0]);
-    const auto y = sln::PixelIndex(pix[i][1]);
+    const auto x = sln::to_pixel_index(pix[i][0]);
+    const auto y = sln::to_pixel_index(pix[i][1]);
     REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 
@@ -172,10 +172,10 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 1);
-  for (int i = 0; i < 3; ++i)
+  for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(pix[i][0]);
-    const auto y = sln::PixelIndex(pix[i][1]);
+    const auto x = sln::to_pixel_index(pix[i][0]);
+    const auto y = sln::to_pixel_index(pix[i][1]);
 #if (PNG_LIBPNG_VER_MAJOR > 1) || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 6)
     REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(pix[i][5])));
 #endif
@@ -230,10 +230,10 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
     REQUIRE(img.width() == ref_width);
     REQUIRE(img.height() == ref_height);
     REQUIRE(img.stride_bytes() == ref_width * 3);
-    for (int i = 0; i < 3; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
-      const auto x = sln::PixelIndex(pix[i][0]);
-      const auto y = sln::PixelIndex(pix[i][1]);
+      const auto x = sln::to_pixel_index(pix[i][0]);
+      const auto y = sln::to_pixel_index(pix[i][1]);
       REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
     }
   }
@@ -294,10 +294,10 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
-  for (int i = 0; i < 3; ++i)
+  for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(pix[i][0]);
-    const auto y = sln::PixelIndex(pix[i][1]);
+    const auto x = sln::to_pixel_index(pix[i][0]);
+    const auto y = sln::to_pixel_index(pix[i][1]);
     REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 

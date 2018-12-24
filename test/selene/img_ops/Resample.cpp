@@ -53,7 +53,7 @@ TEST_CASE("Image resampling", "[img]")
     {
       for (auto x = 0_idx; x < img_r.width(); ++x)
       {
-        const auto i = y * img_r.width() + x;
+        const auto i = std::size_t(y * img_r.width() + x);
         REQUIRE(img_r(x, y) == values[i]);
       }
     }

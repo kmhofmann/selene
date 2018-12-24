@@ -84,10 +84,10 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
-  for (int i = 0; i < 3; ++i)
+  for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(pix[i][0]);
-    const auto y = sln::PixelIndex(pix[i][1]);
+    const auto x = sln::to_pixel_index(pix[i][0]);
+    const auto y = sln::to_pixel_index(pix[i][1]);
     REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 
@@ -132,10 +132,10 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 1);
-  for (int i = 0; i < 3; ++i)
+  for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(pix[i][0]);
-    const auto y = sln::PixelIndex(pix[i][1]);
+    const auto x = sln::to_pixel_index(pix[i][0]);
+    const auto y = sln::to_pixel_index(pix[i][1]);
     REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(pix[i][5])));
   }
 
@@ -213,10 +213,10 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
     REQUIRE(img.width() == ref_width);
     REQUIRE(img.height() == ref_height);
     REQUIRE(img.stride_bytes() == ref_width * 3);
-    for (int i = 0; i < 3; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
-      const auto x = sln::PixelIndex(pix[i][0]);
-      const auto y = sln::PixelIndex(pix[i][1]);
+      const auto x = sln::to_pixel_index(pix[i][0]);
+      const auto y = sln::to_pixel_index(pix[i][1]);
       REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
     }
   }
@@ -346,10 +346,10 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(img.width() == ref_width);
   REQUIRE(img.height() == ref_height);
   REQUIRE(img.stride_bytes() == ref_width * 3);
-  for (int i = 0; i < 3; ++i)
+  for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::PixelIndex(pix[i][0]);
-    const auto y = sln::PixelIndex(pix[i][1]);
+    const auto x = sln::to_pixel_index(pix[i][0]);
+    const auto y = sln::to_pixel_index(pix[i][1]);
     REQUIRE(img(x, y) == sln::Pixel_8u3(pix[i][2], pix[i][3], pix[i][4]));
   }
 

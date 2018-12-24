@@ -78,7 +78,7 @@ sln::Image<PixelType> construct_random_image(sln::PixelLength width, sln::PixelL
                                                       is_int ? std::numeric_limits<Element>::max() : Element{1});
 
   std::uniform_int_distribution<std::uint16_t> die_stride(0, 16);
-  const auto extra_stride_bytes = std::size_t{die_stride(rng) * sizeof(Element)};
+  const auto extra_stride_bytes = std::ptrdiff_t(die_stride(rng) * sizeof(Element));
   const auto stride_bytes = sln::Stride(width * sln::PixelTraits<PixelType>::nr_bytes + extra_stride_bytes);
   sln::Image<PixelType> img({width, height, stride_bytes});
 

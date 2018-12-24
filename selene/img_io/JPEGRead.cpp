@@ -164,11 +164,13 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
 
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
+  using value_type = PixelIndex::value_type;
+
   auto& cinfo = obj_.impl_->cinfo;
 
   const auto region_valid = !region_.empty();
-  const auto skip_lines_top = region_valid ? region_.y0() : 0;
-  const auto skip_lines_bottom = region_valid ? cinfo.output_height - region_.y1() : 0;
+  const auto skip_lines_top = region_valid ? region_.y0() : value_type{0};
+  const auto skip_lines_bottom = region_valid ? static_cast<value_type>(cinfo.output_height) - region_.y1() : value_type{0};
 
   if (setjmp(obj_.impl_->error_manager.setjmp_buffer))
   {
@@ -179,9 +181,10 @@ bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
   jpeg_skip_scanlines(&cinfo, static_cast<JDIMENSION>(skip_lines_top));
 #endif
 
-  while (cinfo.output_scanline < cinfo.output_height - skip_lines_bottom)
+  while (static_cast<value_type>(cinfo.output_scanline) < static_cast<value_type>(cinfo.output_height) - skip_lines_bottom)
   {
-    jpeg_read_scanlines(&cinfo, &row_pointers[cinfo.output_scanline - skip_lines_top], 1);
+    const auto idx = static_cast<std::size_t>(static_cast<value_type>(cinfo.output_scanline) - skip_lines_top);
+    jpeg_read_scanlines(&cinfo, &row_pointers[idx], 1);
   }
 
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
