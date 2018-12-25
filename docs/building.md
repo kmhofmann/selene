@@ -1,13 +1,16 @@
 # Selene
 
-## Building the library
+* [Building the library using CMake](#section_cmake)
+* [Building the library using the `easy_build` script](#section_easy_build)
 
-### General
+## <a name="section_cmake"></a>Building the library using CMake
 
 **Selene** requires a compiler supporting C++17 and uses [CMake](https://cmake.org/) for building.
 
 See the [Dependencies](dependencies.md) page for more information on its required and optional dependencies.
 These need to be installed before attempting to build the respective parts.
+
+### General
 
 Follow the usual instructions for CMake projects on UNIX-like systems.
 First, clone the project and create a `build` directory (or use another name).
@@ -141,8 +144,53 @@ If desired, this can be explicitly disabled by one or more of the following CMak
 
 ### Running tests & examples
 
+After building, the test suite executable will be located in `<build_dir>/test`, called `selene_tests`.
+From the build directory, execute it as follows to see an overview of the performed tests:
+
+    ./test/selene_tests -d yes
+
 #### Specifying the data path
 
 In case some tests or examples are failing because auxiliary data files can not be found automatically, specify the path
 to the `data` directory inside the `selene/` folder manually: `SELENE_DATA_PATH=../data ./test/selene_tests` (or
 similar).
+
+<hr>
+
+## <a name="section_easy_build"></a>Building the library using the `easy_build` script
+
+On Linux systems, one additional option to build **Selene** is via the `scripts/easy_build.sh` *bash* script.
+
+Its main purpose is to provide a proof-of-concept for building the library on older (Ubuntu) Linux systems, and to make
+this process relatively straightforward.
+As such, it tries to rely on as few system packages as possible.
+
+**Generally, the above [*CMake* based](#section_cmake) "manual" building approach is preferable**, but it assumes that
+recent enough versions of *CMake* and the compiler are installed, and that all dependencies are present as well in an ABI
+compatible form.
+
+The `easy_build` script will build all parts of Selene, i.e. the libraries (as static libraries), tests, examples
+and benchmarks.
+All necessary dependencies will be built and installed (as static libraries) through a local clone of
+[vcpkg](https://github.com/Microsoft/vcpkg).
+
+It will also:
+* Download a recent enough version of CMake to use for build file generation.
+* Check whether the default compiler supports the required features (i.e. C++17).
+  If not, it provides the option (on Ubuntu) to download a recent version of Clang, and to build **Selene** using
+  Clang/libc++.
+* Run the unit tests, if desired.
+
+The script does not provide any configuration choices as described above; all CMake options are enabled.
+
+From the project's root directory, call
+
+    ./scripts/easy_build.sh 
+    
+to get an overview over its options.
+To actually trigger the build process, add `-X` as an option, and follow potential instructions.
+
+Notes:
+* `git`, `curl`, `wget`, `unzip` and `tar` are required to be present on the system.
+* On Ubuntu 14.04, a newer version of `git` needs to be installed via the official [upstream PPA](https://git-scm.com/download/linux).
+* *vcpkg* requires building with a reasonably new GCC version, and will display its own instructions how to install this.
