@@ -12,6 +12,7 @@ target_sources(selene_base PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Assert.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Kernel.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MemoryBlock.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Promote.hpp
@@ -181,6 +182,7 @@ target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Convolution.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp

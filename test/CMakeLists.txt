@@ -12,6 +12,7 @@ target_sources(selene_tests PRIVATE
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Bitcount.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/base/Kernel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Round.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/_Utils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/io/IO.cpp
@@ -51,6 +52,7 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Allocate.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/ChannelOperations.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Clone.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Convolution.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Crop.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Fill.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/ImageConversions.cpp

@@ -64,7 +64,7 @@ constexpr Result constexpr_floor(Value val) noexcept
   return static_cast<Result>(ival - (val < 0 ? 1 : 0));
 }
 
-/** \brief Ceil operation, i.e. computes the smalles integer value not less than `val`.
+/** \brief Ceil operation, i.e. computes the smallest integer value not less than `val`.
  *
  * This function can (and should only!) be used in a guaranteed constexpr context.
  * Otherwise use the equivalent `std::ceil`, which is likely to be more efficient.

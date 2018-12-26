@@ -15,6 +15,7 @@
 
 #include <array>
 #include <cstdint>
+#include <ostream>
 #include <type_traits>
 
 namespace sln {
@@ -144,6 +145,10 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
 operator/(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
+template <typename Result, typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+Pixel<Result, nr_channels_, pixel_format_>
+round(const Pixel<T, nr_channels_, pixel_format_>& px);
+
 // -----
 
 template <typename PixelType, typename = void>
@@ -166,6 +171,9 @@ struct promote<Pixel<T, nr_channels_, pixel_format_>>
 {
   using type = Pixel<promote_t<T>, nr_channels_, pixel_format_>;  ///< The promoted type.
 };
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+std::ostream& operator<<(std::ostream& os, Pixel<T, nr_channels_, pixel_format_>& px);
 
 // ----------
 // Implementation:
@@ -812,6 +820,40 @@ constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/
   }
 
   return result;
+}
+
+template <typename Result, typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+Pixel<Result, nr_channels_, pixel_format_>
+round(const Pixel<T, nr_channels_, pixel_format_>& px)
+{
+  Pixel<Result, nr_channels_, pixel_format_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = sln::round<Result>(px[i]);
+  }
+
+  return result;
+};
+
+// -----
+
+/** \brief Converts a pixel value into a character stream representation, e.g. for printing.
+ *
+ * @param os An output stream.
+ * @param px The pixel to be converted.
+ * @return A reference to the provided output stream.
+ */
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+std::ostream& operator<<(std::ostream& os, Pixel<T, nr_channels_, pixel_format_>& px)
+{
+  os << '(';
+  for (auto c = std::size_t{0}; c < nr_channels_ - 1; ++c)
+  {
+    os << static_cast<promote_t<T>>(px[c]) << ", ";
+  }
+  os << static_cast<promote_t<T>>(px[nr_channels_ - 1]) << ')';
+  return os;
 }
 
 }  // namespace sln
