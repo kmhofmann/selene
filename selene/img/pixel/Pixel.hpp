@@ -145,6 +145,22 @@ template <typename T, typename U, std::size_t nr_channels_, PixelFormat pixel_fo
 constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_>
 operator/(Pixel<T, nr_channels_, pixel_format_> lhs, U rhs) noexcept;
 
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>
+operator<<(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift);
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>
+operator>>(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift);
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>&
+operator<<=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift);
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>&
+operator>>=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift);
+
 template <typename Result, typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 Pixel<Result, nr_channels_, pixel_format_>
 round(const Pixel<T, nr_channels_, pixel_format_>& px);
@@ -822,6 +838,103 @@ constexpr Pixel<std::common_type_t<T, U>, nr_channels_, pixel_format_> operator/
   return result;
 }
 
+/** \brief Bitwise shift-left operation on all pixel values.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam pixel_format_ The pixel format.
+ * @param px The pixel to shift left.
+ * @param shift The number of bits to shift.
+ * @return A pixel instance with all channel elements shifted left accordingly.
+ */
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>
+operator<<(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift)
+{
+  Pixel<T, nr_channels_, pixel_format_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = px[i] << shift;
+  }
+
+  return result;
+}
+
+/** \brief Bitwise shift-right operation on all pixel values.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam pixel_format_ The pixel format.
+ * @param px The pixel to shift right.
+ * @param shift The number of bits to shift.
+ * @return A pixel instance with all channel elements shifted right accordingly.
+ */
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>
+operator>>(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift)
+{
+  Pixel<T, nr_channels_, pixel_format_> result{};
+
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    result[i] = px[i] >> shift;
+  }
+
+  return result;
+}
+
+/** \brief Bitwise shift-left operation on all pixel values, in-place.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam pixel_format_ The pixel format.
+ * @param px The pixel to shift left.
+ * @param shift The number of bits to shift.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>&
+operator<<=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift)
+{
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    px[i] << shift;
+  }
+
+  return px;
+}
+
+/** \brief Bitwise shift-right operation on all pixel values, in-place.
+ *
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam pixel_format_ The pixel format.
+ * @param px The pixel to shift right.
+ * @param shift The number of bits to shift.
+ * @return A reference to *this.
+ */
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr Pixel<T, nr_channels_, pixel_format_>&
+operator>>=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift)
+{
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    px[i] >> shift;
+  }
+
+  return px;
+}
+
+/** \brief Rounds the given pixel values to the nearest integer value.
+ *
+ * @tparam Result The result value type.
+ * @tparam T The pixel element type.
+ * @tparam nr_channels_ The number of channels.
+ * @tparam pixel_format_ The pixel format.
+ * @param px The input pixel.
+ * @return A new pixel instance, with each element being rounded to the nearest result type value.
+ */
 template <typename Result, typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 Pixel<Result, nr_channels_, pixel_format_>
 round(const Pixel<T, nr_channels_, pixel_format_>& px)

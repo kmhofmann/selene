@@ -11,6 +11,7 @@
 #include <selene/base/Promote.hpp>
 #include <selene/base/Round.hpp>
 
+#include <selene/img/pixel/Pixel.hpp>
 #include <selene/img/pixel/PixelTraits.hpp>
 
 #include <selene/img/typed/Image.hpp>
@@ -26,15 +27,23 @@
 
 namespace sln {
 
-template <BorderAccessMode access_mode = BorderAccessMode::Replicated,
+template <BorderAccessMode access_mode, std::size_t shift_right = 0,
           typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
                    const Kernel<KernelValueType, kernel_size>& kernel);
 
-template <BorderAccessMode access_mode = BorderAccessMode::Replicated,
+template <BorderAccessMode access_mode, std::size_t shift_right = 0,
+    typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
+Image<typename DerivedSrc::PixelType> convolution_x(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel);
+
+template <BorderAccessMode access_mode, std::size_t shift_right = 0,
           typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
                    const Kernel<KernelValueType, kernel_size>& kernel);
+
+template <BorderAccessMode access_mode, std::size_t shift_right = 0,
+    typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
+Image<typename DerivedSrc::PixelType> convolution_y(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel);
 
 // ----------
 // Implementation:
@@ -53,8 +62,7 @@ auto convolve_pixels_x(const ImageBase<DerivedSrc>& img_src, PixelIndex x, Pixel
   {
     const auto x_idx = PixelIndex{x + static_cast<PixelIndex::value_type>(k_idx) - k_offset};
     const auto& px = ImageBorderAccessor<access_mode>::access(img_src, x_idx, y);
-    const auto val = kernel[k_idx] * px;
-    sum = sum + val;
+    sum += kernel[k_idx] * px;
   }
 
   return sum;
@@ -72,8 +80,7 @@ auto convolve_pixels_y(const ImageBase<DerivedSrc>& img_src, PixelIndex x, Pixel
   {
     const auto y_idx = PixelIndex{y + static_cast<PixelIndex::value_type>(k_idx) - k_offset};
     const auto& px = ImageBorderAccessor<access_mode>::access(img_src, x, y_idx);
-    const auto val = kernel[k_idx] * px;
-    sum = sum + val;
+    sum += kernel[k_idx] * px;
   }
 
   return sum;
@@ -83,7 +90,8 @@ auto convolve_pixels_y(const ImageBase<DerivedSrc>& img_src, PixelIndex x, Pixel
 
 // ---
 
-template <BorderAccessMode access_mode,
+// TODO: Documentation
+template <BorderAccessMode access_mode, std::size_t shift_right,
           typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
                    const Kernel<KernelValueType, kernel_size>& kernel)
@@ -105,6 +113,17 @@ void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
   const auto x_left = k_offset;
   const auto x_right = img_src.width() - k_offset;
 
+  auto write_to_dst = [&img_dst](auto res, auto x, auto y) {
+    if constexpr (/*std::is_integral_v<ConvolutionResultType> &&*/ shift_right > 0)
+    {
+      img_dst(x, y) = res + (1 << (shift_right - 1)) >> shift_right;
+    }
+    else
+    {
+      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+    }
+  };
+
   for (auto y = 0_idx; y < img_dst.height(); ++y)
   {
     auto x = 0_idx;
@@ -112,24 +131,35 @@ void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
     for (; x < x_left; ++x)
     {
       const auto res = impl::convolve_pixels_x<ConvolutionResultType, access_mode>(img_src, x, y, kernel, k_offset);
-      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+      write_to_dst(res, x, y);
     }
 
     for (; x < x_right; ++x)
     {
       const auto res = impl::convolve_pixels_x<ConvolutionResultType, BorderAccessMode::Unchecked>(img_src, x, y, kernel, k_offset);
-      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+      write_to_dst(res, x, y);
     }
 
     for (; x < img_dst.width(); ++x)
     {
       const auto res = impl::convolve_pixels_x<ConvolutionResultType, access_mode>(img_src, x, y, kernel, k_offset);
-      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+      write_to_dst(res, x, y);
     }
   }
 }
 
-template <BorderAccessMode access_mode,
+// TODO: Documentation
+template <BorderAccessMode access_mode, std::size_t shift_right,
+    typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
+Image<typename DerivedSrc::PixelType> convolution_x(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel)
+{
+  Image<typename DerivedSrc::PixelType> img_dst;
+  convolution_x<access_mode, shift_right>(img_src, img_dst, kernel);
+  return img_dst;
+}
+
+// TODO: Documentation
+template <BorderAccessMode access_mode, std::size_t shift_right,
     typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
                    const Kernel<KernelValueType, kernel_size>& kernel)
@@ -151,6 +181,17 @@ void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
   const auto y_top = k_offset;
   const auto y_bottom = img_src.height() - k_offset;
 
+  auto write_to_dst = [&img_dst](auto res, auto x, auto y) {
+    if constexpr (/*std::is_integral_v<ConvolutionResultType> &&*/ shift_right > 0)
+    {
+      img_dst(x, y) = res + (1 << (shift_right - 1)) >> shift_right;
+    }
+    else
+    {
+      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+    }
+  };
+
   auto y = 0_idx;
 
   for (; y < y_top; ++y)
@@ -158,7 +199,7 @@ void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
     for (auto x = 0_idx; x < img_dst.width(); ++x)
     {
       const auto res = impl::convolve_pixels_y<ConvolutionResultType, access_mode>(img_src, x, y, kernel, k_offset);
-      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+      write_to_dst(res, x, y);
     }
   }
 
@@ -167,7 +208,7 @@ void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
     for (auto x = 0_idx; x < img_dst.width(); ++x)
     {
       const auto res = impl::convolve_pixels_y<ConvolutionResultType, BorderAccessMode::Unchecked>(img_src, x, y, kernel, k_offset);
-      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+      write_to_dst(res, x, y);
     }
   }
 
@@ -176,10 +217,21 @@ void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
     for (auto x = 0_idx; x < img_dst.width(); ++x)
     {
       const auto res = impl::convolve_pixels_y<ConvolutionResultType, access_mode>(img_src, x, y, kernel, k_offset);
-      img_dst(x, y) = sln::round<ElementTypeDst>(res);
+      write_to_dst(res, x, y);
     }
   }
 }
+
+// TODO: Documentation
+template <BorderAccessMode access_mode, std::size_t shift_right,
+    typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
+Image<typename DerivedSrc::PixelType> convolution_y(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel)
+{
+  Image<typename DerivedSrc::PixelType> img_dst;
+  convolution_y<access_mode, shift_right>(img_src, img_dst, kernel);
+  return img_dst;
+}
+
 
 }  // namespace sln
 

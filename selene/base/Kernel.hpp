@@ -29,6 +29,7 @@ constexpr static auto kernel_size_dynamic = KernelSize{-1};
 template <typename ValueType_, KernelSize k_ = kernel_size_dynamic>
 class Kernel;
 
+// TODO: Documentation
 template <typename ValueType_, KernelSize k_>
 class Kernel
 {
@@ -85,6 +86,7 @@ private:
 };
 
 
+// TODO: Documentation
 template <typename ValueType_>
 class Kernel<ValueType_, kernel_size_dynamic>
 {
@@ -141,7 +143,7 @@ private:
   static_assert(std::is_trivial_v<ValueType_>, "Value type of kernel is not trivial");
 };
 
-
+// TODO: Documentation
 template <typename ValueType, KernelSize k>
 constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel, ValueType sum)
 {
@@ -150,7 +152,7 @@ constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel, Val
   return normalized_kernel;
 }
 
-
+// TODO: Documentation
 template <typename ValueType, KernelSize k>
 constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel)
 {
@@ -192,6 +194,7 @@ inline auto fill_with_gaussian_pdf(Container& c, std::ptrdiff_t center_idx, defa
 }  // namespace impl
 
 
+// TODO: Documentation
 template <KernelSize kernel_size, typename ValueType = default_float_t>
 inline auto gaussian_kernel(default_float_t sigma, bool renormalize = true)
 {
@@ -211,6 +214,7 @@ inline auto gaussian_kernel(default_float_t sigma, bool renormalize = true)
   return kernel;
 }
 
+// TODO: Documentation
 template <typename ValueType = default_float_t>
 inline auto gaussian_kernel(default_float_t sigma, KernelSize size, bool renormalize = true)
 {
@@ -231,6 +235,7 @@ inline auto gaussian_kernel(default_float_t sigma, KernelSize size, bool renorma
   return kernel;
 }
 
+// TODO: Documentation
 template <typename ValueType = default_float_t>
 inline auto gaussian_kernel(default_float_t sigma, default_float_t range_nr_std_deviations, bool renormalize = true)
 {
@@ -252,6 +257,7 @@ inline auto gaussian_kernel(default_float_t sigma, default_float_t range_nr_std_
   return kernel;
 }
 
+// TODO: Documentation
 template <KernelSize kernel_size, typename ValueType = default_float_t>
 constexpr auto uniform_kernel()
 {
@@ -262,6 +268,7 @@ constexpr auto uniform_kernel()
   return Kernel<ValueType, kernel_size>(arr);
 }
 
+// TODO: Documentation
 template <typename ValueType = default_float_t>
 inline auto uniform_kernel(KernelSize size)
 {
@@ -275,6 +282,7 @@ inline auto uniform_kernel(KernelSize size)
   return Kernel<ValueType, kernel_size_dynamic>(std::move(vec));
 }
 
+// TODO: Documentation
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k>
 constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel) -> Kernel<OutValueType, k>
 {
@@ -283,13 +291,13 @@ constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel) -> Kernel<OutV
 
   for (std::size_t i = 0; i < arr.size(); ++i)
   {
-    // TODO: pessimized performance due to use of sln::constexpr_round?
     arr[i] = sln::constexpr_round<OutValueType>(kernel[i] * scale_factor);
   }
 
   return Kernel<OutValueType, k>(arr);
 }
 
+// TODO: Documentation
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType>
 inline auto integer_kernel(const Kernel<ValueType, kernel_size_dynamic>& kernel) -> Kernel<OutValueType, kernel_size_dynamic>
 {
