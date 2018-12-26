@@ -91,7 +91,8 @@ ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const ImageBase<Derived
                                                          PixelIndex x,
                                                          PixelIndex y) noexcept
 {
-  SELENE_ASSERT(x >= 0 && x < img.width() && y >= 0 && y < img.height());
+  // Disabled, since it might be legal to go outside bounds when inside a sub-view.
+  //SELENE_ASSERT(x >= 0 && x < img.width() && y >= 0 && y < img.height());
   return img(to_pixel_index(x), to_pixel_index(y));
 }
 

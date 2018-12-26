@@ -3,12 +3,6 @@
 set -x
 set -e
 
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  export NCPUS=`sysctl -n hw.ncpu`
-elif [[ "$(uname -s)" == "Linux" ]]; then
-  export NCPUS=`nproc`
-fi
-
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR=${SCRIPT_DIR}/..
 
@@ -16,11 +10,15 @@ export CC=clang
 export CXX=clang++
 
 function build_everything {
+  CMK_GENERATOR=""
+  if [ $(which ninja) ]; then
+    CMK_GENERATOR="-G Ninja"
+  fi
+
   rm -f CMakeCache.txt
   rm -rf CMakeFiles
-  cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ..
-  make clean
-  make -j${NCPUS}
+  cmake ${CMK_GENERATOR} -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON ..
+  cmake --build . -j --clean-first
 }
 
 function run_all_binaries {
@@ -49,18 +47,19 @@ run_all_binaries
 
 # -----------------------------------
 # Build and test with ThreadSanitizer
+# (Currently disabled, since there is no multithreading in the library...)
 # -----------------------------------
 
-mkdir -p ${REPO_DIR}/_build_with_tsan
-cd ${REPO_DIR}/_build_with_tsan
+#mkdir -p ${REPO_DIR}/_build_with_tsan
+#cd ${REPO_DIR}/_build_with_tsan
 
-SAN_FLAGS="-fsanitize=thread -g -O1"
-export CXXFLAGS=${SAN_FLAGS}
-export LDFLAGS=${SAN_FLAGS}
-export TSAN_OPTIONS="second_deadlock_stack=1"
+#SAN_FLAGS="-fsanitize=thread -g -O1"
+#export CXXFLAGS=${SAN_FLAGS}
+#export LDFLAGS=${SAN_FLAGS}
+#export TSAN_OPTIONS="second_deadlock_stack=1"
 
-build_everything
-run_all_binaries
+#build_everything
+#run_all_binaries
 
 # --------
 # Clean up
