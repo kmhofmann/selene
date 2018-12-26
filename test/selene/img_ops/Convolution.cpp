@@ -15,22 +15,12 @@
 
 #include <selene/img_io/IO.hpp>
 
-#include <test/selene/img/typed/_Utils.hpp>
+#include <test/selene/Utils.hpp>
 
 #include <boost/filesystem.hpp>
 
 using namespace sln::literals;
 namespace fs = boost::filesystem;
-
-namespace {
-
-fs::path full_path(const char* filename)
-{
-  const auto env_var = std::getenv("SELENE_DATA_PATH");
-  return (env_var) ? (fs::path(env_var) / fs::path(filename)) : (fs::path("../data") / fs::path(filename));
-}
-
-}  // namespace
 
 TEST_CASE("Convolution (pixels)", "[img]")
 {
@@ -121,7 +111,7 @@ TEST_CASE("Convolution (pixels)", "[img]")
 TEST_CASE("Image convolution (IO)", "[img]")
 {
   // TODO: test convolution on some easier cases, without relying on image IO?
-  const auto img_path = full_path("stickers.png");
+  const auto img_path = sln_test::full_data_path("stickers.png");
   sln::FileReader source(img_path.string());
   auto dyn_img = sln::read_image(source);
   const auto img_src = sln::to_image<sln::PixelRGB_8u>(std::move(dyn_img));

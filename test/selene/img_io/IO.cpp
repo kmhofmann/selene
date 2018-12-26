@@ -23,16 +23,6 @@ namespace fs = boost::filesystem;
 constexpr auto ref_width = 1024;
 constexpr auto ref_height = 684;
 
-namespace {
-
-fs::path full_path(const char* filename)
-{
-  const auto env_var = std::getenv("SELENE_DATA_PATH");
-  return (env_var) ? (fs::path(env_var) / fs::path(filename)) : (fs::path("../data") / fs::path(filename));
-}
-
-}  // namespace
-
 TEST_CASE("Image reading with automatic format selection", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
@@ -40,7 +30,7 @@ TEST_CASE("Image reading with automatic format selection", "[img]")
   SECTION("Read a JPEG file, and write as PNG")
   {
     // Read a JPEG file
-    const auto img_path = full_path("bike_duck.jpg");
+    const auto img_path = sln_test::full_data_path("bike_duck.jpg");
     sln::FileReader source(img_path.string());
     REQUIRE(source.is_open());
 

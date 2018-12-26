@@ -48,12 +48,6 @@ constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
 
 namespace {
 
-fs::path in_filename()
-{
-  const auto env_var = std::getenv("SELENE_DATA_PATH");
-  return (env_var) ? fs::path(env_var) / "bike_duck.png" : fs::path("../data/bike_duck.png");
-}
-
 fs::path test_suite_dir()
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
@@ -103,7 +97,7 @@ void check_write_read(sln::DynImage& dyn_img, const fs::path& tmp_path)
 TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.png").string());
   REQUIRE(source.is_open());
 
   // Test reading without conversion
@@ -147,7 +141,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.png").string());
   REQUIRE(source.is_open());
 
   // Test reading with conversion to grayscale
@@ -200,7 +194,7 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
 
   for (int j = 0; j < 5; ++j)
   {
-    sln::FileReader source(in_filename().string());
+    sln::FileReader source(sln_test::full_data_path("bike_duck.png").string());
     REQUIRE(source.is_open());
 
     // Test reading of header...
@@ -245,7 +239,8 @@ TEST_CASE("PNG image writing, reusing compression object", "[img]")
 
   // First, read an image
   sln::MessageLog message_log_read;
-  auto dyn_img = sln::read_png(sln::FileReader(in_filename().string()), sln::PNGDecompressionOptions(),
+  auto dyn_img = sln::read_png(sln::FileReader(sln_test::full_data_path("bike_duck.png").string()),
+                               sln::PNGDecompressionOptions(),
                                &message_log_read);
   REQUIRE(dyn_img.is_valid());
   REQUIRE(message_log_read.messages().empty());
@@ -267,7 +262,7 @@ TEST_CASE("PNG image writing, reusing compression object", "[img]")
 TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
-  const auto file_contents = sln::read_file_contents(in_filename().string());
+  const auto file_contents = sln::read_file_contents(sln_test::full_data_path("bike_duck.png").string());
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory
@@ -365,7 +360,7 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.png").string());
   REQUIRE(source.is_open());
   const auto pos = source.position();
 

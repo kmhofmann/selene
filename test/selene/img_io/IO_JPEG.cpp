@@ -8,8 +8,6 @@
 
 #include <cstdlib>
 
-#include <boost/filesystem.hpp>
-
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/FileUtils.hpp>
 #include <selene/base/io/FileWriter.hpp>
@@ -33,7 +31,6 @@
 
 #include <test/selene/Utils.hpp>
 
-namespace fs = boost::filesystem;
 using namespace sln::literals;
 
 // clang-format off
@@ -46,22 +43,12 @@ constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
 constexpr auto compression_factor = 70;
 // clang-format on
 
-namespace {
-
-fs::path in_filename()
-{
-  const auto env_var = std::getenv("SELENE_DATA_PATH");
-  return (env_var) ? fs::path(env_var) / "bike_duck.jpg" : fs::path("../data/bike_duck.jpg");
-}
-
-}  // namespace
-
 TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
   // Test reading without conversion
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.jpg").string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto dyn_img = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);
@@ -109,7 +96,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   const auto tmp_path = sln_test::get_tmp_path();
 
   // Test reading with conversion to grayscale
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.jpg").string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto dyn_img = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Grayscale), &messages_read);
@@ -179,7 +166,7 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
 
   for (int j = 0; j < 5; ++j)
   {
-    sln::FileReader source(in_filename().string());
+    sln::FileReader source(sln_test::full_data_path("bike_duck.jpg").string());
     REQUIRE(source.is_open());
 
     // Test reading of header...
@@ -228,7 +215,8 @@ TEST_CASE("JPEG image writing, reusing compression object", "[img]")
 
   // First, read an image
   sln::MessageLog message_log_read;
-  auto img_data = sln::read_jpeg(sln::FileReader(in_filename().string()), sln::JPEGDecompressionOptions(),
+  auto img_data = sln::read_jpeg(sln::FileReader(sln_test::full_data_path("bike_duck.jpg").string()),
+                                 sln::JPEGDecompressionOptions(),
                                  &message_log_read);
   REQUIRE(img_data.is_valid());
   REQUIRE(message_log_read.messages().empty());
@@ -258,7 +246,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   const auto targeted_height = 350_px;
   sln::BoundingBox region(100_idx, 100_idx, 400_px, targeted_height);
 
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.jpg").string());
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(sln::JPEGColorSpace::Auto, region),
@@ -319,7 +307,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
-  const auto file_contents = sln::read_file_contents(in_filename().string());
+  const auto file_contents = sln::read_file_contents(sln_test::full_data_path("bike_duck.jpg").string());
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory
@@ -374,7 +362,7 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
-  sln::FileReader source(in_filename().string());
+  sln::FileReader source(sln_test::full_data_path("bike_duck.jpg").string());
   REQUIRE(source.is_open());
   const auto pos = source.position();
 

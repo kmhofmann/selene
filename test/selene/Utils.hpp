@@ -27,6 +27,14 @@ inline boost::filesystem::path get_tmp_path()
   return tmp_path;
 }
 
+inline boost::filesystem::path full_data_path(const char* filename)
+{
+  const auto env_var = std::getenv("SELENE_DATA_PATH");
+  return (env_var)
+      ? (boost::filesystem::path(env_var) / boost::filesystem::path(filename))
+      : (boost::filesystem::path("../data") / boost::filesystem::path(filename));
+}
+
 template <typename T>
 inline auto uniform_distribution(T lb, T ub)
 {
