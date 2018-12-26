@@ -9,6 +9,7 @@
 
 #include <selene/base/Assert.hpp>
 #include <selene/base/Promote.hpp>
+#include <selene/base/Round.hpp>
 #include <selene/base/Types.hpp>
 
 #include <selene/img/common/PixelFormat.hpp>
