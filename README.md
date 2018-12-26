@@ -27,7 +27,7 @@ A first impression of the API:
 
 ```
 // Decode JPEG image data from disk
-DynImage img_data = read_image(FileReader(example_img_path.string()));
+DynImage img_data = read_image(FileReader("example.jpg"));
 assert(img_data.nr_channels() == 3 && img_data.nr_bytes_per_channel() == 1);
 
 // Convert to strongly typed RGB image
@@ -43,7 +43,7 @@ for_each_pixel(img_part, [](auto& px){ px /= 4; });
 // Flip this part horizontally
 flip_horizontally_in_place(img_part);
 
-// Apply a convolution on this part (1-D Gaussian kernel in x-direction, sigma=5.0, range: 3 standard deviations)
+// Apply a convolution on this part (1-D Gaussian kernel in x-direction, sigma=5.0, range: 3 std. deviations)
 Kernel<double> kernel = gaussian_kernel(5.0, 3.0);
 const auto img_part_copy = convolution_x<BorderAccessMode::Unchecked>(img_part, kernel);
 
