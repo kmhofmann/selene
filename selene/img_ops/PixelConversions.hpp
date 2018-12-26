@@ -65,12 +65,16 @@ namespace impl {
 
 struct RGBToYCoefficients
 {
-  static constexpr std::array<default_float_t, 3> values = {{0.299, 0.587, 0.114}};
+  static constexpr std::array<default_float_t, 3> values = {{default_float_t(0.299),
+                                                             default_float_t(0.587),
+                                                             default_float_t(0.114)}};
 };
 
 struct BGRToYCoefficients
 {
-  static constexpr std::array<default_float_t, 3> values = {{0.114, 0.587, 0.299}};
+  static constexpr std::array<default_float_t, 3> values = {{default_float_t(0.114),
+                                                             default_float_t(0.587),
+                                                             default_float_t(0.299)}};
 };
 
 template <PixelFormat pixel_format_src, PixelFormat pixel_format_dst>

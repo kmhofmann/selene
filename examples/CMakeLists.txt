@@ -29,6 +29,14 @@ target_compile_definitions(image_conversion PRIVATE ${SELENE_COMPILER_DEFINITION
 target_include_directories(image_conversion PRIVATE ${SELENE_DIR}/examples)
 target_link_libraries(image_conversion selene Boost::filesystem)
 
+add_executable(image_convolution "")
+target_sources(image_convolution PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/image_convolution.cpp)
+target_compile_options(image_convolution PRIVATE ${SELENE_COMPILER_OPTIONS})
+target_compile_definitions(image_convolution PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_include_directories(image_convolution PRIVATE ${SELENE_DIR}/examples)
+target_link_libraries(image_convolution selene Boost::filesystem)
+
 add_executable(image_io "")
 target_sources(image_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/image_io.cpp)

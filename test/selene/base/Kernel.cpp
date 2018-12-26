@@ -69,7 +69,7 @@ TEST_CASE("Gaussian kernel", "[base]")
     REQUIRE(sgk[5] == Approx(sgk[1]));
     REQUIRE(sgk[6] == Approx(sgk[0]));
 
-    for (auto sigma = sln::default_float_t{0.001}; sigma < 3.0; sigma *= 1.1)
+    for (auto sigma = sln::default_float_t(0.001); sigma < sln::default_float_t(3.0); sigma *= sln::default_float_t(1.1))
     {
       const auto sgk2 = sln::gaussian_kernel<5>(sigma);
       REQUIRE(sgk2.size() == 5);
@@ -89,7 +89,7 @@ TEST_CASE("Gaussian kernel", "[base]")
       REQUIRE(gk[5] == Approx(gk[1]));
       REQUIRE(gk[6] == Approx(gk[0]));
 
-      for (auto sigma = sln::default_float_t{0.001}; sigma < 3.0; sigma *= 1.1)
+      for (auto sigma = sln::default_float_t(0.001); sigma < sln::default_float_t(3.0); sigma *= sln::default_float_t(1.1))
       {
         const auto gk2 = sln::gaussian_kernel(sigma, sln::default_float_t(3.0));
         REQUIRE(gk2.size() > 0);
@@ -107,7 +107,7 @@ TEST_CASE("Gaussian kernel", "[base]")
       REQUIRE(gk[5] == Approx(gk[1]));
       REQUIRE(gk[6] == Approx(gk[0]));
 
-      for (auto sigma = sln::default_float_t{0.001}; sigma < 3.0; sigma *= 1.1)
+      for (auto sigma = sln::default_float_t(0.001); sigma < sln::default_float_t(3.0); sigma *= sln::default_float_t(1.1))
       {
         const auto gk2 = sln::gaussian_kernel(sigma, sln::KernelSize{7});
         REQUIRE(gk2.size() == 7);
