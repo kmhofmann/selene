@@ -18,7 +18,7 @@ type-safe API.
 
   * Strongly typed image and multi-channel pixel representations, and functions for image data access.
   * Easy-to-use APIs to read and write images in JPEG and PNG formats (leveraging *libjpeg* and *libpng*).
-  * Basic image processing algorithms such as color conversions, pixel-wise operations, rotation, flipping, etc.
+  * Basic image processing algorithms such as color conversions, pixel-wise operations, convolutions, rotation, etc.
   * Lightweight and easy to build using *CMake* on Linux, MacOS, Windows.
 
 ### Example
@@ -43,9 +43,16 @@ for_each_pixel(img_part, [](auto& px){ px /= 4; });
 // Flip this part horizontally
 flip_horizontally_in_place(img_part);
 
+// Apply a convolution on this part (1-D Gaussian kernel in x-direction, sigma=5.0, range: 3 standard deviations)
+Kernel<double> kernel = gaussian_kernel(5.0, 3.0);
+const auto img_part_copy = convolution_x<BorderAccessMode::Unchecked>(img_part, kernel);
+
+// And copy the result back to the original image (i.e. to the view).
+clone(img_part_copy, img_part);
+
 // Convert whole image to RGBA, adding semi-transparent alpha channel
 const Image<PixelRGBA_8u> img_rgba =
-  convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{128});
+  convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{192});
 
 // Encode in-memory to PNG
 std::vector<std::uint8_t> encoded_png_data;

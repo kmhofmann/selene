@@ -12,6 +12,8 @@
 #include <selene/img_io/IO.hpp>
 
 #include <selene/img_ops/Algorithms.hpp>
+#include <selene/img_ops/Clone.hpp>
+#include <selene/img_ops/Convolution.hpp>
 #include <selene/img_ops/ImageConversions.hpp>
 #include <selene/img_ops/Transformations.hpp>
 #include <selene/img_ops/View.hpp>
@@ -48,9 +50,16 @@ int main(int argc, char** argv)
   // Flip this part horizontally
   flip_horizontally_in_place(img_part);
 
+  // Apply a convolution on this part (1-D Gaussian kernel in x-direction, sigma=5.0, range: 3 standard deviations)
+  Kernel<double> kernel = gaussian_kernel(5.0, 3.0);
+  const auto img_part_copy = convolution_x<BorderAccessMode::Unchecked>(img_part, kernel);
+
+  // And copy the result back to the original image (i.e. to the view).
+  clone(img_part_copy, img_part);
+
   // Convert whole image to RGBA, adding semi-transparent alpha channel
   const Image<PixelRGBA_8u> img_rgba =
-      convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{128});
+      convert_image<PixelFormat::RGBA>(img_rgb, std::uint8_t{192});
 
   // Encode in-memory to PNG
   std::vector<std::uint8_t> encoded_png_data;

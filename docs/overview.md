@@ -65,6 +65,9 @@ It currently contains, among other things
       * Example: `const auto img_transposed = transpose(img);`
       * Example: `const auto img_flipped = flip<FlipDirection::Horizontal>(img);`
       * Example: `const auto img_rotated = rotate<RotationDirection::Clockwise90>(img);`
+    * [Convolution operations](../selene/img_ops/Convolution.hpp) using [1-D kernels](../selene/base/Kernel.hpp)
+    that can be applied in x- or y-direction on an image.
+      * Example: `const auto img_convolved = convolution_x<BorderAccessMode::Unchecked>(img, kernel);` 
 
   * Functions for binary IO from and to files or memory. The type of source/sink can be transparent to users of this
   functionality, via static polymorphism.
