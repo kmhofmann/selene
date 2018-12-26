@@ -17,6 +17,21 @@
 
 namespace sln {
 
+template <typename DerivedSrc, typename DerivedDst>
+void clone(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst);
+
+template <typename DerivedSrc, typename DerivedDst>
+void clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src, ImageBase<DerivedDst>& img_dst);
+
+template <typename DerivedSrc>
+Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src);
+
+template <typename DerivedSrc>
+Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src);
+
+// ----------
+// Implementation:
+
 namespace impl {
 
 template <typename DerivedSrc, typename DerivedDst>
@@ -57,6 +72,15 @@ void copy_rows_from(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>&
 }  // namespace impl
 
 
+/** \brief Copy contents of `img_src` to `img_dst`.
+ *
+ * `img_dst` will be (re-)allocated if necessary.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @param img_dst The target image.
+ */
 template <typename DerivedSrc, typename DerivedDst>
 void clone(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst)
 {
@@ -66,6 +90,16 @@ void clone(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst)
   impl::copy_rows_from(img_src, img_dst);
 }
 
+/** \brief Copy contents of the specified region of `img_src` to `img_dst`.
+ *
+ * `img_dst` will be (re-)allocated if necessary.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @param region_src The region of the source image to be copied.
+ * @param img_dst The target image.
+ */
 template <typename DerivedSrc, typename DerivedDst>
 void clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src, ImageBase<DerivedDst>& img_dst)
 {
@@ -76,6 +110,15 @@ void clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src, 
   impl::copy_rows_from(view_src, img_dst);
 }
 
+/** \brief Copy contents of `img_src` to a new image.
+ *
+ * `img_dst` will be (re-)allocated if necessary.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @return The cloned image.
+ */
 template <typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src)
 {
@@ -85,6 +128,16 @@ Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src
   return img_dst;
 }
 
+/** \brief Copy contents of the specified region of `img_src` to a new image.
+ *
+ * `img_dst` will be (re-)allocated if necessary.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @param region_src The region of the source image to be copied.
+ * @return The cloned image region.
+ */
 template <typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src)
 {
