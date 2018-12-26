@@ -71,8 +71,8 @@ TEST_CASE("Gaussian kernel", "[base]")
 
     for (auto sigma = sln::default_float_t{0.001}; sigma < 3.0; sigma *= 1.1)
     {
-      const auto sgk = sln::gaussian_kernel<5>(sigma);
-      REQUIRE(sgk.size() == 5);
+      const auto sgk2 = sln::gaussian_kernel<5>(sigma);
+      REQUIRE(sgk2.size() == 5);
     }
   }
 
@@ -91,8 +91,8 @@ TEST_CASE("Gaussian kernel", "[base]")
 
       for (auto sigma = sln::default_float_t{0.001}; sigma < 3.0; sigma *= 1.1)
       {
-        const auto gk = sln::gaussian_kernel(sigma, sln::default_float_t(3.0));
-        REQUIRE(gk.size() > 0);
+        const auto gk2 = sln::gaussian_kernel(sigma, sln::default_float_t(3.0));
+        REQUIRE(gk2.size() > 0);
       }
     }
 
@@ -109,8 +109,8 @@ TEST_CASE("Gaussian kernel", "[base]")
 
       for (auto sigma = sln::default_float_t{0.001}; sigma < 3.0; sigma *= 1.1)
       {
-        const auto gk = sln::gaussian_kernel(sigma, sln::KernelSize{7});
-        REQUIRE(gk.size() == 7);
+        const auto gk2 = sln::gaussian_kernel(sigma, sln::KernelSize{7});
+        REQUIRE(gk2.size() == 7);
       }
     }
   }
@@ -203,6 +203,6 @@ TEST_CASE("Integer kernel", "[base]")
     std::mt19937 rng(142);
     test_integer_kernel<256, std::int32_t>(rng);
     test_integer_kernel<65536, std::int32_t>(rng);
-    test_integer_kernel<4294967296, std::int64_t>(rng);
+    test_integer_kernel<16776960, std::int64_t>(rng);
   }
 }
