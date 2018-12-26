@@ -16,7 +16,7 @@
 namespace sln {
 
 template <typename Derived>
-bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout = false, bool shrink_to_fit = false)
+bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout = false, [[maybe_unused]] bool shrink_to_fit = false)
 {
   if (!force_layout && img_dst.width() == layout.width && img_dst.height() == layout.height)
   {
