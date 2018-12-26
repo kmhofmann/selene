@@ -34,6 +34,9 @@ TEST_CASE("Kernel", "[base]")
     REQUIRE(k[1] == 66.6);
     REQUIRE(k[2] == 80.01);
 
+    REQUIRE(k.begin() < k.end());
+    REQUIRE(k.cbegin() < k.cend());
+
     const auto k2 = sln::normalize(k);
     REQUIRE(k2[0] == Approx(42.0 / (42.0 + 66.6 + 80.01)));
     REQUIRE(k2[1] == Approx(66.6 / (42.0 + 66.6 + 80.01)));
@@ -47,6 +50,9 @@ TEST_CASE("Kernel", "[base]")
     STATIC_REQUIRE(k[0] == 42.0);
     STATIC_REQUIRE(k[1] == 66.6);
     STATIC_REQUIRE(k[2] == 80.01);
+
+    REQUIRE(k.begin() < k.end());
+    REQUIRE(k.cbegin() < k.cend());
 
     constexpr static auto k2 = sln::normalize(k);
     STATIC_REQUIRE(k2[0] == 42.0 / (42.0 + 66.6 + 80.01));

@@ -29,7 +29,15 @@ constexpr static auto kernel_size_dynamic = KernelSize{-1};
 template <typename ValueType_, KernelSize k_ = kernel_size_dynamic>
 class Kernel;
 
-// TODO: Documentation
+/** \brief 1-dimensional kernel class.
+ *
+ * This class represents a 1-dimensional kernel, for use in image convolutions.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The kernel size. If it is set to `kernel_size_dynamic`, the data used to store the kernel elements
+ *            will be allocated dynamically (i.e. using a `std::vector`); otherwise, it will be allocated on the stack
+ *            (i.e. using a `std::array`).
+ */
 template <typename ValueType_, KernelSize k_>
 class Kernel
 {
@@ -38,46 +46,29 @@ public:
   using iterator = typename std::array<ValueType_, k_>::iterator;
   using const_iterator = typename std::array<ValueType_, k_>::const_iterator;
 
-  constexpr Kernel() = default;
-  constexpr Kernel(const std::array<ValueType_, k_>& data) : data_(data)
-  { }
+  constexpr Kernel() = default;  ///< Default constructor.
+  constexpr Kernel(const std::array<ValueType_, k_>& data);
 
-  ~Kernel() = default;
+  ~Kernel() = default;  ///< Defaulted destructor.
 
-  constexpr Kernel(const Kernel&) = default;
-  constexpr Kernel& operator=(const Kernel&) = default;
-  constexpr Kernel(Kernel&&) noexcept = default;
-  constexpr Kernel& operator=(Kernel&&) noexcept = default;
+  constexpr Kernel(const Kernel&) = default;  ///< Defaulted copy constructor.
+  constexpr Kernel& operator=(const Kernel&) = default;  ///< Defaulted copy assignment operator.
+  constexpr Kernel(Kernel&&) noexcept = default;  ///< Defaulted move constructor.
+  constexpr Kernel& operator=(Kernel&&) noexcept = default;  ///< Defaulted move assignment operator.
 
-  iterator begin() noexcept { return data_.begin(); }
-  iterator begin() const noexcept { return data_.begin(); }
-  const_iterator cbegin() const noexcept { return data_.cbegin(); }
+  iterator begin() noexcept;
+  const_iterator begin() const noexcept;
+  const_iterator cbegin() const noexcept;
 
-  iterator end() noexcept { return data_.end(); }
-  iterator end() const noexcept { return data_.end(); }
-  const_iterator cend() const noexcept { return data_.cend(); }
+  iterator end() noexcept;
+  const_iterator end() const noexcept;
+  const_iterator cend() const noexcept;
 
-  constexpr std::size_t size() const noexcept { return static_cast<std::size_t>(k_); }
-  constexpr value_type operator[](std::size_t idx) const noexcept { return data_[idx]; }
+  constexpr std::size_t size() const noexcept;
+  constexpr value_type operator[](std::size_t idx) const noexcept;
 
-  constexpr void normalize(value_type sum) noexcept
-  {
-    for (std::size_t i = 0; i < data_.size(); ++i)
-    {
-      data_[i] /= sum;
-    }
-  }
-
-  constexpr void normalize() noexcept
-  {
-    auto abs_sum = value_type{0};
-    for (std::size_t i = 0; i < data_.size(); ++i)
-    {
-      abs_sum += (data_[i] >= 0) ? data_[i] : -data_[i];
-    }
-
-    normalize(abs_sum);
-  }
+  constexpr void normalize(value_type sum) noexcept;
+  constexpr void normalize() noexcept;
 
 private:
   std::array<ValueType_, k_> data_;
@@ -86,7 +77,10 @@ private:
 };
 
 
-// TODO: Documentation
+/** \brief 1-dimensional kernel class. Partial specialization for k_ == kernel_size_dynamic.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ */
 template <typename ValueType_>
 class Kernel<ValueType_, kernel_size_dynamic>
 {
@@ -95,73 +89,352 @@ public:
   using iterator = typename std::vector<ValueType_>::iterator;
   using const_iterator = typename std::vector<ValueType_>::const_iterator;
 
-  Kernel() = default;
-  Kernel(std::initializer_list<ValueType_> init) : data_(init)
-  { }
-  explicit Kernel(std::vector<value_type>&& vec) : data_(std::move(vec))
-  { }
+  Kernel() = default;  ///< Default constructor.
+  Kernel(std::initializer_list<ValueType_> init);
+  explicit Kernel(std::vector<value_type>&& vec);
 
-  ~Kernel() = default;
+  ~Kernel() = default;  ///< Defaulted destructor.
 
-  Kernel(const Kernel&) = default;
-  Kernel& operator=(const Kernel&) = default;
-  Kernel(Kernel&&) noexcept = default;
-  Kernel& operator=(Kernel&&) noexcept = default;
+  Kernel(const Kernel&) = default;  ///< Defaulted copy constructor.
+  Kernel& operator=(const Kernel&) = default;  ///< Defaulted copy assignment operator.
+  Kernel(Kernel&&) noexcept = default;  ///< Defaulted move constructor.
+  Kernel& operator=(Kernel&&) noexcept = default;  ///< Defaulted move assignment operator.
 
-  iterator begin() noexcept { return data_.begin(); }
-  iterator begin() const noexcept { return data_.begin(); }
-  const_iterator cbegin() const noexcept { return data_.cbegin(); }
+  iterator begin() noexcept;
+  const_iterator begin() const noexcept;
+  const_iterator cbegin() const noexcept;
 
-  iterator end() noexcept { return data_.end(); }
-  iterator end() const noexcept { return data_.end(); }
-  const_iterator cend() const noexcept { return data_.cend(); }
+  iterator end() noexcept;
+  const_iterator end() const noexcept;
+  const_iterator cend() const noexcept;
 
-  std::size_t size() const noexcept { return data_.size(); }
-  value_type operator[](std::size_t idx) const noexcept { return data_[idx]; }
+  std::size_t size() const noexcept;
+  value_type operator[](std::size_t idx) const noexcept;
 
-  void normalize(value_type sum) noexcept
-  {
-    for (std::size_t i = 0; i < data_.size(); ++i)
-    {
-      data_[i] /= sum;
-    }
-  }
-
-  void normalize() noexcept
-  {
-    auto abs_sum = value_type{0};
-    for (std::size_t i = 0; i < data_.size(); ++i)
-    {
-      abs_sum += std::abs(data_[i]);
-    }
-
-    normalize(abs_sum);
-  }
+  void normalize(value_type sum) noexcept;
+  void normalize() noexcept;
 
 private:
   std::vector<ValueType_> data_;
   static_assert(std::is_trivial_v<ValueType_>, "Value type of kernel is not trivial");
 };
 
-// TODO: Documentation
 template <typename ValueType, KernelSize k>
-constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel, ValueType sum)
-{
-  auto normalized_kernel = kernel;
-  normalized_kernel.normalize(sum);
-  return normalized_kernel;
-}
+constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel, ValueType sum);
 
-// TODO: Documentation
 template <typename ValueType, KernelSize k>
-constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel)
-{
-  auto normalized_kernel = kernel;
-  normalized_kernel.normalize();
-  return normalized_kernel;
-}
+constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel);
+
+template <KernelSize kernel_size, typename ValueType = default_float_t>
+auto gaussian_kernel(default_float_t sigma, bool renormalize = true);
+
+template <typename ValueType = default_float_t>
+auto gaussian_kernel(default_float_t sigma, KernelSize size, bool renormalize = true);
+
+template <typename ValueType = default_float_t>
+auto gaussian_kernel(default_float_t sigma, default_float_t range_nr_std_deviations, bool renormalize = true);
+
+template <KernelSize kernel_size, typename ValueType = default_float_t>
+constexpr auto uniform_kernel();
+
+template <typename ValueType = default_float_t>
+auto uniform_kernel(KernelSize size);
+
+template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k>
+constexpr Kernel<OutValueType, k> integer_kernel(const Kernel<ValueType, k>& kernel);
+
+template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType>
+Kernel<OutValueType, kernel_size_dynamic> integer_kernel(const Kernel<ValueType, kernel_size_dynamic>& kernel);
 
 // ----------
+// Implementation:
+
+/** \brief Constructor from a `std::array`.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @param data The data the kernel should contain.
+ */
+template <typename ValueType_, KernelSize k_>
+constexpr Kernel<ValueType_, k_>::Kernel(const std::array<ValueType_, k_>& data)
+    : data_(data)
+{ }
+
+/** \brief Returns an iterator to the beginning of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return An iterator to the beginning of the kernel data.
+ */
+template <typename ValueType_, KernelSize k_>
+auto Kernel<ValueType_, k_>::begin() noexcept  -> iterator
+{
+  return data_.begin();
+}
+
+/** \brief Returns a constant iterator to the beginning of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return A constant iterator to the beginning of the kernel data.
+ */
+template <typename ValueType_, KernelSize k_>
+auto Kernel<ValueType_, k_>::begin() const noexcept -> const_iterator
+{
+  return data_.begin();
+}
+
+/** \brief Returns a constant iterator to the beginning of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return A constant iterator to the beginning of the kernel data.
+ */
+template <typename ValueType_, KernelSize k_>
+auto Kernel<ValueType_, k_>::cbegin() const noexcept -> const_iterator
+{
+  return data_.cbegin();
+}
+
+/** \brief Returns an iterator to the end of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return An iterator to the end of the kernel data.
+ */
+template <typename ValueType_, KernelSize k_>
+auto Kernel<ValueType_, k_>::end() noexcept -> iterator
+{
+  return data_.end();
+}
+
+/** \brief Returns a constant iterator to the end of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return A constant iterator to the end of the kernel data.
+ */
+template <typename ValueType_, KernelSize k_>
+auto Kernel<ValueType_, k_>::end() const noexcept -> const_iterator
+{
+  return data_.end();
+}
+
+/** \brief Returns a constant iterator to the end of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return A constant iterator to the end of the kernel data.
+ */
+template <typename ValueType_, KernelSize k_>
+auto Kernel<ValueType_, k_>::cend() const noexcept -> const_iterator
+{
+  return data_.cend();
+}
+
+/** \brief Returns the size (length) of the kernel.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @return The kernel size.
+ */
+template <typename ValueType_, KernelSize k_>
+constexpr std::size_t Kernel<ValueType_, k_>::size() const noexcept
+{
+  return static_cast<std::size_t>(k_);
+}
+
+/** \brief Access the n-th kernel element.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @param idx The index of the element to access.
+ * @return The n-th kernel element, speficied by `idx`.
+ */
+template <typename ValueType_, KernelSize k_>
+constexpr auto Kernel<ValueType_, k_>::operator[](std::size_t idx) const noexcept -> value_type
+{
+  SELENE_ASSERT(idx < k_);
+  return data_[idx];
+}
+
+/** \brief Normalizes the kernel by dividing each element by the specified sum.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @param sum The value that each element will be divided by.
+ */
+template <typename ValueType_, KernelSize k_>
+constexpr void Kernel<ValueType_, k_>::normalize(value_type sum) noexcept
+{
+  for (std::size_t i = 0; i < data_.size(); ++i)
+  {
+    data_[i] /= sum;
+  }
+}
+
+/** \brief Normalizes the kernel such that the sum of (absolute) elements is 1.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ */
+template <typename ValueType_, KernelSize k_>
+constexpr void Kernel<ValueType_, k_>::normalize() noexcept
+{
+  auto abs_sum = value_type{0};
+  for (std::size_t i = 0; i < data_.size(); ++i)
+  {
+    abs_sum += (data_[i] >= 0) ? data_[i] : -data_[i];
+  }
+
+  normalize(abs_sum);
+}
+
+// -----
+
+/** \brief Constructor from an initializer list.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @param init The data the kernel should contain, in form of an initializer list.
+ */
+template <typename ValueType_>
+Kernel<ValueType_, kernel_size_dynamic>::Kernel(std::initializer_list<ValueType_> init)
+    : data_(init)
+{
+}
+
+/** \brief Constructor from a `std::vector`.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @param vec The data the kernel should contain.
+ */
+template <typename ValueType_>
+Kernel<ValueType_, kernel_size_dynamic>::Kernel(std::vector<value_type>&& vec)
+    : data_(std::move(vec))
+{
+}
+
+/** \brief Returns an iterator to the beginning of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return An iterator to the beginning of the kernel data.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::begin() noexcept -> iterator
+{
+  return data_.begin();
+}
+
+/** \brief Returns a constant iterator to the beginning of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return A constant iterator to the beginning of the kernel data.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::begin() const noexcept -> const_iterator
+{
+  return data_.begin();
+}
+
+/** \brief Returns a constant iterator to the beginning of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return A constant iterator to the beginning of the kernel data.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::cbegin() const noexcept -> const_iterator
+{
+  return data_.cbegin();
+}
+
+/** \brief Returns an iterator to the end of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return An iterator to the end of the kernel data.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::end() noexcept -> iterator
+{
+  return data_.end();
+}
+
+/** \brief Returns a constant iterator to the end of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return A constant iterator to the end of the kernel data.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::end() const noexcept -> const_iterator
+{
+  return data_.end();
+}
+
+/** \brief Returns a constant iterator to the end of the kernel data.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return A constant iterator to the end of the kernel data.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::cend() const noexcept -> const_iterator
+{
+  return data_.cend();
+}
+
+/** \brief Returns the size (length) of the kernel.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @return The kernel size.
+ */
+template <typename ValueType_>
+std::size_t Kernel<ValueType_, kernel_size_dynamic>::size() const noexcept
+{
+  return data_.size();
+}
+
+/** \brief Access the n-th kernel element.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @param idx The index of the element to access.
+ * @return The n-th kernel element, speficied by `idx`.
+ */
+template <typename ValueType_>
+auto Kernel<ValueType_, kernel_size_dynamic>::operator[](std::size_t idx) const noexcept -> value_type
+{
+  SELENE_ASSERT(idx < data_.size());
+  return data_[idx];
+}
+
+/** \brief Normalizes the kernel by dividing each element by the specified sum.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @param sum The value that each element will be divided by.
+ */
+template <typename ValueType_>
+void Kernel<ValueType_, kernel_size_dynamic>::normalize(value_type sum) noexcept
+{
+  for (std::size_t i = 0; i < data_.size(); ++i)
+  {
+    data_[i] /= sum;
+  }
+}
+
+/** \brief Normalizes the kernel such that the sum of (absolute) elements is 1.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ */
+template <typename ValueType_>
+void Kernel<ValueType_, kernel_size_dynamic>::normalize() noexcept
+{
+  auto abs_sum = value_type{0};
+  for (std::size_t i = 0; i < data_.size(); ++i)
+  {
+    abs_sum += std::abs(data_[i]);
+  }
+
+  normalize(abs_sum);
+}
+
+// -----
 
 namespace impl {
 
@@ -193,10 +466,47 @@ inline auto fill_with_gaussian_pdf(Container& c, std::ptrdiff_t center_idx, defa
 
 }  // namespace impl
 
+/** \brief Returns a normalized kernel, where each element of the input kernel has been divided by the specified sum.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @param kernel The input kernel.
+ * @param sum The value that each element of the input kernel will be divided by.
+ * @return The normalized kernel.
+ */
+template <typename ValueType, KernelSize k>
+constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel, ValueType sum)
+{
+  auto normalized_kernel = kernel;
+  normalized_kernel.normalize(sum);
+  return normalized_kernel;
+}
 
-// TODO: Documentation
-template <KernelSize kernel_size, typename ValueType = default_float_t>
-inline auto gaussian_kernel(default_float_t sigma, bool renormalize = true)
+/** \brief Returns a normalized kernel, such that the sum of (absolute) elements is 1.
+ *
+ * @tparam ValueType_ The value type of the kernel elements.
+ * @tparam k_ The number of kernel elements.
+ * @param kernel The input kernel.
+ * @return The normalized kernel.
+ */
+template <typename ValueType, KernelSize k>
+constexpr Kernel<ValueType, k> normalize(const Kernel<ValueType, k>& kernel)
+{
+  auto normalized_kernel = kernel;
+  normalized_kernel.normalize();
+  return normalized_kernel;
+}
+
+/** \brief Returns a kernel discretely sampled from a Gaussian (normal) distribution.
+ *
+ * @tparam kernel_size The kernel size.
+ * @tparam ValueType The value type of the kernel elements.
+ * @param sigma The standard deviation of the Gaussian distribution.
+ * @param renormalize If true, the kernel will be normalized after sampling, such the the sum of its elements is 1.
+ * @return A kernel representing a sampled Gaussian distribution.
+ */
+template <KernelSize kernel_size, typename ValueType>
+inline auto gaussian_kernel(default_float_t sigma, bool renormalize)
 {
   static_assert(kernel_size % 2 == 1, "Gaussian kernel size must be odd");
   constexpr auto center_idx = kernel_size / 2;
@@ -214,9 +524,16 @@ inline auto gaussian_kernel(default_float_t sigma, bool renormalize = true)
   return kernel;
 }
 
-// TODO: Documentation
-template <typename ValueType = default_float_t>
-inline auto gaussian_kernel(default_float_t sigma, KernelSize size, bool renormalize = true)
+/** \brief Returns a kernel discretely sampled from a Gaussian (normal) distribution.
+ *
+ * @tparam ValueType The value type of the kernel elements.
+ * @param sigma The standard deviation of the Gaussian distribution.
+ * @param size The kernel size.
+ * @param renormalize If true, the kernel will be normalized after sampling, such the the sum of its elements is 1.
+ * @return A kernel representing a sampled Gaussian distribution.
+ */
+template <typename ValueType>
+inline auto gaussian_kernel(default_float_t sigma, KernelSize size, bool renormalize)
 {
   //SELENE_ASSERT(size % 2 == 1);
   const auto full_size = (size % 2 == 0) ? size + 1 : size;  // ensure kernel size is odd
@@ -235,9 +552,18 @@ inline auto gaussian_kernel(default_float_t sigma, KernelSize size, bool renorma
   return kernel;
 }
 
-// TODO: Documentation
-template <typename ValueType = default_float_t>
-inline auto gaussian_kernel(default_float_t sigma, default_float_t range_nr_std_deviations, bool renormalize = true)
+/** \brief Returns a kernel discretely sampled from a Gaussian (normal) distribution.
+ *
+ * Using this overload, the kernel size will be determined by the given range in times of standard deviation.
+ *
+ * @tparam ValueType The value type of the kernel elements.
+ * @param sigma The standard deviation of the Gaussian distribution.
+ * @param range_nr_std_deviations How many standard deviations should be represented.
+ * @param renormalize If true, the kernel will be normalized after sampling, such the the sum of its elements is 1.
+ * @return A kernel representing a sampled Gaussian distribution.
+ */
+template <typename ValueType>
+inline auto gaussian_kernel(default_float_t sigma, default_float_t range_nr_std_deviations, bool renormalize)
 {
   using size_type = std::ptrdiff_t;
   const auto half_size = static_cast<size_type>(std::ceil(sigma * range_nr_std_deviations));
@@ -257,8 +583,13 @@ inline auto gaussian_kernel(default_float_t sigma, default_float_t range_nr_std_
   return kernel;
 }
 
-// TODO: Documentation
-template <KernelSize kernel_size, typename ValueType = default_float_t>
+/** \brief Returns a kernel representing a discrete uniform distribution.
+ *
+ * @tparam kernel_size The kernel size.
+ * @tparam ValueType The value type of the kernel elements.
+ * @return A kernel representing a discrete uniform distribution.
+ */
+template <KernelSize kernel_size, typename ValueType>
 constexpr auto uniform_kernel()
 {
   static_assert(kernel_size > 0, "Kernel size must be >0.");
@@ -268,8 +599,13 @@ constexpr auto uniform_kernel()
   return Kernel<ValueType, kernel_size>(arr);
 }
 
-// TODO: Documentation
-template <typename ValueType = default_float_t>
+/** \brief Returns a kernel representing a discrete uniform distribution.
+ *
+ * @tparam ValueType The value type of the kernel elements.
+ * @param size The kernel size.
+ * @return A kernel representing a discrete uniform distribution.
+ */
+template <typename ValueType>
 inline auto uniform_kernel(KernelSize size)
 {
   if (size == 0)
@@ -282,7 +618,15 @@ inline auto uniform_kernel(KernelSize size)
   return Kernel<ValueType, kernel_size_dynamic>(std::move(vec));
 }
 
-// TODO: Documentation
+/** \brief Converts a floating point kernel into a kernel containing scaled integral values.
+ *
+ * @tparam OutValueType The output element type of the kernel to be returned.
+ * @tparam scale_factor The multiplication factor for scaling the input kernel elements with.
+ * @tparam ValueType The value type of the input kernel elements.
+ * @tparam k The kernel size.
+ * @param kernel The input floating point kernel.
+ * @return An integer kernel, scaled by the respective factor
+ */
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k>
 constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel) -> Kernel<OutValueType, k>
 {
@@ -297,7 +641,14 @@ constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel) -> Kernel<OutV
   return Kernel<OutValueType, k>(arr);
 }
 
-// TODO: Documentation
+/** \brief Converts a floating point kernel into a kernel containing scaled integral values.
+ *
+ * @tparam OutValueType The output element type of the kernel to be returned.
+ * @tparam scale_factor The multiplication factor for scaling the input kernel elements with.
+ * @tparam ValueType The value type of the input kernel elements.
+ * @param kernel The input floating point kernel.
+ * @return An integer kernel, scaled by the respective factor
+ */
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType>
 inline auto integer_kernel(const Kernel<ValueType, kernel_size_dynamic>& kernel) -> Kernel<OutValueType, kernel_size_dynamic>
 {

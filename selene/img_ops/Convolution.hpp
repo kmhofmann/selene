@@ -90,7 +90,20 @@ auto convolve_pixels_y(const ImageBase<DerivedSrc>& img_src, PixelIndex x, Pixel
 
 // ---
 
-// TODO: Documentation
+/** \brief Performs a convolution in x-direction for each pixel of the input image; i.e. with a (1xN) kernel.
+ *
+ * @tparam access_mode The border access mode to be used when going outside the image bounds.
+ * @tparam shift_right An optional bit-shift factor, to be applied before each convolution result is written to the
+ *                     output image. `0` by default. Non-zero values are useful in combination with a respectively
+ *                     scaled integer kernel.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
+ * @tparam KernelValueType The value type of the kernel elements (usually automatically deduced).
+ * @tparam kernel_size The kernel size (usually automatically deduced).
+ * @param img_src The typed source image.
+ * @param img_dst The typed target image.
+ * @param kernel The kernel to apply.
+ */
 template <BorderAccessMode access_mode, std::size_t shift_right,
           typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
@@ -148,7 +161,20 @@ void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
   }
 }
 
-// TODO: Documentation
+/** \brief Performs a convolution in x-direction for each pixel of the input image; i.e. with a (1xN) kernel.
+ *
+ * @tparam access_mode The border access mode to be used when going outside the image bounds.
+ * @tparam shift_right An optional bit-shift factor, to be applied before each convolution result is written to the
+ *                     output image. `0` by default. Non-zero values are useful in combination with a respectively
+ *                     scaled integer kernel.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam KernelValueType The value type of the kernel elements (usually automatically deduced).
+ * @tparam kernel_size The kernel size (usually automatically deduced).
+ * @param img_src The typed source image.
+ * @param img_dst The typed target image.
+ * @param kernel The kernel to apply.
+ * @return The output image with the applied convolution.
+ */
 template <BorderAccessMode access_mode, std::size_t shift_right,
     typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
 Image<typename DerivedSrc::PixelType> convolution_x(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel)
@@ -158,7 +184,20 @@ Image<typename DerivedSrc::PixelType> convolution_x(const ImageBase<DerivedSrc>&
   return img_dst;
 }
 
-// TODO: Documentation
+/** \brief Performs a convolution in y-direction for each pixel of the input image; i.e. with a (Nx1) kernel.
+ *
+ * @tparam access_mode The border access mode to be used when going outside the image bounds.
+ * @tparam shift_right An optional bit-shift factor, to be applied before each convolution result is written to the
+ *                     output image. `0` by default. Non-zero values are useful in combination with a respectively
+ *                     scaled integer kernel.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam DerivedDst The typed target image type (usually automatically deduced).
+ * @tparam KernelValueType The value type of the kernel elements (usually automatically deduced).
+ * @tparam kernel_size The kernel size (usually automatically deduced).
+ * @param img_src The typed source image.
+ * @param img_dst The typed target image.
+ * @param kernel The kernel to apply.
+ */
 template <BorderAccessMode access_mode, std::size_t shift_right,
     typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
@@ -222,7 +261,20 @@ void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
   }
 }
 
-// TODO: Documentation
+/** \brief Performs a convolution in y-direction for each pixel of the input image; i.e. with a (Nx1) kernel.
+ *
+ * @tparam access_mode The border access mode to be used when going outside the image bounds.
+ * @tparam shift_right An optional bit-shift factor, to be applied before each convolution result is written to the
+ *                     output image. `0` by default. Non-zero values are useful in combination with a respectively
+ *                     scaled integer kernel.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @tparam KernelValueType The value type of the kernel elements (usually automatically deduced).
+ * @tparam kernel_size The kernel size (usually automatically deduced).
+ * @param img_src The typed source image.
+ * @param img_dst The typed target image.
+ * @param kernel The kernel to apply.
+ * @return The output image with the applied convolution.
+ */
 template <BorderAccessMode access_mode, std::size_t shift_right,
     typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
 Image<typename DerivedSrc::PixelType> convolution_y(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel)
