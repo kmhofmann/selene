@@ -16,13 +16,13 @@ TEST_CASE("Kernel", "[base]")
 {
   SECTION("Empty kernel")
   {
-    sln::Kernel<double> k;
+    sln::Kernel<double> k{};
     REQUIRE(k.size() == 0);
   }
 
   SECTION("Empty kernel (static)")
   {
-    constexpr static sln::Kernel<double, 0> k;
+    constexpr static sln::Kernel<double, 0> k{};
     STATIC_REQUIRE(k.size() == 0);
   }
 
