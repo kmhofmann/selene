@@ -18,24 +18,67 @@
 
 namespace sln {
 
+template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+auto view(const ImageBase<DerivedSrc>& img);
+
+template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+auto view(ImageBase<DerivedSrc>& img);
+
+template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region);
+
+template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+auto view(ImageBase<DerivedSrc>& img, const BoundingBox& region);
+
+template <typename PixelTypeDst, typename DerivedSrc, typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(const ImageBase<DerivedSrc>& img);
+
+template <typename PixelTypeDst, typename DerivedSrc, typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(ImageBase<DerivedSrc>& img);
+
+template <typename PixelTypeDst, typename DerivedSrc, typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(const ImageBase<DerivedSrc>& img, const BoundingBox& region);
+
+template <typename PixelTypeDst, typename DerivedSrc, typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+auto view_with_pixel_type(ImageBase<DerivedSrc>& img, const BoundingBox& region);
+
+// ----------
+// Implementation:
+
 // Functions after which the PixelType of the view will be unchanged:
 
-template <typename DerivedSrc,
-          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+/** \brief Create a non-owning constant view onto the specified image.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @return A non-owning constant view onto the input image.
+ */
+template <typename DerivedSrc, typename>
 auto view(const ImageBase<DerivedSrc>& img)
 {
   return img.view();
 }
 
-template <typename DerivedSrc,
-          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+/** \brief Create a non-owning mutable view onto the specified image.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @return A non-owning mutable view onto the input image.
+ */
+template <typename DerivedSrc, typename>
 auto view(ImageBase<DerivedSrc>& img)
 {
   return img.view();
 }
 
-template <typename DerivedSrc,
-          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+/** Create a non-owning constant view onto a sub-region of the specified image.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @param region A sub-region of the input image.
+ * @return A non-owning constant view onto the respective sub-region of the input image.
+ */
+template <typename DerivedSrc, typename>
 auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -47,8 +90,14 @@ auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
   return ImageView<PixelTypeSrc, ImageModifiability::Constant>(byte_ptr, layout);
 }
 
-template <typename DerivedSrc,
-          typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+/** Create a non-owning mutable view onto a sub-region of the specified image.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @param region A sub-region of the input image.
+ * @return A non-owning mutable view onto the respective sub-region of the input image.
+ */
+template <typename DerivedSrc, typename>
 auto view(ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -92,8 +141,18 @@ void static_check_view_pixel_types()
 // these or the above overloads. No problem with Clang 7.0, but GCC 8.2.0 does not like this.
 // TODO: Investigate later.
 
-template <typename PixelTypeDst, typename DerivedSrc,
-          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+/** \brief Create a non-owning constant view onto the specified image.
+ *
+ * This function allows the pixel type of the view to be changed, e.g. to contain a different pixel format.
+ *
+ * The underlying element type and nr of channels both have to match; the pixel format has to match at least in the
+ * nr of channels, or be PixelFormat::Unknown in either source or target.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @return A non-owning constant view onto the input image.
+ */
+template <typename PixelTypeDst, typename DerivedSrc, typename>
 auto view_with_pixel_type(const ImageBase<DerivedSrc>& img)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -103,8 +162,18 @@ auto view_with_pixel_type(const ImageBase<DerivedSrc>& img)
   return ImageView<PixelTypeDst, ImageModifiability::Constant>(img.byte_ptr(), img.layout());
 }
 
-template <typename PixelTypeDst, typename DerivedSrc,
-          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+/** \brief Create a non-owning mutable view onto the specified image.
+ *
+ * This function allows the pixel type of the view to be changed, e.g. to contain a different pixel format.
+ *
+ * The underlying element type and nr of channels both have to match; the pixel format has to match at least in the
+ * nr of channels, or be PixelFormat::Unknown in either source or target.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @return A non-owning mutable view onto the input image.
+ */
+template <typename PixelTypeDst, typename DerivedSrc, typename>
 auto view_with_pixel_type(ImageBase<DerivedSrc>& img)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -115,8 +184,19 @@ auto view_with_pixel_type(ImageBase<DerivedSrc>& img)
   return ImageView<PixelTypeDst, modifiability>(img.byte_ptr(), img.layout());
 }
 
-template <typename PixelTypeDst, typename DerivedSrc,
-          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+/** Create a non-owning constant view onto a sub-region of the specified image.
+ *
+ * This function allows the pixel type of the view to be changed, e.g. to contain a different pixel format.
+ *
+ * The underlying element type and nr of channels both have to match; the pixel format has to match at least in the
+ * nr of channels, or be PixelFormat::Unknown in either source or target.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @param region A sub-region of the input image.
+ * @return A non-owning constant view onto the respective sub-region of the input image.
+ */
+template <typename PixelTypeDst, typename DerivedSrc, typename>
 auto view_with_pixel_type(const ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -130,8 +210,19 @@ auto view_with_pixel_type(const ImageBase<DerivedSrc>& img, const BoundingBox& r
   return ImageView<PixelTypeDst, ImageModifiability::Constant>(byte_ptr, layout);
 }
 
-template <typename PixelTypeDst, typename DerivedSrc,
-          typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
+/** Create a non-owning mutable view onto a sub-region of the specified image.
+ *
+ * This function allows the pixel type of the view to be changed, e.g. to contain a different pixel format.
+ *
+ * The underlying element type and nr of channels both have to match; the pixel format has to match at least in the
+ * nr of channels, or be PixelFormat::Unknown in either source or target.
+ *
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img The input image.
+ * @param region A sub-region of the input image.
+ * @return A non-owning mutable view onto the respective sub-region of the input image.
+ */
+template <typename PixelTypeDst, typename DerivedSrc, typename>
 auto view_with_pixel_type(ImageBase<DerivedSrc>& img, const BoundingBox& region)
 {
   using PixelTypeSrc = typename ImageBase<DerivedSrc>::PixelType;
