@@ -12,6 +12,8 @@
 
 namespace sln {
 
+// clang-format off
+
 using Image_8u1 = Image<Pixel<std::uint8_t, 1>>;  ///< 8-bit unsigned 1-channel image.
 using Image_8u2 = Image<Pixel<std::uint8_t, 2>>;  ///< 8-bit unsigned 2-channel image.
 using Image_8u3 = Image<Pixel<std::uint8_t, 3>>;  ///< 8-bit unsigned 3-channel image.
@@ -90,6 +92,8 @@ SELENE_CREATE_IMAGE_TYPE_ALIAS(CMYK, 4)
 SELENE_CREATE_IMAGE_TYPE_ALIAS(YCCK, 4)
 
 #undef SELENE_CREATE_IMAGE_TYPE_ALIAS
+
+// clang-format on
 
 }  // namespace sln
 

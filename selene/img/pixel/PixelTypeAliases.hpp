@@ -11,6 +11,8 @@
 
 namespace sln {
 
+// clang-format off
+
 using Pixel_8u1 = Pixel<std::uint8_t, 1, PixelFormat::Unknown>;  ///< 8-bit unsigned 1-channel pixel.
 using Pixel_8u2 = Pixel<std::uint8_t, 2, PixelFormat::Unknown>;  ///< 8-bit unsigned 2-channel pixel.
 using Pixel_8u3 = Pixel<std::uint8_t, 3, PixelFormat::Unknown>;  ///< 8-bit unsigned 3-channel pixel.
@@ -89,6 +91,8 @@ SELENE_CREATE_PIXEL_TYPE_ALIAS(CMYK, 4)
 SELENE_CREATE_PIXEL_TYPE_ALIAS(YCCK, 4)
 
 #undef SELENE_CREATE_PIXEL_TYPE_ALIAS
+
+// clang-format on
 
 }  // namespace sln
 
