@@ -14,7 +14,7 @@
 #include <selene/img/typed/ImageBase.hpp>
 #include <selene/img/typed/ImageView.hpp>
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 
 #include <algorithm>
 #include <cstdint>
@@ -46,46 +46,46 @@ namespace impl {
 template <typename T> struct PixelToOpenCVType;
 
 template <> struct PixelToOpenCVType<std::uint8_t>{ static constexpr auto type = CV_8UC1; };
-template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 1>>{ static constexpr auto type = CV_8UC1; };
-template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 2>>{ static constexpr auto type = CV_8UC2; };
-template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 3>>{ static constexpr auto type = CV_8UC3; };
-template <> struct PixelToOpenCVType<Pixel<std::uint8_t, 4>>{ static constexpr auto type = CV_8UC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint8_t, 1, pixel_format>>{ static constexpr auto type = CV_8UC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint8_t, 2, pixel_format>>{ static constexpr auto type = CV_8UC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint8_t, 3, pixel_format>>{ static constexpr auto type = CV_8UC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint8_t, 4, pixel_format>>{ static constexpr auto type = CV_8UC4; };
 
 template <> struct PixelToOpenCVType<std::int8_t>{ static constexpr auto type = CV_8SC1; };
-template <> struct PixelToOpenCVType<Pixel<std::int8_t, 1>>{ static constexpr auto type = CV_8SC1; };
-template <> struct PixelToOpenCVType<Pixel<std::int8_t, 2>>{ static constexpr auto type = CV_8SC2; };
-template <> struct PixelToOpenCVType<Pixel<std::int8_t, 3>>{ static constexpr auto type = CV_8SC3; };
-template <> struct PixelToOpenCVType<Pixel<std::int8_t, 4>>{ static constexpr auto type = CV_8SC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int8_t, 1, pixel_format>>{ static constexpr auto type = CV_8SC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int8_t, 2, pixel_format>>{ static constexpr auto type = CV_8SC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int8_t, 3, pixel_format>>{ static constexpr auto type = CV_8SC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int8_t, 4, pixel_format>>{ static constexpr auto type = CV_8SC4; };
 
 template <> struct PixelToOpenCVType<std::uint16_t>{ static constexpr auto type = CV_16UC1; };
-template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 1>>{ static constexpr auto type = CV_16UC1; };
-template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 2>>{ static constexpr auto type = CV_16UC2; };
-template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 3>>{ static constexpr auto type = CV_16UC3; };
-template <> struct PixelToOpenCVType<Pixel<std::uint16_t, 4>>{ static constexpr auto type = CV_16UC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint16_t, 1, pixel_format>>{ static constexpr auto type = CV_16UC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint16_t, 2, pixel_format>>{ static constexpr auto type = CV_16UC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint16_t, 3, pixel_format>>{ static constexpr auto type = CV_16UC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::uint16_t, 4, pixel_format>>{ static constexpr auto type = CV_16UC4; };
 
 template <> struct PixelToOpenCVType<std::int16_t>{ static constexpr auto type = CV_16SC1; };
-template <> struct PixelToOpenCVType<Pixel<std::int16_t, 1>>{ static constexpr auto type = CV_16SC1; };
-template <> struct PixelToOpenCVType<Pixel<std::int16_t, 2>>{ static constexpr auto type = CV_16SC2; };
-template <> struct PixelToOpenCVType<Pixel<std::int16_t, 3>>{ static constexpr auto type = CV_16SC3; };
-template <> struct PixelToOpenCVType<Pixel<std::int16_t, 4>>{ static constexpr auto type = CV_16SC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int16_t, 1, pixel_format>>{ static constexpr auto type = CV_16SC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int16_t, 2, pixel_format>>{ static constexpr auto type = CV_16SC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int16_t, 3, pixel_format>>{ static constexpr auto type = CV_16SC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int16_t, 4, pixel_format>>{ static constexpr auto type = CV_16SC4; };
 
 template <> struct PixelToOpenCVType<std::int32_t>{ static constexpr auto type = CV_32SC1; };
-template <> struct PixelToOpenCVType<Pixel<std::int32_t, 1>>{ static constexpr auto type = CV_32SC1; };
-template <> struct PixelToOpenCVType<Pixel<std::int32_t, 2>>{ static constexpr auto type = CV_32SC2; };
-template <> struct PixelToOpenCVType<Pixel<std::int32_t, 3>>{ static constexpr auto type = CV_32SC3; };
-template <> struct PixelToOpenCVType<Pixel<std::int32_t, 4>>{ static constexpr auto type = CV_32SC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int32_t, 1, pixel_format>>{ static constexpr auto type = CV_32SC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int32_t, 2, pixel_format>>{ static constexpr auto type = CV_32SC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int32_t, 3, pixel_format>>{ static constexpr auto type = CV_32SC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<std::int32_t, 4, pixel_format>>{ static constexpr auto type = CV_32SC4; };
 
 template <> struct PixelToOpenCVType<float32_t>{ static constexpr auto type = CV_32FC1; };
-template <> struct PixelToOpenCVType<Pixel<float32_t, 1>>{ static constexpr auto type = CV_32FC1; };
-template <> struct PixelToOpenCVType<Pixel<float32_t, 2>>{ static constexpr auto type = CV_32FC2; };
-template <> struct PixelToOpenCVType<Pixel<float32_t, 3>>{ static constexpr auto type = CV_32FC3; };
-template <> struct PixelToOpenCVType<Pixel<float32_t, 4>>{ static constexpr auto type = CV_32FC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float32_t, 1, pixel_format>>{ static constexpr auto type = CV_32FC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float32_t, 2, pixel_format>>{ static constexpr auto type = CV_32FC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float32_t, 3, pixel_format>>{ static constexpr auto type = CV_32FC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float32_t, 4, pixel_format>>{ static constexpr auto type = CV_32FC4; };
 
 template <> struct PixelToOpenCVType<float64_t>{ static constexpr auto type = CV_64FC1; };
-template <> struct PixelToOpenCVType<Pixel<float64_t, 1>>{ static constexpr auto type = CV_64FC1; };
-template <> struct PixelToOpenCVType<Pixel<float64_t, 2>>{ static constexpr auto type = CV_64FC2; };
-template <> struct PixelToOpenCVType<Pixel<float64_t, 3>>{ static constexpr auto type = CV_64FC3; };
-template <> struct PixelToOpenCVType<Pixel<float64_t, 4>>{ static constexpr auto type = CV_64FC4; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float64_t, 1, pixel_format>>{ static constexpr auto type = CV_64FC1; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float64_t, 2, pixel_format>>{ static constexpr auto type = CV_64FC2; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float64_t, 3, pixel_format>>{ static constexpr auto type = CV_64FC3; };
+template <PixelFormat pixel_format> struct PixelToOpenCVType<Pixel<float64_t, 4, pixel_format>>{ static constexpr auto type = CV_64FC4; };
 // clang-format on
 
 inline int opencv_nr_bytes_per_channel(const cv::Mat& img_cv)
