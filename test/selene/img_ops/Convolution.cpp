@@ -106,7 +106,7 @@ TEST_CASE("Convolution (pixels)", "[img]")
       REQUIRE(img_dst(0_idx, 2_idx) == 59);
     }
   }
-};
+}
 
 TEST_CASE("Image convolution (IO)", "[img]")
 {

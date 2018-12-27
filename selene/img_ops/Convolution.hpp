@@ -129,7 +129,7 @@ void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
   auto write_to_dst = [&img_dst](auto res, auto x, auto y) {
     if constexpr (/*std::is_integral_v<ConvolutionResultType> &&*/ shift_right > 0)
     {
-      img_dst(x, y) = res + (1 << (shift_right - 1)) >> shift_right;
+      img_dst(x, y) = (res + (1 << (shift_right - 1))) >> shift_right;
     }
     else
     {
@@ -223,7 +223,7 @@ void convolution_y(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
   auto write_to_dst = [&img_dst](auto res, auto x, auto y) {
     if constexpr (/*std::is_integral_v<ConvolutionResultType> &&*/ shift_right > 0)
     {
-      img_dst(x, y) = res + (1 << (shift_right - 1)) >> shift_right;
+      img_dst(x, y) = (res + (1 << (shift_right - 1))) >> shift_right;
     }
     else
     {

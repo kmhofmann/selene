@@ -948,7 +948,7 @@ round(const Pixel<T, nr_channels_, pixel_format_>& px)
   }
 
   return result;
-};
+}
 
 // -----
 

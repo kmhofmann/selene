@@ -153,7 +153,7 @@ TEST_CASE("Uniform kernel", "[base]")
       const auto uk = sln::uniform_kernel(i);
       REQUIRE(static_cast<sln::KernelSize>(uk.size()) == i);
 
-      const auto value = (i == 0) ? 0 : sln::default_float_t(1.0) / uk.size();
+      const auto value = (i == 0) ? sln::default_float_t(0.0) : sln::default_float_t(1.0) / sln::default_float_t(uk.size());
       for (std::size_t x = 0; x < uk.size(); ++x)
       {
         REQUIRE(uk[x] == value);
