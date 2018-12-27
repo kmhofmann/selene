@@ -81,7 +81,7 @@ jobs:
     - task: CMake@1
       inputs:
         workingDirectory: 'build'
-        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
         displayName: 'Run CMake'
     - task: MSBuild@1
       inputs:
@@ -96,7 +96,7 @@ jobs:
     - task: CMake@1
       inputs:
         workingDirectory: 'build'
-        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
         displayName: 'Run CMake, release'
     - task: MSBuild@1
       inputs:
@@ -126,7 +126,7 @@ jobs:
     - task: CMake@1
       inputs:
         workingDirectory: 'build'
-        cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
         displayName: 'Run CMake'
     - task: MSBuild@1
       inputs:
@@ -141,7 +141,7 @@ jobs:
     - task: CMake@1
       inputs:
         workingDirectory: 'build'
-        cmakeArgs: '--DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..'
+        cmakeArgs: '--DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
         displayName: 'Run CMake, release'
     - task: MSBuild@1
       inputs:
@@ -169,7 +169,7 @@ jobs:
         cmake -G Ninja \
               -DCMAKE_PREFIX_PATH="/usr/local/opt/jpeg-turbo;/usr/local" \
               -DCMAKE_BUILD_TYPE=Debug \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..
       displayName: 'Run CMake, debug'
     - script: |
         cd build-debug && ninja
@@ -182,7 +182,7 @@ jobs:
         cmake -G Ninja \
               -DCMAKE_PREFIX_PATH="/usr/local/opt/jpeg-turbo;/usr/local" \
               -DCMAKE_BUILD_TYPE=Release \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..
       displayName: 'Run CMake, release'
     - script: |
         cd build-release && ninja
@@ -218,7 +218,7 @@ jobs:
         cmake -G Ninja \
               -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake \
               -DCMAKE_BUILD_TYPE=Debug \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..
       displayName: 'Run CMake, debug'
     - script: |
         cd build-debug && ninja
@@ -232,7 +232,7 @@ jobs:
         cmake -G Ninja \
               -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake \
               -DCMAKE_BUILD_TYPE=Release \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..
       displayName: 'Run CMake, release'
     - script: |
         cd build-release && ninja

@@ -12,6 +12,7 @@ if (SELENE_BUILD_ALL)
     set(SELENE_BUILD_BENCHMARKS ON)
 endif()
 option(SELENE_USE_DEFAULT_SINGLE_PRECISION "Use single precision for floating point calculations by default (instead of double precision)" OFF)
+option(SELENE_WARNINGS_AS_ERRORS "Treat warnings as errors (mainly intended for CI)" OFF)
 
 option(SELENE_NO_LIBJPEG "Disable looking for libjpeg" OFF)
 option(SELENE_NO_LIBPNG "Disable looking for libpng" OFF)

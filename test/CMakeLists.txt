@@ -63,8 +63,7 @@ target_sources(selene_tests PRIVATE
         )
 
 target_compile_options(selene_tests PRIVATE
-        ${SELENE_COMPILER_OPTIONS}
-        ${SELENE_TEST_COMPILER_OPTIONS})
+        ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_tests PRIVATE
         ${SELENE_COMPILER_DEFINITIONS})

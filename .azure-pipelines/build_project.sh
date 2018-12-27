@@ -46,6 +46,7 @@ cmake -G Ninja \
   ${LOCAL_VCPKG_TOOLCHAIN} \
   -DSELENE_BUILD_TESTS=ON \
   -DSELENE_BUILD_EXAMPLES=ON \
+  -DSELENE_WARNINGS_AS_ERRORS=ON \
   ..
 
 echo "--------------------------------------------------"
