@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   // Flip this part horizontally
   flip_horizontally_in_place(img_part);
 
-  // Apply a convolution on this part (1-D Gaussian kernel in x-direction, sigma=5.0, range: 3 standard deviations)
+  // Apply a convolution to this part (1-D Gaussian kernel in x-direction, sigma=5.0, range: 3 standard deviations)
   Kernel<double> kernel = gaussian_kernel(5.0, 3.0);
   const auto img_part_copy = convolution_x<BorderAccessMode::Unchecked>(img_part, kernel);
 

@@ -19,3 +19,6 @@ target_compile_options(benchmark_image_convolution PRIVATE ${SELENE_COMPILER_OPT
 target_compile_definitions(benchmark_image_convolution PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(benchmark_image_convolution PRIVATE ${SELENE_DIR}/examples)
 target_link_libraries(benchmark_image_convolution selene benchmark::benchmark Boost::filesystem)
+if (OPENCV_IMGPROC_FOUND)
+    target_link_libraries(benchmark_image_convolution ${OpenCV_LIBS})
+endif()
