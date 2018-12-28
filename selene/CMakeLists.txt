@@ -45,6 +45,7 @@ target_sources(selene_base_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/FileWriter.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryRegion.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryWriter.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorReader.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorWriter.hpp

@@ -8,6 +8,7 @@
 /// @file
 
 #include <selene/base/Assert.hpp>
+#include <selene/base/io/MemoryRegion.hpp>
 
 #include <cstdint>
 #include <cstdlib>
@@ -27,7 +28,7 @@ class MemoryReader
 {
 public:
   MemoryReader() = default;
-  MemoryReader(const std::uint8_t* data, std::size_t len);
+  MemoryReader(const ConstantMemoryRegion region);
   ~MemoryReader() = default;
 
   MemoryReader(const MemoryReader&) = delete;
@@ -37,7 +38,7 @@ public:
 
   const std::uint8_t* handle() noexcept;
 
-  bool open(const std::uint8_t* data, std::size_t len) noexcept;
+  bool open(const ConstantMemoryRegion region) noexcept;
   void close() noexcept;
 
   bool is_open() const noexcept;
@@ -49,6 +50,7 @@ public:
   void rewind() noexcept;
   bool seek_abs(std::ptrdiff_t offset) noexcept;
   bool seek_rel(std::ptrdiff_t offset) noexcept;
+  bool seek_end(std::ptrdiff_t offset) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
   bool read(T& value) noexcept;
@@ -82,9 +84,9 @@ std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) noexcep
  * \param data A pointer to the beginning of the memory region to be read.
  * \param len The size in bytes of the memory region to be read.
  */
-inline MemoryReader::MemoryReader(const std::uint8_t* data, std::size_t len)
+inline MemoryReader::MemoryReader(const ConstantMemoryRegion region)
 {
-  if (!open(data, len))
+  if (!open(region))
   {
     throw std::runtime_error("Invalid memory region");
   }
@@ -110,15 +112,15 @@ inline const std::uint8_t* MemoryReader::handle() noexcept
  * \param len The size in bytes of the memory region to be read.
  * \return True, if the memory region was successfully opened; false otherwise.
  */
-inline bool MemoryReader::open(const std::uint8_t* data, std::size_t len) noexcept
+inline bool MemoryReader::open(const ConstantMemoryRegion region) noexcept
 {
-  if (data == nullptr || len == 0)
+  if (region.data == nullptr || region.len == 0)
   {
     return false;
   }
 
-  data_ = data;
-  len_ = static_cast<std::ptrdiff_t>(len);
+  data_ = region.data;
+  len_ = static_cast<std::ptrdiff_t>(region.len);
   ptr_ = data_;
   return true;
 }
@@ -238,6 +240,25 @@ inline bool MemoryReader::seek_rel(std::ptrdiff_t offset) noexcept
   return true;
 }
 
+/** \brief Performs an absolute seek operation to the specified offset, relative to the end of the memory region.
+ *
+ * The function sets the internal memory region pointer to the specified offset, relative to the end of the memory region.
+ * Failure cases include no memory region being open, or the offset being outside the memory region.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
+inline bool MemoryReader::seek_end(std::ptrdiff_t offset) noexcept
+{
+  if (!is_open() || offset > 0 || offset < -len_)
+  {
+    return false;
+  }
+
+  ptr_ = data_ + len_ + offset;
+  return true;
+}
+
 /** \brief Reads an element of type T and writes the element to the output parameter `value`.
  *
  * In generic code, prefer using the corresponding non-member function.
@@ -256,7 +277,7 @@ inline bool MemoryReader::read(T& value) noexcept
     return false;
   }
 
-  std::memcpy(value, ptr_, sizeof(T));  // memory access might be unaligned
+  std::memcpy(&value, ptr_, sizeof(T));  // memory access might be unaligned
   ptr_ += sizeof(T);
   return true;
 }

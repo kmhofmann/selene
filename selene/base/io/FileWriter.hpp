@@ -57,6 +57,7 @@ public:
   void rewind() noexcept;
   bool seek_abs(std::ptrdiff_t offset) noexcept;
   bool seek_rel(std::ptrdiff_t offset) noexcept;
+  bool seek_end(std::ptrdiff_t offset) noexcept;
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -279,6 +280,28 @@ inline bool FileWriter::seek_rel(std::ptrdiff_t offset) noexcept
   }
 
   const auto rc = std::fseek(fp_, static_cast<long>(offset), SEEK_CUR);
+  return (rc == 0);
+}
+
+/** \brief Performs an absolute seek operation to the specified offset, relative to the end of the file.
+ *
+ * The function sets the position indicator for the file stream to the specified offset, relative to the end of the file.
+ * Failure cases include no file being open, or the offset being outside the file stream region.
+ *
+ * \note Seeking beyond the existing end of the file may be legal, depending on platform.
+ * In this case, FileWriter::seek_end will behave similar to `std::fseek`.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
+inline bool FileWriter::seek_end(std::ptrdiff_t offset) noexcept
+{
+  if (!fp_)
+  {
+    return false;
+  }
+
+  const auto rc = std::fseek(fp_, static_cast<long>(offset), SEEK_END);
   return (rc == 0);
 }
 

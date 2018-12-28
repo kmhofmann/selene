@@ -311,7 +311,7 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory
-  sln::MemoryReader source(file_contents.data(), file_contents.size());
+  sln::MemoryReader source(sln::ConstantMemoryRegion{file_contents.data(), file_contents.size()});
   REQUIRE(source.is_open());
   sln::MessageLog messages_read;
   auto img_data = sln::read_jpeg(source, sln::JPEGDecompressionOptions(), &messages_read);

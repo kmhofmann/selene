@@ -16,9 +16,11 @@
 #include <test/selene/Utils.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <limits>
 #include <random>
+#include <type_traits>
 
 bool handle_valid(sln::FileReader& source)
 {
@@ -77,6 +79,21 @@ void write_test_1(Target* target)
   f.seek_abs(1);
   REQUIRE(f.position() == 1);
   write(f, std::int32_t{128});
+
+  if constexpr (std::is_same_v<SinkType, sln::MemoryWriter>)
+  {
+    f.seek_end(0);
+    REQUIRE(f.position() == static_cast<std::ptrdiff_t>(f.size()));
+    f.seek_end(-3);
+    REQUIRE(f.position() == static_cast<std::ptrdiff_t>(f.size()) - 3);
+  }
+  else
+  {
+    f.seek_end(0);
+    REQUIRE(f.position() == 13);
+    f.seek_end(-3);
+    REQUIRE(f.position() == 10);
+  }
 
   f.close();
   REQUIRE(!handle_valid(f));
@@ -167,6 +184,12 @@ TEST_CASE("Test I/O classes", "[io]")
   read_test_1<sln::VectorReader>(&vec);
   write_test_2<sln::VectorWriter>(&vec);
   read_test_2<sln::VectorReader>(&vec);
+
+  std::array<std::uint8_t, 20> arr{};
+  const auto constant_memory_region = sln::ConstantMemoryRegion{arr.data(), arr.size()};
+  const auto mutable_memory_region = sln::MutableMemoryRegion{arr.data(), arr.size()};
+  write_test_1<sln::MemoryWriter>(&mutable_memory_region);
+  read_test_1<sln::MemoryReader>(&constant_memory_region);
 }
 
 TEST_CASE("Test binary data I/O", "[io]")

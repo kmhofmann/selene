@@ -53,6 +53,7 @@ public:
   void rewind() noexcept;
   bool seek_abs(std::ptrdiff_t offset) noexcept;
   bool seek_rel(std::ptrdiff_t offset) noexcept;
+  bool seek_end(std::ptrdiff_t offset) noexcept;
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -215,6 +216,25 @@ inline bool VectorWriter::seek_rel(std::ptrdiff_t offset) noexcept
   }
 
   pos_ = new_pos;
+  return true;
+}
+
+/** \brief Performs an absolute seek operation to the specified offset, relative to the end of the vector.
+ *
+ * The function sets the internal data pointer to the specified offset, relative to the end of the vector.
+ * Failure cases include no vector being open, or the offset being outside the vector data region.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
+inline bool VectorWriter::seek_end(std::ptrdiff_t offset) noexcept
+{
+  if (!is_open() || offset > 0 || offset < -static_cast<std::ptrdiff_t>(data_->size()))
+  {
+    return false;
+  }
+
+  pos_ = static_cast<std::ptrdiff_t>(data_->size()) + offset;
   return true;
 }
 

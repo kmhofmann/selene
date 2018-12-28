@@ -266,7 +266,7 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
   REQUIRE(!file_contents.empty());
 
   // Test reading from memory
-  sln::MemoryReader source(file_contents.data(), file_contents.size());
+  sln::MemoryReader source(sln::ConstantMemoryRegion{file_contents.data(), file_contents.size()});
   REQUIRE(source.is_open());
 
   // Test reading without conversion

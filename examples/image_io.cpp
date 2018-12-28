@@ -85,7 +85,8 @@ int main(int argc, char** argv)
   // And we can decode the image from memory again. The encoded image data does not need to come from disk.
 
   std::cout << "Reading the image from memory...\n";
-  sln::DynImage img_data_2 = read_image(sln::MemoryReader(encoded_png_data.data(), encoded_png_data.size()));
+  sln::DynImage img_data_2 = read_image(
+      sln::MemoryReader(sln::ConstantMemoryRegion{encoded_png_data.data(), encoded_png_data.size()}));
   const sln::Image<sln::PixelRGB_8u> img_2 = sln::to_image<sln::PixelRGB_8u>(std::move(img_data_2));
 
   // And of course the resulting image is identical to the one previously read from disk

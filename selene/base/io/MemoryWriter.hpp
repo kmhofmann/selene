@@ -8,6 +8,7 @@
 /// @file
 
 #include <selene/base/Assert.hpp>
+#include <selene/base/io/MemoryRegion.hpp>
 #include <selene/base/io/WriterMode.hpp>
 
 #include <cstdint>
@@ -32,7 +33,7 @@ class MemoryWriter
 {
 public:
   MemoryWriter() = default;
-  MemoryWriter(std::uint8_t* data, std::size_t len, WriterMode mode = WriterMode::Write);
+  MemoryWriter(const MutableMemoryRegion region, WriterMode mode = WriterMode::Write);
   ~MemoryWriter() = default;
 
   MemoryWriter(const MemoryWriter&) = delete;
@@ -42,7 +43,7 @@ public:
 
   std::uint8_t* handle() noexcept;
 
-  bool open(std::uint8_t* data, std::size_t len, WriterMode mode = WriterMode::Write) noexcept;
+  bool open(const MutableMemoryRegion region, WriterMode mode = WriterMode::Write) noexcept;
   void close() noexcept;
 
   bool is_open() const noexcept;
@@ -54,6 +55,7 @@ public:
   void rewind() noexcept;
   bool seek_abs(std::ptrdiff_t offset) noexcept;
   bool seek_rel(std::ptrdiff_t offset) noexcept;
+  bool seek_end(std::ptrdiff_t offset) noexcept;
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -86,9 +88,9 @@ std::size_t write(MemoryWriter& sink, const T* values, std::size_t nr_values) no
  * \param len The size in bytes of the memory region to be read.
  * \param mode The writing mode, which has to be WriterMode::Write (otherwise the open operation will fail).
  */
-inline MemoryWriter::MemoryWriter(std::uint8_t* data, std::size_t len, WriterMode mode)
+inline MemoryWriter::MemoryWriter(const MutableMemoryRegion region, WriterMode mode)
 {
-  if (!open(data, len, mode))
+  if (!open(region, mode))
   {
     throw std::runtime_error("Invalid memory region or append mode");
   }
@@ -116,15 +118,15 @@ inline std::uint8_t* MemoryWriter::handle() noexcept
  * \param mode The writing mode, which has to be WriterMode::Write (otherwise the open operation will fail).
  * \return True, if the memory region was successfully opened; false otherwise.
  */
-inline bool MemoryWriter::open(std::uint8_t* data, std::size_t len, WriterMode mode) noexcept
+inline bool MemoryWriter::open(const MutableMemoryRegion region, WriterMode mode) noexcept
 {
-  if (data == nullptr || len == 0 || mode == WriterMode::Append)
+  if (region.data == nullptr || region.len == 0 || mode == WriterMode::Append)
   {
     return false;
   }
 
-  data_ = data;
-  len_ = static_cast<std::ptrdiff_t>(len);
+  data_ = region.data;
+  len_ = static_cast<std::ptrdiff_t>(region.len);
   ptr_ = data_;
   return true;
 }
@@ -244,6 +246,25 @@ inline bool MemoryWriter::seek_rel(std::ptrdiff_t offset) noexcept
   return true;
 }
 
+/** \brief Performs an absolute seek operation to the specified offset, relative to the end of the memory region.
+ *
+ * The function sets the internal memory region pointer to the specified offset, relative to the end of the memory region.
+ * Failure cases include no memory region being open, or the offset being outside the memory region.
+ *
+ * \param offset The absolute offset in bytes.
+ * \return True, if the seek operation was successful; false on failure.
+ */
+inline bool MemoryWriter::seek_end(std::ptrdiff_t offset) noexcept
+{
+  if (!is_open() || offset > 0 || offset < -len_)
+  {
+    return false;
+  }
+
+  ptr_ = data_ + len_ + offset;
+  return true;
+}
+
 /** \brief Performs a flush operation.
  *
  * MemoryWriter::flush is a no-op, since writing to memory is not buffered.
@@ -271,7 +292,7 @@ inline bool MemoryWriter::write(const T& value) noexcept
     return false;
   }
 
-  std::memcpy(ptr_, value, sizeof(T));  // memory access might be unaligned
+  std::memcpy(ptr_, &value, sizeof(T));  // memory access might be unaligned
   ptr_ += sizeof(T);
   return true;
 }
