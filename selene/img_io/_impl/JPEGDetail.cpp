@@ -76,7 +76,7 @@ void output_message(j_common_ptr cinfo)
   auto& err_man = *reinterpret_cast<JPEGErrorManager*>(cinfo->err);
   char buffer[JMSG_LENGTH_MAX];
   (*cinfo->err->format_message)(cinfo, buffer);
-  err_man.message_log.add_message(std::string("Error: ") + std::string(buffer));
+  err_man.message_log.add_message(std::string("Error: ") + std::string(buffer), MessageType::Error);
 }
 
 }  // namespace impl

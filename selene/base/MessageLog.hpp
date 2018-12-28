@@ -8,9 +8,20 @@
 /// @file
 
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sln {
+
+enum class MessageType
+{
+  Headline,
+  Verbose,
+  Success,
+  Message,
+  Warning,
+  Error
+};
 
 /** \brief Very simple message log, containing a collection of messages.
  *
@@ -19,19 +30,27 @@ namespace sln {
 class MessageLog
 {
 public:
-  using Messages = std::vector<std::string>;  ///< A message collection.
+  struct Message
+  {
+    std::string message;
+    MessageType type;
+  };
+
+  using Messages = std::vector<Message>;  ///< A message collection.
   MessageLog() = default;
 
   const Messages& messages() const;
 
   // TODO: Replace by std::string_view
-  void add_message(const char* message);
-  void add_message(const std::string& message);
+  void add_message(const char* text, MessageType type);
+  void add_message(const std::string& text, MessageType type);
+  void add_message(const Message& message);
+  void add_message(Message&& message);
 
   void clear();
 
 private:
-  std::vector<std::string> messages_;
+  std::vector<Message> messages_;
 };
 
 // ---------------
@@ -39,7 +58,7 @@ private:
 
 /** \brief Returns the message collection.
  *
- * \return A reference to the internally managed message log (in form of a std::vector<std::string>&).
+ * \return A reference to the internally managed message log (in form of a std::vector<std::pair<std::string, MessageType>>&).
  */
 inline const MessageLog::Messages& MessageLog::messages() const
 {
@@ -48,20 +67,40 @@ inline const MessageLog::Messages& MessageLog::messages() const
 
 /** \brief Adds a message to the message log.
  *
- * \param message Message text.
+ * \param text Message text.
+ * \param type Message type.
  */
-inline void MessageLog::add_message(const char* message)
+inline void MessageLog::add_message(const char* text, MessageType type)
 {
-  messages_.emplace_back(std::string(message));
+  messages_.push_back({std::string(text), type});
 }
 
 /** \brief Adds a message to the message log.
  *
- * \param message Message text.
+ * \param text Message text.
+ * \param type Message type.
  */
-inline void MessageLog::add_message(const std::string& message)
+inline void MessageLog::add_message(const std::string& text, MessageType type)
+{
+  messages_.push_back({text, type});
+}
+
+/** \brief Adds a message to the message log.
+ *
+ * \param message Message, consisting of text and type.
+ */
+inline void MessageLog::add_message(const Message& message)
 {
   messages_.push_back(message);
+}
+
+/** \brief Adds a message to the message log.
+ *
+ * \param message Message, consisting of text and type.
+ */
+inline void MessageLog::add_message(Message&& message)
+{
+  messages_.push_back(std::move(message));
 }
 
 /** \brief Clears the message log.

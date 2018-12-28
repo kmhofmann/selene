@@ -542,7 +542,7 @@ PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std:
 
   if (error)
   {
-    message_log.add_message("Source is not a PNG file.");
+    message_log.add_message("Source is not a PNG file.", MessageType::Error);
     goto failure_state;
   }
 
