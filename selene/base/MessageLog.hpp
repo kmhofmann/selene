@@ -32,7 +32,7 @@ class MessageLog
 public:
   struct Message
   {
-    std::string message;
+    std::string text;
     MessageType type;
   };
 
