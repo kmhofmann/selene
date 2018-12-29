@@ -73,7 +73,7 @@ jobs:
         git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
         ..\vcpkg\bootstrap-vcpkg.bat
       displayName: 'Bootstrap vcpkg'
-    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng boost-filesystem --triplet x64-windows
+    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng --triplet x64-windows
       displayName: 'Install vcpkg dependencies'
     - script: |
         mkdir build
@@ -93,11 +93,6 @@ jobs:
         cd build
         .\test\Debug\selene_tests.exe -d yes
       displayName: 'Run tests, debug'
-    - task: CMake@1
-      inputs:
-        workingDirectory: 'build'
-        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
-        displayName: 'Run CMake, release'
     - task: MSBuild@1
       inputs:
         solution: 'build/ALL_BUILD.vcxproj'
@@ -118,7 +113,7 @@ jobs:
         git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
         ..\vcpkg\bootstrap-vcpkg.bat
       displayName: 'Bootstrap vcpkg'
-    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng boost-filesystem
+    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng
       displayName: 'Install vcpkg dependencies'
     - script: |
         mkdir build
@@ -138,11 +133,6 @@ jobs:
         cd build
         .\test\Debug\selene_tests.exe -d yes
       displayName: 'Run tests, debug'
-    - task: CMake@1
-      inputs:
-        workingDirectory: 'build'
-        cmakeArgs: '--DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
-        displayName: 'Run CMake, release'
     - task: MSBuild@1
       inputs:
         solution: 'build/ALL_BUILD.vcxproj'
