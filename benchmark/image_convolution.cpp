@@ -19,8 +19,6 @@
 
 #include <test/selene/Utils.hpp>
 
-#include <boost/filesystem.hpp>
-
 #include <benchmark/benchmark.h>
 
 #if defined(SELENE_WITH_OPENCV)
@@ -30,7 +28,6 @@
 #include <tuple>
 
 using namespace sln::literals;
-namespace fs = boost::filesystem;
 
 namespace {
 

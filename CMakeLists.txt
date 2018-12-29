@@ -39,6 +39,10 @@ include(cmake/compiler_options.cmake)
 
 add_subdirectory(selene)
 
+if (SELENE_BUILD_TESTS OR SELENE_BUILD_EXAMPLES OR SELENE_BUILD_BENCHMARKS)
+    add_subdirectory(wrappers/fs)
+endif()
+
 if (SELENE_BUILD_TESTS)
     add_subdirectory(test)
 endif()

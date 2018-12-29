@@ -11,7 +11,7 @@ target_sources(image_access PRIVATE
 target_compile_options(image_access PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_access PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_access PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_access selene Boost::filesystem)
+target_link_libraries(image_access selene selene_wrapper_fs)
 
 add_executable(image_clone_view "")
 target_sources(image_clone_view PRIVATE
@@ -19,7 +19,7 @@ target_sources(image_clone_view PRIVATE
 target_compile_options(image_clone_view PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_clone_view PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_clone_view PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_clone_view selene Boost::filesystem)
+target_link_libraries(image_clone_view selene selene_wrapper_fs)
 
 add_executable(image_conversion "")
 target_sources(image_conversion PRIVATE
@@ -27,7 +27,7 @@ target_sources(image_conversion PRIVATE
 target_compile_options(image_conversion PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_conversion PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_conversion PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_conversion selene Boost::filesystem)
+target_link_libraries(image_conversion selene selene_wrapper_fs)
 
 add_executable(image_convolution "")
 target_sources(image_convolution PRIVATE
@@ -35,7 +35,7 @@ target_sources(image_convolution PRIVATE
 target_compile_options(image_convolution PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_convolution PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_convolution PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_convolution selene Boost::filesystem)
+target_link_libraries(image_convolution selene selene_wrapper_fs)
 
 add_executable(image_io "")
 target_sources(image_io PRIVATE
@@ -43,7 +43,7 @@ target_sources(image_io PRIVATE
 target_compile_options(image_io PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_io PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_io selene Boost::filesystem)
+target_link_libraries(image_io selene selene_wrapper_fs)
 
 add_executable(image_resample "")
 target_sources(image_resample PRIVATE
@@ -51,7 +51,7 @@ target_sources(image_resample PRIVATE
 target_compile_options(image_resample PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_resample PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_resample PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_resample selene Boost::filesystem)
+target_link_libraries(image_resample selene selene_wrapper_fs)
 
 add_executable(image_rotate "")
 target_sources(image_rotate PRIVATE
@@ -59,7 +59,7 @@ target_sources(image_rotate PRIVATE
 target_compile_options(image_rotate PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_rotate PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_rotate PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_rotate selene Boost::filesystem)
+target_link_libraries(image_rotate selene selene_wrapper_fs)
 
 add_executable(image_transform "")
 target_sources(image_transform PRIVATE
@@ -67,7 +67,7 @@ target_sources(image_transform PRIVATE
 target_compile_options(image_transform PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(image_transform PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(image_transform PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(image_transform selene Boost::filesystem)
+target_link_libraries(image_transform selene selene_wrapper_fs)
 
 add_executable(readme_example "")
 target_sources(readme_example PRIVATE
@@ -75,4 +75,4 @@ target_sources(readme_example PRIVATE
 target_compile_options(readme_example PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(readme_example PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(readme_example PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(readme_example selene Boost::filesystem)
+target_link_libraries(readme_example selene selene_wrapper_fs)

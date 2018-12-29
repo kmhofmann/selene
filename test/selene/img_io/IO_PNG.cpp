@@ -11,8 +11,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <boost/filesystem.hpp>
-
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/FileUtils.hpp>
 #include <selene/base/io/FileWriter.hpp>
@@ -36,7 +34,8 @@
 
 #include <test/selene/Utils.hpp>
 
-namespace fs = boost::filesystem;
+#include <wrappers/fs/Filesystem.hpp>
+
 using namespace sln::literals;
 
 constexpr auto ref_width = 1024;
@@ -48,13 +47,13 @@ constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
 
 namespace {
 
-fs::path test_suite_dir()
+sln_fs::path test_suite_dir()
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
-  return (env_var) ? fs::path(env_var) / "png_suite" : fs::path("../data/png_suite");
+  return (env_var) ? sln_fs::path(env_var) / "png_suite" : sln_fs::path("../data/png_suite");
 }
 
-void check_write_read(sln::DynImage& dyn_img, const fs::path& tmp_path)
+void check_write_read(sln::DynImage& dyn_img, const sln_fs::path& tmp_path)
 {
   // Write as PNG file...
   sln::FileWriter sink((tmp_path / "test_img.png").string());
@@ -314,12 +313,12 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
   const auto tmp_path = sln_test::get_tmp_path();
   const auto test_suite_path = test_suite_dir();
 
-  using fs::directory_iterator;
+  using sln_fs::directory_iterator;
   sln::PNGDecompressionObject dec_obj;
 
   for (directory_iterator itr(test_suite_path), itr_end = directory_iterator(); itr != itr_end; ++itr)
   {
-    const fs::directory_entry& e = *itr;
+    const sln_fs::directory_entry& e = *itr;
 
     if (e.path().extension() == ".png")
     {

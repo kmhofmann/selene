@@ -7,32 +7,31 @@
 
 #include <selene/base/Promote.hpp>
 
-#include <boost/filesystem.hpp>
+#include <wrappers/fs/Filesystem.hpp>
 
 #include <random>
 #include <type_traits>
 
 namespace sln_test {
 
-inline boost::filesystem::path get_tmp_path()
+inline sln_fs::path get_tmp_path()
 {
-  namespace fs = boost::filesystem;
-  const auto tmp_path = fs::temp_directory_path() / "selene_test";
+  const auto tmp_path = sln_fs::temp_directory_path() / "selene_test";
 
-  if (!fs::exists(tmp_path))
+  if (!sln_fs::exists(tmp_path))
   {
-    fs::create_directories(tmp_path);
+    sln_fs::create_directories(tmp_path);
   }
 
   return tmp_path;
 }
 
-inline boost::filesystem::path full_data_path(const char* filename)
+inline sln_fs::path full_data_path(const char* filename)
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
   return (env_var)
-      ? (boost::filesystem::path(env_var) / boost::filesystem::path(filename))
-      : (boost::filesystem::path("../data") / boost::filesystem::path(filename));
+      ? (sln_fs::path(env_var) / sln_fs::path(filename))
+      : (sln_fs::path("../data") / sln_fs::path(filename));
 }
 
 template <typename T>

@@ -4,6 +4,8 @@ endif()
 
 #------------------------------------------------------------------------------
 
+find_package(benchmark REQUIRED)
+
 add_executable(benchmark_image_access "")
 target_sources(benchmark_image_access PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/image_access.cpp)
@@ -18,7 +20,7 @@ target_sources(benchmark_image_convolution PRIVATE
 target_compile_options(benchmark_image_convolution PRIVATE ${SELENE_COMPILER_OPTIONS})
 target_compile_definitions(benchmark_image_convolution PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 target_include_directories(benchmark_image_convolution PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(benchmark_image_convolution selene benchmark::benchmark Boost::filesystem)
+target_link_libraries(benchmark_image_convolution selene selene_wrapper_fs benchmark::benchmark)
 if (OPENCV_IMGPROC_FOUND)
     target_link_libraries(benchmark_image_convolution opencv_core opencv_imgproc)
 endif()

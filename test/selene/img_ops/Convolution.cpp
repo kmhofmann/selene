@@ -17,10 +17,7 @@
 
 #include <test/selene/Utils.hpp>
 
-#include <boost/filesystem.hpp>
-
 using namespace sln::literals;
-namespace fs = boost::filesystem;
 
 TEST_CASE("Convolution (pixels)", "[img]")
 {
