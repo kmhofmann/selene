@@ -32,17 +32,18 @@ For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/lib
 The use of [Conan](https://conan.io/) or [vcpkg](https://github.com/Microsoft/vcpkg) as dependency package managers is
 also supported; see below.
 
-## Auxiliary dependencies
+## Auxiliary dependencies (tests, examples, benchmarks)
 
-* The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/)
-for building the tests.
-  The former is bundled as a Git submodule and will be automatically cloned during execution of the `cmake` command.
-  The latter is automatically searched for by a CMake `find_package` command; its presence is required to build the tests.
+* The test suite depends on [Catch2](https://github.com/catchorg/Catch2), which is bundled as a Git submodule and will
+be automatically cloned during execution of the `cmake` command.
 
 * The benchmark programs depend on the [Google benchmark](https://github.com/google/benchmark) library.
   It is searched for by a CMake `find_package` command.
 
-
+* Tests, examples, and benchmarks depend on standard library filesystem support.
+  If (*and only if*) this support is not detected, then CMake tests for the presence of
+  [Boost.Filesystem](http://www.boost.org/) as a fallback, by means of a `find_package` command. 
+  
 ## Installing dependencies
 
 The following are recommendations for installation of dependencies on various platforms.
@@ -65,11 +66,12 @@ See below for instructions on how to install dependencies using [Conan](https://
 On sufficiently recent Debian-like systems (e.g. Ubuntu), one can install the necessary dependencies using `apt` as
 follows:
 
-    # Dependencies for building the library
+    # Dependencies for building the complete library
     apt install libjpeg-turbo8-dev libpng-dev
     
-    # Dependencies for building tests & examples
-    apt install libopencv-dev libboost-filesystem-dev
+    # Dependencies for building all tests, examples, and benchmarks
+    apt install libopencv-dev
+    apt install libboost-filesystem-dev  # ONLY if standard library filesystem support is missing
     
     # Note: There is no pre-built google-benchmark package in e.g. Ubuntu.
     #       Install from source instead, or use vcpkg.
@@ -81,11 +83,12 @@ such an old distribution anyway.)
 
 Install [Homebrew](https://brew.sh/) to build and install the dependencies as follows:
 
-    # Dependencies for building the library
+    # Dependencies for building the complete library
     brew install libjpeg-turbo libpng
     
-    # Dependencies for building tests, examples, benchmarks
-    brew install opencv3 boost google-benchmark
+    # Dependencies for building all tests, examples, benchmarks
+    brew install opencv3 google-benchmark
+    brew install boost  # ONLY if standard library filesystem support is missing
 
 ### Windows
 
@@ -106,9 +109,9 @@ Then, install packages as follows
     ./vcpkg install libjpeg-turbo
     ./vcpkg install libpng
     
-    ./vcpkg install opencv            # only for tests
-    ./vcpkg install boost-filesystem  # only for tests
-    ./vcpkg install benchmark         # only for benchmarks
+    ./vcpkg install opencv            # for tests & benchmarks
+    ./vcpkg install benchmark         # for benchmarks
+    ./vcpkg install boost-filesystem  # ONLY if standard library filesystem support is missing
 
 (Windows users call `.\vcpkg.exe` instead of `./vcpkg`.)
 

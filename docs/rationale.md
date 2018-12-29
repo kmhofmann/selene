@@ -44,12 +44,13 @@ Other C++ image representation libraries include GIL, available either
 [from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
 
 GIL is quite well designed and shares many of its design goals with **Selene**.
+The library provides the concept of lazily evaluated views, which can be more efficient than what **Selene** currently
+provides, depending on the application.
 However, the maintenance situation around GIL is confusing.
 
 (Adobe) GIL offers image I/O routines as an extension.
 Overall, the reading and writing routines are quite rudimentary and do not allow for any finer control of parameters.
 Reading and writing from/to memory also does not seem to be supported.
-
 More problematically, the last update to GIL by the original implementer Adobe was
 [made in 2007](https://stlab.adobe.com/gil/).
 
@@ -58,6 +59,7 @@ See the [repository on GitHub](https://github.com/boostorg/gil).
 
 Boost.GIL is written in C++11, as opposed to a more modern standard version, and depends on many other Boost libraries.
 Depending on the Boost usage policy, this may be quite undesirable.
+**Selene does not depend on any Boost library**.
 
 ### What does Selene aim to provide?
 

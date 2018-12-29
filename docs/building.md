@@ -68,7 +68,7 @@ or `ninja install` for ninja.
   `-DCMAKE_INSTALL_PREFIX=<your_custom_location>` to the *initial* CMake invocation.
   For example: `cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local/selene ..`.
 
-  Note how this approach can easily provide a much cleaner separation of library/application files on a
+  Note how this approach can provide a much cleaner separation of library/application files on a
   library/application level on the filesystem.
 
 * Even *without* explicit installation, CMake adds a reference to the build tree location to the user-level CMake cache.
@@ -108,14 +108,6 @@ More fine-grained control can be achieved by the options right below.
 Building the tests is disabled by default, and can be enabled by adding `-DSELENE_BUILD_TESTS=ON` to the `cmake`
 command.
 
-The test suite depends on [Catch2](https://github.com/catchorg/Catch2) and [Boost.Filesystem](http://www.boost.org/) for building the tests.
-The former is bundled as a Git submodule and will be automatically cloned during execution of the `cmake` command.
-The latter is automatically searched for by a CMake `find_package` command; its presence is required to build the tests.
-
-The test suite can be run by executing `./test/selene_tests` from the `build` directory. `./test/selene_tests -h` lists
-available options. See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
-for more information.
-
 #### Building examples
 
     -DSELENE_BUILD_EXAMPLES=ON
@@ -129,8 +121,7 @@ The examples can then be found in the `./examples/` folder in the build director
     -DSELENE_BUILD_BENCHMARKS=ON
 
 A few micro-benchmarks can be optionally compiled by adding `-DSELENE_BUILD_BENCHMARKS=ON` to the `cmake` command line.
-The code for these can be found in the `./benchmark/` folder, and depends on Google's
-[benchmark](https://github.com/google/benchmark) library to be installed.
+The code for these can be found in the `./benchmark/` folder.
 
 #### Excluding dependencies
 
@@ -138,16 +129,20 @@ By default, the **Selene** CMake build instructions will automatically detect li
 present on the system and make use of these.
 If desired, this can be explicitly disabled by one or more of the following CMake options:
 
-    -DSELENE_NO_LIBJPEG
-    -DSELENE_NO_LIBPNG
-    -DSELENE_NO_OPENCV
+    -DSELENE_NO_LIBJPEG=ON
+    -DSELENE_NO_LIBPNG=ON
+    -DSELENE_NO_OPENCV=ON
 
 ### Running tests & examples
 
-After building, the test suite executable will be located in `<build_dir>/test`, called `selene_tests`.
-From the build directory, execute it as follows to see an overview of the performed tests:
+The tests can be run by executing `./test/selene_tests` from the build directory.
+Execute it as follows to see an overview of the performed tests while running:
 
     ./test/selene_tests -d yes
+    
+`./test/selene_tests -h` lists other available options.
+See the [Catch2 documentation](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md)
+for more information.
 
 #### Specifying the data path
 
