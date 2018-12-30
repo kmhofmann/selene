@@ -368,6 +368,7 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
 
   sln::JPEGReader<sln::FileReader> jpeg_reader;
 
+  SECTION("With invalid source")
   {
     const auto header = jpeg_reader.read_header();
     REQUIRE(!header.is_valid());
@@ -378,28 +379,60 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
     REQUIRE(!res);
   }
 
-  for (int i = 0; i < 5; ++i)
+  SECTION("With valid source")
+  {
+    for (int i = 0; i < 2; ++i)
+    {
+      source.seek_abs(pos);
+      jpeg_reader.set_source(source);
+
+      const auto header = jpeg_reader.read_header();
+      REQUIRE(header.is_valid());
+      REQUIRE(header.width == ref_width);
+      REQUIRE(header.height == ref_height);
+      REQUIRE(header.nr_channels == 3);
+      REQUIRE(header.color_space == sln::JPEGColorSpace::YCbCr);
+
+      jpeg_reader.set_decompression_options(sln::JPEGDecompressionOptions());
+      const auto info = jpeg_reader.get_output_image_info();
+      REQUIRE(info.is_valid());
+      REQUIRE(info.width == ref_width);
+      REQUIRE(info.height == ref_height);
+      REQUIRE(info.nr_channels == 3);
+      REQUIRE(info.color_space == sln::JPEGColorSpace::RGB);
+
+      sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+      auto res = jpeg_reader.read_image_data(dyn_img);
+      REQUIRE(res);
+
+      REQUIRE(jpeg_reader.message_log().messages().empty());
+      REQUIRE(dyn_img.width() == ref_width);
+      REQUIRE(dyn_img.height() == ref_height);
+      REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+      REQUIRE(dyn_img.nr_channels() == 3);
+      REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+      REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+      REQUIRE(dyn_img.is_packed());
+      REQUIRE(!dyn_img.is_empty());
+      REQUIRE(dyn_img.is_valid());
+    }
+  }
+
+  SECTION("Into view, successful")
   {
     source.seek_abs(pos);
     jpeg_reader.set_source(source);
 
     const auto header = jpeg_reader.read_header();
     REQUIRE(header.is_valid());
-    REQUIRE(header.width == ref_width);
-    REQUIRE(header.height == ref_height);
-    REQUIRE(header.nr_channels == 3);
-    REQUIRE(header.color_space == sln::JPEGColorSpace::YCbCr);
 
     jpeg_reader.set_decompression_options(sln::JPEGDecompressionOptions());
     const auto info = jpeg_reader.get_output_image_info();
     REQUIRE(info.is_valid());
-    REQUIRE(info.width == ref_width);
-    REQUIRE(info.height == ref_height);
-    REQUIRE(info.nr_channels == 3);
-    REQUIRE(info.color_space == sln::JPEGColorSpace::RGB);
 
     sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
-    auto res = jpeg_reader.read_image_data(dyn_img);
+    sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
+    auto res = jpeg_reader.read_image_data(dyn_img_view);
     REQUIRE(res);
 
     REQUIRE(jpeg_reader.message_log().messages().empty());
@@ -412,6 +445,24 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
     REQUIRE(dyn_img.is_packed());
     REQUIRE(!dyn_img.is_empty());
     REQUIRE(dyn_img.is_valid());
+  }
+
+  SECTION("Into view, unsuccessful")
+  {
+    source.seek_abs(pos);
+    jpeg_reader.set_source(source);
+
+    const auto header = jpeg_reader.read_header();
+    REQUIRE(header.is_valid());
+
+    jpeg_reader.set_decompression_options(sln::JPEGDecompressionOptions());
+    const auto info = jpeg_reader.get_output_image_info();
+    REQUIRE(info.is_valid());
+
+    sln::DynImage dyn_img({sln::PixelLength{info.width + 1}, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
+    auto res = jpeg_reader.read_image_data(dyn_img_view);
+    REQUIRE(!res);
   }
 
   source.close();

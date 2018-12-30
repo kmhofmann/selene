@@ -22,6 +22,8 @@
 #include <selene/img/common/RowPointers.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/_impl/Utils.hpp>
+#include <selene/img/dynamic/_impl/RuntimeChecks.hpp>
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
 
 #include <selene/img_io/_impl/Util.hpp>
@@ -501,7 +503,7 @@ template <typename SourceType>
 template <typename DynImageOrView>
 bool PNGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 {
-  impl::static_check_is_dyn_image_or_mutable_view(dyn_img_or_view);
+  impl::static_check_is_dyn_image_or_mutable_view<DynImageOrView>();
 
   if (!header_read_)
   {
@@ -528,11 +530,16 @@ bool PNGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
   const auto output_pixel_format = obj_.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  dyn_img_or_view.reallocate({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
-                              output_stride_bytes},
-                             ImageRowAlignment{0},
-                             {output_pixel_format, output_sample_format},
-                             false);
+  const auto output_layout = UntypedLayout{output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                                           output_stride_bytes};
+  const auto output_semantics = UntypedImageSemantics{output_pixel_format, output_sample_format};
+
+  const bool prepare_success = impl::prepare_image_or_view(dyn_img_or_view, output_layout, output_semantics);
+  if (!prepare_success)
+  {
+    return false;
+  }
+
   auto row_pointers = get_row_pointers(dyn_img_or_view);
   const auto dec_success = cycle_->decompress(row_pointers);
 

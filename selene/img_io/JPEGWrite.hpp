@@ -180,7 +180,7 @@ bool write_jpeg(const DynImageOrView& dyn_img_or_view,
                 JPEGCompressionOptions options,
                 MessageLog* messages)
 {
-  impl::static_check_is_dyn_image_or_view(dyn_img_or_view);
+  impl::static_check_is_dyn_image_or_view<DynImageOrView>();
 
   impl::set_destination(obj, sink);
 

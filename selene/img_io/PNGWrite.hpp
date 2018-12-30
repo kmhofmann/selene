@@ -184,7 +184,7 @@ bool write_png(const DynImageOrView& dyn_img_or_view,
                PNGCompressionOptions options,
                MessageLog* messages)
 {
-  impl::static_check_is_dyn_image_or_view(dyn_img_or_view);
+  impl::static_check_is_dyn_image_or_view<DynImageOrView>();
 
   if (dyn_img_or_view.nr_bytes_per_channel() != 1 && dyn_img_or_view.nr_bytes_per_channel() != 2)
   {

@@ -17,18 +17,29 @@ namespace sln {
 namespace impl {
 
 template <typename DynImageOrView>
-void static_check_is_dyn_image_or_view(const DynImageOrView&)
+constexpr bool static_check_is_dyn_image()
 {
-  static_assert(std::is_same_v<DynImageOrView, DynImage>
-                || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Mutable>>
-                || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Constant>>,
+  return std::is_same_v<DynImageOrView, DynImage>;
+}
+
+template <typename DynImageOrView>
+constexpr bool static_check_is_dyn_image_view()
+{
+  return std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Mutable>>
+      || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Constant>>;
+}
+
+template <typename DynImageOrView>
+constexpr void static_check_is_dyn_image_or_view()
+{
+  static_assert(static_check_is_dyn_image<DynImageOrView>() || static_check_is_dyn_image_view<DynImageOrView>(),
                 "Supplied type needs be either a sln::DynImage or a sln::DynImageView<>.");
 }
 
 template <typename DynImageOrView>
-void static_check_is_dyn_image_or_mutable_view(const DynImageOrView&)
+constexpr void static_check_is_dyn_image_or_mutable_view()
 {
-  static_assert(std::is_same_v<DynImageOrView, DynImage>
+  static_assert(static_check_is_dyn_image<DynImageOrView>()
                 || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Mutable>>,
                 "Supplied type needs be either a sln::DynImage or a sln::MutableDynImageView<>.");
 }

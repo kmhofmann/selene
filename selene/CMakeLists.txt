@@ -82,7 +82,9 @@ target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/RuntimeChecks.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/StaticChecks.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/Utils.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageBase.hpp

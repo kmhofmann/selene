@@ -1,3 +1,9 @@
+if(NOT IS_DIRECTORY ${SELENE_DIR})
+    message(FATAL_ERROR "Please build using the outermost CMakeLists.txt file.")
+endif()
+
+#------------------------------------------------------------------------------
+
 add_library(selene_wrapper_fs INTERFACE)
 add_library(selene::selene_wrapper_fs ALIAS selene_wrapper_fs)
 

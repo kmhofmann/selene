@@ -365,6 +365,7 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
 
   sln::PNGReader<sln::FileReader> png_reader;
 
+  SECTION("With invalid source")
   {
     const auto header = png_reader.read_header();
     REQUIRE(!header.is_valid());
@@ -375,28 +376,60 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
     REQUIRE(!res);
   }
 
-  for (int i = 0; i < 5; ++i)
+  SECTION("With valid source")
+  {
+    for (int i = 0; i < 2; ++i)
+    {
+      source.seek_abs(pos);
+      png_reader.set_source(source);
+
+      const auto header = png_reader.read_header();
+      REQUIRE(header.is_valid());
+      REQUIRE(header.width == ref_width);
+      REQUIRE(header.height == ref_height);
+      REQUIRE(header.nr_channels == 3);
+      REQUIRE(header.bit_depth == 8);
+
+      png_reader.set_decompression_options(sln::PNGDecompressionOptions());
+      const auto info = png_reader.get_output_image_info();
+      REQUIRE(info.is_valid());
+      REQUIRE(info.width == ref_width);
+      REQUIRE(info.height == ref_height);
+      REQUIRE(info.nr_channels == 3);
+      REQUIRE(info.bit_depth == 8);
+
+      sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+      auto res = png_reader.read_image_data(dyn_img);
+      REQUIRE(res);
+
+      REQUIRE(png_reader.message_log().messages().empty());
+      REQUIRE(dyn_img.width() == ref_width);
+      REQUIRE(dyn_img.height() == ref_height);
+      REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+      REQUIRE(dyn_img.nr_channels() == 3);
+      REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+      REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+      REQUIRE(dyn_img.is_packed());
+      REQUIRE(!dyn_img.is_empty());
+      REQUIRE(dyn_img.is_valid());
+    }
+  }
+
+  SECTION("Into view, successful")
   {
     source.seek_abs(pos);
     png_reader.set_source(source);
 
     const auto header = png_reader.read_header();
     REQUIRE(header.is_valid());
-    REQUIRE(header.width == ref_width);
-    REQUIRE(header.height == ref_height);
-    REQUIRE(header.nr_channels == 3);
-    REQUIRE(header.bit_depth == 8);
 
     png_reader.set_decompression_options(sln::PNGDecompressionOptions());
     const auto info = png_reader.get_output_image_info();
     REQUIRE(info.is_valid());
-    REQUIRE(info.width == ref_width);
-    REQUIRE(info.height == ref_height);
-    REQUIRE(info.nr_channels == 3);
-    REQUIRE(info.bit_depth == 8);
 
     sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
-    auto res = png_reader.read_image_data(dyn_img);
+    sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
+    auto res = png_reader.read_image_data(dyn_img_view);
     REQUIRE(res);
 
     REQUIRE(png_reader.message_log().messages().empty());
@@ -409,6 +442,24 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
     REQUIRE(dyn_img.is_packed());
     REQUIRE(!dyn_img.is_empty());
     REQUIRE(dyn_img.is_valid());
+  }
+
+  SECTION("Into view, unsuccessful")
+  {
+    source.seek_abs(pos);
+    png_reader.set_source(source);
+
+    const auto header = png_reader.read_header();
+    REQUIRE(header.is_valid());
+
+    png_reader.set_decompression_options(sln::PNGDecompressionOptions());
+    const auto info = png_reader.get_output_image_info();
+    REQUIRE(info.is_valid());
+
+    sln::DynImage dyn_img({sln::PixelLength{info.width + 1}, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
+    auto res = png_reader.read_image_data(dyn_img_view);
+    REQUIRE(!res);
   }
 
   source.close();
