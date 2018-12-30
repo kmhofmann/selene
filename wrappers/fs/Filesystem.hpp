@@ -9,11 +9,20 @@
  * either using the std::filesystem or the boost::filesystem implementations. */
 
 #if defined(SELENE_WITH_BOOST_FILESYSTEM)
+
 #include <boost/filesystem.hpp>
 namespace sln_fs = boost::filesystem;
+
+#elif defined(SELENE_WITH_EXPERIMENTAL_STD_FILESYSTEM)
+
+#include <experimental/filesystem>
+namespace sln_fs = std::experimental::filesystem;
+
 #else
+
 #include <filesystem>
 namespace sln_fs = std::filesystem;
+
 #endif
 
 #endif  // SELENE_WRAPPERS_FS_FILESYSTEM_HPP
