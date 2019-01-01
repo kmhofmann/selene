@@ -5,16 +5,15 @@
 **Selene** uses the following (optional) third-party dependencies for implementing some of its functionality:
 
   - [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) or [libjpeg](http://www.ijg.org/):
-    - Optional, but recommended.
+    - Optional and recommended.
     - Required for the JPEG reading and writing API.
     - `libjpeg-turbo` is the preferred version of the library.
   - [libpng](http://www.libpng.org/pub/png/libpng.html):
-    - Optional, but recommended.
+    - Optional and recommended.
     - Required for the PNG reading and writing API.
   - [OpenCV](https://opencv.org/):
-    - Optional, if needed.
-    - For OpenCV interoperability (e.g. copying or wrapping image data).
-    - **Not required** for building the library, since OpenCV interoperability is implemented in a header file only.
+    - Optional, if really needed.
+    - **Only** required for OpenCV interoperability (e.g. copying or wrapping image data).
 
 The presence (or lack of) these dependencies should be detected automatically by CMake.
 
@@ -29,7 +28,7 @@ It is by no means a requirement for using **Selene**.
 To point CMake to custom library installation locations, set the `CMAKE_PREFIX_PATH` environment variable accordingly.
 For example, `export CMAKE_PREFIX_PATH=$HOME/local/libjpeg-turbo:$HOME/local/libpng`. 
 
-The use of [Conan](https://conan.io/) or [vcpkg](https://github.com/Microsoft/vcpkg) as dependency package managers is
+The use of [vcpkg](https://github.com/Microsoft/vcpkg) or [Conan](https://conan.io/) as dependency package managers is
 also supported; see below.
 
 ## Auxiliary dependencies (tests, examples, benchmarks)
@@ -99,8 +98,12 @@ the 64-bit compiled versions instead of the 32-bit ones.
 
 ### Using vcpkg
 
+[vcpkg](https://github.com/Microsoft/vcpkg) is an excellent C++ package manager developed by Microsoft, which is very easy
+to use, works on Linux, macOS and Windows, and supports a large number of libraries, with well maintained package
+recipes.
+
 Install [vcpkg](https://github.com/Microsoft/vcpkg) by cloning (or updating) the repository, and running the
-bootstrapping script from the *vcpkg* directory:
+bootstrapping script from the `vcpkg` directory:
 
     ./bootstrap-vcpkg.sh
     
@@ -125,12 +128,18 @@ Selene itself can also be [installed using *vcpkg*](installation.md).
 
 ### Using Conan
 
-**Selene** supports optional use of [Conan](https://conan.io/) as a dependency manager on all supported platforms.
-(It is also possible to install [a release of Selene itself](https://bintray.com/kmhofmann/conan-repo/selene%3Aselene)
-using Conan).
-See the full [Conan documentation](https://docs.conan.io/) for more information on how to use Conan.
+[Conan](https://conan.io/) is a C and C++ package manager developed by JFrog, and works on all platforms that
+support Python.
+It is potentially more flexible than *vcpkg*, due to its decentralized publishing concept, though this is also its
+biggest downside: a lot fewer libraries are supported "out of the box", the quality of third-party package recipes
+greatly varies, and long term maintenance for them may be unclear.
 
-Currently, `libjpeg-turbo`, `libpng` and `boost` (for the tests) can be built using Conan.
+**Selene** supports optional use of [Conan](https://conan.io/) as a dependency manager on all supported platforms.
+(It is also possible to install [a release of Selene itself](installation.md)
+using Conan).
+See the full [Conan documentation](https://docs.conan.io/) for more information.
+
+Currently, `libjpeg-turbo`, `libpng` and `boost` (if required for the tests) can be built using Conan.
 There are no stable, cross-platform Conan recipes available yet for `OpenCV` or Google's `benchmark` library.
 
 To use Conan, first install it, e.g. with `pip`:

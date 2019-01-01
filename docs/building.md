@@ -12,32 +12,38 @@ These need to be installed before attempting to build the respective parts.
 
 ### General
 
-Follow the usual instructions for CMake projects on UNIX-like systems.
+Follow the usual instructions for CMake projects on UNIX-like systems (**Linux**, **macOS**, **Windows Subsystem for Linux**).
+
 First, clone the project and create a `build` directory (or use another name).
 
     git clone https://github.com/kmhofmann/selene.git
     cd selene
     mkdir build && cd build
 
-Then call `cmake` and build the project.
+Then call `cmake` and build the project, e.g. with.
 
-    cmake -DCMAKE_BUILD_TYPE=Release -DSELENE_BUILD_ALL=ON ..
-    cmake --build .      # or just 'make', if GNU Make is the generator
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DSELENE_BUILD_ALL=ON ..
+    cmake --build . -j           # Or just 'make -j[N]', if GNU Make is the generator;
+                                 # or 'ninja', if Ninja is the generator.
 
 Additional options may be passed to the respective build tool, e.g. `cmake --build . -- -j8`.
 
-On Windows, the CMake command might look similar to the following, in order to generate Visual Studio 2017 project
-files for a 64-bit build (see [here](dependencies.md) for more info on using 
-[vcpkg](https://github.com/Microsoft/vcpkg) for installation of dependencies):
+The setting `-DSELENE_BUILD_ALL=ON` enables building the tests, examples, and benchmarks.
+Omit this parameter if this is not desired, and see below for the individual CMake variables that can be set for
+more fine-grained control.
+
+On **Windows**, recent versions of Visual Studio support opening CMake-based projects directly from the IDE.
+Additional variables (e.g. `-DSELENE_BUILD_ALL=ON`) can be specified through a somewhat unintuitive JSON text file. 
+ 
+Otherwise, CMake can be used to generate Visual Studio project files manually.
+The CMake command might look similar to the following, in order to generate project VS2017 files for a 64-bit build
+(see [here](dependencies.md) for more info on using [vcpkg](https://github.com/Microsoft/vcpkg) for installation of
+dependencies):
 
     cmake -G "Visual Studio 15 2017 Win64" -T "host=x64" \
         -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>\scripts\buildsystems\vcpkg.cmake \
         -DSELENE_BUILD_ALL=ON \
         ..
-
-The setting `-DSELENE_BUILD_ALL=ON` enables building the tests, examples, and benchmarks.
-Omit this parameter if this is not desired, and see below for the individual CMake variables that can be set for
-more fine-grained control.
 
 #### Static vs. shared libraries
 
@@ -52,7 +58,7 @@ If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to t
       cmake --build . --target install
 
   Alternatively, the respective command provided by the build system can be used; e.g. `make install` for GNU Make,
-or `ninja install` for ninja.
+or `ninja install` for [Ninja](https://ninja-build.org/).
 
   Selene can then be found by other CMake projects using the `find_package` command:
   
@@ -69,11 +75,11 @@ or `ninja install` for ninja.
   For example: `cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local/selene ..`.
 
   Note how this approach can provide a much cleaner separation of library/application files on a
-  library/application level on the filesystem.
+  library/application level.
 
 * Even *without* explicit installation, CMake adds a reference to the build tree location to the user-level CMake cache.
-This means that the above `find_package()` call will also work without user-level or system-level installation, and will
-then find the build tree itself.
+This means that **the above `find_package()` call will also work without user-level or system-level installation**, and
+will then find the build tree itself.
 **Selene** just needs to have been successfully built. 
 
 * Another option is to keep the library as a submodule within your project.
@@ -99,7 +105,8 @@ alternatively set in a helper tool like `ccmake`.
     -DSELENE_BUILD_ALL=ON
     
 This is a convenience option to enable building tests, examples, and benchmarks.
-More fine-grained control can be achieved by the options right below.
+It implies `-DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_BUILD_BENCHMARKS=ON`.
+More fine-grained control can be achieved by using the options right below.
 
 #### Building tests
 
@@ -132,6 +139,8 @@ If desired, this can be explicitly disabled by one or more of the following CMak
     -DSELENE_NO_LIBJPEG=ON
     -DSELENE_NO_LIBPNG=ON
     -DSELENE_NO_OPENCV=ON
+
+The respective functionality, i.e. image I/O, or interoperability with OpenCV's `cv::Mat`, will then be disabled.
 
 ### Running tests & examples
 

@@ -87,3 +87,9 @@ But the library is also available as a
   * [vcpkg](https://github.com/Microsoft/vcpkg)
 
 besides OS level package managers or from source.
+
+### Feedback encouraged
+
+Please [send me a message](CONTRIBUTING.md) if you're using **Selene**.
+I would love to know what you think of it, and what your use cases are!
+Contributions are also very encouraged; see [here](CONTRIBUTING.md) for more information.

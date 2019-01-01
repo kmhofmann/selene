@@ -2,13 +2,37 @@
 
 ## Installation
 
-Besides building from source, **Selene** can be installed using popular C++ package managers on Linux, MacOS and Windows.
+Besides building from source, **Selene** can be installed using popular C++ package managers on Linux, macOS and Windows.
 
 ### Building from source
 
 Building the library from source is the recommended way to use **Selene**.
 
 See [here](building.md) for detailed instructions.
+
+### Using vcpkg
+
+Install [vcpkg](https://github.com/Microsoft/vcpkg) by cloning (or updating) the repository, and running the
+bootstrapping script from the *vcpkg* directory:
+
+    git clone https://github.com/Microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh
+
+Please ensure that your installed version of *vcpkg* is up to date.
+Then, the most recent release of **Selene** (that is represented in the *vcpkg* repository) can be installed with:
+
+    ./vcpkg install selene
+
+Alternatively, in order to build and install from `HEAD`, use:
+
+    ./vcpkg install --head selene
+
+To make use of the *vcpkg*-installed version of Selene, please refer to the [vcpkg documentation](https://vcpkg.readthedocs.io/).
+Using CMake, this is as easy as specifying the respective CMake Toolchain file during the `cmake` invocation:
+
+     ... -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake ...
+
 
 ### Using Conan
 
@@ -32,24 +56,3 @@ Alternatively, just specify `selene/0.2@selene/testing` in a project's `conanfil
 
 Please refer to the [Conan documentation](http://docs.conan.io/) on how to make use of the installed package. 
 See also the Bintray website for Selene: https://bintray.com/kmhofmann/conan-repo/selene%3Aselene.
-
-### Using vcpkg
-
-Install [vcpkg](https://github.com/Microsoft/vcpkg) by cloning (or updating) the repository, and running the
-bootstrapping script from the *vcpkg* directory:
-
-    ./bootstrap-vcpkg.sh
-
-Please ensure that your installed version of *vcpkg* is up to date.
-Then, the most recent release of **Selene** (that is represented in the *vcpkg* repository) can be installed with:
-
-    vcpkg install selene
-
-Alternatively, in order to build and install from `HEAD`, use:
-
-    vcpkg install --head selene
-
-To make use of the *vcpkg*-installed version of Selene, please refer to the [vcpkg documentation](https://vcpkg.readthedocs.io/).
-Using CMake, this is as easy as specifying the respective CMake Toolchain file during the `cmake` invocation:
-
-     ... -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake ...
