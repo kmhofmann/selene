@@ -61,6 +61,7 @@ JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEG
 
   jpeg_create_decompress(&impl_->cinfo);
   impl_->valid = true;
+  return;
 
 failure_state:
   impl_->valid = false;
