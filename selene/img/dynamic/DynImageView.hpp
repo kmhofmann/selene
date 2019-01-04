@@ -557,7 +557,7 @@ decltype(auto) DynImageView<modifiability_>::constant_view() const noexcept
   }
   else
   {
-    return static_cast<DynImageView<ImageModifiability::Constant>&>(*this);
+    return static_cast<const DynImageView<ImageModifiability::Constant>&>(*this);
   }
 }
 

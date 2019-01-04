@@ -500,7 +500,7 @@ decltype(auto) ImageView<PixelType_, modifiability_>::constant_view() const noex
   }
   else
   {
-    return static_cast<ImageView<PixelType, ImageModifiability::Constant>&>(*this);
+    return static_cast<const ImageView<PixelType, ImageModifiability::Constant>&>(*this);
   }
 }
 

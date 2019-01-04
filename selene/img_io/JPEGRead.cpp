@@ -53,8 +53,17 @@ JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEG
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
   impl_->cinfo.err->error_exit = impl::error_exit;
   impl_->cinfo.err->output_message = impl::output_message;
+
+  if (setjmp(impl_->error_manager.setjmp_buffer))
+  {
+    goto failure_state;
+  }
+
   jpeg_create_decompress(&impl_->cinfo);
   impl_->valid = true;
+
+failure_state:
+  impl_->valid = false;
 }
 
 JPEGDecompressionObject::~JPEGDecompressionObject()

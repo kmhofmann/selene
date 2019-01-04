@@ -14,7 +14,8 @@ namespace sln {
 namespace impl {
 
 template <typename DynImageOrView>
-inline bool prepare_image_or_view(DynImageOrView& dyn_img_or_view, const UntypedLayout& layout, const UntypedImageSemantics& semantics)
+[[nodiscard]] inline
+bool prepare_image_or_view(DynImageOrView& dyn_img_or_view, const UntypedLayout& layout, const UntypedImageSemantics& semantics)
 {
   impl::static_check_is_dyn_image_or_mutable_view<DynImageOrView>();
 
