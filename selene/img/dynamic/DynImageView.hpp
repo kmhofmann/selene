@@ -540,7 +540,7 @@ DynImageView<modifiability_>& DynImageView<modifiability_>::view() noexcept
 template <ImageModifiability modifiability_>
 decltype(auto) DynImageView<modifiability_>::view() const noexcept
 {
-  return constant_view();
+  return *this;
 }
 
 /** \brief Returns a constant dynamic image view.

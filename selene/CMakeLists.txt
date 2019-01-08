@@ -187,6 +187,7 @@ target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Convolution.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/DynView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
