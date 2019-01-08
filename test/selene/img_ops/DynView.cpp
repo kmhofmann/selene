@@ -15,7 +15,7 @@ using namespace sln::literals;
 
 namespace {
 
-std::array<std::uint8_t, 16> arr = {{
+std::array<std::uint8_t, 16> dyn_img_arr_44 = {{
    10,  20,  30,  40,
    50,  60,  70,  80,
    90, 100, 110, 120,
@@ -25,14 +25,14 @@ sln::DynImage create_dyn_image()
 {
   sln::DynImage dyn_img{sln::UntypedLayout{4_px, 4_px, 1, 1},
                         sln::UntypedImageSemantics{}};
-  std::copy(arr.cbegin(), arr.cend(), dyn_img.byte_ptr());
+  std::copy(dyn_img_arr_44.cbegin(), dyn_img_arr_44.cend(), dyn_img.byte_ptr());
   return dyn_img;
 }
 
 template <sln::ImageModifiability modifiability>
 sln::DynImageView<modifiability> create_dyn_image_view()
 {
-  return sln::DynImageView<modifiability>{arr.data(),
+  return sln::DynImageView<modifiability>{dyn_img_arr_44.data(),
                                           sln::UntypedLayout{4_px, 4_px, 1, 1},
                                           sln::UntypedImageSemantics{}};
 }
@@ -47,7 +47,7 @@ void check_result(sln::PixelIndex x_beg, sln::PixelIndex y_beg,
     for (auto x = x_beg; x < x_end; ++x)
     {
       const auto idx = std::size_t(y * 4 + x);
-      REQUIRE(img.template pixel<PixelType>(sln::PixelIndex{x - x_beg}, sln::PixelIndex{y - y_beg}) == PixelType{arr[idx]});
+      REQUIRE(img.template pixel<PixelType>(sln::PixelIndex{x - x_beg}, sln::PixelIndex{y - y_beg}) == PixelType{dyn_img_arr_44[idx]});
     }
   }
 }
