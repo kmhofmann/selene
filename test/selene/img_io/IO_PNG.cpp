@@ -167,8 +167,8 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(img.stride_bytes() == ref_width * 1);
   for (std::size_t i = 0; i < 3; ++i)
   {
-    const auto x = sln::to_pixel_index(pix[i][0]);
-    const auto y = sln::to_pixel_index(pix[i][1]);
+    [[maybe_unused]] const auto x = sln::to_pixel_index(pix[i][0]);
+    [[maybe_unused]] const auto y = sln::to_pixel_index(pix[i][1]);
 #if (PNG_LIBPNG_VER_MAJOR > 1) || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 6)
     REQUIRE(static_cast<int>(img(x, y)) == static_cast<int>(sln::Pixel_8u1(pix[i][5])));
 #endif
