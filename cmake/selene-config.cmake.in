@@ -5,6 +5,7 @@ list(APPEND CMAKE_MODULE_PATH ${SELENE_CMAKE_DIR})
 
 find_dependency(JPEG)
 find_dependency(PNG)
+find_dependency(TIFF)
 
 if(NOT TARGET selene::selene)
     include("${SELENE_CMAKE_DIR}/selene-targets.cmake")

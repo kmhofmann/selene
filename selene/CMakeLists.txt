@@ -138,11 +138,26 @@ target_sources(selene_img_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFCommon.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFCommon.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFRead.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFRead.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFWrite.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGCommon.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFIOFunctions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadHighLevel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadHighLevel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadStrips.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadStrips.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadTiles.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadTiles.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
         )
 
@@ -171,6 +186,14 @@ endif()
 if (PNG_FOUND)
     target_compile_definitions(selene_img_io PUBLIC SELENE_WITH_LIBPNG)
     target_link_libraries(selene_img_io PUBLIC PNG::PNG)
+endif()
+
+if (TIFF_FOUND)
+    target_compile_definitions(selene_img_io PUBLIC SELENE_WITH_LIBTIFF)
+    if (TIFF_SUPPORT_ZSTD_AND_WEBP)
+        target_compile_definitions(selene_img_io PUBLIC SELENE_LIBTIFF_ZSTD_WEBP_SUPPORT)
+    endif()
+    target_link_libraries(selene_img_io PUBLIC TIFF::TIFF)
 endif()
 
 target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)

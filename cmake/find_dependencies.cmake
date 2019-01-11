@@ -47,6 +47,32 @@ else()
     message(STATUS "Building without libpng support.")
 endif()
 
+# libtiff
+
+if (NOT SELENE_NO_LIBTIFF)
+    find_package(TIFF)
+endif()
+
+if (TIFF_FOUND)
+    message(STATUS "Building with libtiff support.")
+    # Detect some features provided only by recent libtiff versions (v4.0.10 and up)
+    set(TIFF_SUPPORT_ZSTD_AND_WEBP OFF)
+    if (TIFF_INCLUDE_DIR AND EXISTS "${TIFF_INCLUDE_DIR}/tiff.h")
+        file(STRINGS "${TIFF_INCLUDE_DIR}/tiff.h" tiff_supports_zstd_compression REGEX "COMPRESSION_ZSTD")
+        file(STRINGS "${TIFF_INCLUDE_DIR}/tiff.h" tiff_supports_webp_compression REGEX "COMPRESSION_WEBP")
+        if (tiff_supports_zstd_compression AND tiff_supports_webp_compression)
+            set(TIFF_SUPPORT_ZSTD_AND_WEBP ON)
+        endif()
+        unset(tiff_supports_zstd_compression)
+        unset(tiff_supports_webp_compression)
+    endif()
+    if (TIFF_SUPPORT_ZSTD_AND_WEBP)
+        message(STATUS "libtiff supports Zstd and WebP (de)compression, with respective libraries present.")
+    endif()
+else()
+    message(STATUS "Building without libtiff support.")
+endif()
+
 # OpenCV
 
 if (NOT SELENE_NO_OPENCV)
