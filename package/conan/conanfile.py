@@ -16,7 +16,8 @@ class SeleneConan(ConanFile):
     build_policy = "missing"
 
     requires = ("libjpeg-turbo/[>1.5.0]@bincrafters/stable",
-                "libpng/[>1.2.0]@bincrafters/stable")
+                "libpng/[>1.2.0]@bincrafters/stable",
+                "libtiff/[>4.0.9]@bincrafters/stable")
 
     exports_sources = ("../../selene*",
                        "../../cmake*",
