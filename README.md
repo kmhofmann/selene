@@ -17,7 +17,7 @@ type-safe API.
 ### Summary
 
   * Strongly typed image and multi-channel pixel representations, and functions for image data access.
-  * Easy-to-use APIs to read and write images in JPEG and PNG formats (leveraging *libjpeg* and *libpng*).
+  * Easy-to-use APIs to read and write images in JPEG, PNG, and TIFF formats (leveraging *libjpeg*, *libpng*, and *libtiff*).
   * Basic image processing algorithms such as color conversions, pixel-wise operations, convolutions, rotation, etc.
   * Lightweight and easy to build using *CMake* on Linux, MacOS, Windows.
 

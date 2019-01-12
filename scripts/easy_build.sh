@@ -24,7 +24,7 @@ function check_for_linux {
 }
 
 function check_for_system_tools {
-  if [ ! -e "$(which $1)" ]; then
+  if [[ ! -e "$(which $1)" ]]; then
     echo "This script requires $1. Please install $1 via your system's package manager."
     TOOLS_ERROR=1
   fi
@@ -32,11 +32,11 @@ function check_for_system_tools {
 
 function check_for_cxx17 {
   COMPILER_BIN=$(which c++)
-  if [ ! -z "${CXX}" ]; then
+  if [[ ! -z "${CXX}" ]]; then
     COMPILER_BIN=${CXX}
   fi
   CPP_VER=$(echo '' | ${COMPILER_BIN} -x c++ -dM -E -std=c++17 - | grep __cplusplus | awk '{print $3}' | cut -dL -f1)
-  if [ ! "${CPP_VER}" ] || [ "${CPP_VER}" -lt "201703" ]; then
+  if [[ ! "${CPP_VER}" ]] || [[ "${CPP_VER}" -lt "201703" ]]; then
     return 1
   fi
   return 0
@@ -57,13 +57,17 @@ CMK_VERSION="3.13.2"
 CMK_TARNAME="cmake-${CMK_VERSION}-Linux-x86_64.tar.gz"
 CMK_URL="https://github.com/Kitware/CMake/releases/download/v${CMK_VERSION}/${CMK_TARNAME}"
 
-if [ "${DISTR_ID}" == "Ubuntu" ]; then
-  CLANG_VERSION="7.0.0"
-  if [ $(echo "${DISTR_RELEASE} >= 16.04" | bc) -eq 1 ]; then
-    CLANG_TARNAME="clang+llvm-${CLANG_VERSION}-x86_64-linux-gnu-ubuntu-16.04.tar.xz"
-  elif [ $(echo "${DISTR_RELEASE} >= 14.04" | bc) -eq 1 ]; then
-    CLANG_TARNAME="clang+llvm-${CLANG_VERSION}-x86_64-linux-gnu-ubuntu-14.04.tar.xz"
+if [[ "${DISTR_ID}" == "Ubuntu" ]]; then
+  CLANG_VERSION="7.0.1"
+  CLANG_DISTR_VERSION="18.04"
+  if [[ $(echo "${DISTR_RELEASE} >= 18.04" | bc) -eq 1 ]]; then
+    CLANG_DISTR_VERSION="18.04"
+  elif [[ $(echo "${DISTR_RELEASE} >= 16.04" | bc) -eq 1 ]]; then
+    CLANG_DISTR_VERSION="16.04"
+  elif [[ $(echo "${DISTR_RELEASE} >= 14.04" | bc) -eq 1 ]]; then
+    CLANG_DISTR_VERSION="14.04"
   fi
+  CLANG_TARNAME="clang+llvm-${CLANG_VERSION}-x86_64-linux-gnu-ubuntu-${CLANG_DISTR_VERSION}.tar.xz"
   CLANG_URL="http://releases.llvm.org/${CLANG_VERSION}/${CLANG_TARNAME}"
 fi
 
@@ -82,7 +86,7 @@ while getopts ":ctudXh" opt; do
   esac
 done
 
-if [ ! "$DO_IT" ] ; then
+if [[ ! "$DO_IT" ]] ; then
   print_help
   exit 0
 fi
@@ -95,13 +99,13 @@ check_for_system_tools curl
 check_for_system_tools unzip
 check_for_system_tools tar
 check_for_system_tools git
-if [ "${TOOLS_ERROR}" ]; then
+if [[ "${TOOLS_ERROR}" ]]; then
   exit 1
 fi
 
 # --- Check for C++17 support ---
 
-if ! check_for_cxx17 && [ ! "${DOWNLOAD_CLANG}" ]; then
+if ! check_for_cxx17 && [[ ! "${DOWNLOAD_CLANG}" ]]; then
   echo "The default compiler/standard library does not support C++17."
   echo "There are two options to proceed:"
   echo ""
@@ -132,34 +136,34 @@ set -e
 CMK_DIR=${TOOLS_DIR}/$(basename -s .tar.gz ${CMK_TARNAME})
 CMK_BINARY=${CMK_DIR}/bin/cmake
 
-if [ ! -e "${TOOLS_DIR}/${CMK_TARNAME}" ]; then
+if [[ ! -e "${TOOLS_DIR}/${CMK_TARNAME}" ]]; then
   echo "Downloading CMake ${CMK_VERSION}..."
   wget -q -P ${TOOLS_DIR} ${CMK_URL}
 fi
 
-if [ ! -e "${CMK_BINARY}" ] ; then
+if [[ ! -e "${CMK_BINARY}" ]]; then
   echo "Extracting CMake ${CMK_VERSION}..."
   tar xf ${TOOLS_DIR}/${CMK_TARNAME} -C ${TOOLS_DIR}
 fi
 
 # --- Download local copy of Clang, if specified ---
 
-if [ "${DOWNLOAD_CLANG}" ]; then
+if [[ "${DOWNLOAD_CLANG}" ]]; then
   CLANG_DIR=${TOOLS_DIR}/$(basename -s .tar.xz ${CLANG_TARNAME})
   CLANG_BINARY=${CLANG_DIR}/bin/clang
 
-  if [ ! "${CLANG_TARNAME}" ]; then
+  if [[ ! "${CLANG_TARNAME}" ]]; then
     echo "ERROR: Cannot determine correct version of Clang release to download."
     echo "(You might not be on Ubuntu?)"
     exit 1
   fi
 
-  if [ ! -e "${TOOLS_DIR}/${CLANG_TARNAME}" ]; then
+  if [[ ! -e "${TOOLS_DIR}/${CLANG_TARNAME}" ]]; then
     echo "Downloading Clang ${CLANG_VERSION}..."
     wget -q -P ${TOOLS_DIR} ${CLANG_URL}
   fi
 
-  if [ ! -e "${CLANG_BINARY}" ] ; then
+  if [[ ! -e "${CLANG_BINARY}" ]]; then
     echo "Extracting Clang ${CLANG_VERSION}..."
     tar xf ${TOOLS_DIR}/${CLANG_TARNAME} -C ${TOOLS_DIR}
   fi
@@ -175,18 +179,18 @@ fi
 
 # --- Download and bootstrap vcpkg ---
 
-if [ ! -d "${VCPKG_DIR}" ]; then
+if [[ ! -d "${VCPKG_DIR}" ]]; then
   echo "Cloning vcpkg..."
   git -C ${REPO_DIR} clone https://github.com/Microsoft/vcpkg.git ${VCPKG_DIR}
-elif [ "${FORCE_VCPKG_UPDATE}" ]; then
+elif [[ "${FORCE_VCPKG_UPDATE}" ]]; then
   echo "Updating vcpkg..."
   git -C ${VCPKG_DIR} reset HEAD --hard
   git -C ${VCPKG_DIR} pull --rebase
 fi
 
-if [ ! -e "${VCPKG_DIR}/vcpkg" ] || [ "${FORCE_VCPKG_UPDATE}" ]; then
+if [[ ! -e "${VCPKG_DIR}/vcpkg" ]] || [[ "${FORCE_VCPKG_UPDATE}" ]]; then
   echo "Bootstrapping vcpkg..."
-  if [ "${SET_CLANG_ENV_VARS}" ]; then
+  if [[ "${SET_CLANG_ENV_VARS}" ]]; then
     # Make sure we link against libc++fs
     sed -i 's/c++experimental/c++fs/g' ${VCPKG_DIR}/toolsrc/CMakeLists.txt
   fi
@@ -196,16 +200,16 @@ fi
 # --- Install dependencies via vcpkg ---
 
 echo "Installing dependencies via vcpkg..."
-${VCPKG_DIR}/vcpkg install libjpeg-turbo libpng opencv boost-filesystem benchmark
+${VCPKG_DIR}/vcpkg install libjpeg-turbo libpng tiff opencv boost-filesystem benchmark
 
-if [ "${FORCE_VCPKG_UPDATE}" ]; then
+if [[ "${FORCE_VCPKG_UPDATE}" ]]; then
   ${VCPKG_DIR}/vcpkg upgrade --no-dry-run
 fi
 
 # --- Build Selene using CMake ---
 
 mkdir -p ${BUILD_DIR}
-if [ "${CLEAN}" ] ; then
+if [[ "${CLEAN}" ]] ; then
   echo "Cleaning Selene build..."
   rm -f ${BUILD_DIR}/CMakeCache.txt
   rm -f ${BUILD_DIR}/build.ninja
@@ -221,7 +225,7 @@ if [ "${CLEAN}" ] ; then
 fi
 
 CMK_GENERATOR=""
-if [ $(which ninja) ]; then
+if [[ $(which ninja) ]]; then
   CMK_GENERATOR="-G Ninja"
 fi
 
@@ -238,7 +242,7 @@ ${CMK_BINARY} --build ${BUILD_DIR} -j ${CLEAN_BUILD_ARG}
 
 # --- Run unit tests, if desired ---
 
-if [ "${RUN_UNIT_TESTS}" ] ; then
+if [[ "${RUN_UNIT_TESTS}" ]] ; then
   echo "Running unit tests..."
   SELENE_DATA_PATH=${REPO_DIR}/data ${BUILD_DIR}/test/selene_tests
 fi
@@ -250,6 +254,6 @@ echo "Done."
 echo "- The unit test executable is in ${BUILD_DIR}/test/."
 echo "- The example executables are in ${BUILD_DIR}/examples/."
 echo "- You may need to call \"export SELENE_DATA_PATH=${REPO_DIR}/data\" before running either."
-if [ "${SET_CLANG_ENV_VARS}" ]; then
+if [[ "${SET_CLANG_ENV_VARS}" ]]; then
   echo "- You may need to set \"export LD_LIBRARY_PATH=${CLANG_DIR}/lib:\${LD_LIBRARY_PATH}\" before running any executable."
 fi
