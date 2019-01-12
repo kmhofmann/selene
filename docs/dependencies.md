@@ -11,6 +11,9 @@
   - [libpng](http://www.libpng.org/pub/png/libpng.html):
     - Optional and recommended.
     - Required for the PNG reading and writing API.
+  - [libtiff](http://www.simplesystems.org/libtiff/)
+    - Optional and recommended.
+    - Required for the TIFF reading and writing API.  
   - [OpenCV](https://opencv.org/):
     - Optional, if really needed.
     - **Only** required for OpenCV interoperability (e.g. copying or wrapping image data).
@@ -62,11 +65,11 @@ See below for instructions on how to install dependencies using [Conan](https://
 
 ### Linux
 
-On sufficiently recent Debian-like systems (e.g. Ubuntu), one can install the necessary dependencies using `apt` as
-follows:
+On sufficiently recent Debian-like systems (e.g. Ubuntu 18.04 or higher), one can install the necessary dependencies
+using `apt` as follows:
 
     # Dependencies for building the complete library
-    apt install libjpeg-turbo8-dev libpng-dev
+    apt install libjpeg-turbo8-dev libpng-dev libtiff-dev
     
     # Dependencies for building all tests, examples, and benchmarks
     apt install libopencv-dev
@@ -75,15 +78,14 @@ follows:
     # Note: There is no pre-built google-benchmark package in e.g. Ubuntu.
     #       Install from source instead, or use vcpkg.
 
-(Some distributions supply broken packages; e.g. there are issues with `libopencv-dev` on Ubuntu 16.04. Good luck with
-such an old distribution anyway.)
+(Some distributions supply broken packages; e.g. there are issues with `libopencv-dev` on Ubuntu 16.04.)
 
 ### MacOS
 
 Install [Homebrew](https://brew.sh/) to build and install the dependencies as follows:
 
     # Dependencies for building the complete library
-    brew install libjpeg-turbo libpng
+    brew install libjpeg-turbo libpng libtiff
     
     # Dependencies for building all tests, examples, benchmarks
     brew install opencv3 google-benchmark
@@ -111,6 +113,7 @@ Then, install packages as follows
 
     ./vcpkg install libjpeg-turbo
     ./vcpkg install libpng
+    ./vcpkg install tiff
     
     ./vcpkg install opencv            # for tests & benchmarks
     ./vcpkg install benchmark         # for benchmarks
@@ -131,7 +134,7 @@ Selene itself can also be [installed using *vcpkg*](installation.md).
 [Conan](https://conan.io/) is a C and C++ package manager developed by JFrog, and works on all platforms that
 support Python.
 It is potentially more flexible than *vcpkg*, due to its decentralized publishing concept, though this is also its
-biggest downside: a lot fewer libraries are supported "out of the box", the quality of third-party package recipes
+biggest downside: fewer libraries are supported "out of the box", the quality of third-party package recipes
 greatly varies, and long term maintenance for them may be unclear.
 
 **Selene** supports optional use of [Conan](https://conan.io/) as a dependency manager on all supported platforms.

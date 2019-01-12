@@ -28,17 +28,18 @@ It currently contains, among other things
   	* [Interoperability](../selene/img/interop/OpenCV.hpp) with [OpenCV](https://opencv.org/) `cv::Mat` matrices:
   	both wrapping (as view) or copying is supported, in both directions. 
 
-  * Functions for reading and writing image data in JPEG and PNG formats (from/to files or memory). The implementation
-  cleanly wraps the *libjpeg* and *libpng* APIs.
+  * Functions for reading and writing image data in JPEG, PNG, and TIFF formats (from/to files or memory).
+    The implementation cleanly wraps the *libjpeg*, *libpng*, and *libtiff* APIs.
   	* [read_jpeg()](../selene/img_io/JPEGRead.hpp),
   	[read_jpeg_header()](../selene/img_io/JPEGRead.hpp),
   	[write_jpeg()](../selene/img_io/JPEGWrite.hpp)
   	* [read_png()](../selene/img_io/PNGRead.hpp),
   	[read_png_header()](../selene/img_io/PNGRead.hpp),
   	[write_png()](../selene/img_io/PNGWrite.hpp)
+  	* [read_tiff()](../selene/img_io/TIFFRead.hpp),
+  	[write_tiff()](../selene/img_io/TIFFWrite.hpp)
   	* Convenience functions [read_image()](../selene/img_io/IO.hpp)
-  	and [write_image()](../selene/img_io/IO.hpp), being able to handle
-  	both formats.
+  	and [write_image()](../selene/img_io/IO.hpp), being able to handle all formats.
   	  * Example: `auto img_data = read_image(FileReader("image.png"));`
   	  * Example: `auto img_data = read_image(MemoryReader(data_ptr, size_bytes));`
 

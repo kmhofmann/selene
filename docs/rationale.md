@@ -26,19 +26,20 @@ each point of access and is not trivial to determine from a read image. Making a
 These are actually the same type, masking an abstraction with a `void*` somewhere at the end of it.
 Good-bye type safety!
 
-#### libjpeg's/libpng's non-typesafe interfaces
+#### libjpeg's/libpng's/libtiff's non-typesafe interfaces
 
 Another option for C++ developers to read or write image data is to use the reference implementations for common formats
-directly; e.g. [libjpeg](http://www.ijg.org/) or [libpng](http://www.libpng.org/pub/png/libpng.html).
+directly; e.g. [libjpeg](http://www.ijg.org/), [libpng](http://www.libpng.org/pub/png/libpng.html), or
+[libtiff](http://www.simplesystems.org/libtiff/).
 
 This is also notoriously difficult to get right, because although these libraries are very well documented, their C
 interfaces are very low-level, require lots of boilerplate code, and provide even less type safety.
-Error handling even needs to be implemented using `setjmp` and `longjmp`!
+In some of these, error handling even needs to be implemented using `setjmp` and `longjmp`!
 
 And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
 image representation class.
 
-#### GIL - unmaintained (until recently)
+#### GIL - unmaintained (until recently) & Boost dependencies
 
 Other C++ image representation libraries include GIL, available either
 [from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
@@ -69,9 +70,9 @@ See also the [feature set](overview.md).
 Its goal is to provide a wide-enough feature set to be able to _build_ more complex functionality _on top_.
 
 As a starting point, the initial feature set includes
-- type-safe and customizable representation of image data
-- basic image processing operations, such as color channel conversions
-- flexible I/O operations for the most common formats (currently: JPEG & PNG) 
+- Type-safe and customizable representation of image data
+- Basic image processing operations, such as color channel conversions
+- Flexible I/O operations for the most common formats (currently: JPEG, PNG, TIFF) 
 
 It is not intended to become a competitor to, say, OpenCV's more specialized computer vision algorithms, and it does
 not aim to be a jack of all trades, master of none.
