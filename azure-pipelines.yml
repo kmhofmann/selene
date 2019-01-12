@@ -73,7 +73,7 @@ jobs:
         git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
         ..\vcpkg\bootstrap-vcpkg.bat
       displayName: 'Bootstrap vcpkg'
-    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng --triplet x64-windows
+    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng tiff --triplet x64-windows
       displayName: 'Install vcpkg dependencies'
     - script: |
         mkdir build
@@ -113,7 +113,7 @@ jobs:
         git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
         ..\vcpkg\bootstrap-vcpkg.bat
       displayName: 'Bootstrap vcpkg'
-    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng
+    - script: ..\vcpkg\vcpkg.exe install libjpeg-turbo libpng tiff
       displayName: 'Install vcpkg dependencies'
     - script: |
         mkdir build
@@ -150,7 +150,8 @@ jobs:
       vmImage: 'macOS-10.13'
     steps:
     - script: |
-        brew install ninja libjpeg-turbo libpng boost
+        brew update
+        brew install ninja libjpeg-turbo libpng libtiff boost
         # Remove conflicting headers (e.g. png.h)
         sudo rm -rf /Library/Frameworks/Mono.framework/Headers
       displayName: Install brew dependencies
@@ -186,6 +187,7 @@ jobs:
       vmImage: 'macOS-10.13'
     steps:
     - script: |
+        brew update
         brew install gcc ninja gnu-sed
         # Remove conflicting headers (e.g. png.h)
         sudo rm -rf /Library/Frameworks/Mono.framework/Headers
@@ -200,7 +202,7 @@ jobs:
         ../vcpkg/bootstrap-vcpkg.sh
       displayName: 'Bootstrap vcpkg'
     - script: |
-        ../vcpkg/vcpkg install libjpeg-turbo libpng boost-filesystem
+        ../vcpkg/vcpkg install libjpeg-turbo libpng tiff boost-filesystem
       displayName: 'Install vcpkg dependencies'
     - script: |
         pwd
