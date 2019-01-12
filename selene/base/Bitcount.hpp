@@ -43,7 +43,7 @@ constexpr std::size_t bit_count(T x)
  */
 inline std::size_t bit_count(unsigned int x)
 {
-  return __builtin_popcount(x);
+  return static_cast<std::size_t>(__builtin_popcount(x));
 }
 
 /** \brief Performs a bit count on the supplied value.
@@ -53,7 +53,7 @@ inline std::size_t bit_count(unsigned int x)
  */
 inline std::size_t bit_count(unsigned long x)
 {
-  return __builtin_popcountl(x);
+  return static_cast<std::size_t>(__builtin_popcountl(x));
 }
 
 /** \brief Performs a bit count on the supplied value.
@@ -63,7 +63,7 @@ inline std::size_t bit_count(unsigned long x)
  */
 inline std::size_t bit_count(unsigned long long x)
 {
-  return __builtin_popcountll(x);
+  return static_cast<std::size_t>(__builtin_popcountll(x));
 }
 
 #elif defined(_MSC_VER)
@@ -75,7 +75,7 @@ inline std::size_t bit_count(unsigned long long x)
  */
 inline std::size_t bit_count(unsigned short x)
 {
-  return __popcnt16(x);
+  return static_cast<std::size_t>(__popcnt16(x));
 }
 
 /** \brief Performs a bit count on the supplied value.
@@ -85,7 +85,7 @@ inline std::size_t bit_count(unsigned short x)
  */
 inline std::size_t bit_count(unsigned int x)
 {
-  return __popcnt(x);
+  return static_cast<std::size_t>(__popcnt(x));
 }
 
 #if _WIN64
@@ -97,7 +97,7 @@ inline std::size_t bit_count(unsigned int x)
  */
 inline std::size_t bit_count(unsigned __int64 x)
 {
-  return __popcnt64(x);
+  return static_cast<std::size_t>(__popcnt64(x));
 }
 
 #endif  // _WIN64

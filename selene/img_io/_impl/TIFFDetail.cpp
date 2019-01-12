@@ -364,14 +364,14 @@ std::ostream& operator<<(std::ostream& os, const OutputLayout& info)
 }
 
 std::uint8_t* copy_samples(const std::uint8_t* src_dense, std::size_t nr_src_pixels, std::size_t channel_offset,
-                           std::size_t nr_bytes_per_channel, std::size_t nr_channels, std::uint8_t* dst)
+                           std::int16_t nr_bytes_per_channel, std::int16_t nr_channels, std::uint8_t* dst)
 {
   dst += channel_offset;
   const auto dst_offset = nr_bytes_per_channel * nr_channels;
 
   for (std::size_t s = 0; s < nr_src_pixels; ++s)
   {
-    std::memcpy(dst, src_dense, nr_bytes_per_channel);
+    std::memcpy(dst, src_dense, static_cast<std::size_t>(nr_bytes_per_channel));
     src_dense += nr_bytes_per_channel;
     dst += dst_offset;
   }
@@ -391,7 +391,7 @@ std::vector<std::uint8_t> convert_single_channel_1bit_to_8bit(const std::vector<
   constexpr std::array<std::uint8_t, 2> res_arr = {{0x00, 0xFF}};
 
   auto transform_value = [&res_arr](const std::uint8_t val, std::uint8_t shift) {
-    const auto index = (val & (std::uint8_t{0x01} << shift)) >> shift;
+    const auto index = std::size_t((val & (std::uint8_t{0x01} << shift)) >> shift);
     return res_arr[index];
   };
 
@@ -429,7 +429,7 @@ std::vector<std::uint8_t> convert_single_channel_4bit_to_8bit(const std::vector<
       {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}};
 
   auto transform_value = [&res_arr](const std::uint8_t val, std::uint8_t shift) {
-    const auto index = (val & (std::uint8_t{0x0F} << shift)) >> shift;
+    const auto index = std::size_t((val & (std::uint8_t{0x0F} << shift)) >> shift);
     return res_arr[index];
   };
 

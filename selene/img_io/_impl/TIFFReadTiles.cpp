@@ -66,25 +66,25 @@ bool read_data_tiles_interleaved(TIFF* tif,
       {
         assert(out.nr_bytes_per_channel == 1);
         buf = convert_ycbcr_to_rgb_interleaved(buf, nr_bytes_read, tile_layout.width, tile_layout.height, ycbcr_info, ycbcr_converter);
-        nr_bytes_read = buf.size();
+        nr_bytes_read = static_cast<tmsize_t>(buf.size());
       }
       else if (src.is_format_lab())
       {
         assert(out.nr_bytes_per_channel == 1);
         buf = convert_lab_to_rgb_interleaved(buf, nr_bytes_read, tile_layout.width, tile_layout.height, lab_converter);
-        nr_bytes_read = buf.size();
+        nr_bytes_read = static_cast<tmsize_t>(buf.size());
       }
       else if (src.is_format_grayscale())
       {
         if (src.bits_per_sample == 1)
         {
           buf = impl::tiff::convert_single_channel_1bit_to_8bit(buf, nr_bytes_read, tile_layout.width, tile_layout.height);
-          nr_bytes_read = buf.size();
+          nr_bytes_read = static_cast<tmsize_t>(buf.size());
         }
         else if (src.bits_per_sample == 4)
         {
           buf = impl::tiff::convert_single_channel_4bit_to_8bit(buf, nr_bytes_read, tile_layout.width, tile_layout.height);
-          nr_bytes_read = buf.size();
+          nr_bytes_read = static_cast<tmsize_t>(buf.size());
         }
       }
 
@@ -99,14 +99,14 @@ bool read_data_tiles_interleaved(TIFF* tif,
 
       // Data is stored interleaved.
       const auto dst_x = src_x;
-      const auto this_tile_width = std::min(tile_layout.width, src.width - src_x);
-      const auto this_tile_height = std::min(tile_layout.height, src.height - src_y);
+      const auto this_tile_width = std::min(tile_layout.width, src.width - static_cast<std::uint32_t>(src_x));
+      const auto this_tile_height = std::min(tile_layout.height, src.height - static_cast<std::uint32_t>(src_y));
 
       std::size_t i = 0;
-      for (PixelIndex dst_y = src_y; dst_y < static_cast<value_type>(src_y + this_tile_height); ++dst_y, ++i)
+      for (PixelIndex dst_y = src_y; dst_y < static_cast<value_type>(static_cast<std::uint32_t>(src_y) + this_tile_height); ++dst_y, ++i)
       {
-        const std::size_t nr_bytes_to_write = this_tile_width * out.nr_channels * out.nr_bytes_per_channel;
-        const std::size_t nr_bytes_offset = tile_layout.width * out.nr_channels * out.nr_bytes_per_channel;
+        const std::size_t nr_bytes_to_write = this_tile_width * to_unsigned(out.nr_channels) * to_unsigned(out.nr_bytes_per_channel);
+        const std::size_t nr_bytes_offset = tile_layout.width * to_unsigned(out.nr_channels) * to_unsigned(out.nr_bytes_per_channel);
         const auto img_ptr_y_start = dyn_img_view.byte_ptr(dst_x, dst_y);
         const auto buf_ptr_start = buf.data() + i * nr_bytes_offset;
 
@@ -220,7 +220,7 @@ bool read_data_tiles(TIFF* tif,
   // The minimum bit depth is 8 (1 byte/channel)
   const auto nr_bytes_per_channel_out = std::max(std::uint16_t{1}, static_cast<std::uint16_t>(src.bits_per_sample >> 3));
   sln::impl::tiff::OutputLayout out(to_pixel_length(src.width), to_pixel_length(src.height),
-                                    src.samples_per_pixel, nr_bytes_per_channel_out,
+                                    to_signed(src.samples_per_pixel), to_signed(nr_bytes_per_channel_out),
                                     impl::tiff::photometric_to_pixel_format(src.photometric, src.samples_per_pixel),
                                     impl::tiff::sample_format_to_sample_format(src.sample_format));
 //  message_log.add_message(str(oss() << out), MessageType::Message);

@@ -48,7 +48,7 @@ struct TIFFWriteOptions
   }
 };
 
-template <typename DynImageOrView, typename SinkType, typename SinkType2>
+template <typename DynImageOrView, typename SinkType, typename SinkType2 = std::remove_reference_t<SinkType>>
 bool write_tiff(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 const TIFFWriteOptions& write_options = TIFFWriteOptions(),

@@ -236,7 +236,6 @@ void tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj, MessageLo
   bool suitable = check_suitability(layout, message_log);
   if (!suitable)
   {
-    TIFFClose(tif);
     return;
   }
 

@@ -360,7 +360,7 @@ std::ostream& operator<<(std::ostream& os, const YCbCrInfo& info);
 std::ostream& operator<<(std::ostream& os, const OutputLayout& info);
 
 std::uint8_t* copy_samples(const std::uint8_t* src_dense, std::size_t nr_src_pixels, std::size_t channel_offset,
-                           std::size_t nr_bytes_per_channel, std::size_t nr_channels, std::uint8_t* dst);
+                           std::int16_t nr_bytes_per_channel, std::int16_t nr_channels, std::uint8_t* dst);
 
 std::vector<std::uint8_t> convert_single_channel_1bit_to_8bit(const std::vector<std::uint8_t>& buf,
                                                               std::ptrdiff_t nr_bytes_read,

@@ -47,6 +47,28 @@ constexpr Bytes operator"" _b(unsigned long long nr_bytes) noexcept
 
 }  // namespace literals
 
+// Utility functions
+
+template <typename T> decltype(auto) to_signed(T x)
+{
+  return static_cast<std::make_signed_t<decltype(x)>>(x);
+}
+
+template <typename T, typename Tag> decltype(auto) to_signed(sln::impl::ExplicitType<T, Tag> x)
+{
+  return static_cast<std::make_signed_t<T>>(x);
+}
+
+template <typename T> decltype(auto) to_unsigned(T x)
+{
+  return static_cast<std::make_unsigned_t<decltype(x)>>(x);
+}
+
+template <typename T, typename Tag> decltype(auto) to_unsigned(sln::impl::ExplicitType<T, Tag> x)
+{
+  return static_cast<std::make_unsigned_t<T>>(x);
+}
+
 }  // namespace sln
 
 #endif  // SELENE_BASE_TYPES_HPP

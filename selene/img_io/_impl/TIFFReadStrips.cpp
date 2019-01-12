@@ -62,12 +62,12 @@ bool read_data_strips_interleaved(TIFF* tif,
       if (src.is_format_ycbcr())
       {
         assert(out.nr_bytes_per_channel == 1);
-        const auto nr_bytes_for_1_channel = strip_layout.rows_per_strip * out.width * out.nr_bytes_per_channel;
-        const auto subsample_factor = ycbcr_info.subsampling_horz * ycbcr_info.subsampling_vert;
+        const auto nr_bytes_for_1_channel = strip_layout.rows_per_strip * to_unsigned(out.width) * to_unsigned(out.nr_bytes_per_channel);
+        const auto subsample_factor = to_unsigned(ycbcr_info.subsampling_horz * ycbcr_info.subsampling_vert);
         return nr_bytes_for_1_channel + (2 * nr_bytes_for_1_channel / subsample_factor);
       }
 
-      return (strip_layout.rows_per_strip * out.width * out.nr_channels * src.bits_per_sample) >> 3;
+      return (strip_layout.rows_per_strip * to_unsigned(out.width) * to_unsigned(out.nr_channels) * src.bits_per_sample) >> 3;
     }();
 
     if (nr_bytes_read != expected_nr_bytes && strip_index != strip_layout.nr_strips - 1)
@@ -83,25 +83,25 @@ bool read_data_strips_interleaved(TIFF* tif,
     {
       assert(out.nr_bytes_per_channel == 1);
       buf = convert_ycbcr_to_rgb_interleaved(buf, nr_bytes_read, src.width, rows_in_this_strip, ycbcr_info, ycbcr_converter);
-      nr_bytes_read = buf.size();
+      nr_bytes_read = static_cast<tmsize_t>(buf.size());
     }
     else if (src.is_format_lab())
     {
       assert(out.nr_bytes_per_channel == 1);
       buf = convert_lab_to_rgb_interleaved(buf, nr_bytes_read, src.width, rows_in_this_strip, lab_converter);
-      nr_bytes_read = buf.size();
+      nr_bytes_read = static_cast<tmsize_t>(buf.size());
     }
     else if (src.is_format_grayscale())
     {
       if (src.bits_per_sample == 1)
       {
         buf = impl::tiff::convert_single_channel_1bit_to_8bit(buf, nr_bytes_read, src.width, rows_in_this_strip);
-        nr_bytes_read = buf.size();
+        nr_bytes_read = static_cast<tmsize_t>(buf.size());
       }
       else if (src.bits_per_sample == 4)
       {
         buf = impl::tiff::convert_single_channel_4bit_to_8bit(buf, nr_bytes_read, src.width, rows_in_this_strip);
-        nr_bytes_read = buf.size();
+        nr_bytes_read = static_cast<tmsize_t>(buf.size());
       }
     }
 
@@ -195,7 +195,7 @@ bool read_data_strips_planar(TIFF* tif,
       return false;
     }
 
-    const auto expected_nr_bytes = (strip_layout.rows_per_strip * out.width * src.bits_per_sample) >> 3;
+    const auto expected_nr_bytes = (strip_layout.rows_per_strip * to_unsigned(out.width) * src.bits_per_sample) >> 3;
     const auto rows_in_this_strip = strip_layout.rows_per_strip * nr_bytes_read / expected_nr_bytes;
 
     if (nr_bytes_read != expected_nr_bytes && plane_strip_index != nr_planes_per_sample - 1)
@@ -225,7 +225,7 @@ bool read_data_strips_planar(TIFF* tif,
       const auto row_y = sln::PixelIndex(plane_strip_index * strip_layout.rows_per_strip + y);
       auto img_ptr = dyn_img_view.byte_ptr(row_y);
 
-      impl::tiff::copy_samples(buf_ptr, out.width, channel_index, out.nr_bytes_per_channel, out.nr_channels, img_ptr);
+      impl::tiff::copy_samples(buf_ptr, to_unsigned(out.width), channel_index, out.nr_bytes_per_channel, out.nr_channels, img_ptr);
     }
   }
 

@@ -22,13 +22,13 @@ namespace sln {
 
 template <typename SourceType> class TIFFReadObject;
 
-template <typename SourceType, typename SourceType2>
+template <typename SourceType, typename SourceType2 = std::remove_reference_t<SourceType>>
 std::vector<TiffImageLayout> read_tiff_layouts(SourceType&&, MessageLog* = nullptr, TIFFReadObject<SourceType2>* = nullptr);
 
-template <typename SourceType, typename SourceType2>
+template <typename SourceType, typename SourceType2 = std::remove_reference_t<SourceType>>
 DynImage read_tiff(SourceType&&, MessageLog* = nullptr, TIFFReadObject<SourceType2>* = nullptr);
 
-template <typename SourceType, typename SourceType2>
+template <typename SourceType, typename SourceType2 = std::remove_reference_t<SourceType>>
 std::vector<DynImage> read_tiff_all(SourceType&&, MessageLog* = nullptr, TIFFReadObject<SourceType2>* = nullptr);
 
 
