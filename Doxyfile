@@ -1087,7 +1087,7 @@ CLANG_ASSISTED_PARSING = YES
 # specified with INPUT and INCLUDE_PATH.
 # This tag requires that the tag CLANG_ASSISTED_PARSING is set to YES.
 
-CLANG_OPTIONS          = "-std=c++17" "-I." "-DSELENE_WITH_LIBJPEG" "-DSELENE_LIBJPEG_PARTIAL_DECODING" "-DSELENE_LIBJPEG_EXTENDED_COLORSPACES" "-DSELENE_WITH_LIBPNG" "-DSELENE_WITH_OPENCV"
+CLANG_OPTIONS          = "-std=c++17" "-I." "-DSELENE_WITH_LIBJPEG" "-DSELENE_LIBJPEG_PARTIAL_DECODING" "-DSELENE_LIBJPEG_EXTENDED_COLORSPACES" "-DSELENE_WITH_LIBPNG" "-DSELENE_WITH_LIBTIFF" "-DSELENE_WITH_OPENCV"
 
 #---------------------------------------------------------------------------
 # Configuration options related to the alphabetical class index

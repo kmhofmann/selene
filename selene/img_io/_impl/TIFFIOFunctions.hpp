@@ -15,6 +15,7 @@
 #include <type_traits>
 
 #include <tiff.h>
+#include <tiffio.h>
 
 namespace sln {
 namespace impl {

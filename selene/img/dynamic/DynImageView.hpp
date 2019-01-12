@@ -11,6 +11,7 @@
 #include <selene/img/dynamic/UntypedLayout.hpp>
 
 #include <cstring>
+#include <iterator>
 #include <type_traits>
 
 namespace sln {
