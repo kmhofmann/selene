@@ -26,12 +26,12 @@ inline sln_fs::path get_tmp_path()
   return tmp_path;
 }
 
-inline sln_fs::path full_data_path(const char* filename)
+inline sln_fs::path full_data_path(const sln_fs::path& filename)
 {
   const auto env_var = std::getenv("SELENE_DATA_PATH");
   return (env_var)
-      ? (sln_fs::path(env_var) / sln_fs::path(filename))
-      : (sln_fs::path("../data") / sln_fs::path(filename));
+      ? (sln_fs::path(env_var) / filename)
+      : (sln_fs::path("../data") / filename);
 }
 
 template <typename T>

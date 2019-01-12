@@ -47,6 +47,7 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_io/IO_JPEG.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_io/IO_PNG.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img_io/IO_TIFF.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Algorithms.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Allocate.cpp

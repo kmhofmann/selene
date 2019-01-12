@@ -47,12 +47,6 @@ constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
 
 namespace {
 
-sln_fs::path test_suite_dir()
-{
-  const auto env_var = std::getenv("SELENE_DATA_PATH");
-  return (env_var) ? sln_fs::path(env_var) / "png_suite" : sln_fs::path("../data/png_suite");
-}
-
 void check_write_read(sln::DynImage& dyn_img, const sln_fs::path& tmp_path)
 {
   // Write as PNG file...
@@ -311,7 +305,7 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
 TEST_CASE("PNG reading of the official test suite", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
-  const auto test_suite_path = test_suite_dir();
+  const auto test_suite_path = sln_test::full_data_path("png_suite");
 
   using sln_fs::directory_iterator;
   sln::PNGDecompressionObject dec_obj;
