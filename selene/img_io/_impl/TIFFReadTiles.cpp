@@ -87,8 +87,8 @@ bool read_data_tiles_interleaved(TIFF* tif,
         }
       }
 
-      const auto nr_pixels_read = nr_bytes_read / (src.samples_per_pixel * (src.bits_per_sample >> 3));
-      const auto expected_nr_pixels_read = tile_layout.width * tile_layout.height;
+      [[maybe_unused]] const auto nr_pixels_read = nr_bytes_read / (src.samples_per_pixel * (src.bits_per_sample >> 3));
+      [[maybe_unused]] const auto expected_nr_pixels_read = tile_layout.width * tile_layout.height;
       SELENE_ASSERT(nr_pixels_read == expected_nr_pixels_read);
 
       std::uint8_t* data_begin = buf.data();
@@ -125,7 +125,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
 
         if (max_bytes_to_write < nr_bytes_to_write)
         {
-          message_log.add("Writing fewer bytes than we should...", MessageType::Warning);
+          message_log.add("Writing fewer bytes than expected to target image...", MessageType::Warning);
         }
 
         std::memcpy(static_cast<void*>(img_ptr_y_start), buf_ptr_start, max_bytes_to_write);
@@ -139,7 +139,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
 bool read_data_tiles_planar(TIFF* tif,
                             const sln::TiffImageLayout& src,
                             const sln::impl::tiff::ImageLayoutTiles& tile_layout,
-                            const sln::impl::tiff::YCbCrInfo& ycbcr_info,
+                            const sln::impl::tiff::YCbCrInfo& /*ycbcr_info*/,
                             const sln::impl::tiff::YCbCrConverter& /*ycbcr_converter*/,
                             const sln::impl::tiff::LabConverter& /*lab_converter*/,
                             const sln::impl::tiff::OutputLayout& out,
@@ -148,21 +148,16 @@ bool read_data_tiles_planar(TIFF* tif,
 {
   using value_type = PixelIndex::value_type;
 
-//  message_log.add("Case TILES / PLANAR not implemented.", MessageType::Error);
-//  return false;
-
   if (src.is_format_ycbcr())
   {
-    assert(src.samples_per_pixel == 3);
-    ycbcr_info.check_tile_size(src.width, src.height, tile_layout.width, tile_layout.height, message_log);
-
-    message_log.add("Case TILES / PLANAR / YCBCR not implemented.", MessageType::Error);
+    message_log.add("Cannot read TIFF image with the following properties: tiled, planar, YCbCr (not implemented).",
+                    MessageType::Error);
     return false;
   }
-
-  if (src.is_format_lab())
+  else if (src.is_format_lab())
   {
-    message_log.add("Case TILES / PLANAR / LAB not implemented.", MessageType::Error);
+    message_log.add("Cannot read TIFF image with the following properties: tiled, planar, Lab (not implemented).",
+                    MessageType::Error);
     return false;
   }
 
@@ -184,7 +179,7 @@ bool read_data_tiles_planar(TIFF* tif,
 
         if (nr_bytes_read < 0)
         {
-          message_log.add("ERROR: nr_bytes_read = " + std::to_string(nr_bytes_read), MessageType::Error);
+          message_log.add("While reading tile: nr_bytes_read == " + std::to_string(nr_bytes_read), MessageType::Error);
           return false;
         }
 
@@ -220,7 +215,7 @@ bool read_data_tiles_planar(TIFF* tif,
 
           if (max_bytes_to_write < nr_bytes_to_write)
           {
-            message_log.add("Writing fewer bytes than we should...", MessageType::Warning);
+            message_log.add("Writing fewer bytes than expected to target image...", MessageType::Warning);
           }
 
           const auto nr_src_pixels = max_bytes_to_write / (nr_channels * nr_bytes_per_channel);

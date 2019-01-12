@@ -134,7 +134,7 @@ bool read_data_strips_interleaved(TIFF* tif,
     if (max_bytes_to_write < static_cast<std::size_t>(nr_bytes_read))
     {
       message_log.add(
-          "Writing fewer bytes than we should (max_bytes_to_write = "
+          "Writing fewer bytes than expected to target image (max_bytes_to_write = "
           + std::to_string(max_bytes_to_write) + ", nr_bytes_read = " + std::to_string(nr_bytes_read) + ")\n",
           MessageType::Warning);
     }
@@ -173,12 +173,14 @@ bool read_data_strips_planar(TIFF* tif,
 {
   if (src.is_format_ycbcr())
   {
-    message_log.add("Case STRIPS / PLANAR / YCBCR not implemented.", MessageType::Error);
+    message_log.add("Cannot read TIFF image with the following properties: strips, planar, YCbCr (not implemented).",
+                    MessageType::Error);
     return false;
   }
   else if (src.is_format_lab())
   {
-    message_log.add("Case STRIPS / PLANAR / LAB not implemented.", MessageType::Error);
+    message_log.add("Cannot read TIFF image with the following properties: strips, planar, Lab (not implemented).",
+                    MessageType::Error);
     return false;
   }
 

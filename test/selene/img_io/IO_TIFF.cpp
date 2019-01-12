@@ -34,9 +34,6 @@
 
 #include <wrappers/fs/Filesystem.hpp>
 
-// ---
-#include <iostream>
-
 using namespace sln::literals;
 
 namespace {
@@ -92,8 +89,6 @@ void check_test_suite(const sln_fs::path& test_suite_path,
 
     if (e.path().extension() == ".tif")
     {
-      std::cout << e.path().string() << '\n';
-
       sln::FileReader source(e.path().string());
       REQUIRE(source.is_open());
 
@@ -112,8 +107,6 @@ void check_test_suite(const sln_fs::path& test_suite_path,
       }
       else
       {
-        std::cout << messages_read;
-
         const bool may_have_error = std::any_of(may_have_error_list.cbegin(), may_have_error_list.cend(),
                                                 [&e](const auto& s) { return s == e.path().stem().string(); });
         REQUIRE(static_cast<bool>(!messages_read.contains_errors() || may_have_error));
@@ -161,16 +154,7 @@ TEST_CASE("TIFF reading of the self-produced test suite", "[img]")
   const auto tmp_path = sln_test::get_tmp_path();
   const auto test_suite_path = sln_test::full_data_path("tiff_test");
 
-  const std::vector<std::string> cannot_read_list = {
-      // TODO: reading these images is not implemented yet
-      "stickers_tiles_separate",
-      "stickers_cropped_tiles_separate",
-  };
-
-  const std::vector<std::string> may_have_error_list = {
-  };
-
-  check_test_suite(test_suite_path, tmp_path, cannot_read_list, may_have_error_list);
+  check_test_suite(test_suite_path, tmp_path, {}, {});
 }
 
 #endif  // defined(SELENE_WITH_LIBTIFF)
