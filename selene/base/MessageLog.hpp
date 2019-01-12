@@ -7,6 +7,7 @@
 
 /// @file
 
+#include <iosfwd>
 #include <string>
 #include <utility>
 #include <vector>
@@ -42,16 +43,24 @@ public:
   const Messages& messages() const;
 
   // TODO: Replace by std::string_view
-  void add_message(const char* text, MessageType type);
-  void add_message(const std::string& text, MessageType type);
-  void add_message(const Message& message);
-  void add_message(Message&& message);
+  void add(const char* text, MessageType type);
+  void add(const std::string& text, MessageType type);
+  void add(const Message& message);
+  void add(Message&& message);
+
+  bool contains_warnings();
+  bool contains_errors();
+  bool contains_warnings_or_errors();
 
   void clear();
 
 private:
   std::vector<Message> messages_;
 };
+
+std::string message_type_to_string(MessageType type);
+
+std::ostream& operator<<(std::ostream& os, const MessageLog& message_log);
 
 // ---------------
 // Implementation:
@@ -70,7 +79,7 @@ inline const MessageLog::Messages& MessageLog::messages() const
  * \param text Message text.
  * \param type Message type.
  */
-inline void MessageLog::add_message(const char* text, MessageType type)
+inline void MessageLog::add(const char* text, MessageType type)
 {
   messages_.push_back({std::string(text), type});
 }
@@ -80,7 +89,7 @@ inline void MessageLog::add_message(const char* text, MessageType type)
  * \param text Message text.
  * \param type Message type.
  */
-inline void MessageLog::add_message(const std::string& text, MessageType type)
+inline void MessageLog::add(const std::string& text, MessageType type)
 {
   messages_.push_back({text, type});
 }
@@ -89,7 +98,7 @@ inline void MessageLog::add_message(const std::string& text, MessageType type)
  *
  * \param message Message, consisting of text and type.
  */
-inline void MessageLog::add_message(const Message& message)
+inline void MessageLog::add(const Message& message)
 {
   messages_.push_back(message);
 }
@@ -98,7 +107,7 @@ inline void MessageLog::add_message(const Message& message)
  *
  * \param message Message, consisting of text and type.
  */
-inline void MessageLog::add_message(Message&& message)
+inline void MessageLog::add(Message&& message)
 {
   messages_.push_back(std::move(message));
 }

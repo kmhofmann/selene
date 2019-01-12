@@ -34,8 +34,9 @@ std::vector<DynImage> read_tiff_all(SourceType&&, MessageLog* = nullptr, TIFFRea
 
 namespace impl {
 template <typename SourceType, typename DynImageOrView>
-    void tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj, MessageLog& message_log,
-                                     DynImageOrView& dyn_img_or_view);
+    [[nodiscard]] bool tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj,
+                                                   MessageLog& message_log,
+                                                   DynImageOrView& dyn_img_or_view);
 }  // namespace impl
 
 template <typename SourceType>
@@ -64,7 +65,7 @@ private:
   template <typename SourceType1, typename SourceType2> friend DynImage read_tiff(SourceType1&&, MessageLog*, TIFFReadObject<SourceType2>*);
   template <typename SourceType1, typename SourceType2> friend std::vector<DynImage> read_tiff_all(SourceType1&&, MessageLog*, TIFFReadObject<SourceType2>*);
 
-  template <typename SourceType2, typename DynImageOrView> friend void impl::tiff_read_current_directory(TIFFReadObject<SourceType2>&, MessageLog&, DynImageOrView&);
+  template <typename SourceType2, typename DynImageOrView> friend bool impl::tiff_read_current_directory(TIFFReadObject<SourceType2>&, MessageLog&, DynImageOrView&);
 };
 
 // ----------
@@ -84,7 +85,7 @@ std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* 
 
   if (!obj->open(std::forward<SourceType>(source)))
   {
-    local_message_log.add_message("TIFF reader: ERROR: Data stream could not be opened.", MessageType::Error);
+    local_message_log.add("Data stream could not be opened.", MessageType::Error);
     impl::tiff_assign_message_log(local_message_log, message_log);
     return layouts;
   }
@@ -114,13 +115,13 @@ DynImage read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<
 
   if (!obj->open(std::forward<SourceType>(source)))
   {
-    local_message_log.add_message("TIFF reader: ERROR: Data stream could not be opened.", MessageType::Error);
+    local_message_log.add("Data stream could not be opened.", MessageType::Error);
     impl::tiff_assign_message_log(local_message_log, message_log);
     return DynImage{};
   }
 
   DynImage dyn_img;
-  impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
+  [[maybe_unused]] const bool read_successfully = impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
 
   // Reset back to first image
   obj->set_directory(0);
@@ -144,7 +145,7 @@ std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log
 
   if (!obj->open(source))
   {
-    local_message_log.add_message("TIFF reader: ERROR: Data stream could not be opened.", MessageType::Error);
+    local_message_log.add("Data stream could not be opened.", MessageType::Error);
     impl::tiff_assign_message_log(local_message_log, message_log);
     return images;
   }
@@ -152,7 +153,7 @@ std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log
   do
   {
     DynImage dyn_img;
-    impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
+    [[maybe_unused]] const bool read_successfully = impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
     images.push_back(std::move(dyn_img));
   } while (obj->advance_directory());
 

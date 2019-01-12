@@ -82,7 +82,7 @@ bool check_suitability(const TiffImageLayout& layout, MessageLog& message_log)
   // Reading of 3D data is unsupported.
   if (layout.depth != 1)
   {
-    message_log.add_message("TIFF reader: 3D data (depth != 1) is unsupported.", MessageType::Error);
+    message_log.add("TIFF reader: 3D data (depth != 1) is unsupported.", MessageType::Error);
     return false;
   }
 
@@ -90,19 +90,21 @@ bool check_suitability(const TiffImageLayout& layout, MessageLog& message_log)
 
   if (layout.photometric == TIFFPhotometricTag::YCbCr && !(layout.samples_per_pixel == 3 && layout.bits_per_sample == 8))
   {
-    message_log.add_message("TIFF reader: YCbCr data layout is unsupported..", MessageType::Error);
+    message_log.add("TIFF reader: YCbCr data layout is unsupported..", MessageType::Error);
     return false;
   }
 
   if (layout.photometric == TIFFPhotometricTag::Palette)
   {
-    message_log.add_message("TIFF reader: Palette images unsupported", MessageType::Error);
+    message_log.add("TIFF reader: Palette images unsupported", MessageType::Error);
     return false;
   }
 
   if (layout.bits_per_sample != 1 && layout.bits_per_sample != 4 && layout.bits_per_sample != 8 && layout.bits_per_sample != 16)
   {
-    message_log.add_message("TIFF reader: Bit depth " + std::to_string(layout.bits_per_sample) + " unsupported (bits per sample have to be: 1, 4, 8 or 16).", MessageType::Error);
+    message_log.add(
+        "TIFF reader: Bit depth " + std::to_string(layout.bits_per_sample) +
+        " unsupported (bits per sample have to be: 1, 4, 8 or 16).", MessageType::Error);
     return false;
   }
 
@@ -111,7 +113,9 @@ bool check_suitability(const TiffImageLayout& layout, MessageLog& message_log)
   if (pixel_format != sln::PixelFormat::Y && pixel_format != sln::PixelFormat::RGB
       && pixel_format != sln::PixelFormat::RGBA && pixel_format != sln::PixelFormat::YCbCr)
   {
-    message_log.add_message("TIFF reader: Photometric tag '" + impl::tiff::photometric_to_string(layout.photometric) + "' unsupported (has to be one of: grayscale, RGB(A), YCbCr).", MessageType::Error);
+    message_log.add(
+        "TIFF reader: Photometric tag '" + impl::tiff::photometric_to_string(layout.photometric) +
+        "' unsupported (has to be one of: grayscale, RGB(A), YCbCr).", MessageType::Error);
     return false;
   }
 
@@ -202,19 +206,6 @@ int TIFFReadObject<SourceType>::set_directory(std::uint16_t index)
   return TIFFSetDirectory(impl_->tif, index);
 }
 
-//template <typename SourceType>
-//bool TIFFReadObject<SourceType>::close()
-//{
-//  if (impl_->tif != nullptr)
-//  {
-//    TIFFClose(impl_->tif);
-//    impl_->tif = nullptr;
-//    return true;
-//  }
-//
-//  return false;
-//}
-
 // Explicit instantiations:
 template class TIFFReadObject<FileReader>;
 template class TIFFReadObject<MemoryReader>;
@@ -223,23 +214,24 @@ template class TIFFReadObject<MemoryReader>;
 namespace impl {
 
 template <typename SourceType, typename DynImageOrView>
-void tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj, MessageLog& message_log, DynImageOrView& dyn_img_or_view)
+bool tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj,
+                                 MessageLog& message_log,
+                                 DynImageOrView& dyn_img_or_view)
 {
   auto tif = tiff_obj.impl_->tif;
 
   // Obtain several structures containing information about the image.
   auto layout = get_tiff_layout(tif);
-//  auto t = get_tiff_color_conversion_structures(tif);
   const auto& cs = get_tiff_color_conversion_structures(tif);
 
   // Check if we can (likely) read the image
   bool suitable = check_suitability(layout, message_log);
   if (!suitable)
   {
-    return;
+    return false;
   }
 
-//  message_log.add_message(str(oss() << layout), MessageType::Message);
+//  message_log.add(str(oss() << layout), MessageType::Message);
 
   if (layout.photometric == TIFFPhotometricTag::YCbCr)
   {
@@ -252,7 +244,7 @@ void tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj, MessageLo
     }
   }
 
-  [[maybe_unused]] const bool read = [&, tif]() {
+  const bool read_successfully = [&, tif]() {
     if (TIFFIsTiled(tif) == 0)
     {
       return impl::read_data_strips(tif, layout, cs.ycbcr_info, cs.ycbcr_converter, cs.lab_converter, dyn_img_or_view, message_log);
@@ -262,14 +254,16 @@ void tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj, MessageLo
       return impl::read_data_tiles(tif, layout, cs.ycbcr_info, cs.ycbcr_converter, cs.lab_converter, dyn_img_or_view, message_log);
     }
   }();
+
+  return read_successfully;
 }
 
 // Explicit instantiations:
-template void tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, DynImage&);
-template void tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, MutableDynImageView&);
+template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, DynImage&);
+template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, MutableDynImageView&);
 
-template void tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, DynImage&);
-template void tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, MutableDynImageView&);
+template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, DynImage&);
+template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, MutableDynImageView&);
 
 }  // namespace impl
 

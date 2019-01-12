@@ -107,7 +107,7 @@ bool write_tiff(const DynImageOrView& dyn_img_or_view,
 
   if (!obj->open(std::forward<SinkType>(sink)))
   {
-    local_message_log.add_message("TIFF writer: ERROR: Data stream could not be opened.", MessageType::Error);
+    local_message_log.add("TIFF writer: ERROR: Data stream could not be opened.", MessageType::Error);
     impl::tiff_assign_message_log(local_message_log, message_log);
     return false;
   }

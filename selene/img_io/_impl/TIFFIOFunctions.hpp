@@ -20,22 +20,6 @@ namespace sln {
 namespace impl {
 namespace tiff {
 
-// We need to provide the following functions to TIFFClientOpen:
-//
-// typedef tmsize_t (*TIFFReadWriteProc)(thandle_t, void*, tmsize_t);
-// typedef toff_t (*TIFFSeekProc)(thandle_t, toff_t, int);
-// typedef int (*TIFFCloseProc)(thandle_t);
-// typedef toff_t (*TIFFSizeProc)(thandle _t);
-// typedef int (*TIFFMapFileProc)(thandle_t, void** base, toff_t* size);
-// typedef void (*TIFFUnmapFileProc)(thandle_t, void* base, toff_t size);
-//
-// extern TIFF* TIFFClientOpen(const char* filename, const char* mode,
-//                            thandle_t clientdata,
-//                            TIFFReadWriteProc readproc, TIFFReadWriteProc writeproc,
-//                            TIFFSeekProc seekproc, TIFFCloseProc closeproc,
-//                            TIFFSizeProc sizeproc,
-//                            TIFFMapFileProc mapproc, TIFFUnmapFileProc unmapproc);
-
 template <typename Source> struct SourceStruct
 {
   Source* source{nullptr};
@@ -44,9 +28,6 @@ template <typename Source> struct SourceStruct
   SourceStruct() = default;
 
   explicit SourceStruct(Source* source_) : source(source_), start_pos(source->position())
-  { }
-
-  SourceStruct(Source* source_, std::ptrdiff_t start_pos_) : source(source_), start_pos(start_pos_)
   { }
 };
 
@@ -58,9 +39,6 @@ template <typename Sink> struct SinkStruct
   SinkStruct() = default;
 
   explicit SinkStruct(Sink* sink_) : sink(sink_), start_pos(sink->position())
-  { }
-
-  SinkStruct(Sink* sink_, std::ptrdiff_t start_pos_) : sink(sink_), start_pos(start_pos_)
   { }
 };
 

@@ -14,6 +14,7 @@ target_sources(selene_base PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Kernel.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MemoryBlock.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Promote.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Round.hpp

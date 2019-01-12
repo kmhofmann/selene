@@ -25,17 +25,6 @@ namespace impl {
 
 namespace {
 
-//std::uint32_t reverse_bytes(std::uint32_t x)
-//{
-//  std::uint32_t out = 0, i;
-//  for (i = 0; i < 4; ++i)
-//  {
-//    const std::uint32_t byte = (x >> 8 * i) & 0xff;
-//    out |= byte << (24 - 8 * i);
-//  }
-//  return out;
-//}
-
 std::uint8_t get_r(std::uint32_t x) // ABGR
 {
   return static_cast<std::uint8_t>(x & 0x000000ff);
@@ -75,7 +64,7 @@ bool read_data_high_level(TIFF* tif,
 
   if (res == 0)
   {
-    message_log.add_message("ERROR: could not read using high-level interface (TIFFReadRGBAImage).", MessageType::Error);
+    message_log.add("Could not read using high-level interface (TIFFReadRGBAImage).", MessageType::Error);
     return false;
   }
 
@@ -93,8 +82,6 @@ bool read_data_high_level(TIFF* tif,
   const auto dyn_img_semantics = UntypedImageSemantics{PixelFormat::RGBA,
                                                        impl::tiff::sample_format_to_sample_format(src.sample_format)};
   dyn_img.reallocate(dyn_img_layout, sln::ImageRowAlignment{0}, dyn_img_semantics);
-
-  //  std::memcpy(dyn_img.byte_ptr(), raster, raster_len);
 
   // convert each pixel from ABGR to RGBA
   auto dyn_ptr = dyn_img.byte_ptr();

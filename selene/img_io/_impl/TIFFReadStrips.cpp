@@ -48,13 +48,17 @@ bool read_data_strips_interleaved(TIFF* tif,
     {
       if (nr_bytes_read >= 0 && nr_bytes_read != static_cast<tmsize_t>(buf.size()))
       {
-        message_log.add_message("WARNING: strip " + std::to_string(strip_index) + ": nr_bytes_read (" + std::to_string(nr_bytes_read) + ") != buf.size() (" + std::to_string(buf.size()) + ")", MessageType::Warning);
+        message_log.add(
+            "Strip " + std::to_string(strip_index) + ": nr_bytes_read (" + std::to_string(nr_bytes_read) +
+            ") != buf.size() (" + std::to_string(buf.size()) + ")", MessageType::Warning);
       }
     }
 
     if (nr_bytes_read < 0)
     {
-      message_log.add_message("ERROR: strip " + std::to_string(strip_index) + ": nr_bytes_read == " + std::to_string(nr_bytes_read), MessageType::Error);
+      message_log.add(
+          "Strip " + std::to_string(strip_index) + ": nr_bytes_read == " + std::to_string(nr_bytes_read),
+          MessageType::Error);
       return false;
     }
 
@@ -72,7 +76,9 @@ bool read_data_strips_interleaved(TIFF* tif,
 
     if (nr_bytes_read != expected_nr_bytes && strip_index != strip_layout.nr_strips - 1)
     {
-      message_log.add_message("WARNING: nr_bytes_read (" + std::to_string(nr_bytes_read) + ") != expected_nr_bytes (" + std::to_string(expected_nr_bytes) + ")", MessageType::Warning);
+      message_log.add(
+          "nr_bytes_read (" + std::to_string(nr_bytes_read) + ") != expected_nr_bytes (" +
+          std::to_string(expected_nr_bytes) + ")", MessageType::Warning);
     }
 
     const auto rows_in_this_strip = static_cast<uint32>(strip_layout.rows_per_strip * nr_bytes_read / expected_nr_bytes);
@@ -128,8 +134,10 @@ bool read_data_strips_interleaved(TIFF* tif,
 
     if (max_bytes_to_write < static_cast<std::size_t>(nr_bytes_read))
     {
-      message_log.add_message("WARNING: WRITING FEWER BYTES THAN WE SHOULD... (max_bytes_to_write = "
-                                  + std::to_string(max_bytes_to_write) + ", nr_bytes_read = " + std::to_string(nr_bytes_read) + ")\n", MessageType::Warning);
+      message_log.add(
+          "Writing fewer bytes than we should (max_bytes_to_write = "
+          + std::to_string(max_bytes_to_write) + ", nr_bytes_read = " + std::to_string(nr_bytes_read) + ")\n",
+          MessageType::Warning);
     }
 
     // Write to output image row-wise (since it might not be packed)
@@ -166,12 +174,12 @@ bool read_data_strips_planar(TIFF* tif,
 {
   if (src.is_format_ycbcr())
   {
-    message_log.add_message("ERROR: Case STRIPS / PLANAR / YCBCR not implemented.", MessageType::Error);
+    message_log.add("Case STRIPS / PLANAR / YCBCR not implemented.", MessageType::Error);
     return false;
   }
   else if (src.is_format_lab())
   {
-    message_log.add_message("ERROR: Case STRIPS / PLANAR / LAB not implemented.", MessageType::Error);
+    message_log.add("Case STRIPS / PLANAR / LAB not implemented.", MessageType::Error);
     return false;
   }
 
@@ -191,7 +199,8 @@ bool read_data_strips_planar(TIFF* tif,
 
     if (nr_bytes_read < 0)
     {
-      message_log.add_message("ERROR: nr_bytes_read == " + std::to_string(nr_bytes_read), MessageType::Error);
+      message_log.add("Strip " + std::to_string(strip_index) + ": nr_bytes_read == " + std::to_string(nr_bytes_read),
+                      MessageType::Error);
       return false;
     }
 
@@ -200,7 +209,10 @@ bool read_data_strips_planar(TIFF* tif,
 
     if (nr_bytes_read != expected_nr_bytes && plane_strip_index != nr_planes_per_sample - 1)
     {
-      message_log.add_message("WARNING: nr_bytes_read (" + std::to_string(nr_bytes_read) + ") != expected_nr_bytes (" + std::to_string(expected_nr_bytes) + ")", MessageType::Warning);
+      message_log.add(
+          "Strip " + std::to_string(strip_index)
+          + "nr_bytes_read (" + std::to_string(nr_bytes_read) + ") != expected_nr_bytes ("
+          + std::to_string(expected_nr_bytes) + ")", MessageType::Warning);
     }
 
     std::uint8_t* const buf_begin = buf.data();
@@ -247,7 +259,7 @@ bool read_data_strips(TIFF* tif,
   const auto nr_rows_per_strip = std::min(src.height, impl::tiff::get_field<uint32>(tif, TIFFTAG_ROWSPERSTRIP));
   const sln::impl::tiff::ImageLayoutStrips strip_layout(TIFFNumberOfStrips(tif), TIFFStripSize(tif), nr_rows_per_strip);
 
-//  message_log.add_message(str(oss() << strip_layout), MessageType::Message);
+//  message_log.add(str(oss() << strip_layout), MessageType::Message);
 
   if (src.planar_config == TIFFPlanarConfig::Separate)
   {
@@ -285,7 +297,7 @@ bool read_data_strips(TIFF* tif,
                                     to_signed(src.samples_per_pixel), to_signed(nr_bytes_per_channel_out),
                                     impl::tiff::photometric_to_pixel_format(src.photometric, src.samples_per_pixel),
                                     impl::tiff::sample_format_to_sample_format(src.sample_format));
-//  message_log.add_message(str(oss() << out), MessageType::Message);
+//  message_log.add(str(oss() << out), MessageType::Message);
 
   const auto pixel_format = [&](){
     if (src.is_format_ycbcr() || src.is_format_lab())

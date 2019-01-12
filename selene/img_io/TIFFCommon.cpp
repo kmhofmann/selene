@@ -41,11 +41,11 @@ namespace {
     std::string thread_id_str = oss.str();
 
     char buf[4096];  // Hoping that this is enough...
-    int nr_chars_written = sprintf(buf, "LIBTIFF_WARNING: [tid=%s] [%s] ", thread_id_str.c_str(), module);
+    int nr_chars_written = sprintf(buf, "LIBTIFF: [tid=%s] [%s] ", thread_id_str.c_str(), module);
     vsprintf(buf + nr_chars_written, fmt, args);
 
     std::lock_guard<std::mutex> lock(tiff_message_log_mutex);
-    tiff_message_log.add_message(buf, MessageType::Warning);
+    tiff_message_log.add(buf, MessageType::Warning);
   }
 
   void error_handler(const char *module, const char *fmt, va_list args)
@@ -56,11 +56,11 @@ namespace {
     std::string thread_id_str = oss.str();
 
     char buf[4096];  // Hoping that this is enough...
-    int nr_chars_written = sprintf(buf, "LIBTIFF_ERROR: [tid=%s] [%s] ", thread_id_str.c_str(), module);
+    int nr_chars_written = sprintf(buf, "LIBTIFF: [tid=%s] [%s] ", thread_id_str.c_str(), module);
     vsprintf(buf + nr_chars_written, fmt, args);
 
     std::lock_guard<std::mutex> lock(tiff_message_log_mutex);
-    tiff_message_log.add_message(buf, MessageType::Warning);
+    tiff_message_log.add(buf, MessageType::Warning);
   }
 
   void set_handlers_once()
@@ -100,7 +100,7 @@ void tiff_assign_message_log(const MessageLog& message_log, MessageLog* output_m
 
   for (const auto& message : message_log.messages())
   {
-    output_message_log->add_message(message);
+    output_message_log->add(message);
   }
 }
 

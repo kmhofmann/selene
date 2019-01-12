@@ -77,13 +77,17 @@ bool JPEGCompressionObject::set_image_info(
 
   if (nr_bytes_per_channel != 1)
   {
-    impl_->error_manager.message_log.add_message("Cannot create JPEG image where bit depth != 8 bits/channel", MessageType::Error);
+    impl_->error_manager.message_log.add(
+        "Cannot create JPEG image where bit depth != 8 bits/channel",
+        MessageType::Error);
     return false;
   }
 
   if (in_color_space == JPEGColorSpace::Unknown)
   {
-    impl_->error_manager.message_log.add_message("Cannot determine JPEG color space from pixel format of image data", MessageType::Error);
+    impl_->error_manager.message_log.add(
+        "Cannot determine JPEG color space from pixel format of image data",
+        MessageType::Error);
     return false;
   }
 

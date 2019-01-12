@@ -17,7 +17,7 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
 
   for (const auto& msg : messages_src.messages())
   {
-    messages_dst->add_message(msg);
+    messages_dst->add(msg);
   }
 }
 

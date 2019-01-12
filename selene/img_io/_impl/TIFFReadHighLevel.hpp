@@ -7,14 +7,14 @@
 
 #if defined(SELENE_WITH_LIBTIFF)
 
-#include <tiff.h>
-#include <tiffio.h>
-
 #include <selene/base/MessageLog.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
 
 #include <selene/img_io/TIFFCommon.hpp>
+
+#include <tiff.h>
+#include <tiffio.h>
 
 namespace sln {
 namespace impl {

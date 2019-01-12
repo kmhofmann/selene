@@ -150,7 +150,7 @@ struct YCbCrInfo
 
     if (rows_per_strip % subsampling_vert != 0)
     {
-      message_log.add_message("WARNING: Invalid rows_per_strip for YCbCr y-subsampling parameter", MessageType::Warning);
+      message_log.add("WARNING: Invalid rows_per_strip for YCbCr y-subsampling parameter", MessageType::Warning);
       return false;
     }
 
@@ -169,7 +169,7 @@ struct YCbCrInfo
 
     if (tile_width % subsampling_horz != 0 || tile_height % subsampling_vert != 0)
     {
-      message_log.add_message("WARNING: Invalid tile_width/tile_height for YCbCr subsampling parameters", MessageType::Warning);
+      message_log.add("WARNING: Invalid tile_width/tile_height for YCbCr subsampling parameters", MessageType::Warning);
       return false;
     }
 
@@ -182,19 +182,19 @@ private:
     // See also https://www.awaresystems.be/imaging/tiff/tifftags/ycbcrsubsampling.html
     if (subsampling_horz != 1 && subsampling_horz != 2 && subsampling_horz != 4)
     {
-      message_log.add_message("WARNING: Invalid YCbCr subsampling parameters", MessageType::Warning);
+      message_log.add("WARNING: Invalid YCbCr subsampling parameters", MessageType::Warning);
       return false;
     }
 
     if (subsampling_vert != 1 && subsampling_vert != 2 && subsampling_vert != 4)
     {
-      message_log.add_message("WARNING: Invalid YCbCr subsampling parameters", MessageType::Warning);
+      message_log.add("WARNING: Invalid YCbCr subsampling parameters", MessageType::Warning);
       return false;
     }
 
     if (subsampling_vert > subsampling_horz)
     {
-      message_log.add_message("WARNING: Invalid YCbCr subsampling parameters", MessageType::Warning);
+      message_log.add("WARNING: Invalid YCbCr subsampling parameters", MessageType::Warning);
       return false;
     }
 
@@ -205,7 +205,7 @@ private:
   {
     if (width % subsampling_horz != 0 || height % subsampling_vert != 0)
     {
-      message_log.add_message("WARNING: Invalid width/height for YCbCr subsampling parameters", MessageType::Warning);
+      message_log.add("WARNING: Invalid width/height for YCbCr subsampling parameters", MessageType::Warning);
       return false;
     }
 

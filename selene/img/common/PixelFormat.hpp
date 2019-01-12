@@ -8,7 +8,7 @@
 /// @file
 
 #include <cstdlib>
-#include <ostream>
+#include <iosfwd>
 
 namespace sln {
 

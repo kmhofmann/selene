@@ -4,6 +4,8 @@
 
 #include <selene/img/common/PixelFormat.hpp>
 
+#include <ostream>
+
 namespace sln {
 
 /** \brief Converts a pixel format value into a character stream representation, e.g. for printing.

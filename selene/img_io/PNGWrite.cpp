@@ -113,7 +113,9 @@ bool PNGCompressionObject::set_image_info(
 
   if (color_type == PNG_COLOR_TYPE_INVALID)
   {
-    impl_->error_manager.message_log.add_message("Cannot determine PNG color type from pixel format of image data", MessageType::Error);
+    impl_->error_manager.message_log.add(
+        "Cannot determine PNG color type from pixel format of image data",
+        MessageType::Error);
     return false;
   }
 
@@ -122,7 +124,9 @@ bool PNGCompressionObject::set_image_info(
       || (color_type == PNG_COLOR_TYPE_RGB && nr_channels != 3)
       || (color_type == PNG_COLOR_TYPE_RGB_ALPHA && nr_channels != 4))
   {
-    impl_->error_manager.message_log.add_message("Mismatch between determined PNG color type and nr of channels", MessageType::Error);
+    impl_->error_manager.message_log.add(
+        "Mismatch between determined PNG color type and nr of channels",
+        MessageType::Error);
     return false;
   }
 

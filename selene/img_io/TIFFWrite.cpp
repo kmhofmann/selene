@@ -68,25 +68,33 @@ bool check_tiff_tile_size(const ConstantDynImageView& view, TIFFWriteOptions& op
 {
   if (opts.tile_width % 16 != 0)
   {
-    message_log.add_message("WARNING: Adjusting tile width (" + std::to_string(opts.tile_width) + ") to be divisible by 16 (i.e. set to 16).", MessageType::Warning);
+    message_log.add(
+        "Adjusting tile width (" + std::to_string(opts.tile_width) +
+        ") to be divisible by 16 (i.e. set to 16).", MessageType::Warning);
     opts.tile_width = 16;
   }
 
   if (opts.tile_height % 16 != 0)
   {
-    message_log.add_message("WARNING: Adjusting tile height (" + std::to_string(opts.tile_height) + ") to be divisible by 16 (i.e. set to 16).", MessageType::Warning);
+    message_log.add(
+        "Adjusting tile height (" + std::to_string(opts.tile_height) +
+        ") to be divisible by 16 (i.e. set to 16).", MessageType::Warning);
     opts.tile_height = 16;
   }
 
   if (to_unsigned(view.width()) % opts.tile_width != 0)
   {
-    message_log.add_message("ERROR: Image width (" + std::to_string(view.width()) + ") needs to be divisible by tile width (" + std::to_string(opts.tile_width) + ")", MessageType::Error);
+    message_log.add(
+        "Image width (" + std::to_string(view.width()) + ") needs to be divisible by tile width (" +
+        std::to_string(opts.tile_width) + ")", MessageType::Error);
     return false;
   }
 
   if (to_unsigned(view.height()) % opts.tile_height != 0)
   {
-    message_log.add_message("ERROR: Image height (" + std::to_string(view.height()) + ") needs to be divisible by tile height (" + std::to_string(opts.tile_height) + ")", MessageType::Error);
+    message_log.add(
+        "Image height (" + std::to_string(view.height()) + ") needs to be divisible by tile height (" +
+        std::to_string(opts.tile_height) + ")", MessageType::Error);
     return false;
   }
 
@@ -290,7 +298,7 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
 
       if (tile_written_size == -1)
       {
-        message_log.add_message("ERROR: tile " + std::to_string(tile_idx) + " could not be written.", MessageType::Error);
+        message_log.add("Tile " + std::to_string(tile_idx) + " could not be written.", MessageType::Error);
         return false;
       }
 
