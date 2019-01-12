@@ -17,7 +17,6 @@
 
 #include <algorithm>
 #include <limits>
-#include <iostream>
 #include <sstream>
 #include <vector>
 
@@ -88,6 +87,10 @@ bool read_data_tiles_interleaved(TIFF* tif,
         }
       }
 
+      const auto nr_pixels_read = nr_bytes_read / (src.samples_per_pixel * (src.bits_per_sample >> 3));
+      const auto expected_nr_pixels_read = tile_layout.width * tile_layout.height;
+      SELENE_ASSERT(nr_pixels_read == expected_nr_pixels_read);
+
       std::uint8_t* data_begin = buf.data();
       std::uint8_t* data_end = buf.data() + nr_bytes_read;
 
@@ -102,17 +105,23 @@ bool read_data_tiles_interleaved(TIFF* tif,
       const auto this_tile_width = std::min(tile_layout.width, src.width - static_cast<std::uint32_t>(src_x));
       const auto this_tile_height = std::min(tile_layout.height, src.height - static_cast<std::uint32_t>(src_y));
 
-      std::size_t i = 0;
-      for (PixelIndex dst_y = src_y; dst_y < static_cast<value_type>(static_cast<std::uint32_t>(src_y) + this_tile_height); ++dst_y, ++i)
-      {
-        const std::size_t nr_bytes_to_write = this_tile_width * to_unsigned(out.nr_channels) * to_unsigned(out.nr_bytes_per_channel);
-        const std::size_t nr_bytes_offset = tile_layout.width * to_unsigned(out.nr_channels) * to_unsigned(out.nr_bytes_per_channel);
-        const auto img_ptr_y_start = dyn_img_view.byte_ptr(dst_x, dst_y);
-        const auto buf_ptr_start = buf.data() + i * nr_bytes_offset;
+      const auto nr_channels = to_unsigned(out.nr_channels);
+      const auto nr_bytes_per_channel = to_unsigned(out.nr_bytes_per_channel);
 
-        auto img_ptr_end = dyn_img_view.byte_ptr() + dyn_img_view.total_bytes();
+      const auto max_y = static_cast<value_type>(static_cast<std::uint32_t>(src_y) + this_tile_height);
+
+      for (PixelIndex dst_y = src_y; dst_y < max_y; ++dst_y)  // For each target row...
+      {
+        const auto img_ptr_y_start = dyn_img_view.byte_ptr(dst_x, dst_y);
+        const auto img_ptr_y_end = img_ptr_y_start + dyn_img_view.row_bytes();
+
+        const std::size_t tile_row_nr_bytes = tile_layout.width * nr_channels * nr_bytes_per_channel;
+        const auto tile_row_index = static_cast<std::size_t>(dst_y - src_y);
+        const auto buf_ptr_start = buf.data() + tile_row_index * tile_row_nr_bytes;
+
+        const std::size_t nr_bytes_to_write = this_tile_width * nr_channels * nr_bytes_per_channel;
         const std::size_t max_bytes_to_write = std::min(static_cast<std::size_t>(nr_bytes_to_write),
-                                                        static_cast<std::size_t>(img_ptr_end - img_ptr_y_start));
+                                                        static_cast<std::size_t>(img_ptr_y_end - img_ptr_y_start));
 
         if (max_bytes_to_write < nr_bytes_to_write)
         {
@@ -133,14 +142,14 @@ bool read_data_tiles_planar(TIFF* tif,
                             const sln::impl::tiff::YCbCrInfo& ycbcr_info,
                             const sln::impl::tiff::YCbCrConverter& /*ycbcr_converter*/,
                             const sln::impl::tiff::LabConverter& /*lab_converter*/,
-                            const sln::impl::tiff::OutputLayout& /*out*/,
+                            const sln::impl::tiff::OutputLayout& out,
                             sln::MutableDynImageView& dyn_img_view,
                             sln::MessageLog& message_log)
 {
   using value_type = PixelIndex::value_type;
 
-  message_log.add("Case TILES / PLANAR not implemented.", MessageType::Error);
-  return false;
+//  message_log.add("Case TILES / PLANAR not implemented.", MessageType::Error);
+//  return false;
 
   if (src.is_format_ycbcr())
   {
@@ -157,11 +166,17 @@ bool read_data_tiles_planar(TIFF* tif,
     return false;
   }
 
+  const auto nr_channels = to_unsigned(out.nr_channels);
+  const auto nr_bytes_per_channel = to_unsigned(out.nr_bytes_per_channel);
+
+  SELENE_ASSERT(nr_channels == static_cast<std::int16_t>(src.samples_per_pixel));
+  SELENE_ASSERT(nr_bytes_per_channel == static_cast<std::int16_t>(src.bits_per_sample >> 3));
+
   for (uint16 sample_index = 0; sample_index < src.samples_per_pixel; ++sample_index)
   {
-    for (auto src_y = 0_px; src_y < static_cast<value_type>(src.height); src_y += tile_layout.height)
+    for (auto src_y = 0_idx; src_y < static_cast<value_type>(src.height); src_y += tile_layout.height)
     {
-      for (auto src_x = 0_px; src_x < static_cast<value_type>(src.width); src_x += tile_layout.width)
+      for (auto src_x = 0_idx; src_x < static_cast<value_type>(src.width); src_x += tile_layout.width)
       {
         std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
         const auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<uint32>(src_x), static_cast<uint32>(src_y), 0, sample_index);
@@ -182,10 +197,36 @@ bool read_data_tiles_planar(TIFF* tif,
             px = static_cast<std::uint8_t>(std::numeric_limits<std::uint8_t>::max() - px); });
         }
 
-        // TODO: Copy buffer into target image
-        // ..
-        // ...
-        return false;
+        // Copy buffer into target image
+
+        const auto dst_x = src_x;
+        const auto this_tile_width = std::min(tile_layout.width, src.width - static_cast<std::uint32_t>(src_x));
+        const auto this_tile_height = std::min(tile_layout.height, src.height - static_cast<std::uint32_t>(src_y));
+
+        const auto max_y = static_cast<value_type>(static_cast<std::uint32_t>(src_y) + this_tile_height);
+
+        for (PixelIndex dst_y = src_y; dst_y < max_y; ++dst_y)  // For each target row...
+        {
+          const auto img_ptr_y_start = dyn_img_view.byte_ptr(dst_x, dst_y);
+          const auto img_ptr_y_end = img_ptr_y_start + dyn_img_view.row_bytes();
+
+          const std::size_t tile_row_nr_bytes = tile_layout.width * nr_bytes_per_channel;
+          const auto tile_row_index = static_cast<std::size_t>(dst_y - src_y);
+          const auto buf_ptr_start = buf.data() + tile_row_index * tile_row_nr_bytes;
+
+          const std::size_t nr_bytes_to_write = this_tile_width * nr_channels * nr_bytes_per_channel;
+          const std::size_t max_bytes_to_write = std::min(static_cast<std::size_t>(nr_bytes_to_write),
+                                                          static_cast<std::size_t>(img_ptr_y_end - img_ptr_y_start));
+
+          if (max_bytes_to_write < nr_bytes_to_write)
+          {
+            message_log.add("Writing fewer bytes than we should...", MessageType::Warning);
+          }
+
+          const auto nr_src_pixels = max_bytes_to_write / (nr_channels * nr_bytes_per_channel);
+          impl::tiff::copy_samples(buf_ptr_start, nr_src_pixels, std::size_t{sample_index},
+                                   to_signed(nr_bytes_per_channel), to_signed(nr_channels), img_ptr_y_start);
+        }
       }
     }
   }

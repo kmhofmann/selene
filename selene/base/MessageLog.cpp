@@ -38,6 +38,7 @@ std::string message_type_to_string(MessageType type)
     case MessageType::Message:  return "MESSAGE";
     case MessageType::Warning:  return "WARNING";
     case MessageType::Error:    return "ERROR";
+    default: return "";
   }
 }
 
