@@ -145,90 +145,93 @@ jobs:
         .\test\Release\selene_tests.exe -d yes
       displayName: 'Run tests, release'
 
-  - job: MacOS_brew
-    pool:
-      vmImage: 'macOS-10.13'
-    steps:
-    - script: |
-        brew update
-        brew install ninja libjpeg-turbo libpng libtiff boost
-        # Remove conflicting headers (e.g. png.h)
-        sudo rm -rf /Library/Frameworks/Mono.framework/Headers
-      displayName: Install brew dependencies
-    - script: |
-        mkdir build-debug && cd build-debug
-        cmake -G Ninja \
-              -DCMAKE_PREFIX_PATH="/usr/local/opt/jpeg-turbo;/usr/local" \
-              -DCMAKE_BUILD_TYPE=Debug \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
-      displayName: 'Run CMake, debug'
-    - script: |
-        cd build-debug && ninja
-      displayName: 'Run ninja, debug'
-    - script: |
-        cd build-debug && ./test/selene_tests -d yes
-      displayName: 'Run tests, debug'
-    - script: |
-        mkdir build-release && cd build-release
-        cmake -G Ninja \
-              -DCMAKE_PREFIX_PATH="/usr/local/opt/jpeg-turbo;/usr/local" \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
-      displayName: 'Run CMake, release'
-    - script: |
-        cd build-release && ninja
-      displayName: 'Run ninja, release'
-    - script: |
-        cd build-release && ./test/selene_tests -d yes
-      displayName: 'Run tests, release'
+# CI tests on macOS are disabled until Azure Pipelines upgrades the macOS environment to provide AppleClang 10
+# (or later) instead of AppleClang 9.1. AppleClang 9.1 does not support <variant>, AppleClang 10 does.
 
-  - job: MacOS_vcpkg
-    pool:
-      vmImage: 'macOS-10.13'
-    steps:
-    - script: |
-        brew update
-        brew install gcc ninja gnu-sed
-        # Remove conflicting headers (e.g. png.h)
-        sudo rm -rf /Library/Frameworks/Mono.framework/Headers
-      displayName: 'Install brew dependencies'
-    - script: |
-        git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
-        # Make sure Boost is compiled in C++17 mode;
-        # see e.g. https://github.com/Microsoft/vcpkg/issues/4476#issuecomment-430175834
-        export BOOST_MODULAR_CMAKE="../vcpkg/ports/boost-modular-build-helper/CMakeLists.txt"
-        export LN=$(grep -n "WORKING_DIRECTORY" ${BOOST_MODULAR_CMAKE} | awk -F ":" '{print $1}')
-        gsed -i "${LN}i\        cxxstd=17" ${BOOST_MODULAR_CMAKE}
-        ../vcpkg/bootstrap-vcpkg.sh
-      displayName: 'Bootstrap vcpkg'
-    - script: |
-        ../vcpkg/vcpkg install libjpeg-turbo libpng tiff boost-filesystem
-      displayName: 'Install vcpkg dependencies'
-    - script: |
-        pwd
-        mkdir build-debug && cd build-debug
-        cmake -G Ninja \
-              -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake \
-              -DCMAKE_BUILD_TYPE=Debug \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
-      displayName: 'Run CMake, debug'
-    - script: |
-        cd build-debug && ninja
-      displayName: 'Run ninja, debug'
-    - script: |
-        cd build-debug && ./test/selene_tests -d yes
-      displayName: 'Run tests, debug'
-    - script: |
-        pwd
-        mkdir build-release && cd build-release
-        cmake -G Ninja \
-              -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
-      displayName: 'Run CMake, release'
-    - script: |
-        cd build-release && ninja
-      displayName: 'Run ninja, release'
-    - script: |
-        cd build-release && ./test/selene_tests -d yes
-      displayName: 'Run tests, release'
+#  - job: MacOS_brew
+#    pool:
+#      vmImage: 'macOS-10.13'
+#    steps:
+#    - script: |
+#        brew update
+#        brew install ninja libjpeg-turbo libpng libtiff boost
+#        # Remove conflicting headers (e.g. png.h)
+#        sudo rm -rf /Library/Frameworks/Mono.framework/Headers
+#      displayName: Install brew dependencies
+#    - script: |
+#        mkdir build-debug && cd build-debug
+#        cmake -G Ninja \
+#              -DCMAKE_PREFIX_PATH="/usr/local/opt/jpeg-turbo;/usr/local" \
+#              -DCMAKE_BUILD_TYPE=Debug \
+#              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+#      displayName: 'Run CMake, debug'
+#    - script: |
+#        cd build-debug && ninja
+#      displayName: 'Run ninja, debug'
+#    - script: |
+#        cd build-debug && ./test/selene_tests -d yes
+#      displayName: 'Run tests, debug'
+#    - script: |
+#        mkdir build-release && cd build-release
+#        cmake -G Ninja \
+#              -DCMAKE_PREFIX_PATH="/usr/local/opt/jpeg-turbo;/usr/local" \
+#              -DCMAKE_BUILD_TYPE=Release \
+#              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+#      displayName: 'Run CMake, release'
+#    - script: |
+#        cd build-release && ninja
+#      displayName: 'Run ninja, release'
+#    - script: |
+#        cd build-release && ./test/selene_tests -d yes
+#      displayName: 'Run tests, release'
+#
+#  - job: MacOS_vcpkg
+#    pool:
+#      vmImage: 'macOS-10.13'
+#    steps:
+#    - script: |
+#        brew update
+#        brew install gcc ninja gnu-sed
+#        # Remove conflicting headers (e.g. png.h)
+#        sudo rm -rf /Library/Frameworks/Mono.framework/Headers
+#      displayName: 'Install brew dependencies'
+#    - script: |
+#        git clone https://github.com/Microsoft/vcpkg.git ../vcpkg
+#        # Make sure Boost is compiled in C++17 mode;
+#        # see e.g. https://github.com/Microsoft/vcpkg/issues/4476#issuecomment-430175834
+#        export BOOST_MODULAR_CMAKE="../vcpkg/ports/boost-modular-build-helper/CMakeLists.txt"
+#        export LN=$(grep -n "WORKING_DIRECTORY" ${BOOST_MODULAR_CMAKE} | awk -F ":" '{print $1}')
+#        gsed -i "${LN}i\        cxxstd=17" ${BOOST_MODULAR_CMAKE}
+#        ../vcpkg/bootstrap-vcpkg.sh
+#      displayName: 'Bootstrap vcpkg'
+#    - script: |
+#        ../vcpkg/vcpkg install libjpeg-turbo libpng tiff boost-filesystem
+#      displayName: 'Install vcpkg dependencies'
+#    - script: |
+#        pwd
+#        mkdir build-debug && cd build-debug
+#        cmake -G Ninja \
+#              -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake \
+#              -DCMAKE_BUILD_TYPE=Debug \
+#              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+#      displayName: 'Run CMake, debug'
+#    - script: |
+#        cd build-debug && ninja
+#      displayName: 'Run ninja, debug'
+#    - script: |
+#        cd build-debug && ./test/selene_tests -d yes
+#      displayName: 'Run tests, debug'
+#    - script: |
+#        pwd
+#        mkdir build-release && cd build-release
+#        cmake -G Ninja \
+#              -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake \
+#              -DCMAKE_BUILD_TYPE=Release \
+#              -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON ..
+#      displayName: 'Run CMake, release'
+#    - script: |
+#        cd build-release && ninja
+#      displayName: 'Run ninja, release'
+#    - script: |
+#        cd build-release && ./test/selene_tests -d yes
+#      displayName: 'Run tests, release'
