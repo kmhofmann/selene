@@ -182,16 +182,24 @@ inline void VectorWriter::rewind() noexcept
 /** \brief Performs an absolute seek operation to the specified offset.
  *
  * The function sets the internal data pointer to the specified offset.
- * Failure cases include no vector being open, or the offset being outside the vector data region.
+ * Failure cases include no vector being open, or the offset being negative.
+ *
+ * If the offset points beyond the current vector size, then the vector will be extended to accommodate the offset.
+ * The newly added elements will be `0`.
  *
  * \param offset The absolute offset in bytes.
  * \return True, if the seek operation was successful; false on failure.
  */
 inline bool VectorWriter::seek_abs(std::ptrdiff_t offset) noexcept
 {
-  if (!is_open() || offset < 0 || offset > static_cast<std::ptrdiff_t>(data_->size()))
+  if (!is_open() || offset < 0)
   {
     return false;
+  }
+
+  if (offset > static_cast<std::ptrdiff_t>(data_->size()))
+  {
+    data_->resize(static_cast<std::size_t>(offset), std::uint8_t{0});
   }
 
   pos_ = offset;
@@ -203,6 +211,9 @@ inline bool VectorWriter::seek_abs(std::ptrdiff_t offset) noexcept
  * The function moves the internal data pointer by the specified relative offset.
  * Failure cases include no vector being open, or the resulting position being outside the vector data region.
  *
+ * If the new absolute position points beyond the current vector size, then the vector will be extended to accommodate
+ * the offset. The newly added elements will be `0`.
+ *
  * \param offset The relative offset in bytes.
  * \return True, if the seek operation was successful; false on failure.
  */
@@ -210,9 +221,14 @@ inline bool VectorWriter::seek_rel(std::ptrdiff_t offset) noexcept
 {
   const auto new_pos = pos_ + offset;
 
-  if (!is_open() || new_pos < 0 || new_pos > static_cast<std::ptrdiff_t>(data_->size()))
+  if (!is_open() || new_pos < 0)
   {
     return false;
+  }
+
+  if (new_pos > static_cast<std::ptrdiff_t>(data_->size()))
+  {
+    data_->resize(static_cast<std::size_t>(new_pos), std::uint8_t{0});
   }
 
   pos_ = new_pos;
@@ -222,16 +238,25 @@ inline bool VectorWriter::seek_rel(std::ptrdiff_t offset) noexcept
 /** \brief Performs an absolute seek operation to the specified offset, relative to the end of the vector.
  *
  * The function sets the internal data pointer to the specified offset, relative to the end of the vector.
- * Failure cases include no vector being open, or the offset being outside the vector data region.
+ * Failure cases include no vector being open, or the offset being less than the negative vector data size (in which
+ * case it would point at "negative" elements of the vector).
+ *
+ * If the offset points beyond the current vector size (i.e. is greater than zero), then the vector will be extended
+ * to accommodate the offset. The newly added elements will be `0`.
  *
  * \param offset The absolute offset in bytes.
  * \return True, if the seek operation was successful; false on failure.
  */
 inline bool VectorWriter::seek_end(std::ptrdiff_t offset) noexcept
 {
-  if (!is_open() || offset > 0 || offset < -static_cast<std::ptrdiff_t>(data_->size()))
+  if (!is_open() || offset < -static_cast<std::ptrdiff_t>(data_->size()))
   {
     return false;
+  }
+
+  if (offset > 0)
+  {
+    data_->resize(data_->size() + static_cast<std::size_t>(offset), std::uint8_t{0});
   }
 
   pos_ = static_cast<std::ptrdiff_t>(data_->size()) + offset;
