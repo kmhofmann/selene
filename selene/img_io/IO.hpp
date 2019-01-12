@@ -42,14 +42,20 @@ bool write_image(const DynImage& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log = nullptr,
-                 const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options = {});
+                 const std::variant<std::monostate,
+                                    JPEGCompressionOptions,
+                                    PNGCompressionOptions,
+                                    TIFFWriteOptions>& options = {});
 
 template <ImageModifiability modifiability, typename SinkType>
 bool write_image(const DynImageView<modifiability>& dyn_img_view,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log = nullptr,
-                 const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options = {});
+                 const std::variant<std::monostate,
+                                    JPEGCompressionOptions,
+                                    PNGCompressionOptions,
+                                    TIFFWriteOptions>& options = {});
 
 // ----------
 // Implementation:
@@ -178,26 +184,38 @@ DynImage read_image(SourceType&& source,
   return dyn_img;
 }
 
-template <typename SinkType>
-bool write_image(const DynImage& dyn_img,
-                 ImageFormat format,
-                 SinkType&& sink,
-                 MessageLog* message_log,
-                 const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options)
-{
-  return write_image(dyn_img.view(), format, sink, message_log, options);
-}
-
-/** \brief Writes an image stream, given the supplied uncompressed image data.
+/** \brief Writes an image stream, given the supplied uncompressed image data (from a `DynImage`).
  *
- * @tparam modifiability The dynamic image modifiability (mutable or constant).
  * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
  * @param dyn_img The dynamic image to be written.
  * @param format Desired output image format.
  * @param sink Output sink instance.
  * @param message_log Optional pointer to the message log. If provided, warning and error messages will be output there.
- * @param jpeg_quality Compression quality for JPEG data. May take values from 1 (worst) to 100 (best). Only meaningful
- * in combination with `format` set to `ImageFormat::JPEG`, otherwise this value will be ignored.
+ * @param options Writing/compression options for the respective format. If omitted, default options will be used.
+ * @return True, if the write operation was successful; false otherwise.
+ */
+template <typename SinkType>
+bool write_image(const DynImage& dyn_img,
+                 ImageFormat format,
+                 SinkType&& sink,
+                 MessageLog* message_log,
+                 const std::variant<std::monostate,
+                                    JPEGCompressionOptions,
+                                    PNGCompressionOptions,
+                                    TIFFWriteOptions>& options)
+{
+  return write_image(dyn_img.view(), format, sink, message_log, options);
+}
+
+/** \brief Writes an image stream, given the supplied uncompressed image data (from a `DynImageView`).
+ *
+ * @tparam modifiability The dynamic image modifiability (mutable or constant).
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
+ * @param dyn_img_view The dynamic image view to be written.
+ * @param format Desired output image format.
+ * @param sink Output sink instance.
+ * @param message_log Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @param options Writing/compression options for the respective format. If omitted, default options will be used.
  * @return True, if the write operation was successful; false otherwise.
  */
 template <ImageModifiability modifiability, typename SinkType>
@@ -205,7 +223,10 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
                  ImageFormat format,
                  [[maybe_unused]] SinkType&& sink,
                  [[maybe_unused]] MessageLog* message_log,
-                 [[maybe_unused]] const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options)
+                 [[maybe_unused]] const std::variant<std::monostate,
+                                                     JPEGCompressionOptions,
+                                                     PNGCompressionOptions,
+                                                     TIFFWriteOptions>& options)
 {
   if (format == ImageFormat::JPEG)
   {
