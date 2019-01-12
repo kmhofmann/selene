@@ -17,6 +17,8 @@
 #include <selene/img_io/JPEGWrite.hpp>
 #include <selene/img_io/PNGRead.hpp>
 #include <selene/img_io/PNGWrite.hpp>
+#include <selene/img_io/TIFFRead.hpp>
+#include <selene/img_io/TIFFWrite.hpp>
 
 #include <stdexcept>
 
@@ -27,24 +29,25 @@ namespace sln {
 enum class ImageFormat
 {
   JPEG,  ///< JPEG image format.
-  PNG  ///< PNG image format.
+  PNG,   ///< PNG image format.
+  TIFF,  ///< TIFF image format.
 };
 
 template <typename SourceType>
-DynImage read_image(SourceType&& source, MessageLog* messages = nullptr);
+DynImage read_image(SourceType&& source, MessageLog* message_log = nullptr);
 
 template <typename SinkType>
 bool write_image(const DynImage& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
-                 MessageLog* messages = nullptr,
+                 MessageLog* message_log = nullptr,
                  int jpeg_quality = 95);
 
 template <ImageModifiability modifiability, typename SinkType>
 bool write_image(const DynImageView<modifiability>& dyn_img_view,
                  ImageFormat format,
                  SinkType&& sink,
-                 MessageLog* messages = nullptr,
+                 MessageLog* message_log = nullptr,
                  int jpeg_quality = 95);
 
 // ----------
@@ -52,7 +55,61 @@ bool write_image(const DynImageView<modifiability>& dyn_img_view,
 
 namespace impl {
 
-void add_messages(const MessageLog& messages_src, MessageLog* messages_dst);
+void add_messages(const MessageLog& message_log_src, MessageLog* message_log_dst);
+
+template <typename SourceType>
+[[nodiscard]] bool try_read_as_jpeg_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
+{
+  MessageLog message_log_jpeg;
+  JPEGDecompressionObject obj;
+  const auto header_info = read_jpeg_header(obj, std::forward<SourceType>(source), false, &message_log_jpeg);
+
+  if (!header_info.is_valid())
+  {
+    return false;
+  }
+
+  dyn_img = read_jpeg(obj, std::forward<SourceType>(source), JPEGDecompressionOptions(), &message_log_jpeg,
+                      &header_info);
+
+  impl::add_messages(message_log_jpeg, message_log);
+  return true;
+}
+
+template <typename SourceType>
+[[nodiscard]] bool try_read_as_png_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
+{
+  MessageLog message_log_png;
+  PNGDecompressionObject obj;
+  const auto header_info = read_png_header(obj, std::forward<SourceType>(source), false, &message_log_png);
+
+  if (!header_info.is_valid())
+  {
+    return false;
+  }
+
+  dyn_img = read_png(obj, std::forward<SourceType>(source), PNGDecompressionOptions(), &message_log_png,
+                     &header_info);
+  impl::add_messages(message_log_png, message_log);
+  return true;
+}
+
+template <typename SourceType>
+[[nodiscard]] bool try_read_as_tiff_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
+{
+  MessageLog message_log_tiff;
+  TIFFReadObject<std::remove_reference_t<SourceType>> tiff_obj;
+  const auto layouts = read_tiff_layouts(std::forward<SourceType>(source), &message_log_tiff, &tiff_obj);
+
+  if (layouts.empty())  // We assume this means it's not a TIFF image...
+  {
+    return false;
+  }
+
+  dyn_img = read_tiff(std::forward<SourceType>(source), &message_log_tiff, &tiff_obj);
+  impl::add_messages(message_log_tiff, message_log);
+  return true;
+}
 
 }  // namespace impl
 
@@ -60,70 +117,63 @@ void add_messages(const MessageLog& messages_src, MessageLog* messages_dst);
  *
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @param message_log Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @return A `DynImage` instance. Reading the image stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
 template <typename SourceType>
 DynImage read_image(SourceType&& source,
-                    [[maybe_unused]] MessageLog* messages)
+                    [[maybe_unused]] MessageLog* message_log)
 {
   bool reading_attempted = false;
   const auto source_pos = source.position();
   DynImage dyn_img;
 
   // First, try to read as JPEG image:
-
 #if defined(SELENE_WITH_LIBJPEG)
+  reading_attempted = true;
+  const bool read_as_jpeg = impl::try_read_as_jpeg_image(std::forward<SourceType>(source), dyn_img, message_log);
+
+  if (read_as_jpeg)
   {
-    JPEGDecompressionObject obj;
-    MessageLog messages_jpeg;
-    auto header_info = read_jpeg_header(obj, std::forward<SourceType>(source), false, &messages_jpeg);
-    reading_attempted = true;
-
-    if (header_info.is_valid())
-    {
-      dyn_img = read_jpeg(obj, std::forward<SourceType>(source), JPEGDecompressionOptions(), &messages_jpeg,
-                          &header_info);
-
-      impl::add_messages(messages_jpeg, messages);
-      return dyn_img;
-    }
+    return dyn_img;
   }
 #endif  // defined(SELENE_WITH_LIBJPEG)
 
-  // In case that failed, try to read as PNG image:
   SELENE_ASSERT(!dyn_img.is_valid());
   source.seek_abs(source_pos);
 
+  // In case that failed, try to read as PNG image:
 #if defined(SELENE_WITH_LIBPNG)
+  reading_attempted = true;
+  const bool read_as_png = impl::try_read_as_png_image(std::forward<SourceType>(source), dyn_img, message_log);
+
+  if (read_as_png)
   {
-    PNGDecompressionObject obj;
-    MessageLog messages_png;
-    auto header_info = read_png_header(obj, std::forward<SourceType>(source), false, &messages_png);
-    reading_attempted = true;
-
-    if (header_info.is_valid())
-    {
-      dyn_img = read_png(obj, std::forward<SourceType>(source), PNGDecompressionOptions(), &messages_png,
-                         &header_info);
-
-      impl::add_messages(messages_png, messages);
-      return dyn_img;
-    }
+    return dyn_img;
   }
 #endif  // defined(SELENE_WITH_LIBPNG)
 
-  // Image reading failed: return an ImageData instance that is invalid:
-
   SELENE_ASSERT(!dyn_img.is_valid());
   source.seek_abs(source_pos);
+
+  // In case that failed, try to read as TIFF image:
+#if defined(SELENE_WITH_LIBTIFF)
+  reading_attempted = true;
+  const bool read_as_tiff = impl::try_read_as_tiff_image(std::forward<SourceType>(source), dyn_img, message_log);
+
+  if (read_as_tiff)
+  {
+    return dyn_img;
+  }
+#endif  // defined(SELENE_WITH_LIBTIFF)
 
   if (!reading_attempted)
   {
     throw std::runtime_error("ERROR: Image reading unsupported; recompile with the respective external dependencies.");
   }
 
+  // Image reading failed: return an ImageData instance that is invalid:
   return dyn_img;
 }
 
@@ -131,10 +181,10 @@ template <typename SinkType>
 bool write_image(const DynImage& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
-                 MessageLog* messages,
+                 MessageLog* message_log,
                  int jpeg_quality)
 {
-  return write_image(dyn_img.view(), format, sink, messages, jpeg_quality);
+  return write_image(dyn_img.view(), format, sink, message_log, jpeg_quality);
 }
 
 /** \brief Writes an image stream, given the supplied uncompressed image data.
@@ -144,7 +194,7 @@ bool write_image(const DynImage& dyn_img,
  * @param dyn_img The dynamic image to be written.
  * @param format Desired output image format.
  * @param sink Output sink instance.
- * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @param message_log Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @param jpeg_quality Compression quality for JPEG data. May take values from 1 (worst) to 100 (best). Only meaningful
  * in combination with `format` set to `ImageFormat::JPEG`, otherwise this value will be ignored.
  * @return True, if the write operation was successful; false otherwise.
@@ -153,17 +203,17 @@ template <ImageModifiability modifiability, typename SinkType>
 bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_view,
                  ImageFormat format,
                  [[maybe_unused]] SinkType&& sink,
-                 [[maybe_unused]] MessageLog* messages,
+                 [[maybe_unused]] MessageLog* message_log,
                  [[maybe_unused]] int jpeg_quality)
 {
   if (format == ImageFormat::JPEG)
   {
 #if defined(SELENE_WITH_LIBJPEG)
-    MessageLog messages_jpeg;
+    MessageLog message_log_jpeg;
     bool success = write_jpeg(dyn_img_view, std::forward<SinkType>(sink), JPEGCompressionOptions(jpeg_quality),
-                              &messages_jpeg);
+                              &message_log_jpeg);
 
-    impl::add_messages(messages_jpeg, messages);
+    impl::add_messages(message_log_jpeg, message_log);
     return success;
 #else  // defined(SELENE_WITH_LIBJPEG)
     throw std::runtime_error("ERROR: JPEG writing unsupported; recompile with the respective external dependency.");
@@ -172,14 +222,26 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
   else if (format == ImageFormat::PNG)
   {
 #if defined(SELENE_WITH_LIBPNG)
-    MessageLog messages_png;
-    bool success = write_png(dyn_img_view, std::forward<SinkType>(sink), PNGCompressionOptions(), &messages_png);
+    MessageLog message_log_png;
+    bool success = write_png(dyn_img_view, std::forward<SinkType>(sink), PNGCompressionOptions(), &message_log_png);
 
-    impl::add_messages(messages_png, messages);
+    impl::add_messages(message_log_png, message_log);
     return success;
 #else  // defined(SELENE_WITH_LIBPNG)
     throw std::runtime_error("ERROR: PNG writing unsupported; recompile with the respective external dependency.");
 #endif  // defined(SELENE_WITH_LIBPNG)
+  }
+  else if (format == ImageFormat::TIFF)
+  {
+#if defined(SELENE_WITH_LIBTIFF)
+    MessageLog message_log_tiff;
+    bool success = write_tiff(dyn_img_view, std::forward<SinkType>(sink), TIFFWriteOptions(), &message_log_tiff);
+
+    impl::add_messages(message_log_tiff, message_log);
+    return success;
+#else  // defined(SELENE_WITH_LIBTIFF)
+    throw std::runtime_error("ERROR: TIFF writing unsupported; recompile with the respective external dependency.");
+#endif  // defined(SELENE_WITH_LIBTIFF)
   }
 
   throw std::runtime_error("ERROR: Unknown image format.");

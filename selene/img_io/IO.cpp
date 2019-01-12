@@ -8,16 +8,16 @@ namespace sln {
 
 namespace impl {
 
-void add_messages(const MessageLog& messages_src, MessageLog* messages_dst)
+void add_messages(const MessageLog& message_log_src, MessageLog* message_log_dst)
 {
-  if (messages_dst == nullptr)
+  if (message_log_dst == nullptr)
   {
     return;
   }
 
-  for (const auto& msg : messages_src.messages())
+  for (const auto& msg : message_log_src.messages())
   {
-    messages_dst->add(msg);
+    message_log_dst->add(msg);
   }
 }
 

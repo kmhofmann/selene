@@ -48,12 +48,12 @@ struct TIFFWriteOptions
   }
 };
 
-template <typename DynImageOrView, typename SinkType, typename SinkType2 = std::remove_reference_t<SinkType>>
+template <typename DynImageOrView, typename SinkType>
 bool write_tiff(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 const TIFFWriteOptions& write_options = TIFFWriteOptions(),
                 MessageLog* message_log = nullptr,
-                TIFFWriteObject<SinkType2>* = nullptr);
+                TIFFWriteObject<std::remove_reference_t<SinkType>>* = nullptr);
 
 
 namespace impl {
@@ -83,7 +83,7 @@ private:
   bool open(SinkType&& sink);
   bool flush();
 
-  template <typename DynImageOrView, typename SinkType1, typename SinkType2> friend bool write_tiff(const DynImageOrView&, SinkType1&&, const TIFFWriteOptions&, MessageLog*, TIFFWriteObject<SinkType2>*);
+  template <typename DynImageOrView, typename SinkType2> friend bool write_tiff(const DynImageOrView&, SinkType2&&, const TIFFWriteOptions&, MessageLog*, TIFFWriteObject<std::remove_reference_t<SinkType2>>*);
   template <typename SinkType2, typename DynImageOrView> friend bool impl::tiff_write_to_current_directory(TIFFWriteObject<SinkType2>&, const TIFFWriteOptions&, MessageLog&, const DynImageOrView&);
 };
 
@@ -92,18 +92,18 @@ private:
 // ----------
 // Implementation:
 
-template <typename DynImageOrView, typename SinkType, typename SinkType2>
+template <typename DynImageOrView, typename SinkType>
 bool write_tiff(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,
                 const TIFFWriteOptions& write_options,
                 MessageLog* message_log,
-                TIFFWriteObject<SinkType2>* tiff_object)
+                TIFFWriteObject<std::remove_reference_t<SinkType>>* tiff_object)
 {
   impl::static_check_is_dyn_image_or_view<DynImageOrView>();
 
   impl::tiff_set_handlers();
-  TIFFWriteObject<SinkType2> local_tiff_object;
-  TIFFWriteObject<SinkType2>* obj = tiff_object ? tiff_object : &local_tiff_object;
+  TIFFWriteObject<std::remove_reference_t<SinkType>> local_tiff_object;
+  TIFFWriteObject<std::remove_reference_t<SinkType>>* obj = tiff_object ? tiff_object : &local_tiff_object;
 
   MessageLog local_message_log;
 

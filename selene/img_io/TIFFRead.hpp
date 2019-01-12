@@ -22,14 +22,14 @@ namespace sln {
 
 template <typename SourceType> class TIFFReadObject;
 
-template <typename SourceType, typename SourceType2 = std::remove_reference_t<SourceType>>
-std::vector<TiffImageLayout> read_tiff_layouts(SourceType&&, MessageLog* = nullptr, TIFFReadObject<SourceType2>* = nullptr);
+template <typename SourceType>
+std::vector<TiffImageLayout> read_tiff_layouts(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
 
-template <typename SourceType, typename SourceType2 = std::remove_reference_t<SourceType>>
-DynImage read_tiff(SourceType&&, MessageLog* = nullptr, TIFFReadObject<SourceType2>* = nullptr);
+template <typename SourceType>
+DynImage read_tiff(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
 
-template <typename SourceType, typename SourceType2 = std::remove_reference_t<SourceType>>
-std::vector<DynImage> read_tiff_all(SourceType&&, MessageLog* = nullptr, TIFFReadObject<SourceType2>* = nullptr);
+template <typename SourceType>
+std::vector<DynImage> read_tiff_all(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
 
 
 namespace impl {
@@ -59,11 +59,10 @@ private:
   TiffImageLayout get_layout();
   bool advance_directory();
   int set_directory(std::uint16_t index);
-//  bool close();
 
-  template <typename SourceType1, typename SourceType2> friend std::vector<TiffImageLayout> read_tiff_layouts(SourceType1&&, MessageLog*, TIFFReadObject<SourceType2>*);
-  template <typename SourceType1, typename SourceType2> friend DynImage read_tiff(SourceType1&&, MessageLog*, TIFFReadObject<SourceType2>*);
-  template <typename SourceType1, typename SourceType2> friend std::vector<DynImage> read_tiff_all(SourceType1&&, MessageLog*, TIFFReadObject<SourceType2>*);
+  template <typename SourceType2> friend std::vector<TiffImageLayout> read_tiff_layouts(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
+  template <typename SourceType2> friend DynImage read_tiff(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
+  template <typename SourceType2> friend std::vector<DynImage> read_tiff_all(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
 
   template <typename SourceType2, typename DynImageOrView> friend bool impl::tiff_read_current_directory(TIFFReadObject<SourceType2>&, MessageLog&, DynImageOrView&);
 };
@@ -73,12 +72,12 @@ private:
 // ----------
 // Implementation:
 
-template <typename SourceType, typename SourceType2>
-std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* message_log, TIFFReadObject<SourceType2>* tiff_object)
+template <typename SourceType>
+std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* message_log, TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
 {
   impl::tiff_set_handlers();
-  TIFFReadObject<SourceType2> local_tiff_object;
-  TIFFReadObject<SourceType2>* obj = tiff_object ? tiff_object : &local_tiff_object;
+  TIFFReadObject<std::remove_reference_t<SourceType>> local_tiff_object;
+  TIFFReadObject<std::remove_reference_t<SourceType>>* obj = tiff_object ? tiff_object : &local_tiff_object;
 
   MessageLog local_message_log;
   std::vector<TiffImageLayout> layouts;
@@ -104,12 +103,12 @@ std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* 
 }
 
 
-template <typename SourceType, typename SourceType2>
-DynImage read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<SourceType2>* tiff_object)
+template <typename SourceType>
+DynImage read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
 {
   impl::tiff_set_handlers();
-  TIFFReadObject<SourceType2> local_tiff_object;
-  TIFFReadObject<SourceType2>* obj = tiff_object ? tiff_object : &local_tiff_object;
+  TIFFReadObject<std::remove_reference_t<SourceType>> local_tiff_object;
+  TIFFReadObject<std::remove_reference_t<SourceType>>* obj = tiff_object ? tiff_object : &local_tiff_object;
 
   MessageLog local_message_log;
 
@@ -133,12 +132,12 @@ DynImage read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<
 }
 
 
-template <typename SourceType, typename SourceType2>
-std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log, TIFFReadObject<SourceType2>* tiff_object)
+template <typename SourceType>
+std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log, TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
 {
   impl::tiff_set_handlers();
-  TIFFReadObject<SourceType2> local_tiff_object;
-  TIFFReadObject<SourceType2>* obj = tiff_object ? tiff_object : &local_tiff_object;
+  TIFFReadObject<std::remove_reference_t<SourceType>> local_tiff_object;
+  TIFFReadObject<std::remove_reference_t<SourceType>>* obj = tiff_object ? tiff_object : &local_tiff_object;
 
   MessageLog local_message_log;
   std::vector<DynImage> images;
