@@ -117,7 +117,7 @@ bool read_data_strips_interleaved(TIFF* tif,
     // Copy buffer into target image. Data is stored interleaved.
 
     // This strip starts at row (strip_index * rows_per_strip) in the output image.
-    const auto y_start = sln::PixelIndex(strip_index * strip_layout.rows_per_strip);
+    const auto y_start = sln::to_pixel_index(strip_index * strip_layout.rows_per_strip);
 
     const auto nr_rows_remaining_in_output_image = dyn_img_view.height() - y_start;
     const auto bytes_remaining_in_output_image = nr_rows_remaining_in_output_image * dyn_img_view.row_bytes();
@@ -134,7 +134,7 @@ bool read_data_strips_interleaved(TIFF* tif,
 
     // Write to output image row-wise (since it might not be packed)
     auto remaining_bytes_to_write = std::ptrdiff_t{bytes_remaining_in_output_image};
-    for (auto y = PixelIndex{0}; y < static_cast<PixelIndex>(rows_in_this_strip); ++y)
+    for (auto y = PixelIndex{0}; y < to_pixel_index(rows_in_this_strip); ++y)
     {
       if (remaining_bytes_to_write < 0)
       {
@@ -222,7 +222,7 @@ bool read_data_strips_planar(TIFF* tif,
       auto buf_ptr = buf_begin + y * nr_bytes_per_input_row;
       SELENE_ASSERT(buf_ptr + nr_bytes_per_input_row <= buf_end);
 
-      const auto row_y = sln::PixelIndex(plane_strip_index * strip_layout.rows_per_strip + y);
+      const auto row_y = to_pixel_index(plane_strip_index * strip_layout.rows_per_strip + to_unsigned(y));
       auto img_ptr = dyn_img_view.byte_ptr(row_y);
 
       impl::tiff::copy_samples(buf_ptr, to_unsigned(out.width), channel_index, out.nr_bytes_per_channel, out.nr_channels, img_ptr);
@@ -282,7 +282,7 @@ bool read_data_strips(TIFF* tif,
   // The minimum bit depth is 8 (1 byte/channel)
   const auto nr_bytes_per_channel_out = std::max(std::uint16_t{1}, static_cast<std::uint16_t>(src.bits_per_sample >> 3));
   sln::impl::tiff::OutputLayout out(to_pixel_length(src.width), to_pixel_length(src.height),
-                                    src.samples_per_pixel, nr_bytes_per_channel_out,
+                                    to_signed(src.samples_per_pixel), to_signed(nr_bytes_per_channel_out),
                                     impl::tiff::photometric_to_pixel_format(src.photometric, src.samples_per_pixel),
                                     impl::tiff::sample_format_to_sample_format(src.sample_format));
 //  message_log.add_message(str(oss() << out), MessageType::Message);

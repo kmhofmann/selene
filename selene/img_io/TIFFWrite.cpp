@@ -78,13 +78,13 @@ bool check_tiff_tile_size(const ConstantDynImageView& view, TIFFWriteOptions& op
     opts.tile_height = 16;
   }
 
-  if (view.width() % opts.tile_width != 0)
+  if (to_unsigned(view.width()) % opts.tile_width != 0)
   {
     message_log.add_message("ERROR: Image width (" + std::to_string(view.width()) + ") needs to be divisible by tile width (" + std::to_string(opts.tile_width) + ")", MessageType::Error);
     return false;
   }
 
-  if (view.height() % opts.tile_height != 0)
+  if (to_unsigned(view.height()) % opts.tile_height != 0)
   {
     message_log.add_message("ERROR: Image height (" + std::to_string(view.height()) + ") needs to be divisible by tile height (" + std::to_string(opts.tile_height) + ")", MessageType::Error);
     return false;
@@ -181,7 +181,7 @@ namespace impl {
 bool tiff_write_to_current_directory_strips(TIFF* tif, const TIFFWriteOptions& write_options, MessageLog& /*message_log*/, const ConstantDynImageView& view)
 {
   const auto height = view.height();
-  const auto row_size_bytes = view.row_bytes();
+  const auto row_size_bytes = to_unsigned(view.row_bytes());
   const auto nr_rows_per_strip = [&write_options, row_size_bytes]() {
     // For JPEG compression, the nr of rows per strip must be a multiple of 8.
     const auto nrps = std::size_t(write_options.max_bytes_per_strip / row_size_bytes);
@@ -190,8 +190,8 @@ bool tiff_write_to_current_directory_strips(TIFF* tif, const TIFFWriteOptions& w
 
   set_tiff_layout_strips(tif, nr_rows_per_strip);
 
-  const auto nr_strips = std::size_t{height / nr_rows_per_strip + ((height % nr_rows_per_strip > 0) ? 1 : 0)};
-  const auto rows_in_last_strip = (height % nr_rows_per_strip > 0) ? (height % nr_rows_per_strip) : (nr_rows_per_strip);
+  const auto nr_strips = std::size_t{to_unsigned(height) / nr_rows_per_strip + ((to_unsigned(height) % nr_rows_per_strip > 0) ? 1 : 0)};
+  const auto rows_in_last_strip = (to_unsigned(height) % nr_rows_per_strip > 0) ? (to_unsigned(height) % nr_rows_per_strip) : (nr_rows_per_strip);
   const auto expected_strip_size = TIFFStripSize(tif);
 
 //  std::cout << "nr_rows_per_strip = " << nr_rows_per_strip << '\n';
@@ -211,7 +211,7 @@ bool tiff_write_to_current_directory_strips(TIFF* tif, const TIFFWriteOptions& w
     const auto buf_size = static_cast<tmsize_t>(nr_available_rows * row_size_bytes);
     SELENE_ASSERT(buf_size <= expected_strip_size);
 
-    const auto buf_ptr = [packed, cur_row, nr_available_rows, &view, &buffer]() -> const std::uint8_t* {
+    const auto buf_ptr = [packed, cur_row, nr_available_rows, row_size_bytes, &view, &buffer]() -> const std::uint8_t* {
       // If image data is packed, return direct pointer to it.
       if (packed)
       {
@@ -221,8 +221,8 @@ bool tiff_write_to_current_directory_strips(TIFF* tif, const TIFFWriteOptions& w
       // Otherwise, copy non-packed image data into contiguous strip buffer.
       for (auto row_idx = std::size_t{0}; row_idx < nr_available_rows; ++row_idx)
       {
-        auto dst = buffer.data() + row_idx * view.row_bytes();
-        std::memcpy(dst, view.byte_ptr(to_pixel_index(cur_row + row_idx)), view.row_bytes());
+        auto dst = buffer.data() + row_idx * row_size_bytes;
+        std::memcpy(dst, view.byte_ptr(to_pixel_index(cur_row + row_idx)), row_size_bytes);
       }
       return buffer.data();
     }();
@@ -255,7 +255,7 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
   const auto nr_bytes_per_pixel = view.layout().nr_bytes_per_pixel();
 
   // Allocate temporary buffer
-  std::vector<std::uint8_t> buffer(tile_width * tile_height * nr_bytes_per_pixel);
+  std::vector<std::uint8_t> buffer(tile_width * tile_height * to_unsigned(nr_bytes_per_pixel));
 
   // For each tile...
   uint32 tile_ctr = 0;
@@ -273,20 +273,20 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
       const auto this_tile_width = std::min(width - src_x, static_cast<value_type>(tile_width));
       const auto this_tile_height = std::min(height - src_y, static_cast<value_type>(tile_height));
       const auto nr_bytes_per_this_tile_row = static_cast<std::size_t>(this_tile_width * nr_bytes_per_pixel);
-      const auto buf_size = this_tile_height * nr_bytes_per_this_tile_row;
+      const auto buf_size = static_cast<std::size_t>(this_tile_height) * nr_bytes_per_this_tile_row;
       SELENE_ASSERT(buf_size <= buffer.size());
 //      std::cout << "TILE " << tile_idx << ": src_x = " << src_x << ", src_y = " << src_y << ", ttw = " << this_tile_width << ", tth = " << this_tile_height << ", nr_bytes_tile_row = " << nr_bytes_per_this_tile_row << '\n';
 
       // Copy region to buffer
       for (auto tile_y = 0; tile_y < this_tile_height; ++tile_y)
       {
-        auto dst = buffer.data() + tile_y * nr_bytes_per_this_tile_row;
+        auto dst = buffer.data() + static_cast<std::size_t>(tile_y) * nr_bytes_per_this_tile_row;
         SELENE_ASSERT(dst + nr_bytes_per_this_tile_row <= buffer.data() + buffer.size());
         auto src = view.byte_ptr(to_pixel_index(src_x), to_pixel_index(src_y + tile_y));
         std::memcpy(dst, src, nr_bytes_per_this_tile_row);
       }
 
-      const auto tile_written_size = TIFFWriteEncodedTile(tif, tile_idx, buffer.data(), buf_size);
+      const auto tile_written_size = TIFFWriteEncodedTile(tif, tile_idx, buffer.data(), static_cast<tmsize_t>(buf_size));
 
       if (tile_written_size == -1)
       {
