@@ -386,7 +386,7 @@ std::vector<std::uint8_t> convert_single_channel_1bit_to_8bit(const std::vector<
                                                               std::uint32_t width,
                                                               std::uint32_t height)
 {
-  assert(nr_bytes_read == width * height / 8);
+  SELENE_ASSERT(nr_bytes_read == static_cast<std::ptrdiff_t>(width * height / 8));
 
   constexpr std::array<std::uint8_t, 2> res_arr = {{0x00, 0xFF}};
 
@@ -414,7 +414,7 @@ std::vector<std::uint8_t> convert_single_channel_1bit_to_8bit(const std::vector<
     *out_buf_ptr++ = transform_value(val, 0);
   }
 
-  assert(buf_ptr == buf.data() + nr_bytes_read);
+  SELENE_ASSERT(buf_ptr == buf.data() + nr_bytes_read);
   return out_buf;
 }
 
@@ -423,7 +423,7 @@ std::vector<std::uint8_t> convert_single_channel_4bit_to_8bit(const std::vector<
                                                               std::uint32_t width,
                                                               std::uint32_t height)
 {
-  assert(nr_bytes_read == width * height / 2);
+  SELENE_ASSERT(nr_bytes_read == static_cast<std::ptrdiff_t>(width * height / 2));
 
   constexpr std::array<std::uint8_t, 16> res_arr = {
       {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}};
@@ -446,7 +446,7 @@ std::vector<std::uint8_t> convert_single_channel_4bit_to_8bit(const std::vector<
     *out_buf_ptr++ = transform_value(val, 0);
   }
 
-  assert(buf_ptr == buf.data() + nr_bytes_read);
+  SELENE_ASSERT(buf_ptr == buf.data() + nr_bytes_read);
   return out_buf;
 
 }
@@ -480,7 +480,7 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
       const int32 Cb = consume_buf();
       const int32 Cr = consume_buf();
 
-      assert(buf_ptr <= buf.data() + nr_bytes_read);
+      SELENE_ASSERT(buf_ptr <= buf.data() + nr_bytes_read);
 
 //      std::cout << "WRITING NEW MINIBATCH:\n";
       for (std::uint32_t dy = 0; dy < sv; ++dy)
@@ -502,7 +502,7 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
     }
   }
 
-  assert(buf_ptr == buf.data() + nr_bytes_read);
+  SELENE_ASSERT(buf_ptr == buf.data() + nr_bytes_read);
   return out_buf;
 }
 
@@ -513,7 +513,7 @@ std::vector<std::uint8_t> convert_lab_to_rgb_interleaved(const std::vector<std::
                                                          const LabConverter& lab_converter)
 {
   // NB: assumes interleaved storage
-  assert(nr_bytes_read == 3 * width * height);
+  SELENE_ASSERT(nr_bytes_read == static_cast<std::ptrdiff_t>(3 * width * height));
 
   std::vector<std::uint8_t> out_buf(3 * width * height);
 
@@ -535,7 +535,7 @@ std::vector<std::uint8_t> convert_lab_to_rgb_interleaved(const std::vector<std::
   }
 
 
-  assert(buf_ptr == buf.data() + nr_bytes_read);
+  SELENE_ASSERT(buf_ptr == buf.data() + nr_bytes_read);
   return out_buf;
 }
 

@@ -6,6 +6,7 @@
 
 #include <selene/img_io/_impl/TIFFReadStrips.hpp>
 
+#include <selene/base/Assert.hpp>
 #include <selene/base/MessageLog.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
@@ -41,7 +42,7 @@ bool read_data_strips_interleaved(TIFF* tif,
     // Read strip data into buffer
     std::vector<std::uint8_t> buf(static_cast<std::size_t>(strip_layout.size_bytes));  // cannot hoist; overwritten below
     auto nr_bytes_read = TIFFReadEncodedStrip(tif, strip_index, buf.data(), -1);
-    assert(nr_bytes_read <= static_cast<tmsize_t>(buf.size()));
+    SELENE_ASSERT(nr_bytes_read <= static_cast<tmsize_t>(buf.size()));
 
     if (strip_index != strip_layout.nr_strips - 1)
     {
@@ -64,7 +65,7 @@ bool read_data_strips_interleaved(TIFF* tif,
     const auto expected_nr_bytes = [&src, &strip_layout, &ycbcr_info, &out]() {
       if (src.is_format_ycbcr())
       {
-        assert(out.nr_bytes_per_channel == 1);
+        SELENE_ASSERT(out.nr_bytes_per_channel == 1);
         const auto nr_bytes_for_1_channel = strip_layout.rows_per_strip * to_unsigned(out.width) * to_unsigned(out.nr_bytes_per_channel);
         const auto subsample_factor = to_unsigned(ycbcr_info.subsampling_horz * ycbcr_info.subsampling_vert);
         return nr_bytes_for_1_channel + (2 * nr_bytes_for_1_channel / subsample_factor);
@@ -73,7 +74,8 @@ bool read_data_strips_interleaved(TIFF* tif,
       return (strip_layout.rows_per_strip * to_unsigned(out.width) * to_unsigned(out.nr_channels) * src.bits_per_sample) >> 3;
     }();
 
-    if (nr_bytes_read != expected_nr_bytes && strip_index != strip_layout.nr_strips - 1)
+    if (nr_bytes_read != static_cast<tmsize_t>(expected_nr_bytes)
+        && strip_index != static_cast<tstrip_t>(strip_layout.nr_strips - 1))
     {
       message_log.add(
           "nr_bytes_read (" + std::to_string(nr_bytes_read) + ") != expected_nr_bytes (" +
@@ -86,13 +88,13 @@ bool read_data_strips_interleaved(TIFF* tif,
 
     if (src.is_format_ycbcr())
     {
-      assert(out.nr_bytes_per_channel == 1);
+      SELENE_ASSERT(out.nr_bytes_per_channel == 1);
       buf = convert_ycbcr_to_rgb_interleaved(buf, nr_bytes_read, src.width, rows_in_this_strip, ycbcr_info, ycbcr_converter);
       nr_bytes_read = static_cast<tmsize_t>(buf.size());
     }
     else if (src.is_format_lab())
     {
-      assert(out.nr_bytes_per_channel == 1);
+      SELENE_ASSERT(out.nr_bytes_per_channel == 1);
       buf = convert_lab_to_rgb_interleaved(buf, nr_bytes_read, src.width, rows_in_this_strip, lab_converter);
       nr_bytes_read = static_cast<tmsize_t>(buf.size());
     }
@@ -196,7 +198,7 @@ bool read_data_strips_planar(TIFF* tif,
     const auto plane_strip_index = strip_index % nr_planes_per_sample;
 
     auto nr_bytes_read = TIFFReadEncodedStrip(tif, strip_index, buf.data(), -1);
-    assert(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
+    SELENE_ASSERT(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
 
     if (nr_bytes_read < 0)
     {
@@ -208,7 +210,8 @@ bool read_data_strips_planar(TIFF* tif,
     const auto expected_nr_bytes = (strip_layout.rows_per_strip * to_unsigned(out.width) * src.bits_per_sample) >> 3;
     const auto rows_in_this_strip = strip_layout.rows_per_strip * nr_bytes_read / expected_nr_bytes;
 
-    if (nr_bytes_read != expected_nr_bytes && plane_strip_index != nr_planes_per_sample - 1)
+    if (nr_bytes_read != static_cast<tmsize_t>(expected_nr_bytes)
+        && plane_strip_index != static_cast<tstrip_t>(nr_planes_per_sample - 1))
     {
       message_log.add(
           "Strip " + std::to_string(strip_index)
@@ -264,7 +267,7 @@ bool read_data_strips(TIFF* tif,
 
   if (src.planar_config == TIFFPlanarConfig::Separate)
   {
-    assert(strip_layout.nr_strips % src.samples_per_pixel == 0);
+    SELENE_ASSERT(strip_layout.nr_strips % src.samples_per_pixel == 0);
   }
 
   const auto spp = (src.planar_config == TIFFPlanarConfig::Contiguous) ? 1 : src.samples_per_pixel;
@@ -278,13 +281,13 @@ bool read_data_strips(TIFF* tif,
     {
       [[maybe_unused]] const auto strip_index = TIFFComputeStrip(tif, row, sample);
       [[maybe_unused]] const auto expected_strip_index = sample * nr_strips_per_sample + (row / strip_layout.rows_per_strip);
-      assert(strip_index == expected_strip_index);
+      SELENE_ASSERT(strip_index == expected_strip_index);
     }
   }
 
   if (src.is_format_ycbcr())
   {
-    assert(src.samples_per_pixel == 3);
+    SELENE_ASSERT(src.samples_per_pixel == 3);
     ycbcr_info.check_strip_size(src.width, src.height, strip_layout.rows_per_strip, message_log);
   }
 

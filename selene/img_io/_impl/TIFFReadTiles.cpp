@@ -6,6 +6,7 @@
 
 #include <selene/img_io/_impl/TIFFReadTiles.hpp>
 
+#include <selene/base/Assert.hpp>
 #include <selene/base/MessageLog.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
@@ -39,7 +40,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
 
   if (src.is_format_ycbcr())
   {
-    assert(src.samples_per_pixel == 3);
+    SELENE_ASSERT(src.samples_per_pixel == 3);
     ycbcr_info.check_tile_size(src.width, src.height, tile_layout.width, tile_layout.height, message_log);
   }
 
@@ -53,7 +54,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
       // Read tile data into buffer
       std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
       auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<uint32>(src_x), static_cast<uint32>(src_y), 0, sample_index);
-      assert(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
+      SELENE_ASSERT(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
 
       if (nr_bytes_read < 0)
       {
@@ -63,13 +64,13 @@ bool read_data_tiles_interleaved(TIFF* tif,
 
       if (src.is_format_ycbcr())
       {
-        assert(out.nr_bytes_per_channel == 1);
+        SELENE_ASSERT(out.nr_bytes_per_channel == 1);
         buf = convert_ycbcr_to_rgb_interleaved(buf, nr_bytes_read, tile_layout.width, tile_layout.height, ycbcr_info, ycbcr_converter);
         nr_bytes_read = static_cast<tmsize_t>(buf.size());
       }
       else if (src.is_format_lab())
       {
-        assert(out.nr_bytes_per_channel == 1);
+        SELENE_ASSERT(out.nr_bytes_per_channel == 1);
         buf = convert_lab_to_rgb_interleaved(buf, nr_bytes_read, tile_layout.width, tile_layout.height, lab_converter);
         nr_bytes_read = static_cast<tmsize_t>(buf.size());
       }
@@ -89,7 +90,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
 
       [[maybe_unused]] const auto nr_pixels_read = nr_bytes_read / (src.samples_per_pixel * (src.bits_per_sample >> 3));
       [[maybe_unused]] const auto expected_nr_pixels_read = tile_layout.width * tile_layout.height;
-      SELENE_ASSERT(nr_pixels_read == expected_nr_pixels_read);
+      SELENE_ASSERT(static_cast<std::size_t>(nr_pixels_read) == static_cast<std::size_t>(expected_nr_pixels_read));
 
       std::uint8_t* data_begin = buf.data();
       std::uint8_t* data_end = buf.data() + nr_bytes_read;
@@ -175,7 +176,7 @@ bool read_data_tiles_planar(TIFF* tif,
       {
         std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
         const auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<uint32>(src_x), static_cast<uint32>(src_y), 0, sample_index);
-        assert(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
+        SELENE_ASSERT(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
 
         if (nr_bytes_read < 0)
         {

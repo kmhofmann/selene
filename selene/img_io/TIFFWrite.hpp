@@ -87,6 +87,8 @@ private:
   template <typename SinkType2, typename DynImageOrView> friend bool impl::tiff_write_to_current_directory(TIFFWriteObject<SinkType2>&, const TIFFWriteOptions&, MessageLog&, const DynImageOrView&);
 };
 
+// TODO: Implement TIFFWriter interface.
+
 // ----------
 // Implementation:
 

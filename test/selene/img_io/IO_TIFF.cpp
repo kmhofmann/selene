@@ -129,6 +129,9 @@ void check_test_suite(const sln_fs::path& test_suite_path,
 }  // namespace
 
 
+// TODO: more extensive tests for reading & writing TIFF images
+
+
 TEST_CASE("TIFF reading of the official test suite", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();

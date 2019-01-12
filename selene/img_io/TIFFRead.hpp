@@ -68,6 +68,8 @@ private:
   template <typename SourceType2, typename DynImageOrView> friend bool impl::tiff_read_current_directory(TIFFReadObject<SourceType2>&, MessageLog&, DynImageOrView&);
 };
 
+// TODO: Implement TIFFReader interface.
+
 // ----------
 // Implementation:
 

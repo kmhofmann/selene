@@ -119,7 +119,7 @@ struct ImageLayoutTiles
   ImageLayoutTiles(uint32 tile_width, uint32 tile_height, uint32 tile_depth, tmsize_t tile_size)
       : width(tile_width), height(tile_height), depth(tile_depth), size_bytes(tile_size)
   {
-    assert(depth == 1);
+    SELENE_ASSERT(depth == 1);
   }
 };
 
@@ -221,7 +221,7 @@ public:
   {
     ycbcr_ = (TIFFYCbCrToRGB*)_TIFFmalloc(std::max(sizeof(TIFFYCbCrToRGB), sizeof(long))
                                           + 4*256*sizeof(TIFFRGBValue) + 2*256*sizeof(int) + 3*256*sizeof(int32));
-    assert(ycbcr_ != nullptr);
+    SELENE_ASSERT(ycbcr_ != nullptr);
     if (TIFFYCbCrToRGBInit(ycbcr_, ycbcr_coefficients, reference_blackwhite) < 0)
     {
       throw std::runtime_error("Could not allocate TIFFYCbCrToRGB*");
@@ -267,7 +267,7 @@ public:
   explicit LabConverter(const float* white_point_coefficients)
   {
     cielab_ = (TIFFCIELabToRGB*)_TIFFmalloc(sizeof(TIFFCIELabToRGB));
-    assert(cielab_ != nullptr);
+    SELENE_ASSERT(cielab_ != nullptr);
 
     ref_white[1] = 100.0F;
     ref_white[0] = white_point_coefficients[0] / white_point_coefficients[1] * ref_white[1];
