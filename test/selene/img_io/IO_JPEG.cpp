@@ -34,8 +34,8 @@
 using namespace sln::literals;
 
 // clang-format off
-constexpr auto ref_width = 1024;
-constexpr auto ref_height = 684;
+constexpr auto duck_ref_width = 1024;
+constexpr auto duck_ref_height = 684;
 constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
     {std::array<unsigned int, 6>{{226, 180, 244, 198, 0, 189}},
      std::array<unsigned int, 6>{{582, 415, 228, 227, 232, 228}},
@@ -56,9 +56,9 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(!source.is_open());
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(dyn_img.width() == ref_width);
-  REQUIRE(dyn_img.height() == ref_height);
-  REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+  REQUIRE(dyn_img.width() == duck_ref_width);
+  REQUIRE(dyn_img.height() == duck_ref_height);
+  REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
   REQUIRE(dyn_img.nr_channels() == 3);
   REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
   REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -68,9 +68,9 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
 
   auto img = sln::to_image<sln::Pixel_8u3>(std::move(dyn_img));
 
-  REQUIRE(img.width() == ref_width);
-  REQUIRE(img.height() == ref_height);
-  REQUIRE(img.stride_bytes() == ref_width * 3);
+  REQUIRE(img.width() == duck_ref_width);
+  REQUIRE(img.height() == duck_ref_height);
+  REQUIRE(img.stride_bytes() == duck_ref_width * 3);
   for (std::size_t i = 0; i < 3; ++i)
   {
     const auto x = sln::to_pixel_index(pix[i][0]);
@@ -104,9 +104,9 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(!source.is_open());
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(dyn_img.width() == ref_width);
-  REQUIRE(dyn_img.height() == ref_height);
-  REQUIRE(dyn_img.stride_bytes() == ref_width * 1);
+  REQUIRE(dyn_img.width() == duck_ref_width);
+  REQUIRE(dyn_img.height() == duck_ref_height);
+  REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 1);
   REQUIRE(dyn_img.nr_channels() == 1);
   REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
   REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -116,9 +116,9 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
 
   auto img = sln::to_image<sln::Pixel_8u1>(std::move(dyn_img));
 
-  REQUIRE(img.width() == ref_width);
-  REQUIRE(img.height() == ref_height);
-  REQUIRE(img.stride_bytes() == ref_width * 1);
+  REQUIRE(img.width() == duck_ref_width);
+  REQUIRE(img.height() == duck_ref_height);
+  REQUIRE(img.stride_bytes() == duck_ref_width * 1);
   for (std::size_t i = 0; i < 3; ++i)
   {
     const auto x = sln::to_pixel_index(pix[i][0]);
@@ -147,9 +147,9 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(!source_2.is_open());
 
   REQUIRE(messages_read_2.messages().empty());
-  REQUIRE(dyn_img_2.width() == ref_width);
-  REQUIRE(dyn_img_2.height() == ref_height);
-  REQUIRE(dyn_img_2.stride_bytes() == ref_width * 1);
+  REQUIRE(dyn_img_2.width() == duck_ref_width);
+  REQUIRE(dyn_img_2.height() == duck_ref_height);
+  REQUIRE(dyn_img_2.stride_bytes() == duck_ref_width * 1);
   REQUIRE(dyn_img_2.nr_channels() == 1);
   REQUIRE(dyn_img_2.nr_bytes_per_channel() == 1);
   REQUIRE(dyn_img_2.total_bytes() == dyn_img_2.stride_bytes() * dyn_img_2.height());
@@ -172,8 +172,8 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
     // Test reading of header...
     const auto header = sln::read_jpeg_header(decompression_object, source);
 
-    REQUIRE(header.width == ref_width);
-    REQUIRE(header.height == ref_height);
+    REQUIRE(header.width == duck_ref_width);
+    REQUIRE(header.height == duck_ref_height);
     REQUIRE(header.nr_channels == 3);
     REQUIRE(header.color_space == sln::JPEGColorSpace::YCbCr);
 
@@ -185,9 +185,9 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
     REQUIRE(!source.is_open());
 
     REQUIRE(messages_read.messages().empty());
-    REQUIRE(img_data.width() == ref_width);
-    REQUIRE(img_data.height() == ref_height);
-    REQUIRE(img_data.stride_bytes() == ref_width * 3);
+    REQUIRE(img_data.width() == duck_ref_width);
+    REQUIRE(img_data.height() == duck_ref_height);
+    REQUIRE(img_data.stride_bytes() == duck_ref_width * 3);
     REQUIRE(img_data.nr_channels() == 3);
     REQUIRE(img_data.nr_bytes_per_channel() == 1);
     REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
@@ -197,9 +197,9 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
 
     auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
 
-    REQUIRE(img.width() == ref_width);
-    REQUIRE(img.height() == ref_height);
-    REQUIRE(img.stride_bytes() == ref_width * 3);
+    REQUIRE(img.width() == duck_ref_width);
+    REQUIRE(img.height() == duck_ref_height);
+    REQUIRE(img.stride_bytes() == duck_ref_width * 3);
     for (std::size_t i = 0; i < 3; ++i)
     {
       const auto x = sln::to_pixel_index(pix[i][0]);
@@ -319,9 +319,9 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(!source.is_open());
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(img_data.width() == ref_width);
-  REQUIRE(img_data.height() == ref_height);
-  REQUIRE(img_data.stride_bytes() == ref_width * 3);
+  REQUIRE(img_data.width() == duck_ref_width);
+  REQUIRE(img_data.height() == duck_ref_height);
+  REQUIRE(img_data.stride_bytes() == duck_ref_width * 3);
   REQUIRE(img_data.nr_channels() == 3);
   REQUIRE(img_data.nr_bytes_per_channel() == 1);
   REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
@@ -331,9 +331,9 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
 
   auto img = sln::to_image<sln::Pixel_8u3>(std::move(img_data));
 
-  REQUIRE(img.width() == ref_width);
-  REQUIRE(img.height() == ref_height);
-  REQUIRE(img.stride_bytes() == ref_width * 3);
+  REQUIRE(img.width() == duck_ref_width);
+  REQUIRE(img.height() == duck_ref_height);
+  REQUIRE(img.stride_bytes() == duck_ref_width * 3);
   for (std::size_t i = 0; i < 3; ++i)
   {
     const auto x = sln::to_pixel_index(pix[i][0]);
@@ -388,16 +388,16 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
 
       const auto header = jpeg_reader.read_header();
       REQUIRE(header.is_valid());
-      REQUIRE(header.width == ref_width);
-      REQUIRE(header.height == ref_height);
+      REQUIRE(header.width == duck_ref_width);
+      REQUIRE(header.height == duck_ref_height);
       REQUIRE(header.nr_channels == 3);
       REQUIRE(header.color_space == sln::JPEGColorSpace::YCbCr);
 
       jpeg_reader.set_decompression_options(sln::JPEGDecompressionOptions());
       const auto info = jpeg_reader.get_output_image_info();
       REQUIRE(info.is_valid());
-      REQUIRE(info.width == ref_width);
-      REQUIRE(info.height == ref_height);
+      REQUIRE(info.width == duck_ref_width);
+      REQUIRE(info.height == duck_ref_height);
       REQUIRE(info.nr_channels == 3);
       REQUIRE(info.color_space == sln::JPEGColorSpace::RGB);
 
@@ -406,9 +406,9 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
       REQUIRE(res);
 
       REQUIRE(jpeg_reader.message_log().messages().empty());
-      REQUIRE(dyn_img.width() == ref_width);
-      REQUIRE(dyn_img.height() == ref_height);
-      REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+      REQUIRE(dyn_img.width() == duck_ref_width);
+      REQUIRE(dyn_img.height() == duck_ref_height);
+      REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
       REQUIRE(dyn_img.nr_channels() == 3);
       REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
       REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -436,9 +436,9 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
     REQUIRE(res);
 
     REQUIRE(jpeg_reader.message_log().messages().empty());
-    REQUIRE(dyn_img.width() == ref_width);
-    REQUIRE(dyn_img.height() == ref_height);
-    REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+    REQUIRE(dyn_img.width() == duck_ref_width);
+    REQUIRE(dyn_img.height() == duck_ref_height);
+    REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
     REQUIRE(dyn_img.nr_channels() == 3);
     REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
     REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());

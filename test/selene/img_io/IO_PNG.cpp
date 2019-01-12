@@ -38,8 +38,8 @@
 
 using namespace sln::literals;
 
-constexpr auto ref_width = 1024;
-constexpr auto ref_height = 684;
+constexpr auto duck_ref_width = 1024;
+constexpr auto duck_ref_height = 684;
 constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
     {std::array<unsigned int, 6>{{226, 180, 244, 198, 0, 203}},
      std::array<unsigned int, 6>{{582, 415, 228, 227, 233, 227}},
@@ -98,9 +98,9 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
   auto dyn_img = sln::read_png(source, sln::PNGDecompressionOptions(), &messages_read);
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(dyn_img.width() == ref_width);
-  REQUIRE(dyn_img.height() == ref_height);
-  REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+  REQUIRE(dyn_img.width() == duck_ref_width);
+  REQUIRE(dyn_img.height() == duck_ref_height);
+  REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
   REQUIRE(dyn_img.nr_channels() == 3);
   REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
   REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -110,9 +110,9 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
 
   auto img = sln::to_image<sln::Pixel_8u3>(std::move(dyn_img));
 
-  REQUIRE(img.width() == ref_width);
-  REQUIRE(img.height() == ref_height);
-  REQUIRE(img.stride_bytes() == ref_width * 3);
+  REQUIRE(img.width() == duck_ref_width);
+  REQUIRE(img.height() == duck_ref_height);
+  REQUIRE(img.stride_bytes() == duck_ref_width * 3);
   for (std::size_t i = 0; i < 3; ++i)
   {
     const auto x = sln::to_pixel_index(pix[i][0]);
@@ -144,9 +144,9 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   auto dyn_img = sln::read_png(source, decompression_options, &messages_read);
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(dyn_img.width() == ref_width);
-  REQUIRE(dyn_img.height() == ref_height);
-  REQUIRE(dyn_img.stride_bytes() == ref_width * 1);
+  REQUIRE(dyn_img.width() == duck_ref_width);
+  REQUIRE(dyn_img.height() == duck_ref_height);
+  REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 1);
   REQUIRE(dyn_img.nr_channels() == 1);
   REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
   REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -156,9 +156,9 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
 
   auto img = sln::to_image<sln::Pixel_8u1>(std::move(dyn_img));
 
-  REQUIRE(img.width() == ref_width);
-  REQUIRE(img.height() == ref_height);
-  REQUIRE(img.stride_bytes() == ref_width * 1);
+  REQUIRE(img.width() == duck_ref_width);
+  REQUIRE(img.height() == duck_ref_height);
+  REQUIRE(img.stride_bytes() == duck_ref_width * 1);
   for (std::size_t i = 0; i < 3; ++i)
   {
     [[maybe_unused]] const auto x = sln::to_pixel_index(pix[i][0]);
@@ -192,8 +192,8 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
 
     // Test reading of header...
     const auto header = read_png_header(decompression_object, source);
-    REQUIRE(header.width == ref_width);
-    REQUIRE(header.height == ref_height);
+    REQUIRE(header.width == duck_ref_width);
+    REQUIRE(header.height == duck_ref_height);
     REQUIRE(header.nr_channels == 3);
     REQUIRE(header.bit_depth == 8);
 
@@ -202,9 +202,9 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
     auto dyn_img = sln::read_png(decompression_object, source, sln::PNGDecompressionOptions(), &messages_read, &header);
 
     REQUIRE(messages_read.messages().empty());
-    REQUIRE(dyn_img.width() == ref_width);
-    REQUIRE(dyn_img.height() == ref_height);
-    REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+    REQUIRE(dyn_img.width() == duck_ref_width);
+    REQUIRE(dyn_img.height() == duck_ref_height);
+    REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
     REQUIRE(dyn_img.nr_channels() == 3);
     REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
     REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -214,9 +214,9 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
 
     auto img = sln::to_image<sln::Pixel_8u3>(std::move(dyn_img));
 
-    REQUIRE(img.width() == ref_width);
-    REQUIRE(img.height() == ref_height);
-    REQUIRE(img.stride_bytes() == ref_width * 3);
+    REQUIRE(img.width() == duck_ref_width);
+    REQUIRE(img.height() == duck_ref_height);
+    REQUIRE(img.stride_bytes() == duck_ref_width * 3);
     for (std::size_t i = 0; i < 3; ++i)
     {
       const auto x = sln::to_pixel_index(pix[i][0]);
@@ -267,9 +267,9 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
   auto dyn_img = sln::read_png(source, sln::PNGDecompressionOptions(), &messages_read);
 
   REQUIRE(messages_read.messages().empty());
-  REQUIRE(dyn_img.width() == ref_width);
-  REQUIRE(dyn_img.height() == ref_height);
-  REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+  REQUIRE(dyn_img.width() == duck_ref_width);
+  REQUIRE(dyn_img.height() == duck_ref_height);
+  REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
   REQUIRE(dyn_img.nr_channels() == 3);
   REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
   REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -279,9 +279,9 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
 
   auto img = sln::to_image<sln::Pixel_8u3>(std::move(dyn_img));
 
-  REQUIRE(img.width() == ref_width);
-  REQUIRE(img.height() == ref_height);
-  REQUIRE(img.stride_bytes() == ref_width * 3);
+  REQUIRE(img.width() == duck_ref_width);
+  REQUIRE(img.height() == duck_ref_height);
+  REQUIRE(img.stride_bytes() == duck_ref_width * 3);
   for (std::size_t i = 0; i < 3; ++i)
   {
     const auto x = sln::to_pixel_index(pix[i][0]);
@@ -379,16 +379,16 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
 
       const auto header = png_reader.read_header();
       REQUIRE(header.is_valid());
-      REQUIRE(header.width == ref_width);
-      REQUIRE(header.height == ref_height);
+      REQUIRE(header.width == duck_ref_width);
+      REQUIRE(header.height == duck_ref_height);
       REQUIRE(header.nr_channels == 3);
       REQUIRE(header.bit_depth == 8);
 
       png_reader.set_decompression_options(sln::PNGDecompressionOptions());
       const auto info = png_reader.get_output_image_info();
       REQUIRE(info.is_valid());
-      REQUIRE(info.width == ref_width);
-      REQUIRE(info.height == ref_height);
+      REQUIRE(info.width == duck_ref_width);
+      REQUIRE(info.height == duck_ref_height);
       REQUIRE(info.nr_channels == 3);
       REQUIRE(info.bit_depth == 8);
 
@@ -397,9 +397,9 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
       REQUIRE(res);
 
       REQUIRE(png_reader.message_log().messages().empty());
-      REQUIRE(dyn_img.width() == ref_width);
-      REQUIRE(dyn_img.height() == ref_height);
-      REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+      REQUIRE(dyn_img.width() == duck_ref_width);
+      REQUIRE(dyn_img.height() == duck_ref_height);
+      REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
       REQUIRE(dyn_img.nr_channels() == 3);
       REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
       REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
@@ -427,9 +427,9 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
     REQUIRE(res);
 
     REQUIRE(png_reader.message_log().messages().empty());
-    REQUIRE(dyn_img.width() == ref_width);
-    REQUIRE(dyn_img.height() == ref_height);
-    REQUIRE(dyn_img.stride_bytes() == ref_width * 3);
+    REQUIRE(dyn_img.width() == duck_ref_width);
+    REQUIRE(dyn_img.height() == duck_ref_height);
+    REQUIRE(dyn_img.stride_bytes() == duck_ref_width * 3);
     REQUIRE(dyn_img.nr_channels() == 3);
     REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
     REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
