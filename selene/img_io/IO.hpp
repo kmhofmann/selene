@@ -21,6 +21,7 @@
 #include <selene/img_io/TIFFWrite.hpp>
 
 #include <stdexcept>
+#include <variant>
 
 namespace sln {
 
@@ -41,14 +42,14 @@ bool write_image(const DynImage& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log = nullptr,
-                 int jpeg_quality = 95);
+                 const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options = {});
 
 template <ImageModifiability modifiability, typename SinkType>
 bool write_image(const DynImageView<modifiability>& dyn_img_view,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log = nullptr,
-                 int jpeg_quality = 95);
+                 const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options = {});
 
 // ----------
 // Implementation:
@@ -182,9 +183,9 @@ bool write_image(const DynImage& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log,
-                 int jpeg_quality)
+                 const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options)
 {
-  return write_image(dyn_img.view(), format, sink, message_log, jpeg_quality);
+  return write_image(dyn_img.view(), format, sink, message_log, options);
 }
 
 /** \brief Writes an image stream, given the supplied uncompressed image data.
@@ -204,17 +205,20 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
                  ImageFormat format,
                  [[maybe_unused]] SinkType&& sink,
                  [[maybe_unused]] MessageLog* message_log,
-                 [[maybe_unused]] int jpeg_quality)
+                 [[maybe_unused]] const std::variant<std::monostate, JPEGCompressionOptions, PNGCompressionOptions, TIFFWriteOptions>& options)
 {
   if (format == ImageFormat::JPEG)
   {
 #if defined(SELENE_WITH_LIBJPEG)
+
     MessageLog message_log_jpeg;
-    bool success = write_jpeg(dyn_img_view, std::forward<SinkType>(sink), JPEGCompressionOptions(jpeg_quality),
-                              &message_log_jpeg);
+    const auto options_jpeg = std::holds_alternative<JPEGCompressionOptions>(options)
+                                ? std::get<JPEGCompressionOptions>(options) : JPEGCompressionOptions{};
+    const bool success = write_jpeg(dyn_img_view, std::forward<SinkType>(sink), options_jpeg, &message_log_jpeg);
 
     impl::add_messages(message_log_jpeg, message_log);
     return success;
+
 #else  // defined(SELENE_WITH_LIBJPEG)
     throw std::runtime_error("ERROR: JPEG writing unsupported; recompile with the respective external dependency.");
 #endif  // defined(SELENE_WITH_LIBJPEG)
@@ -222,11 +226,15 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
   else if (format == ImageFormat::PNG)
   {
 #if defined(SELENE_WITH_LIBPNG)
+
     MessageLog message_log_png;
-    bool success = write_png(dyn_img_view, std::forward<SinkType>(sink), PNGCompressionOptions(), &message_log_png);
+    const auto options_png = std::holds_alternative<PNGCompressionOptions>(options)
+                               ? std::get<PNGCompressionOptions>(options) : PNGCompressionOptions{};
+    const bool success = write_png(dyn_img_view, std::forward<SinkType>(sink), options_png, &message_log_png);
 
     impl::add_messages(message_log_png, message_log);
     return success;
+
 #else  // defined(SELENE_WITH_LIBPNG)
     throw std::runtime_error("ERROR: PNG writing unsupported; recompile with the respective external dependency.");
 #endif  // defined(SELENE_WITH_LIBPNG)
@@ -234,11 +242,15 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
   else if (format == ImageFormat::TIFF)
   {
 #if defined(SELENE_WITH_LIBTIFF)
+
     MessageLog message_log_tiff;
-    bool success = write_tiff(dyn_img_view, std::forward<SinkType>(sink), TIFFWriteOptions(), &message_log_tiff);
+    const auto options_tiff = std::holds_alternative<TIFFWriteOptions>(options)
+                                ? std::get<TIFFWriteOptions>(options) : TIFFWriteOptions{};
+    const bool success = write_tiff(dyn_img_view, std::forward<SinkType>(sink), options_tiff, &message_log_tiff);
 
     impl::add_messages(message_log_tiff, message_log);
     return success;
+
 #else  // defined(SELENE_WITH_LIBTIFF)
     throw std::runtime_error("ERROR: TIFF writing unsupported; recompile with the respective external dependency.");
 #endif  // defined(SELENE_WITH_LIBTIFF)

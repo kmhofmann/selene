@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   auto write = [](const auto& img, auto filename){
     std::cout << "Writing the result to disk: '" << filename << "'...\n";
     write_image(sln::to_dyn_image_view(img, sln::PixelFormat::RGB), sln::ImageFormat::JPEG,
-                sln::FileWriter(filename), nullptr, 80);
+                sln::FileWriter(filename), nullptr, sln::JPEGCompressionOptions{80});
   };
 
   write(img_transp, output_filename_transposed);
