@@ -15,6 +15,7 @@
 
 #include <selene/img_io/TIFFCommon.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <ostream>
