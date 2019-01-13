@@ -45,7 +45,7 @@ generate_export_header(selene_base
         BASE_NAME selene
         EXPORT_FILE_NAME selene_export.hpp)
 
-set_target_properties(selene_base PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(selene_base PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ target_include_directories(selene_base_io PUBLIC
 
 target_link_libraries(selene_base_io PUBLIC selene_base)
 
-set_target_properties(selene_base_io PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(selene_base_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
@@ -138,7 +138,7 @@ endif()
 
 target_link_libraries(selene_img PUBLIC selene_base)
 
-set_target_properties(selene_img PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(selene_img PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
@@ -218,7 +218,7 @@ endif()
 
 target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
 
-set_target_properties(selene_img_io PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(selene_img_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
@@ -253,7 +253,7 @@ target_include_directories(selene_img_ops PUBLIC
 
 target_link_libraries(selene_img_ops PUBLIC selene_img)
 
-set_target_properties(selene_img_ops PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(selene_img_ops PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
