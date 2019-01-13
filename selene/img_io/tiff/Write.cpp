@@ -39,6 +39,13 @@ void set_tiff_layout(TIFF* tif, const ConstantDynImageView& view, const TIFFWrit
   set_field<uint16>(tif, TIFFTAG_PHOTOMETRIC, pixel_format_to_photometric(view.pixel_format()));
   set_field<uint16>(tif, TIFFTAG_SAMPLEFORMAT, sample_format_to_sample_format(view.sample_format()));
 
+  if (view.pixel_format() == PixelFormat::RGBA)
+  {
+    // We need to specify the extra sample.
+    std::array<uint16, 1> extra_sample_types = {{EXTRASAMPLE_ASSOCALPHA}};
+    set_field<uint16>(tif, TIFFTAG_EXTRASAMPLES, 1, extra_sample_types.data());
+  }
+
   set_field<uint16>(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);  // we only write interleaved data
   set_field<uint16>(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 
@@ -66,39 +73,13 @@ void set_tiff_layout_tiles(TIFF* tif, std::size_t tile_width, std::size_t tile_h
   set_field<uint32>(tif, TIFFTAG_TILEDEPTH, uint32{1});
 }
 
-bool check_tiff_tile_size(const ConstantDynImageView& view, TIFFWriteOptions& opts, MessageLog& message_log)
+bool check_tiff_tile_size(TIFF* tif, const ConstantDynImageView& /*view*/, TIFFWriteOptions& opts, MessageLog& /*message_log*/)
 {
-  if (opts.tile_width % 16 != 0)
-  {
-    message_log.add(
-        "Adjusting tile width (" + std::to_string(opts.tile_width) +
-        ") to be divisible by 16 (i.e. set to 16).", MessageType::Warning);
-    opts.tile_width = 16;
-  }
-
-  if (opts.tile_height % 16 != 0)
-  {
-    message_log.add(
-        "Adjusting tile height (" + std::to_string(opts.tile_height) +
-        ") to be divisible by 16 (i.e. set to 16).", MessageType::Warning);
-    opts.tile_height = 16;
-  }
-
-  if (to_unsigned(view.width()) % opts.tile_width != 0)
-  {
-    message_log.add(
-        "Image width (" + std::to_string(view.width()) + ") needs to be divisible by tile width (" +
-        std::to_string(opts.tile_width) + ")", MessageType::Error);
-    return false;
-  }
-
-  if (to_unsigned(view.height()) % opts.tile_height != 0)
-  {
-    message_log.add(
-        "Image height (" + std::to_string(view.height()) + ") needs to be divisible by tile height (" +
-        std::to_string(opts.tile_height) + ")", MessageType::Error);
-    return false;
-  }
+  auto tw = static_cast<uint32>(opts.tile_width);
+  auto th = static_cast<uint32>(opts.tile_height);
+  TIFFDefaultTileSize(tif, &tw, &th);
+  opts.tile_width = static_cast<std::size_t>(tw);
+  opts.tile_height = static_cast<std::size_t>(th);
 
   return true;
 }
@@ -279,24 +260,23 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
       const auto tile_idx = TIFFComputeTile(tif, x, y, uint32{0}, sample);
       SELENE_ASSERT(tile_idx == tile_ctr); // ???
 
+      // std::fill(buffer.begin(), buffer.end(), std::uint8_t{0});
+
       // Compute buffer size
       const auto this_tile_width = std::min(width - src_x, static_cast<value_type>(tile_width));
       const auto this_tile_height = std::min(height - src_y, static_cast<value_type>(tile_height));
       const auto nr_bytes_per_this_tile_row = static_cast<std::size_t>(this_tile_width * nr_bytes_per_pixel);
-      const auto buf_size = static_cast<std::size_t>(this_tile_height) * nr_bytes_per_this_tile_row;
-      SELENE_ASSERT(buf_size <= buffer.size());
-//      std::cout << "TILE " << tile_idx << ": src_x = " << src_x << ", src_y = " << src_y << ", ttw = " << this_tile_width << ", tth = " << this_tile_height << ", nr_bytes_tile_row = " << nr_bytes_per_this_tile_row << '\n';
 
       // Copy region to buffer
       for (auto tile_y = 0; tile_y < this_tile_height; ++tile_y)
       {
-        auto dst = buffer.data() + static_cast<std::size_t>(tile_y) * nr_bytes_per_this_tile_row;
-        SELENE_ASSERT(dst + nr_bytes_per_this_tile_row <= buffer.data() + buffer.size());
+        auto dst = buffer.data() + static_cast<std::size_t>(tile_y) * tile_width * static_cast<std::size_t>(nr_bytes_per_pixel);
+        SELENE_ASSERT(dst + tile_width * static_cast<std::size_t>(nr_bytes_per_pixel) <= buffer.data() + buffer.size());
         auto src = view.byte_ptr(to_pixel_index(src_x), to_pixel_index(src_y + tile_y));
         std::memcpy(dst, src, nr_bytes_per_this_tile_row);
       }
 
-      const auto tile_written_size = TIFFWriteEncodedTile(tif, tile_idx, buffer.data(), static_cast<tmsize_t>(buf_size));
+      const auto tile_written_size = TIFFWriteEncodedTile(tif, tile_idx, buffer.data(), static_cast<tmsize_t>(buffer.size()));
 
       if (tile_written_size == -1)
       {
@@ -304,7 +284,7 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
         return false;
       }
 
-      SELENE_ASSERT(tile_written_size == static_cast<tsize_t>(buf_size));
+      SELENE_ASSERT(tile_written_size == static_cast<tsize_t>(buffer.size()));
 
       ++tile_ctr;
     }
@@ -328,7 +308,7 @@ bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj, const 
   else
   {
     TIFFWriteOptions local_write_options = write_options;
-    const bool size_ok = check_tiff_tile_size(view, local_write_options, message_log);
+    const bool size_ok = check_tiff_tile_size(tif, view, local_write_options, message_log);
 
     if (!size_ok)
     {

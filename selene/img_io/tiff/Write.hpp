@@ -21,6 +21,11 @@ namespace sln {
 
 template <typename SinkType> class TIFFWriteObject;
 
+/** \brief Options for TIFF writing, controlling (parts of) the output format.
+ *
+ * In particular, the compression type can be specified, e.g. using LZW or JPEG compression. The respective compression
+ * type must be supported by the installed *libtiff* library.
+ */
 struct TIFFWriteOptions
 {
   enum class Layout
@@ -29,14 +34,14 @@ struct TIFFWriteOptions
     Tiles,
   };
 
-  TIFFCompression compression_type;
-  int jpeg_quality;
-  TIFFWriteOptions::Layout layout;
+  TIFFCompression compression_type;  ///< The compression type for the TIFF data.
+  int jpeg_quality;  ///< The JPEG quality (0...100), in case `compression_type == TIFFCompression::JPEG`.
+  TIFFWriteOptions::Layout layout;  ///< The storage layout to use.
 
   std::size_t max_bytes_per_strip{64 * 1024};
   std::size_t nr_rows_per_strip{4096};
-  std::size_t tile_width{16};
-  std::size_t tile_height{16};
+  std::size_t tile_width{256};
+  std::size_t tile_height{256};
 
   explicit TIFFWriteOptions(TIFFCompression compression_type_ = TIFFCompression::None,
                             int jpeg_quality_ = 95,

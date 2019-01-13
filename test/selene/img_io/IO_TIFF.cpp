@@ -69,11 +69,7 @@ void check_write_read(sln::DynImage& dyn_img, const sln_fs::path& tmp_path)
   REQUIRE(dyn_img_2.sample_format() == dyn_img.sample_format());
   REQUIRE(dyn_img_2.total_bytes() == dyn_img.total_bytes());
 
-  const auto nr_bytes_per_row = dyn_img_2.width() * dyn_img_2.nr_channels() * dyn_img_2.nr_bytes_per_channel();
-  for (auto y = 0_idx; y < dyn_img_2.height(); ++y)
-  {
-    REQUIRE(std::memcmp(dyn_img_2.byte_ptr(y), dyn_img.byte_ptr(y), static_cast<std::size_t>(nr_bytes_per_row)) == 0);
-  }
+  REQUIRE(sln::equal(dyn_img, dyn_img_2));
 }
 
 void check_test_suite(const sln_fs::path& test_suite_path,
