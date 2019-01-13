@@ -27,7 +27,7 @@ template <ImageModifiability modifiability_0, ImageModifiability modifiability_1
 bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<modifiability_1>& dyn_img_1);
 
 template <ImageModifiability modifiability_>
-constexpr void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiability_>& dyn_img_view_r) noexcept;
+void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiability_>& dyn_img_view_r) noexcept;
 
 /** \brief Dynamically typed image view class, i.e. non-owning.
  *
@@ -632,7 +632,7 @@ bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<mo
 }
 
 template <ImageModifiability modifiability_>
-constexpr void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiability_>& dyn_img_view_r) noexcept
+void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiability_>& dyn_img_view_r) noexcept
 {
   using std::swap;
   swap(dyn_img_view_l.ptr_, dyn_img_view_r.ptr_);

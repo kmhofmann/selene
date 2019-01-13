@@ -31,7 +31,7 @@ bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img
 template <ImageModifiability modifiability>
 bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1);
 
-constexpr void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
+void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
 
 /** \brief Dynamically typed image class.
  *
@@ -166,7 +166,7 @@ private:
 
   void deallocate_memory();
 
-  friend constexpr void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
+  friend void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
 };
 
 // ----------
@@ -901,7 +901,7 @@ bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dy
   return equal(dyn_img_view_0, dyn_img_1.view());
 }
 
-constexpr void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept
+inline void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept
 {
   using std::swap;
   swap(dyn_img_l.view_, dyn_img_r.view_);

@@ -40,7 +40,7 @@ sln::DynImage construct_random_dynamic_image(sln::PixelLength width, sln::PixelL
     auto ptr = img.data<PixelType>(y);
     for (auto x = 0_idx; x < img.width(); ++x, ++ptr)
     {
-      for (auto c = std::int16_t{0}; c < nr_channels; ++c)
+      for (auto c = std::size_t{0}; c < nr_channels; ++c)
       {
         (*ptr)[c] = static_cast<Element>(die(rng));
       }

@@ -34,10 +34,7 @@ template <typename PixelType0, typename PixelType1, ImageModifiability modifiabi
 bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1);
 
 template <typename PixelType_>
-constexpr void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
-
-template <typename PixelType_>
-constexpr void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
+void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
 
 /** \brief Statically typed image class.
  *
@@ -912,7 +909,7 @@ bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<P
 }
 
 template <typename PixelType_>
-constexpr void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept
+void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept
 {
   using std::swap;
   swap(img_l.view_, img_r.view_);
