@@ -105,6 +105,8 @@ TEST_CASE("Convolution (pixels)", "[img]")
   }
 }
 
+#if defined(SELENE_WITH_LIBPNG)
+
 TEST_CASE("Image convolution (IO)", "[img]")
 {
   // TODO: test convolution on some easier cases, without relying on image IO?
@@ -172,3 +174,5 @@ TEST_CASE("Image convolution (IO)", "[img]")
     REQUIRE(img_dst(300_idx, 300_idx) == sln::PixelRGB_8u(162, 151, 143));
   }
 }
+
+#endif  // defined(SELENE_WITH_LIBPNG)

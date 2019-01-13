@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `Pixel_8u3` designates 3 channels of unsigned 8-bit data for each pixel.
 
-  const auto img = sln_examples::read_example_image<sln::Pixel_8u3>("bike_duck.png", data_path);
+  const auto img = sln_examples::read_example_image<sln::Pixel_8u3>("bike_duck.jpg", data_path);
 
   std::cout << "Transposing image...\n";
   const auto img_transp = sln::transpose(img);

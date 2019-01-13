@@ -50,12 +50,18 @@ endif()
 
 if (SELENE_BUILD_TESTS)
     add_subdirectory(test)
+else()
+    message(STATUS "Not building unit tests; enable with SELENE_BUILD_TESTS=ON if desired.")
 endif()
 
 if (SELENE_BUILD_EXAMPLES)
     add_subdirectory(examples)
+else()
+    message(STATUS "Not building examples; enable with SELENE_BUILD_EXAMPLES=ON if desired.")
 endif()
 
 if (SELENE_BUILD_BENCHMARKS)
     add_subdirectory(benchmark)
+else()
+    message(STATUS "Not building benchmarks; enable with SELENE_BUILD_BENCHMARKS=ON if desired.")
 endif()

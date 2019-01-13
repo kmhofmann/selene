@@ -33,7 +33,7 @@ int main(int argc, char** argv)
   // Read in the example image (check the implementation in Utils.hpp);
   // `PixelRGB_8u` designates 3 channels (R, G, B) of unsigned 8-bit data for each pixel.
 
-  auto img = sln_examples::read_example_image<sln::PixelRGB_8u>("bike_duck.png", data_path);
+  auto img = sln_examples::read_example_image<sln::PixelRGB_8u>("bike_duck.jpg", data_path);
   assert(img.width() == 1024_px);
   assert(img.height() == 684_px);
 
