@@ -18,6 +18,7 @@
 
 #include <selene/selene_export.hpp>
 
+#include <array>
 #include <type_traits>
 
 #include <tiff.h>
