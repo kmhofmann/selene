@@ -136,10 +136,10 @@ By default, the **Selene** CMake build instructions will automatically detect li
 present on the system and make use of these.
 If desired, this can be explicitly disabled by one or more of the following CMake options:
 
-    -DSELENE_NO_LIBJPEG=ON
-    -DSELENE_NO_LIBPNG=ON
-    -DSELENE_NO_LIBTIFF=ON
-    -DSELENE_NO_OPENCV=ON
+    -DSELENE_WITH_LIBJPEG=OFF
+    -DSELENE_WITH_LIBPNG=OFF
+    -DSELENE_WITH_LIBTIFF=OFF
+    -DSELENE_WITH_OPENCV=OFF
 
 The respective functionality, i.e. image I/O, or interoperability with OpenCV's `cv::Mat`, will then be disabled.
 
