@@ -134,9 +134,13 @@ template <typename SourceType>
 template <typename SourceType>
 [[nodiscard]] bool try_read_as_tiff_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
 {
+  const auto source_pos = source.position();
+
   MessageLog message_log_tiff;
   TIFFReadObject<std::remove_reference_t<SourceType>> tiff_obj;
   const auto layouts = read_tiff_layouts(std::forward<SourceType>(source), &message_log_tiff, &tiff_obj);
+
+  source.seek_abs(source_pos);
 
   if (layouts.empty())  // We assume this means it's not a TIFF image...
   {

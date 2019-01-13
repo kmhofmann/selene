@@ -23,6 +23,7 @@
 #include <tiff.h>
 #include <tiffio.h>
 
+
 namespace sln {
 
 namespace {
@@ -134,20 +135,19 @@ struct TIFFReadObject<SourceType>::Impl
 
   void open_read(SourceType& source)
   {
-    if (tif == nullptr)
-    {
-      ss = impl::tiff::SourceStruct{&source};
-      tif = TIFFClientOpen("", "r",
-                           reinterpret_cast<thandle_t>(&ss),
-                           impl::tiff::r_read_func<SourceType>,
-                           impl::tiff::r_write_func<SourceType>,
-                           impl::tiff::r_seek_func<SourceType>,
-                           impl::tiff::r_close_func<SourceType>,
-                           impl::tiff::r_size_func<SourceType>,
-                           impl::tiff::r_map_func<SourceType>,
-                           impl::tiff::r_unmap_func<SourceType>);
-      SELENE_ASSERT(tif != nullptr);
-    }
+    close();
+
+    ss = impl::tiff::SourceStruct{&source};
+    tif = TIFFClientOpen("", "r",
+                         reinterpret_cast<thandle_t>(&ss),
+                         impl::tiff::r_read_func<SourceType>,
+                         impl::tiff::r_write_func<SourceType>,
+                         impl::tiff::r_seek_func<SourceType>,
+                         impl::tiff::r_close_func<SourceType>,
+                         impl::tiff::r_size_func<SourceType>,
+                         impl::tiff::r_map_func<SourceType>,
+                         impl::tiff::r_unmap_func<SourceType>);
+    SELENE_ASSERT(tif != nullptr);
   }
 
   void open_read(SourceType&& source)

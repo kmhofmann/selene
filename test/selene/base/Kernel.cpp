@@ -9,8 +9,6 @@
 #include <numeric>
 #include <random>
 
-// ---
-#include <iostream>
 
 TEST_CASE("Kernel", "[base]")
 {

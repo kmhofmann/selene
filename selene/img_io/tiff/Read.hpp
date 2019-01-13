@@ -85,12 +85,13 @@ private:
  * The size of the output vector corresponds to the number of images contained in the TIFF data stream.
  * In case the returned vector is empty, the supplied data stream was likely not in the TIFF format.
  *
+ * After reading, the source position will point to the beginning of the TIFF data stream.
+ *
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @param tiff_object Optional TIFFReadObject instance, which can be explicitly instantiated outside of this function.
- * Providing this may save internal memory (de)allocations. Note that the same TIFF reader object can **only** be
- * re-used with the same `source` instance throughout its lifetime! Any other use is undefined.
+ * Providing this may save internal memory (de)allocations.
  * @return A vector with all read TIFF image layouts.
  */
 template <typename SourceType>
@@ -104,6 +105,7 @@ std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* 
   std::vector<TiffImageLayout> layouts;
 
   SELENE_ASSERT(source.is_open());
+  const auto start_pos = source.position();
 
   if (!obj->open(std::forward<SourceType>(source)))
   {
@@ -117,8 +119,7 @@ std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* 
     layouts.push_back(obj->get_layout());
   } while (obj->advance_directory());
 
-  // Reset back to first image
-  obj->set_directory(0);
+  source.seek_abs(start_pos);
 
   return layouts;
 }
@@ -128,12 +129,13 @@ std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* 
  * TIFF files may contain more than one image.
  * This function reads the *first* TIFF image from the supplied data stream (here denoted as a 'file'), and returns it.
  *
+ * After reading, the source position may *not* point past the end of the TIFF data stream.
+ *
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @param tiff_object Optional TIFFReadObject instance, which can be explicitly instantiated outside of this function.
- * Providing this may save internal memory (de)allocations. Note that the same TIFF reader object can **only** be
- * re-used with the same `source` instance throughout its lifetime! Any other use is undefined.
+ * Providing this may save internal memory (de)allocations.
  * @return The read TIFF image from the data stream/file. In case the image could not be read successfully, it will not
  * be valid (i.e. `is_valid() == false`).
  */
@@ -158,9 +160,6 @@ DynImage read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<
   DynImage dyn_img;
   [[maybe_unused]] const bool read_successfully = impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
 
-  // Reset back to first image
-  obj->set_directory(0);
-
   impl::tiff_assign_message_log(local_message_log, message_log);
   return dyn_img;
 }
@@ -170,12 +169,13 @@ DynImage read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<
  * TIFF files may contain more than one image.
  * This function reads all TIFF images from the supplied data stream (here denoted as a 'file'), and returns them.
  *
+ * After reading, the source position may *not* point past the end of the TIFF data stream.
+ *
  * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
  * @param source Input source instance.
  * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
  * @param tiff_object Optional TIFFReadObject instance, which can be explicitly instantiated outside of this function.
- * Providing this may save internal memory (de)allocations. Note that the same TIFF reader object can **only** be
- * re-used with the same `source` instance throughout its lifetime! Any other use is undefined.
+ * Providing this may save internal memory (de)allocations.
  * @return A vector with all read TIFF images from the data stream/file. Images that could not be read successfully
  * will not be valid (i.e. `is_valid() == false`).
  */
@@ -204,9 +204,6 @@ std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log
     [[maybe_unused]] const bool read_successfully = impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
     images.push_back(std::move(dyn_img));
   } while (obj->advance_directory());
-
-  // Reset back to first image
-  obj->set_directory(0);
 
   impl::tiff_assign_message_log(local_message_log, message_log);
   return images;

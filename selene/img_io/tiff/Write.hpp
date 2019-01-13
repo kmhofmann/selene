@@ -101,6 +101,18 @@ private:
 // ----------
 // Implementation:
 
+/** \brief Write a TIFF image data stream, given the supplied uncompressed image data.
+ *
+ * @tparam DynImageOrView The type of the input image data. Can be of type `DynImage` or `DynImageView<>`.
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
+ * @param dyn_img_or_view The dynamic image (view) to be written.
+ * @param sink Output sink instance.
+ * @param write_options Options for writing the TIFF image.
+ * @param messages Optional pointer to the message log. If provided, warning and error messages will be output there.
+ * @param tiff_object Optional TIFFWriteObject instance, which can be explicitly instantiated outside of this function.
+ * Providing this may save internal memory (de)allocations.
+ * @return True, if the write operation was successful; false otherwise.
+ */
 template <typename DynImageOrView, typename SinkType>
 bool write_tiff(const DynImageOrView& dyn_img_or_view,
                 SinkType&& sink,

@@ -38,13 +38,16 @@ using namespace sln::literals;
 
 namespace {
 
-void check_write_read(sln::DynImage& dyn_img, const sln_fs::path& tmp_path)
+void check_write_read(sln::DynImage& dyn_img,
+                      const sln_fs::path& tmp_path,
+                      sln::TIFFReadObject<sln::FileReader>& read_object,
+                      sln::TIFFWriteObject<sln::FileWriter>& write_object)
 {
   // Write as TIFF file...
   sln::FileWriter sink((tmp_path / "test_img.tif").string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
-  bool status_write = sln::write_tiff(dyn_img, sink, sln::TIFFWriteOptions(), &messages_write);
+  bool status_write = sln::write_tiff(dyn_img, sink, sln::TIFFWriteOptions(), &messages_write, &write_object);
   REQUIRE(status_write);
   REQUIRE(messages_write.messages().empty());
   sink.close();
@@ -53,7 +56,7 @@ void check_write_read(sln::DynImage& dyn_img, const sln_fs::path& tmp_path)
   // ...and read again
   sln::FileReader source((tmp_path / "test_img.tif").string());
   sln::MessageLog messages_read;
-  auto dyn_img_2 = sln::read_tiff(source, &messages_read);
+  auto dyn_img_2 = sln::read_tiff(source, &messages_read, &read_object);
   REQUIRE(messages_read.messages().empty());
   source.close();
   REQUIRE(!source.is_open());
@@ -79,6 +82,10 @@ void check_test_suite(const sln_fs::path& test_suite_path,
 {
   using sln_fs::directory_iterator;
 
+  // Try to re-use the read and write objects.
+  sln::TIFFReadObject<sln::FileReader> read_object;
+  sln::TIFFWriteObject<sln::FileWriter> write_object;
+
   for (directory_iterator itr(test_suite_path), itr_end = directory_iterator(); itr != itr_end; ++itr)
   {
     const sln_fs::directory_entry& e = *itr;
@@ -89,7 +96,6 @@ void check_test_suite(const sln_fs::path& test_suite_path,
       REQUIRE(source.is_open());
 
       sln::MessageLog messages_read;
-      sln::TIFFReadObject<sln::FileReader> read_object;
       auto dyn_img = sln::read_tiff(source, &messages_read, &read_object);
 
       const bool cannot_be_read = std::any_of(cannot_read_list.cbegin(), cannot_read_list.cend(),
@@ -116,7 +122,7 @@ void check_test_suite(const sln_fs::path& test_suite_path,
         REQUIRE(!dyn_img.is_empty());
         REQUIRE(dyn_img.is_valid());
 
-        check_write_read(dyn_img, tmp_path);
+        check_write_read(dyn_img, tmp_path, read_object, write_object);
       }
     }
   }
