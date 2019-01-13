@@ -16,13 +16,19 @@
 
 namespace sln {
 
+/** \brief Configuration of multi-channel data storage inside a TIFF file (or the current TIFF "directory").
+ *
+ * Multi-channel data can be stored contiguously (interleaved), or separate (planar).
+ */
 enum class TIFFPlanarConfig
 {
-  Unknown,
-  Contiguous,
-  Separate,
+  Unknown,  ///< Storage is unknown.
+  Contiguous,  ///< Storage is contiguous (interleaved).
+  Separate,  ///< Storate is separate (planar).
 };
 
+/** \brief The photometric tag assigned in the TIFF file (or the current TIFF "directory").
+ */
 enum class TIFFPhotometricTag
 {
   Unknown,
@@ -41,6 +47,8 @@ enum class TIFFPhotometricTag
   LogLUV,
 };
 
+/** \brief The sample format used for pixel elements in a TIFF file (or the current TIFF "directory").
+ */
 enum class TIFFSampleFormat
 {
   Unknown,
@@ -52,6 +60,8 @@ enum class TIFFSampleFormat
   ComplexFloat,
 };
 
+/** \brief The compression scheme used in a TIFF file (or the current TIFF "directory").
+ */
 enum class TIFFCompression
 {
   Unknown,
@@ -80,17 +90,22 @@ enum class TIFFCompression
 #endif
 };
 
+/** \brief Describes the layout and some storage properties of a TIFF image.
+ *
+ * Details about the storage type (strips or tiles), or the particular strip or tile storage details are not included
+ * in this structure.
+ */
 struct TiffImageLayout
 {
-  std::uint32_t width;
-  std::uint32_t height;
-  std::uint32_t depth;
-  std::uint16_t samples_per_pixel;
-  std::uint16_t bits_per_sample;
-  sln::TIFFPlanarConfig planar_config;
-  sln::TIFFPhotometricTag photometric;
-  sln::TIFFSampleFormat sample_format;
-  sln::TIFFCompression compression;
+  std::uint32_t width;  ///< The image width.
+  std::uint32_t height;  ///< The image height.
+  std::uint32_t depth;  ///< The image depth. Selene can only read images where depth == 1.
+  std::uint16_t samples_per_pixel;  ///< The number of samples (channels) per pixel.
+  std::uint16_t bits_per_sample;  ///< The number of bits per sample (pixel element/channel).
+  sln::TIFFPlanarConfig planar_config;  ///< The multi-channel data storage configuration (continuous or separate).
+  sln::TIFFPhotometricTag photometric;  ///< The photometric tag.
+  sln::TIFFSampleFormat sample_format;  ///< The sample format.
+  sln::TIFFCompression compression;  ///< The data compression type.
 
   TiffImageLayout(std::uint32_t width_,
                   std::uint32_t height_,

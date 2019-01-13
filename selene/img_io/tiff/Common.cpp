@@ -74,6 +74,18 @@ namespace {
 
 }  // namespace _
 
+/** \brief Returns a copy of the global *libtiff* message log.
+ *
+ * As with other image I/O libraries, *libtiff*'s warning and error handlers can be redirected to custom callbacks.
+ * Unfortunately, *libtiff* only allows doing this on library level, as opposed to per-file level.
+ * Therefore, all warning and errors emitted by *libtiff* are written to a global message log in a thread-safe manner.
+ * This may provide more information, in case of TIFF reading or writing errors.
+ *
+ * This function exists to obtain a snapshot of the global message log.
+ * Warnings are marked as `MessageType::Warning`, and errors as `MessageType::Error`.
+ *
+ * @return A copy of the global libtiff message log.
+ */
 SELENE_EXPORT
 MessageLog global_tiff_message_log()
 {
@@ -82,6 +94,10 @@ MessageLog global_tiff_message_log()
   return log;
 }
 
+/** \brief Clears the global *libtiff* message log.
+ *
+ * This function clears the global message log with *libtiff* emitted messages in a thread-safe manner.
+ */
 SELENE_EXPORT
 void clear_global_tiff_message_log()
 {

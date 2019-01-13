@@ -64,16 +64,20 @@ template <typename SinkType, typename DynImageOrView>
                                          const DynImageOrView&);
 }  // namespace impl
 
+/** \brief Opaque TIFF writing object, holding internal state.
+ */
 template <typename SinkType>
 class TIFFWriteObject
 {
 public:
+  /// \cond INTERNAL
   TIFFWriteObject();
   ~TIFFWriteObject();
   TIFFWriteObject(const TIFFWriteObject&) = delete;
   TIFFWriteObject& operator=(const TIFFWriteObject&) = delete;
   TIFFWriteObject(TIFFWriteObject&&) noexcept = default;
   TIFFWriteObject& operator=(TIFFWriteObject&&) noexcept = default;
+  /// \endcond
 
 private:
   struct Impl;
