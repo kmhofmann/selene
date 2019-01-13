@@ -15,6 +15,8 @@
 #include <selene/img_io/_impl/TIFFReadStrips.hpp>
 #include <selene/img_io/_impl/TIFFReadTiles.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <type_traits>
 #include <tuple>
 
@@ -207,8 +209,8 @@ int TIFFReadObject<SourceType>::set_directory(std::uint16_t index)
 }
 
 // Explicit instantiations:
-template class TIFFReadObject<FileReader>;
-template class TIFFReadObject<MemoryReader>;
+template class SELENE_EXPORT TIFFReadObject<FileReader>;
+template class SELENE_EXPORT TIFFReadObject<MemoryReader>;
 
 
 namespace impl {
@@ -259,11 +261,11 @@ bool tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj,
 }
 
 // Explicit instantiations:
-template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, DynImage&);
-template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, MutableDynImageView&);
+template SELENE_EXPORT bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, DynImage&);
+template SELENE_EXPORT bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, MutableDynImageView&);
 
-template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, DynImage&);
-template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, MutableDynImageView&);
+template SELENE_EXPORT bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, DynImage&);
+template SELENE_EXPORT bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, MutableDynImageView&);
 
 }  // namespace impl
 

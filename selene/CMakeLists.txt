@@ -2,6 +2,10 @@ if(NOT IS_DIRECTORY ${SELENE_DIR})
     message(FATAL_ERROR "Please build using the outermost CMakeLists.txt file.")
 endif()
 
+include(GenerateExportHeader)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 #------------------------------------------------------------------------------
 
 add_library(selene_base "")
@@ -33,7 +37,15 @@ endif()
 
 target_include_directories(selene_base PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+# Generate an export header (only once; to be used by all other libraries, too)
+generate_export_header(selene_base
+        BASE_NAME selene
+        EXPORT_FILE_NAME selene_export.hpp)
+
+set_target_properties(selene_base PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 #------------------------------------------------------------------------------
 
@@ -59,9 +71,12 @@ target_compile_definitions(selene_base_io PRIVATE ${SELENE_COMPILER_DEFINITIONS}
 
 target_include_directories(selene_base_io PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene_base_io PUBLIC selene_base)
+
+set_target_properties(selene_base_io PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 #------------------------------------------------------------------------------
 
@@ -113,14 +128,17 @@ target_compile_definitions(selene_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
 target_include_directories(selene_img PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 if (OPENCV_CORE_FOUND)
     target_compile_definitions(selene_img PUBLIC SELENE_WITH_OPENCV)
-    # no need to link against it, as it's only used in a header
+    # No need to link against OpenCV, as it's only used in a header. The downstream user should link against it.
 endif()
 
 target_link_libraries(selene_img PUBLIC selene_base)
+
+set_target_properties(selene_img PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 #------------------------------------------------------------------------------
 
@@ -168,7 +186,8 @@ target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
 target_include_directories(selene_img_io PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 if (JPEG_FOUND)
     target_compile_definitions(selene_img_io PUBLIC SELENE_WITH_LIBJPEG)
@@ -199,6 +218,8 @@ endif()
 
 target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
 
+set_target_properties(selene_img_io PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
 #------------------------------------------------------------------------------
 
 add_library(selene_img_ops "")
@@ -227,9 +248,12 @@ target_compile_definitions(selene_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS}
 
 target_include_directories(selene_img_ops PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene_img_ops PUBLIC selene_img)
+
+set_target_properties(selene_img_ops PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 #------------------------------------------------------------------------------
 
@@ -238,7 +262,7 @@ add_library(selene::selene ALIAS selene)
 
 target_include_directories(selene INTERFACE
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:include>)
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene INTERFACE
         selene_base
@@ -250,9 +274,6 @@ target_link_libraries(selene INTERFACE
 #------------------------------------------------------------------------------
 
 # Installation
-
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
 
 set(SELENE_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/selene)
 
@@ -279,7 +300,12 @@ install(TARGETS selene_base selene_base_io selene_img selene_img_io selene_img_o
 # Install headers
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FILES_MATCHING PATTERN "*.hpp")
+        FILES_MATCHING PATTERN "*.hpp"
+                       PATTERN "_doc.hpp" EXCLUDE)
+
+# Install export header
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene_export.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/selene)
 
 # Install exports
 install(EXPORT selene-targets

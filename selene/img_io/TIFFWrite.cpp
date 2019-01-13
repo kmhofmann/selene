@@ -16,6 +16,8 @@
 #include <selene/img_io/_impl/TIFFDetail.hpp>
 #include <selene/img_io/_impl/TIFFIOFunctions.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <type_traits>
 
 #include <tiff.h>
@@ -180,8 +182,8 @@ bool TIFFWriteObject<SinkType>::flush()
 }
 
 // Explicit instantiations:
-template class TIFFWriteObject<FileWriter>;
-template class TIFFWriteObject<VectorWriter>;
+template class SELENE_EXPORT TIFFWriteObject<FileWriter>;
+template class SELENE_EXPORT TIFFWriteObject<VectorWriter>;
 
 
 namespace impl {
@@ -338,13 +340,13 @@ bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj, const 
 }
 
 // Explicit instantiations:
-template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&);
-template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&);
-template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&);
 
-template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&);
-template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&);
-template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&);
 
 }  // namespace impl
 

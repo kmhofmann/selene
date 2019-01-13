@@ -4,6 +4,8 @@
 
 #include <selene/base/io/FileUtils.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <array>
 #include <cstdio>
 #include <sstream>
@@ -17,6 +19,7 @@ namespace sln {
  * \param path A string representing the path to the file that should be read.
  * \return A `std::vector<std::uint8_t>` with the contents of the file.
  */
+SELENE_EXPORT
 std::vector<std::uint8_t> read_file_contents(const std::string& path)
 {
   constexpr std::size_t buffer_size = 32768;
@@ -49,6 +52,7 @@ std::vector<std::uint8_t> read_file_contents(const std::string& path)
  * @param data_ptr A pointer to the beginning of the data to be written.
  * @param data_len The length of the data in bytes.
  */
+SELENE_EXPORT
 void write_data_contents(const std::string& path, const std::uint8_t* data_ptr, std::size_t data_len)
 {
   auto fp = std::fopen(path.c_str(), "wb");
@@ -94,6 +98,7 @@ void write_data_contents(const std::string& path, const std::uint8_t* data_ptr, 
  * @param data_ptr A pointer to the beginning of the data to be written.
  * @param data_len The length of the data in bytes.
  */
+SELENE_EXPORT
 void write_data_contents(const std::string& path, const std::int8_t* data_ptr, std::size_t data_len)
 {
   write_data_contents(path, static_cast<const std::uint8_t*>(static_cast<const void*>(data_ptr)), data_len);
@@ -107,6 +112,7 @@ void write_data_contents(const std::string& path, const std::int8_t* data_ptr, s
  * @param data_ptr A pointer to the beginning of the data to be written.
  * @param data_len The length of the data in bytes.
  */
+SELENE_EXPORT
 void write_data_contents(const std::string& path, const char* data_ptr, std::size_t data_len)
 {
   write_data_contents(path, static_cast<const std::uint8_t*>(static_cast<const void*>(data_ptr)), data_len);
@@ -119,6 +125,7 @@ void write_data_contents(const std::string& path, const char* data_ptr, std::siz
  * @param path A string representing the path to the file to be written.
  * @param data A `std::vector<std::uint8_t>` with the contents to be written.
  */
+SELENE_EXPORT
 void write_data_contents(const std::string& path, const std::vector<std::uint8_t>& data)
 {
   write_data_contents(path, data.data(), data.size());

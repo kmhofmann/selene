@@ -7,6 +7,8 @@
 #include <selene/img_io/JPEGRead.hpp>
 #include <selene/img_io/_impl/JPEGDetail.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <jpeglib.h>
 
 #include <cstdio>
@@ -21,6 +23,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param color_space_ The image data color space.
  */
+SELENE_EXPORT
 JPEGImageInfo::JPEGImageInfo(PixelLength width_,
                              PixelLength height_,
                              std::int16_t nr_channels_,
@@ -33,6 +36,7 @@ JPEGImageInfo::JPEGImageInfo(PixelLength width_,
  *
  * @return True, if the header information is valid; false otherwise.
  */
+SELENE_EXPORT
 bool JPEGImageInfo::is_valid() const
 {
   return width > 0 && height > 0 && nr_channels > 0;
@@ -48,6 +52,7 @@ struct JPEGDecompressionObject::Impl
   bool needs_reset = false;
 };
 
+SELENE_EXPORT
 JPEGDecompressionObject::JPEGDecompressionObject() : impl_(std::make_unique<JPEGDecompressionObject::Impl>())
 {
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
@@ -67,11 +72,56 @@ failure_state:
   impl_->valid = false;
 }
 
+SELENE_EXPORT
 JPEGDecompressionObject::~JPEGDecompressionObject()
 {
   jpeg_destroy_decompress(&impl_->cinfo);
 }
 
+SELENE_EXPORT
+bool JPEGDecompressionObject::valid() const
+{
+  return impl_->valid;
+}
+
+SELENE_EXPORT
+bool JPEGDecompressionObject::error_state() const
+{
+  return impl_->error_manager.error_state;
+}
+
+SELENE_EXPORT
+MessageLog& JPEGDecompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
+}
+
+SELENE_EXPORT
+const MessageLog& JPEGDecompressionObject::message_log() const
+{
+  return impl_->error_manager.message_log;
+}
+
+SELENE_EXPORT
+JPEGImageInfo JPEGDecompressionObject::get_header_info() const
+{
+  const auto width = to_pixel_length(impl_->cinfo.image_width);
+  const auto height = to_pixel_length(impl_->cinfo.image_height);
+  const auto num_components = std::int16_t(impl_->cinfo.num_components);
+  const auto color_space = impl::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
+  return JPEGImageInfo(width, height, num_components, color_space);
+}
+
+SELENE_EXPORT
+void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)
+{
+  if (out_color_space != JPEGColorSpace::Auto)
+  {
+    impl_->cinfo.out_color_space = impl::color_space_pub_to_lib(out_color_space);
+  }
+}
+
+SELENE_EXPORT
 void JPEGDecompressionObject::reset_if_needed()
 {
   if (impl_->needs_reset)
@@ -82,46 +132,9 @@ void JPEGDecompressionObject::reset_if_needed()
   }
 }
 
-bool JPEGDecompressionObject::valid() const
-{
-  return impl_->valid;
-}
-
-JPEGImageInfo JPEGDecompressionObject::get_header_info() const
-{
-  const auto width = to_pixel_length(impl_->cinfo.image_width);
-  const auto height = to_pixel_length(impl_->cinfo.image_height);
-  const auto num_components = std::int16_t(impl_->cinfo.num_components);
-  const auto color_space = impl::color_space_lib_to_pub(impl_->cinfo.jpeg_color_space);
-  return JPEGImageInfo(width, height, num_components, color_space);
-}
-
-void JPEGDecompressionObject::set_decompression_parameters(JPEGColorSpace out_color_space)
-{
-  if (out_color_space != JPEGColorSpace::Auto)
-  {
-    impl_->cinfo.out_color_space = impl::color_space_pub_to_lib(out_color_space);
-  }
-}
-
-bool JPEGDecompressionObject::error_state() const
-{
-  return impl_->error_manager.error_state;
-}
-
-MessageLog& JPEGDecompressionObject::message_log()
-{
-  return impl_->error_manager.message_log;
-}
-
-const MessageLog& JPEGDecompressionObject::message_log() const
-{
-  return impl_->error_manager.message_log;
-}
-
-
 namespace impl {
 
+SELENE_EXPORT
 JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region)
     : obj_(obj), region_(region)
 {
@@ -149,6 +162,7 @@ JPEGDecompressionCycle::JPEGDecompressionCycle(JPEGDecompressionObject& obj, con
 #endif
 }
 
+SELENE_EXPORT
 JPEGDecompressionCycle::~JPEGDecompressionCycle()
 {
   if (!finished_or_aborted_)
@@ -160,6 +174,7 @@ JPEGDecompressionCycle::~JPEGDecompressionCycle()
   obj_.impl_->needs_reset = true;
 }
 
+SELENE_EXPORT
 JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
 {
   auto& cinfo = obj_.impl_->cinfo;
@@ -172,6 +187,7 @@ JPEGImageInfo JPEGDecompressionCycle::get_output_info() const
   return JPEGImageInfo{width, height, color_components, out_color_space};
 }
 
+SELENE_EXPORT
 bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
   using value_type = PixelIndex::value_type;
@@ -215,6 +231,7 @@ failure_state:
 // -------------------------------
 // Decompression related functions
 
+SELENE_EXPORT
 void set_source(JPEGDecompressionObject& obj, FileReader& source)
 {
   obj.reset_if_needed();
@@ -229,7 +246,7 @@ void set_source(JPEGDecompressionObject& obj, FileReader& source)
 failure_state:;
 }
 
-
+SELENE_EXPORT
 void set_source(JPEGDecompressionObject& obj, MemoryReader& source)
 {
   obj.reset_if_needed();
@@ -247,7 +264,7 @@ void set_source(JPEGDecompressionObject& obj, MemoryReader& source)
 failure_state:;
 }
 
-
+SELENE_EXPORT
 JPEGImageInfo read_header(JPEGDecompressionObject& obj)
 {
   obj.reset_if_needed();

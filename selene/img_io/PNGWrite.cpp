@@ -11,6 +11,8 @@
 #include <selene/img_io/PNGWrite.hpp>
 #include <selene/img_io/_impl/PNGDetail.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <algorithm>
 #include <array>
 #include <cstdint>
@@ -54,6 +56,7 @@ struct PNGCompressionObject::Impl
   bool needs_reset = false;
 };
 
+SELENE_EXPORT
 PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompressionObject::Impl>())
 {
   auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
@@ -79,27 +82,37 @@ PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompres
   impl_->valid = true;
 }
 
+SELENE_EXPORT
 PNGCompressionObject::~PNGCompressionObject()
 {
   png_destroy_write_struct(&impl_->png_ptr, &impl_->info_ptr);
 }
 
-void PNGCompressionObject::reset_if_needed()
-{
-  if (impl_->needs_reset)
-  {
-    // TODO: do we also need to deallocate and reallocate the png structs here, as in the decompression object?
-    impl_->error_manager.error_state = false;
-    impl_->error_manager.message_log.clear();
-    impl_->needs_reset = false;
-  }
-}
-
+SELENE_EXPORT
 bool PNGCompressionObject::valid() const
 {
   return impl_->valid;
 }
 
+SELENE_EXPORT
+bool PNGCompressionObject::error_state() const
+{
+  return impl_->error_manager.error_state;
+}
+
+SELENE_EXPORT
+MessageLog& PNGCompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
+}
+
+SELENE_EXPORT
+const MessageLog& PNGCompressionObject::message_log() const
+{
+  return impl_->error_manager.message_log;
+}
+
+SELENE_EXPORT
 bool PNGCompressionObject::set_image_info(
     int width, int height, int nr_channels, int bit_depth, bool interlaced, PixelFormat pixel_format)
 {
@@ -147,6 +160,7 @@ failure_state:
   return false;
 }
 
+SELENE_EXPORT
 bool PNGCompressionObject::set_compression_parameters(int compression_level, bool invert_alpha)
 {
   auto png_ptr = impl_->png_ptr;
@@ -171,19 +185,16 @@ failure_state:
   return false;
 }
 
-bool PNGCompressionObject::error_state() const
+SELENE_EXPORT
+void PNGCompressionObject::reset_if_needed()
 {
-  return impl_->error_manager.error_state;
-}
-
-MessageLog& PNGCompressionObject::message_log()
-{
-  return impl_->error_manager.message_log;
-}
-
-const MessageLog& PNGCompressionObject::message_log() const
-{
-  return impl_->error_manager.message_log;
+  if (impl_->needs_reset)
+  {
+    // TODO: do we also need to deallocate and reallocate the png structs here, as in the decompression object?
+    impl_->error_manager.error_state = false;
+    impl_->error_manager.message_log.clear();
+    impl_->needs_reset = false;
+  }
 }
 
 
@@ -192,6 +203,7 @@ namespace impl {
 // ----------------------
 // Compression structures
 
+SELENE_EXPORT
 PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr, bool invert_monochrome)
     : obj_(obj), error_state_(false)
 {
@@ -223,16 +235,19 @@ failure_state:
   error_state_ = true;
 }
 
+SELENE_EXPORT
 PNGCompressionCycle::~PNGCompressionCycle()
 {
   obj_.impl_->needs_reset = true;
 }
 
+SELENE_EXPORT
 bool PNGCompressionCycle::error_state() const
 {
   return error_state_;
 }
 
+SELENE_EXPORT
 void PNGCompressionCycle::compress(const ConstRowPointers& row_pointers)
 {
   auto png_ptr = obj_.impl_->png_ptr;
@@ -246,6 +261,7 @@ void PNGCompressionCycle::compress(const ConstRowPointers& row_pointers)
 }
 
 
+SELENE_EXPORT
 void user_write_data(png_structp png_ptr, png_bytep data, png_size_t length)
 {
   void* io_ptr = png_get_io_ptr(png_ptr);
@@ -262,10 +278,12 @@ void user_write_data(png_structp png_ptr, png_bytep data, png_size_t length)
   SELENE_FORCED_ASSERT(nr_bytes_written == length);
 }
 
+SELENE_EXPORT
 void user_flush_data(png_structp /*png_ptr*/)
 {
 }
 
+SELENE_EXPORT
 void set_destination(PNGCompressionObject& obj, FileWriter& sink)
 {
   obj.reset_if_needed();
@@ -280,6 +298,7 @@ void set_destination(PNGCompressionObject& obj, FileWriter& sink)
 failure_state:;
 }
 
+SELENE_EXPORT
 void set_destination(PNGCompressionObject& obj, VectorWriter& sink)
 {
   obj.reset_if_needed();

@@ -4,10 +4,13 @@
 
 #include <selene/img_io/IO.hpp>
 
+#include <selene/selene_export.hpp>
+
 namespace sln {
 
 namespace impl {
 
+SELENE_EXPORT
 void add_messages(const MessageLog& message_log_src, MessageLog* message_log_dst)
 {
   if (message_log_dst == nullptr)

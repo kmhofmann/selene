@@ -8,6 +8,8 @@
 
 #include <selene/img_io/_impl/TIFFDetail.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <cstdio>
 #include <mutex>
 #include <sstream>
@@ -15,6 +17,7 @@
 
 namespace sln {
 
+SELENE_EXPORT
 std::ostream& operator<<(std::ostream& os, const TiffImageLayout& info)
 {
   using namespace impl::tiff;
@@ -71,6 +74,7 @@ namespace {
 
 }  // namespace _
 
+SELENE_EXPORT
 MessageLog global_tiff_message_log()
 {
   std::lock_guard<std::mutex> lock(tiff_message_log_mutex);
@@ -78,6 +82,7 @@ MessageLog global_tiff_message_log()
   return log;
 }
 
+SELENE_EXPORT
 void clear_global_tiff_message_log()
 {
   std::lock_guard<std::mutex> lock(tiff_message_log_mutex);
@@ -86,11 +91,13 @@ void clear_global_tiff_message_log()
 
 namespace impl {
 
+SELENE_EXPORT
 void tiff_set_handlers()
 {
   std::call_once(tiff_handlers_once_flag, set_handlers_once);
 }
 
+SELENE_EXPORT
 void tiff_assign_message_log(const MessageLog& message_log, MessageLog* output_message_log)
 {
   if (!output_message_log)

@@ -9,6 +9,8 @@
 #include <selene/img_io/PNGRead.hpp>
 #include <selene/img_io/_impl/PNGDetail.hpp>
 
+#include <selene/selene_export.hpp>
+
 #include <array>
 #include <cstdint>
 #include <cstdio>
@@ -27,6 +29,7 @@ namespace sln {
  * @param nr_channels_ The number of image channels.
  * @param bit_depth_ The image bit depth (8 or 16).
  */
+SELENE_EXPORT
 PNGImageInfo::PNGImageInfo(PixelLength width_, PixelLength height_, std::int16_t nr_channels_, std::int16_t bit_depth_)
     : width(width_), height(height_), nr_channels(nr_channels_), bit_depth(bit_depth_)
 {
@@ -36,6 +39,7 @@ PNGImageInfo::PNGImageInfo(PixelLength width_, PixelLength height_, std::int16_t
  *
  * @return True, if the header information is valid; false otherwise.
  */
+SELENE_EXPORT
 bool PNGImageInfo::is_valid() const
 {
   return width > 0 && height > 0 && nr_channels > 0 && bit_depth > 0;
@@ -56,86 +60,43 @@ struct PNGDecompressionObject::Impl
   bool needs_reset = false;
 };
 
+SELENE_EXPORT
 PNGDecompressionObject::PNGDecompressionObject() : impl_(std::make_unique<PNGDecompressionObject::Impl>())
 {
   allocate();
 }
 
+SELENE_EXPORT
 PNGDecompressionObject::~PNGDecompressionObject()
 {
   deallocate();
 }
 
-void PNGDecompressionObject::allocate()
-{
-  SELENE_FORCED_ASSERT(!impl_->png_ptr);
-  SELENE_FORCED_ASSERT(!impl_->info_ptr);
-  SELENE_FORCED_ASSERT(!impl_->end_info);
-
-  auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
-  png_error_ptr user_error_fn = impl::error_handler;
-  png_error_ptr user_warning_fn = impl::warning_handler;
-  impl_->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, user_error_ptr, user_error_fn, user_warning_fn);
-
-  if (!impl_->png_ptr)
-  {
-    return;
-  }
-
-  impl_->info_ptr = png_create_info_struct(impl_->png_ptr);
-
-  if (!impl_->info_ptr)
-  {
-    png_destroy_read_struct(&impl_->png_ptr, nullptr, nullptr);
-    return;
-  }
-
-  impl_->end_info = png_create_info_struct(impl_->png_ptr);
-
-  if (!impl_->end_info)
-  {
-    png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, nullptr);
-    return;
-  }
-
-  SELENE_FORCED_ASSERT(impl_->png_ptr);
-  SELENE_FORCED_ASSERT(impl_->info_ptr);
-  SELENE_FORCED_ASSERT(impl_->end_info);
-  impl_->valid = true;
-}
-
-void PNGDecompressionObject::deallocate()
-{
-  SELENE_FORCED_ASSERT(impl_->png_ptr);
-  SELENE_FORCED_ASSERT(impl_->info_ptr);
-  SELENE_FORCED_ASSERT(impl_->end_info);
-
-  // Deallocate the memory allocated for the png_struct and png_info objects
-  png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, &impl_->end_info);
-
-  impl_->png_ptr = nullptr;
-  impl_->info_ptr = nullptr;
-  impl_->end_info = nullptr;
-  impl_->error_manager = impl::PNGErrorManager();
-  impl_->pixel_format_ = PixelFormat::Unknown;
-  impl_->valid = false;
-}
-
-void PNGDecompressionObject::reset_if_needed()
-{
-  if (impl_->needs_reset)
-  {
-    deallocate();
-    allocate();
-    impl_->needs_reset = false;
-  }
-}
-
+SELENE_EXPORT
 bool PNGDecompressionObject::valid() const
 {
   return impl_->valid;
 }
 
+SELENE_EXPORT
+bool PNGDecompressionObject::error_state() const
+{
+  return impl_->error_manager.error_state;
+}
+
+SELENE_EXPORT
+MessageLog& PNGDecompressionObject::message_log()
+{
+  return impl_->error_manager.message_log;
+}
+
+SELENE_EXPORT
+const MessageLog& PNGDecompressionObject::message_log() const
+{
+  return impl_->error_manager.message_log;
+}
+
+SELENE_EXPORT
 bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8,
                                                           bool set_background,
                                                           bool strip_alpha_channel,
@@ -363,33 +324,88 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
 
   return true;
 
-failure_state:
+  failure_state:
   return false;
 }
 
-bool PNGDecompressionObject::error_state() const
-{
-  return impl_->error_manager.error_state;
-}
-
-MessageLog& PNGDecompressionObject::message_log()
-{
-  return impl_->error_manager.message_log;
-}
-
-const MessageLog& PNGDecompressionObject::message_log() const
-{
-  return impl_->error_manager.message_log;
-}
-
+SELENE_EXPORT
 PixelFormat PNGDecompressionObject::get_pixel_format() const
 {
   return impl_->pixel_format_;
 }
 
+SELENE_EXPORT
+void PNGDecompressionObject::allocate()
+{
+  SELENE_FORCED_ASSERT(!impl_->png_ptr);
+  SELENE_FORCED_ASSERT(!impl_->info_ptr);
+  SELENE_FORCED_ASSERT(!impl_->end_info);
+
+  auto user_error_ptr = static_cast<png_voidp>(&impl_->error_manager);
+  png_error_ptr user_error_fn = impl::error_handler;
+  png_error_ptr user_warning_fn = impl::warning_handler;
+  impl_->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, user_error_ptr, user_error_fn, user_warning_fn);
+
+  if (!impl_->png_ptr)
+  {
+    return;
+  }
+
+  impl_->info_ptr = png_create_info_struct(impl_->png_ptr);
+
+  if (!impl_->info_ptr)
+  {
+    png_destroy_read_struct(&impl_->png_ptr, nullptr, nullptr);
+    return;
+  }
+
+  impl_->end_info = png_create_info_struct(impl_->png_ptr);
+
+  if (!impl_->end_info)
+  {
+    png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, nullptr);
+    return;
+  }
+
+  SELENE_FORCED_ASSERT(impl_->png_ptr);
+  SELENE_FORCED_ASSERT(impl_->info_ptr);
+  SELENE_FORCED_ASSERT(impl_->end_info);
+  impl_->valid = true;
+}
+
+SELENE_EXPORT
+void PNGDecompressionObject::deallocate()
+{
+  SELENE_FORCED_ASSERT(impl_->png_ptr);
+  SELENE_FORCED_ASSERT(impl_->info_ptr);
+  SELENE_FORCED_ASSERT(impl_->end_info);
+
+  // Deallocate the memory allocated for the png_struct and png_info objects
+  png_destroy_read_struct(&impl_->png_ptr, &impl_->info_ptr, &impl_->end_info);
+
+  impl_->png_ptr = nullptr;
+  impl_->info_ptr = nullptr;
+  impl_->end_info = nullptr;
+  impl_->error_manager = impl::PNGErrorManager();
+  impl_->pixel_format_ = PixelFormat::Unknown;
+  impl_->valid = false;
+}
+
+SELENE_EXPORT
+void PNGDecompressionObject::reset_if_needed()
+{
+  if (impl_->needs_reset)
+  {
+    deallocate();
+    allocate();
+    impl_->needs_reset = false;
+  }
+}
+
 
 namespace impl {
 
+SELENE_EXPORT
 PNGDecompressionCycle::PNGDecompressionCycle(PNGDecompressionObject& obj) : obj_(obj), error_state_(false)
 {
   obj.reset_if_needed();
@@ -416,16 +432,19 @@ failure_state:
   error_state_ = true;
 }
 
+SELENE_EXPORT
 PNGDecompressionCycle::~PNGDecompressionCycle()
 {
   obj_.impl_->needs_reset = true;
 }
 
+SELENE_EXPORT
 bool PNGDecompressionCycle::error_state() const
 {
   return error_state_;
 }
 
+SELENE_EXPORT
 PNGImageInfo PNGDecompressionCycle::get_output_info() const
 {
   using value_type = PixelLength::value_type;
@@ -443,6 +462,7 @@ PNGImageInfo PNGDecompressionCycle::get_output_info() const
   return PNGImageInfo{width, height, nr_channels, bit_depth};
 }
 
+SELENE_EXPORT
 bool PNGDecompressionCycle::decompress(RowPointers& row_pointers)
 {
   auto png_ptr = obj_.impl_->png_ptr;
@@ -469,6 +489,7 @@ failure_state:
 // -------------------------------
 // Decompression related functions
 
+SELENE_EXPORT
 void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 {
   void* io_ptr = png_get_io_ptr(png_ptr);
@@ -490,6 +511,7 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
   SELENE_FORCED_ASSERT(nr_bytes_read == length);
 }
 
+SELENE_EXPORT
 void set_source(PNGDecompressionObject& obj, FileReader& source)
 {
   obj.reset_if_needed();
@@ -504,6 +526,7 @@ void set_source(PNGDecompressionObject& obj, FileReader& source)
 failure_state:;
 }
 
+SELENE_EXPORT
 void set_source(PNGDecompressionObject& obj, MemoryReader& source)
 {
   obj.reset_if_needed();
@@ -518,6 +541,7 @@ void set_source(PNGDecompressionObject& obj, MemoryReader& source)
 failure_state:;
 }
 
+SELENE_EXPORT
 PNGImageInfo read_header_info(PNGDecompressionObject& obj, const std::array<std::uint8_t, 8>& header_bytes, bool eof)
 {
   obj.reset_if_needed();
@@ -565,6 +589,7 @@ failure_state:
   return PNGImageInfo();
 }
 
+SELENE_EXPORT
 PNGImageInfo read_header(FileReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
@@ -574,6 +599,7 @@ PNGImageInfo read_header(FileReader& source, PNGDecompressionObject& obj)
   return read_header_info(obj, header_bytes, source.is_eof());
 }
 
+SELENE_EXPORT
 PNGImageInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
@@ -584,7 +610,6 @@ PNGImageInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
 }
 
 }  // namespace impl
-
 
 /// \endcond
 
