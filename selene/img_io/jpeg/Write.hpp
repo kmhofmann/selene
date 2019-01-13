@@ -24,8 +24,8 @@
 #include <selene/img/dynamic/DynImageView.hpp>
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
 
-#include <selene/img_io/JPEGCommon.hpp>
-#include <selene/img_io/_impl/JPEGCommon.hpp>
+#include <selene/img_io/jpeg/Common.hpp>
+#include <selene/img_io/jpeg/_impl/Common.hpp>
 #include <selene/img_io/_impl/Util.hpp>
 
 #include <array>

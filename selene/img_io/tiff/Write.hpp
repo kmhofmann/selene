@@ -13,7 +13,7 @@
 
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
 
-#include <selene/img_io/TIFFCommon.hpp>
+#include <selene/img_io/tiff/Common.hpp>
 
 #include <memory>
 

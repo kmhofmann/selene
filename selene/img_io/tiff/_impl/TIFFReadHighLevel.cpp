@@ -4,7 +4,7 @@
 
 #if defined(SELENE_WITH_LIBTIFF)
 
-#include <selene/img_io/_impl/TIFFReadHighLevel.hpp>
+#include <selene/img_io/tiff/_impl/TIFFReadHighLevel.hpp>
 
 #include <selene/base/MessageLog.hpp>
 
@@ -12,7 +12,7 @@
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/interop/DynImageToImage.hpp>
 
-#include <selene/img_io/_impl/TIFFDetail.hpp>
+#include <selene/img_io/tiff/_impl/TIFFDetail.hpp>
 
 #include <algorithm>
 #include <limits>

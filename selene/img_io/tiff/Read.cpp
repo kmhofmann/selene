@@ -4,16 +4,16 @@
 
 #if defined(SELENE_WITH_LIBTIFF)
 
-#include <selene/img_io/TIFFRead.hpp>
+#include <selene/img_io/tiff/Read.hpp>
 
 #include <selene/base/Assert.hpp>
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/MemoryReader.hpp>
 
-#include <selene/img_io/_impl/TIFFDetail.hpp>
-#include <selene/img_io/_impl/TIFFIOFunctions.hpp>
-#include <selene/img_io/_impl/TIFFReadStrips.hpp>
-#include <selene/img_io/_impl/TIFFReadTiles.hpp>
+#include <selene/img_io/tiff/_impl/TIFFDetail.hpp>
+#include <selene/img_io/tiff/_impl/TIFFIOFunctions.hpp>
+#include <selene/img_io/tiff/_impl/TIFFReadStrips.hpp>
+#include <selene/img_io/tiff/_impl/TIFFReadTiles.hpp>
 
 #include <selene/selene_export.hpp>
 

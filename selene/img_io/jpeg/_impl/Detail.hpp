@@ -9,7 +9,7 @@
 
 #include <selene/base/MessageLog.hpp>
 
-#include <selene/img_io/_impl/JPEGCommon.hpp>
+#include <selene/img_io/jpeg/_impl/Common.hpp>
 
 #include <jpeglib.h>
 

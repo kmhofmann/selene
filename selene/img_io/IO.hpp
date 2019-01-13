@@ -2,8 +2,8 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IO_HPP
-#define SELENE_IMG_IO_HPP
+#ifndef SELENE_IMG_IO_IO_HPP
+#define SELENE_IMG_IO_IO_HPP
 
 /// @file
 
@@ -13,12 +13,12 @@
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/dynamic/DynImageView.hpp>
 
-#include <selene/img_io/JPEGRead.hpp>
-#include <selene/img_io/JPEGWrite.hpp>
-#include <selene/img_io/PNGRead.hpp>
-#include <selene/img_io/PNGWrite.hpp>
-#include <selene/img_io/TIFFRead.hpp>
-#include <selene/img_io/TIFFWrite.hpp>
+#include <selene/img_io/jpeg/Read.hpp>
+#include <selene/img_io/jpeg/Write.hpp>
+#include <selene/img_io/png/Read.hpp>
+#include <selene/img_io/png/Write.hpp>
+#include <selene/img_io/tiff/Read.hpp>
+#include <selene/img_io/tiff/Write.hpp>
 
 #include <stdexcept>
 #include <variant>
@@ -326,4 +326,4 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
 
 }  // namespace sln
 
-#endif  // SELENE_IMG_IO_HPP
+#endif  // SELENE_IMG_IO_IO_HPP

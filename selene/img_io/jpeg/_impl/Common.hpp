@@ -10,7 +10,7 @@
 #include <selene/base/MessageLog.hpp>
 
 #include <selene/img/common/PixelFormat.hpp>
-#include <selene/img_io/JPEGCommon.hpp>
+#include <selene/img_io/jpeg/Common.hpp>
 
 namespace sln {
 namespace impl {

@@ -13,7 +13,7 @@
 
 #include <selene/img/dynamic/DynImage.hpp>
 
-#include <selene/img_io/TIFFCommon.hpp>
+#include <selene/img_io/tiff/Common.hpp>
 
 #include <memory>
 #include <vector>

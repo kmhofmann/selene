@@ -29,8 +29,8 @@
 #include <selene/img/interop/DynImageToImage.hpp>
 #include <selene/img/interop/ImageToDynImage.hpp>
 
-#include <selene/img_io/PNGRead.hpp>
-#include <selene/img_io/PNGWrite.hpp>
+#include <selene/img_io/png/Read.hpp>
+#include <selene/img_io/png/Write.hpp>
 
 #include <test/selene/Utils.hpp>
 

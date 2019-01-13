@@ -4,8 +4,8 @@
 
 #if defined(SELENE_WITH_LIBJPEG)
 
-#include <selene/img_io/JPEGRead.hpp>
-#include <selene/img_io/_impl/JPEGDetail.hpp>
+#include <selene/img_io/jpeg/Read.hpp>
+#include <selene/img_io/jpeg/_impl/Detail.hpp>
 
 #include <selene/selene_export.hpp>
 

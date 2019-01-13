@@ -13,7 +13,7 @@
 #include <selene/img/common/PixelFormat.hpp>
 #include <selene/img/common/Types.hpp>
 
-#include <selene/img_io/TIFFCommon.hpp>
+#include <selene/img_io/tiff/Common.hpp>
 
 #include <algorithm>
 #include <cassert>

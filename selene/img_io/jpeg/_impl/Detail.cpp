@@ -4,7 +4,7 @@
 
 #if defined(SELENE_WITH_LIBJPEG)
 
-#include <selene/img_io/_impl/JPEGDetail.hpp>
+#include <selene/img_io/jpeg/_impl/Detail.hpp>
 
 #include <stdexcept>
 

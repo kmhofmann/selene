@@ -8,8 +8,8 @@
 
 #include <selene/base/Utils.hpp>
 
-#include <selene/img_io/PNGWrite.hpp>
-#include <selene/img_io/_impl/PNGDetail.hpp>
+#include <selene/img_io/png/Write.hpp>
+#include <selene/img_io/png/_impl/Detail.hpp>
 
 #include <selene/selene_export.hpp>
 

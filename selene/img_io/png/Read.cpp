@@ -6,8 +6,8 @@
 
 #include <png.h>
 
-#include <selene/img_io/PNGRead.hpp>
-#include <selene/img_io/_impl/PNGDetail.hpp>
+#include <selene/img_io/png/Read.hpp>
+#include <selene/img_io/png/_impl/Detail.hpp>
 
 #include <selene/selene_export.hpp>
 

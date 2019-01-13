@@ -148,35 +148,35 @@ add_library(selene::selene_img_io ALIAS selene_img_io)
 target_sources(selene_img_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/JPEGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/PNGWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFCommon.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFRead.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFRead.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/TIFFWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGCommon.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/JPEGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/PNGDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFIOFunctions.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadHighLevel.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadHighLevel.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadStrips.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadStrips.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadTiles.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/TIFFReadTiles.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Common.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Common.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFIOFunctions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
         )
 

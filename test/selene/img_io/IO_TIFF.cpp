@@ -27,8 +27,8 @@
 //#include <selene/img/interop/DynImageToImage.hpp>
 //#include <selene/img/interop/ImageToDynImage.hpp>
 
-#include <selene/img_io/TIFFRead.hpp>
-#include <selene/img_io/TIFFWrite.hpp>
+#include <selene/img_io/tiff/Read.hpp>
+#include <selene/img_io/tiff/Write.hpp>
 
 #include <test/selene/Utils.hpp>
 

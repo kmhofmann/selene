@@ -4,7 +4,7 @@
 
 #if defined(SELENE_WITH_LIBTIFF)
 
-#include <selene/img_io/TIFFWrite.hpp>
+#include <selene/img_io/tiff/Write.hpp>
 
 #include <selene/base/Assert.hpp>
 #include <selene/base/io/FileWriter.hpp>
@@ -13,8 +13,8 @@
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/dynamic/DynImageView.hpp>
 
-#include <selene/img_io/_impl/TIFFDetail.hpp>
-#include <selene/img_io/_impl/TIFFIOFunctions.hpp>
+#include <selene/img_io/tiff/_impl/TIFFDetail.hpp>
+#include <selene/img_io/tiff/_impl/TIFFIOFunctions.hpp>
 
 #include <selene/selene_export.hpp>
 
