@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <ostream>
 #include <type_traits>
+#include <utility>
 
 namespace sln {
 
@@ -161,6 +162,9 @@ operator<<=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift);
 template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 constexpr Pixel<T, nr_channels_, pixel_format_>&
 operator>>=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift);
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr void swap(Pixel<T, nr_channels_, pixel_format_>& px_l, Pixel<T, nr_channels_, pixel_format_>& px_r) noexcept;
 
 template <typename Result, typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 Pixel<Result, nr_channels_, pixel_format_>
@@ -925,6 +929,16 @@ operator>>=(Pixel<T, nr_channels_, pixel_format_> px, std::size_t shift)
   }
 
   return px;
+}
+
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+constexpr void swap(Pixel<T, nr_channels_, pixel_format_>& px_l, Pixel<T, nr_channels_, pixel_format_>& px_r) noexcept
+{
+  for (std::size_t i = 0; i < nr_channels_; ++i)
+  {
+    using std::swap;
+    swap(px_l[i], px_r[i]);
+  }
 }
 
 /** \brief Rounds the given pixel values to the nearest integer value.

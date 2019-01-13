@@ -17,6 +17,22 @@
 
 namespace sln {
 
+class DynImage;
+
+bool operator==(const DynImage& img0, const DynImage& img1);
+
+bool operator!=(const DynImage& img0, const DynImage& img1);
+
+inline bool equal(const DynImage& dyn_img_0, const DynImage& dyn_img_1);
+
+template <ImageModifiability modifiability>
+bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1);
+
+template <ImageModifiability modifiability>
+bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1);
+
+constexpr void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
+
 /** \brief Dynamically typed image class.
  *
  * An instance of `DynImage` represents a dynamically typed image with pixel elements in interleaved storage.
@@ -149,19 +165,9 @@ private:
       UntypedImageSemantics semantics);
 
   void deallocate_memory();
+
+  friend constexpr void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
 };
-
-bool operator==(const DynImage& img0, const DynImage& img1);
-
-bool operator!=(const DynImage& img0, const DynImage& img1);
-
-inline bool equal(const DynImage& dyn_img_0, const DynImage& dyn_img_1);
-
-template <ImageModifiability modifiability>
-bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1);
-
-template <ImageModifiability modifiability>
-bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1);
 
 // ----------
 // Implementation:
@@ -893,6 +899,12 @@ template <ImageModifiability modifiability>
 bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1)
 {
   return equal(dyn_img_view_0, dyn_img_1.view());
+}
+
+constexpr void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept
+{
+  using std::swap;
+  swap(dyn_img_l.view_, dyn_img_r.view_);
 }
 
 }  // namespace sln

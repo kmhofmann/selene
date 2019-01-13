@@ -15,6 +15,30 @@
 
 namespace sln {
 
+template <typename PixelType_>
+class Image;
+
+template <typename PixelType0, typename PixelType1>
+bool operator==(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+
+template <typename PixelType0, typename PixelType1>
+bool operator!=(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+
+template <typename PixelType0, typename PixelType1>
+bool equal(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+
+template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
+bool equal(const Image<PixelType0>& img_0, const ImageView<PixelType1, modifiability>& img_view_1);
+
+template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
+bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1);
+
+template <typename PixelType_>
+constexpr void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
+
+template <typename PixelType_>
+constexpr void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
+
 /** \brief Statically typed image class.
  *
  * An instance of `Image<PixelType>` represents a statically typed image with pixel elements of type `PixelType`.
@@ -137,22 +161,9 @@ private:
   allocate_memory(TypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes);
 
   void deallocate_memory();
+
+  friend void swap<PixelType_>(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
 };
-
-template <typename PixelType0, typename PixelType1>
-bool operator==(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
-
-template <typename PixelType0, typename PixelType1>
-bool operator!=(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
-
-template <typename PixelType0, typename PixelType1>
-bool equal(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
-
-template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
-bool equal(const Image<PixelType0>& img_0, const ImageView<PixelType1, modifiability>& img_view_1);
-
-template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
-bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1);
 
 // ----------
 // Implementation:
@@ -898,6 +909,13 @@ template <typename PixelType0, typename PixelType1, ImageModifiability modifiabi
 bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1)
 {
   return equal(img_view_0, img_1.view());
+}
+
+template <typename PixelType_>
+constexpr void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept
+{
+  using std::swap;
+  swap(img_l.view_, img_r.view_);
 }
 
 }  // namespace sln

@@ -4,11 +4,15 @@
 
 #include <catch2/catch.hpp>
 
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
 #include <selene/img/typed/Image.hpp>
 
 #include <selene/img_ops/Fill.hpp>
 
-//#include <test/selene/img/typed/Utils.hpp>
+#include <random>
+
+#include <test/selene/img/typed/_Utils.hpp>
 
 using namespace sln::literals;
 
@@ -93,4 +97,34 @@ TEST_CASE("Image construction", "[img]")
       basic_image_tests<sln::float64_t>(w, h, sln::float64_t{fill_value});
     }
   }
+}
+
+TEST_CASE("Image swap", "[img]")
+{
+  std::default_random_engine rng(43);
+  auto img_0 = sln_test::construct_random_image<sln::PixelRGB_8u>(20_px, 30_px, rng);
+  auto img_1 = sln_test::construct_random_image<sln::PixelRGB_8u>(30_px, 40_px, rng);
+
+  constexpr std::size_t N{32}; // to fit within the first row of either
+
+  const auto ptr_0 = img_0.byte_ptr();
+  const auto layout_0 = img_0.layout();
+  std::array<std::uint8_t, N> first_bytes_0;
+  std::copy(img_0.byte_ptr(), img_0.byte_ptr() + N, first_bytes_0.begin());
+
+  const auto ptr_1 = img_1.byte_ptr();
+  const auto layout_1 = img_1.layout();
+  std::array<std::uint8_t, N> first_bytes_1;
+  std::copy(img_1.byte_ptr(), img_1.byte_ptr() + N, first_bytes_1.begin());
+
+  using std::swap;
+  swap(img_0, img_1);
+
+  REQUIRE(img_0.byte_ptr() == ptr_1);
+  REQUIRE(img_0.layout() == layout_1);
+  REQUIRE(std::memcmp(img_0.byte_ptr(), first_bytes_1.data(), N) == 0);
+
+  REQUIRE(img_1.byte_ptr() == ptr_0);
+  REQUIRE(img_1.layout() == layout_0);
+  REQUIRE(std::memcmp(img_1.byte_ptr(), first_bytes_0.data(), N) == 0);
 }

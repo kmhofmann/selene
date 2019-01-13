@@ -16,8 +16,22 @@
 #include <selene/img/pixel/PixelTraits.hpp>
 
 #include <cstring>
+#include <utility>
 
 namespace sln {
+
+template <typename PixelType_, ImageModifiability modifiability_>
+class ImageView;
+
+template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;  ///< An image view pointing to mutable data.
+template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;  ///< An image view pointing to constant data.
+
+template <typename PixelType0, ImageModifiability modifiability_0,
+    typename PixelType1, ImageModifiability modifiability_1>
+bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<PixelType1, modifiability_1>& img_1);
+
+template <typename PixelType_, ImageModifiability modifiability_>
+constexpr void swap(ImageView<PixelType_, modifiability_>& img_view_l, ImageView<PixelType_, modifiability_>& img_view_r) noexcept;
 
 /** \brief Statically typed image view class, i.e. non-owning.
  *
@@ -108,14 +122,9 @@ private:
 
   sln::Bytes compute_data_offset(PixelIndex y) const noexcept;
   sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
+
+   friend void swap<PixelType_, modifiability_>(ImageView<PixelType_, modifiability_>&, ImageView<PixelType_, modifiability_>&) noexcept;
 };
-
-template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;  ///< An image view pointing to mutable data.
-template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;  ///< An image view pointing to constant data.
-
-template <typename PixelType0, ImageModifiability modifiability_0,
-    typename PixelType1, ImageModifiability modifiability_1>
-bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<PixelType1, modifiability_1>& img_1);
 
 // ----------
 // Implementation:
@@ -581,6 +590,14 @@ bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<
   }
 
   return true;
+}
+
+template <typename PixelType_, ImageModifiability modifiability_>
+constexpr void swap(ImageView<PixelType_, modifiability_>& img_view_l, ImageView<PixelType_, modifiability_>& img_view_r) noexcept
+{
+  using std::swap;
+  swap(img_view_l.ptr_, img_view_r.ptr_);
+  swap(img_view_l.layout_, img_view_r.layout_);
 }
 
 }  // namespace sln

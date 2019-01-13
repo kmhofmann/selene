@@ -6,7 +6,7 @@
 
 #include <selene/img/dynamic/DynImage.hpp>
 
-#include <test/selene/img/dynamic/Utils.hpp>
+#include <test/selene/img/dynamic/_Utils.hpp>
 
 using namespace sln::literals;
 

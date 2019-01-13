@@ -129,4 +129,14 @@ TEST_CASE("Pixel operations", "[img]")
     constexpr auto px7 = -sln::Pixel<std::int32_t, 3>(10, 20, 30);
     REQUIRE(px7 == sln::Pixel<std::int32_t, 3>(-10, -20, -30));
   }
+
+  SECTION("Pixel swap")
+  {
+    auto px1 = sln::Pixel<std::uint8_t, 3>(10, 20, 30);
+    auto px2 = sln::Pixel<std::uint8_t, 3>(40, 50, 60);
+    using std::swap;
+    swap(px1, px2);
+    REQUIRE(px1 == sln::Pixel<std::uint8_t, 3>(40, 50, 60));
+    REQUIRE(px2 == sln::Pixel<std::uint8_t, 3>(10, 20, 30));
+  }
 }

@@ -8,6 +8,10 @@
 #include <selene/img/dynamic/DynImageView.hpp>
 
 #include <selene/img/pixel/PixelTraits.hpp>
+#include <selene/img/pixel/PixelTypeAliases.hpp>
+
+#include <test/selene/Utils.hpp>
+#include <test/selene/img/dynamic/_Utils.hpp>
 
 #include <algorithm>
 #include <memory>
@@ -16,14 +20,6 @@
 using namespace sln::literals;
 
 namespace {
-
-std::vector<std::uint8_t> generate_random_data(std::size_t nr_bytes)
-{
-  std::independent_bits_engine<std::default_random_engine, 16, std::uint16_t> bytes_engine;
-  std::vector<std::uint8_t> data(nr_bytes);
-  std::for_each(data.begin(), data.end(), [&bytes_engine](auto& x) { x = static_cast<std::uint8_t>(bytes_engine()); });
-  return data;
-}
 
 template <typename PixelType>
 void test_dyn_image_construction(std::mt19937& rng)
@@ -54,7 +50,7 @@ void test_dyn_image_construction(std::mt19937& rng)
     REQUIRE(dyn_img.is_valid() == (width * height > 0));
 
     // Generate some random data, and copy it as image data
-    const auto data = generate_random_data(static_cast<std::size_t>(dyn_img.total_bytes()));
+    const auto data = sln_test::generate_random_data(static_cast<std::size_t>(dyn_img.total_bytes()));
     std::copy(data.cbegin(), data.cend(), dyn_img.byte_ptr());
 
     // Create a view onto the same data
@@ -118,4 +114,38 @@ TEST_CASE("DynImage construction", "[img]")
   test_dyn_image_construction_over_channels<std::int32_t>(rng);
   test_dyn_image_construction_over_channels<std::uint64_t>(rng);
   test_dyn_image_construction_over_channels<std::int64_t>(rng);
+}
+
+TEST_CASE("DynImage swap", "[img]")
+{
+  std::default_random_engine rng(43);
+  auto dyn_img_0 = sln_test::construct_random_dynamic_image<sln::PixelRGB_8u>(20_px, 30_px, rng);
+  auto dyn_img_1 = sln_test::construct_random_dynamic_image<sln::PixelY_16s>(30_px, 40_px, rng);
+
+  constexpr std::size_t N{32}; // to fit within the first row of either
+
+  const auto ptr_0 = dyn_img_0.byte_ptr();
+  const auto layout_0 = dyn_img_0.layout();
+  const auto semantics_0 = dyn_img_0.semantics();
+  std::array<std::uint8_t, N> first_bytes_0;
+  std::copy(dyn_img_0.byte_ptr(), dyn_img_0.byte_ptr() + N, first_bytes_0.begin());
+
+  const auto ptr_1 = dyn_img_1.byte_ptr();
+  const auto layout_1 = dyn_img_1.layout();
+  const auto semantics_1 = dyn_img_1.semantics();
+  std::array<std::uint8_t, N> first_bytes_1;
+  std::copy(dyn_img_1.byte_ptr(), dyn_img_1.byte_ptr() + N, first_bytes_1.begin());
+
+  using std::swap;
+  swap(dyn_img_0, dyn_img_1);
+
+  REQUIRE(dyn_img_0.byte_ptr() == ptr_1);
+  REQUIRE(dyn_img_0.layout() == layout_1);
+  REQUIRE(dyn_img_0.semantics() == semantics_1);
+  REQUIRE(std::memcmp(dyn_img_0.byte_ptr(), first_bytes_1.data(), N) == 0);
+
+  REQUIRE(dyn_img_1.byte_ptr() == ptr_0);
+  REQUIRE(dyn_img_1.layout() == layout_0);
+  REQUIRE(dyn_img_1.semantics() == semantics_0);
+  REQUIRE(std::memcmp(dyn_img_1.byte_ptr(), first_bytes_0.data(), N) == 0);
 }

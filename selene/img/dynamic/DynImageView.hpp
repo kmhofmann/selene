@@ -13,8 +13,21 @@
 #include <cstring>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 
 namespace sln {
+
+template <ImageModifiability modifiability_ = ImageModifiability::Constant>
+class DynImageView;
+
+using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;  ///< A dynamic image view pointing to mutable data.
+using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;  ///< A dynamic image view pointing to constant data.
+
+template <ImageModifiability modifiability_0, ImageModifiability modifiability_1>
+bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<modifiability_1>& dyn_img_1);
+
+template <ImageModifiability modifiability_>
+constexpr void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiability_>& dyn_img_view_r) noexcept;
 
 /** \brief Dynamically typed image view class, i.e. non-owning.
  *
@@ -37,7 +50,7 @@ namespace sln {
  * @tparam modifiability_ Expresses whether the view contents can be modified (`ImageModifiability::Mutable`) or not
  *                        (ImageModifiability::Constant`).
  */
-template <ImageModifiability modifiability_ = ImageModifiability::Constant>
+template <ImageModifiability modifiability_>
 class DynImageView
 {
 public:
@@ -115,13 +128,9 @@ private:
 
   sln::Bytes compute_data_offset(PixelIndex y) const noexcept;
   sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
+
+  friend void swap<modifiability_>(DynImageView<modifiability_>&, DynImageView<modifiability_>&) noexcept;
 };
-
-using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;  ///< A dynamic image view pointing to mutable data.
-using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;  ///< A dynamic image view pointing to constant data.
-
-template <ImageModifiability modifiability_0, ImageModifiability modifiability_1>
-bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<modifiability_1>& dyn_img_1);
 
 // ----------
 // Implementation:
@@ -620,6 +629,15 @@ bool equal(const DynImageView<modifiability_0>& dyn_img_0, const DynImageView<mo
   }
 
   return true;
+}
+
+template <ImageModifiability modifiability_>
+constexpr void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiability_>& dyn_img_view_r) noexcept
+{
+  using std::swap;
+  swap(dyn_img_view_l.ptr_, dyn_img_view_r.ptr_);
+  swap(dyn_img_view_l.layout_, dyn_img_view_r.layout_);
+  swap(dyn_img_view_l.semantics_, dyn_img_view_r.semantics_);
 }
 
 }  // namespace sln
