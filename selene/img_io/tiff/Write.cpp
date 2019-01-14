@@ -98,15 +98,14 @@ struct TIFFWriteObject<SinkType>::Impl
     close();
 
     ss = impl::tiff::SinkStruct{&sink};
-    tif = TIFFClientOpen("", "w",
+    tif = TIFFClientOpen("", "wm",
                          reinterpret_cast<thandle_t>(&ss),
                          impl::tiff::w_read_func<SinkType>,
                          impl::tiff::w_write_func<SinkType>,
                          impl::tiff::w_seek_func<SinkType>,
                          impl::tiff::w_close_func<SinkType>,
                          impl::tiff::w_size_func<SinkType>,
-                         impl::tiff::w_map_func<SinkType>,
-                         impl::tiff::w_unmap_func<SinkType>);
+                         nullptr, nullptr);
     SELENE_ASSERT(tif != nullptr);
   }
 

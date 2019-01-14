@@ -11,6 +11,8 @@
 
 #include <selene/base/MessageLog.hpp>
 
+#include <selene/img/common/Types.hpp>
+
 #include <cstdint>
 #include <ostream>
 
@@ -153,6 +155,26 @@ struct TiffImageLayout
   bool is_format_palette() const
   {
     return photometric == TIFFPhotometricTag::Palette;
+  }
+
+  PixelLength width_px() const
+  {
+    return to_pixel_length(width);
+  }
+
+  PixelLength height_px() const
+  {
+    return to_pixel_length(height);
+  }
+
+  std::int16_t nr_channels() const
+  {
+    return static_cast<std::int16_t>(samples_per_pixel);
+  }
+
+  std::int16_t nr_bytes_per_channel() const
+  {
+    return std::min(std::int16_t{1}, static_cast<std::int16_t>(bits_per_sample >> 3));
   }
 };
 

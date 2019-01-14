@@ -248,24 +248,13 @@ bool read_data_strips_planar(TIFF* tif,
   return true;
 }
 
-} // namespace _
-
-
-template <typename DynImageOrView>
-bool read_data_strips(TIFF* tif,
-                      const sln::TiffImageLayout& src,
-                      const sln::impl::tiff::YCbCrInfo& ycbcr_info,
-                      const sln::impl::tiff::YCbCrConverter& ycbcr_converter,
-                      const sln::impl::tiff::LabConverter& lab_converter,
-                      DynImageOrView& dyn_img_or_view,
-                      sln::MessageLog& message_log)
+sln::impl::tiff::OutputLayout get_output_layout(TIFF* tif,
+                                                const sln::TiffImageLayout& src,
+                                                const sln::impl::tiff::YCbCrInfo& ycbcr_info,
+                                                const sln::impl::tiff::ImageLayoutStrips strip_layout,
+                                                MessageLog& message_log)
 {
-  const auto nr_rows_per_strip = std::min(src.height, impl::tiff::get_field<uint32>(tif, TIFFTAG_ROWSPERSTRIP));
-  const sln::impl::tiff::ImageLayoutStrips strip_layout(TIFFNumberOfStrips(tif), TIFFStripSize(tif), nr_rows_per_strip);
-
-//  message_log.add(str(oss() << strip_layout), MessageType::Message);
-
-  if (src.planar_config == TIFFPlanarConfig::Separate)
+    if (src.planar_config == TIFFPlanarConfig::Separate)
   {
     SELENE_ASSERT(strip_layout.nr_strips % src.samples_per_pixel == 0);
   }
@@ -301,7 +290,26 @@ bool read_data_strips(TIFF* tif,
                                     to_signed(src.samples_per_pixel), to_signed(nr_bytes_per_channel_out),
                                     impl::tiff::photometric_to_pixel_format(src.photometric, src.samples_per_pixel),
                                     impl::tiff::sample_format_to_sample_format(src.sample_format));
-//  message_log.add(str(oss() << out), MessageType::Message);
+
+  return out;
+}
+
+} // namespace _
+
+
+template <typename DynImageOrView>
+bool read_data_strips(TIFF* tif,
+                      const sln::TiffImageLayout& src,
+                      const sln::impl::tiff::YCbCrInfo& ycbcr_info,
+                      const sln::impl::tiff::YCbCrConverter& ycbcr_converter,
+                      const sln::impl::tiff::LabConverter& lab_converter,
+                      DynImageOrView& dyn_img_or_view,
+                      sln::MessageLog& message_log)
+{
+  const auto nr_rows_per_strip = std::min(src.height, impl::tiff::get_field<uint32>(tif, TIFFTAG_ROWSPERSTRIP));
+  const sln::impl::tiff::ImageLayoutStrips strip_layout(TIFFNumberOfStrips(tif), TIFFStripSize(tif), nr_rows_per_strip);
+
+  const auto out = get_output_layout(tif, src, ycbcr_info, strip_layout, message_log);
 
   const auto pixel_format = [&](){
     if (src.is_format_ycbcr() || src.is_format_lab())
@@ -317,6 +325,7 @@ bool read_data_strips(TIFF* tif,
 
   if (!prepare_success)
   {
+    message_log.add("Cannot prepare input image or view; most likely it is a view that cannot be resized.", MessageType::Error);
     return false;
   }
 

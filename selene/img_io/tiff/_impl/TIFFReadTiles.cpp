@@ -276,6 +276,7 @@ bool read_data_tiles(TIFF* tif,
 
   if (!prepare_success)
   {
+    message_log.add("Cannot prepare input image or view; most likely it is a view that cannot be resized.", MessageType::Error);
     return false;
   }
 

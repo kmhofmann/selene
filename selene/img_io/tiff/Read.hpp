@@ -21,6 +21,7 @@
 namespace sln {
 
 template <typename SourceType> class TIFFReadObject;
+template <typename SourceType> class TIFFReader;
 
 template <typename SourceType>
 std::vector<TiffImageLayout> read_tiff_layouts(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
@@ -62,16 +63,58 @@ private:
   bool open(SourceType&& source);
   TiffImageLayout get_layout();
   bool advance_directory();
-  int set_directory(std::uint16_t index);
+  bool set_directory(std::uint16_t index);
 
   template <typename SourceType2> friend std::vector<TiffImageLayout> read_tiff_layouts(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
   template <typename SourceType2> friend DynImage read_tiff(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
   template <typename SourceType2> friend std::vector<DynImage> read_tiff_all(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
 
   template <typename SourceType2, typename DynImageOrView> friend bool impl::tiff_read_current_directory(TIFFReadObject<SourceType2>&, MessageLog&, DynImageOrView&);
+
+  friend class TIFFReader<SourceType>;
 };
 
-// TODO: Implement TIFFReader interface.
+/** \brief Class with functionality to read header and data of a TIFF image data stream.
+ *
+ * Generally, the free functions read_tiff() or read_tiff_all() should be preferred, due to ease of use.
+ *
+ * Both of these, however, do not allow reading of the decompressed image data into pre-allocated memory.
+ * This is enabled by calling `read_layouts()` on an instance of this class, then allocating the respective
+ * `DynImage` instance(s) (or by providing a `DynImageView` into pre-allocated memory), and finally calling
+ * `read_image_data(DynImage&)` or `read_image_data(MutableDynImageView&)` on each TIFF directory.
+ * TIFF directories can be advanced one by one using the `advance_directory()` member function, or alternatively set
+ * to one of the contained directories by calling `set_directory` with the respective index.
+ *
+ * Multiple images can be read using the same TIFFReader<> (on the same thread).
+ * The source will need to be re-set using `set_source()` to the respective position before attempting to read a new
+ * image; there is no guarantee that after reading image data, the stream pointer will point past the end of the TIFF
+ * file.
+ *
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
+ */
+template <typename SourceType>
+class TIFFReader
+{
+public:
+  TIFFReader() = default;
+  explicit TIFFReader(SourceType& source);
+
+  void set_source(SourceType& source);
+
+  std::vector<TiffImageLayout> read_layouts();
+  bool advance_directory();
+  bool set_directory(std::size_t index);
+
+  DynImage read_image_data();
+  template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
+
+  MessageLog& message_log();
+
+private:
+  SourceType* source_{nullptr};
+  TIFFReadObject<SourceType> read_object_;
+  MessageLog message_log_;
+};
 
 // ----------
 // Implementation:
@@ -207,6 +250,91 @@ std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log
 
   impl::tiff_assign_message_log(local_message_log, message_log);
   return images;
+}
+
+// -----
+
+template <typename SourceType>
+TIFFReader<SourceType>::TIFFReader(SourceType& source)
+    : source_(&source)
+{
+  impl::tiff_set_handlers();
+  read_object_.open(*source_);
+}
+
+template <typename SourceType>
+void TIFFReader<SourceType>::set_source(SourceType& source)
+{
+  impl::tiff_set_handlers();
+  source_ = &source;
+  read_object_.open(*source_);
+}
+
+template <typename SourceType>
+std::vector<TiffImageLayout> TIFFReader<SourceType>::read_layouts()
+{
+  if (source_ == nullptr)
+  {
+    message_log_.add("TIFFReader source is not set.", MessageType::Error);
+    return {};
+  }
+
+  std::vector<TiffImageLayout> layouts;
+  const auto start_pos = source_->position();
+
+  do
+  {
+    layouts.push_back(read_object_.get_layout());
+  } while (read_object_.advance_directory());
+
+  source_->seek_abs(start_pos);
+  return layouts;
+}
+
+template <typename SourceType>
+bool TIFFReader<SourceType>::advance_directory()
+{
+  return read_object_.advance_directory();
+}
+
+template <typename SourceType>
+bool TIFFReader<SourceType>::set_directory(std::size_t index)
+{
+  return read_object_.set_directory(static_cast<std::uint16_t>(index));
+}
+
+template <typename SourceType>
+DynImage TIFFReader<SourceType>::read_image_data()
+{
+  if (source_ == nullptr)
+  {
+    message_log_.add("TIFFReader source is not set.", MessageType::Error);
+    return DynImage{};
+  }
+
+  DynImage dyn_img;
+  [[maybe_unused]] const bool success = impl::tiff_read_current_directory(read_object_, message_log_, dyn_img);
+  return dyn_img;
+}
+
+template <typename SourceType>
+template <typename DynImageOrView>
+bool TIFFReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
+{
+  if (source_ == nullptr)
+  {
+    message_log_.add("TIFFReader source is not set.", MessageType::Error);
+    return false;
+  }
+
+  const bool success = impl::tiff_read_current_directory(read_object_, message_log_, dyn_img_or_view);
+  return success;
+}
+
+template <typename SourceType>
+MessageLog& TIFFReader<SourceType>::message_log()
+{
+  return message_log_;
 }
 
 }  // namespace sln

@@ -138,15 +138,14 @@ struct TIFFReadObject<SourceType>::Impl
     close();
 
     ss = impl::tiff::SourceStruct{&source};
-    tif = TIFFClientOpen("", "r",
+    tif = TIFFClientOpen("", "rm",
                          reinterpret_cast<thandle_t>(&ss),
                          impl::tiff::r_read_func<SourceType>,
                          impl::tiff::r_write_func<SourceType>,
                          impl::tiff::r_seek_func<SourceType>,
                          impl::tiff::r_close_func<SourceType>,
                          impl::tiff::r_size_func<SourceType>,
-                         impl::tiff::r_map_func<SourceType>,
-                         impl::tiff::r_unmap_func<SourceType>);
+                         nullptr, nullptr);
     SELENE_ASSERT(tif != nullptr);
   }
 
@@ -199,13 +198,23 @@ TiffImageLayout TIFFReadObject<SourceType>::get_layout()
 template <typename SourceType>
 bool TIFFReadObject<SourceType>::advance_directory()
 {
+  if (impl_->tif == nullptr)
+  {
+    return false;
+  }
+
   return TIFFReadDirectory(impl_->tif) != 0;
 }
 
 template <typename SourceType>
-int TIFFReadObject<SourceType>::set_directory(std::uint16_t index)
+bool TIFFReadObject<SourceType>::set_directory(std::uint16_t index)
 {
-  return TIFFSetDirectory(impl_->tif, index);
+  if (impl_->tif == nullptr)
+  {
+    return false;
+  }
+
+  return (TIFFSetDirectory(impl_->tif, index) == 1);
 }
 
 // Explicit instantiations:

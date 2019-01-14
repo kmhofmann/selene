@@ -36,6 +36,9 @@
 
 using namespace sln::literals;
 
+constexpr auto stickers_ref_width = 400;
+constexpr auto stickers_ref_height = 320;
+
 namespace {
 
 void check_write_read(sln::DynImage& dyn_img,
@@ -160,6 +163,108 @@ TEST_CASE("TIFF reading of the self-produced test suite", "[img]")
   const auto test_suite_path = sln_test::full_data_path("tiff_test");
 
   check_test_suite(test_suite_path, tmp_path, {}, {});
+}
+
+TEST_CASE("TIFF image reading, through TIFFReader interface", "[img]")
+{
+  const auto tmp_path = sln_test::get_tmp_path();
+  sln::FileReader source(sln_test::full_data_path("stickers_lzw.tif").string());
+  REQUIRE(source.is_open());
+
+  const auto pos = source.position();
+  REQUIRE(source.position() == 0);
+
+  sln::TIFFReader<sln::FileReader> tiff_reader;
+
+  SECTION("With invalid source")
+  {
+    const auto layouts = tiff_reader.read_layouts();
+    REQUIRE(layouts.empty());
+    REQUIRE(!tiff_reader.advance_directory());
+    REQUIRE(!tiff_reader.set_directory(0));
+    REQUIRE(tiff_reader.read_image_data() == sln::DynImage{});
+    sln::DynImage dyn_img;
+    REQUIRE(!tiff_reader.read_image_data(dyn_img));
+    REQUIRE(!tiff_reader.message_log().messages().empty());
+  }
+
+  SECTION("With valid source")
+  {
+    for (int i = 0; i < 2; ++i)
+    {
+      source.seek_abs(pos);
+      REQUIRE(source.position() == 0);
+      tiff_reader.set_source(source);
+
+      const auto layouts = tiff_reader.read_layouts();
+      REQUIRE(layouts.size() == 1);
+      REQUIRE(layouts[0].width == stickers_ref_width);
+      REQUIRE(layouts[0].height == stickers_ref_height);
+      REQUIRE(layouts[0].samples_per_pixel == 3);
+      REQUIRE(layouts[0].bits_per_sample == 8);
+
+      sln::DynImage dyn_img({layouts[0].width_px(), layouts[0].height_px(),
+                             layouts[0].nr_channels(), layouts[0].nr_bytes_per_channel()});
+      auto res = tiff_reader.read_image_data(dyn_img);
+      REQUIRE(res);
+
+      REQUIRE(tiff_reader.message_log().messages().empty());
+      REQUIRE(dyn_img.width() == stickers_ref_width);
+      REQUIRE(dyn_img.height() == stickers_ref_height);
+      REQUIRE(dyn_img.stride_bytes() == stickers_ref_width * 3);
+      REQUIRE(dyn_img.nr_channels() == 3);
+      REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+      REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+      REQUIRE(dyn_img.is_packed());
+      REQUIRE(!dyn_img.is_empty());
+      REQUIRE(dyn_img.is_valid());
+    }
+  }
+
+  SECTION("Into view, successful")
+  {
+    source.seek_abs(pos);
+    REQUIRE(source.position() == 0);
+    tiff_reader.set_source(source);
+
+    const auto layouts = tiff_reader.read_layouts();
+    REQUIRE(layouts.size() == 1);
+
+    sln::DynImage dyn_img({layouts[0].width_px(), layouts[0].height_px(),
+                           layouts[0].nr_channels(), layouts[0].nr_bytes_per_channel()});
+    sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
+    auto res = tiff_reader.read_image_data(dyn_img_view);
+    REQUIRE(res);
+
+    REQUIRE(tiff_reader.message_log().messages().empty());
+    REQUIRE(dyn_img.width() == stickers_ref_width);
+    REQUIRE(dyn_img.height() == stickers_ref_height);
+    REQUIRE(dyn_img.stride_bytes() == stickers_ref_width * 3);
+    REQUIRE(dyn_img.nr_channels() == 3);
+    REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+    REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+    REQUIRE(dyn_img.is_packed());
+    REQUIRE(!dyn_img.is_empty());
+    REQUIRE(dyn_img.is_valid());
+  }
+
+  SECTION("Into view, unsuccessful")
+  {
+    source.seek_abs(pos);
+    tiff_reader.set_source(source);
+
+    const auto layouts = tiff_reader.read_layouts();
+    REQUIRE(layouts.size() == 1);
+
+    sln::DynImage dyn_img({sln::to_pixel_length(layouts[0].width_px() + 1), layouts[0].height_px(),
+                           layouts[0].nr_channels(), layouts[0].nr_bytes_per_channel()});
+    sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
+    auto res = tiff_reader.read_image_data(dyn_img_view);
+    REQUIRE(!res);
+  }
+
+  source.close();
+  REQUIRE(!source.is_open());
 }
 
 #endif  // defined(SELENE_WITH_LIBTIFF)
