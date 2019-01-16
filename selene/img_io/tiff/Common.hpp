@@ -13,6 +13,7 @@
 
 #include <selene/img/common/Types.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <ostream>
 

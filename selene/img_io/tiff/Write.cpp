@@ -150,15 +150,33 @@ bool TIFFWriteObject<SinkType>::open(SinkType&& sink)
 }
 
 template <typename SinkType>
-bool TIFFWriteObject<SinkType>::flush()
+bool TIFFWriteObject<SinkType>::write_directory()
 {
-  if (impl_->tif != nullptr)
+  if (impl_->tif == nullptr)
   {
-    int res = TIFFFlush(impl_->tif);
-    return res != 0;
+    return false;
   }
 
-  return false;
+  int res = TIFFWriteDirectory(impl_->tif);
+  return res != 0;
+}
+
+template <typename SinkType>
+bool TIFFWriteObject<SinkType>::flush()
+{
+  if (impl_->tif == nullptr)
+  {
+    return false;
+  }
+
+  int res = TIFFFlush(impl_->tif);
+  return res != 0;
+}
+
+template <typename SinkType>
+void TIFFWriteObject<SinkType>::close()
+{
+  impl_->close();
 }
 
 // Explicit instantiations:
@@ -293,12 +311,25 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
 }
 
 template <typename SinkType, typename DynImageOrView>
-bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj, const TIFFWriteOptions& write_options, MessageLog& message_log, const DynImageOrView& dyn_img_or_view)
+bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj,
+                                     const TIFFWriteOptions& write_options,
+                                     MessageLog& message_log,
+                                     const DynImageOrView& dyn_img_or_view,
+                                     std::ptrdiff_t directory_index)
 {
   auto tif = tiff_obj.impl_->tif;
   const auto view = dyn_img_or_view.constant_view();
 
   set_tiff_layout(tif, view, write_options);
+
+  if (directory_index >= 0)
+  {
+    // This is necessary to write a multi-page TIFF, i.e. with multiple directories.
+    // The only tangible information that can be found on the web about this seems to be here:
+    // https://www.asmail.be/msg0055065771.html
+    impl::tiff::set_field<uint32>(tif, TIFFTAG_SUBFILETYPE, FILETYPE_PAGE);
+    impl::tiff::set_field<uint16>(tif, TIFFTAG_PAGENUMBER, static_cast<uint16_t>(directory_index), uint16_t{0});
+  }
 
   if (write_options.layout == TIFFWriteOptions::Layout::Strips)
   {
@@ -319,13 +350,13 @@ bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj, const 
 }
 
 // Explicit instantiations:
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
 
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
+template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
 
 }  // namespace impl
 

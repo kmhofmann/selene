@@ -9,8 +9,8 @@
 
 #include <selene/base/Assert.hpp>
 
-#include <selene/base/io/MemoryReader.hpp>
-#include <selene/base/io/MemoryWriter.hpp>
+#include <selene/base/io/FileWriter.hpp>
+#include <selene/base/io/VectorWriter.hpp>
 
 #include <type_traits>
 
@@ -152,7 +152,22 @@ toff_t w_size_func(thandle_t data)
 template <typename Sink>
 tmsize_t w_read_func([[maybe_unused]] thandle_t data, [[maybe_unused]] void* buf, [[maybe_unused]] tmsize_t size)
 {
-  return 0;
+  // TODO: enable the FileWriter, VectorWriter, MemoryWriter to also read
+
+  if constexpr (std::is_same_v<Sink, sln::FileWriter>)
+  {
+    auto ss = reinterpret_cast<SinkStruct<Sink>*>(data);
+    FILE* fp = ss->sink->handle();
+    const auto nr_bytes_read = std::fread(buf, sizeof(std::uint8_t), static_cast<std::size_t>(size), fp);
+    return static_cast<tmsize_t>(nr_bytes_read);
+  }
+  else //if constexpr (std::is_same_v<Sink, sln::VectorWriter>)
+  {
+    // TODO: implement
+    return 0;
+  }
+
+//  return 0;
 }
 
 template <typename Sink>

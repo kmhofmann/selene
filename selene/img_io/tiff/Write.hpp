@@ -20,6 +20,7 @@
 namespace sln {
 
 template <typename SinkType> class TIFFWriteObject;
+template <typename SinkType> class TIFFWriter;
 
 /** \brief Options for TIFF writing, controlling (parts of) the output format.
  *
@@ -63,10 +64,8 @@ bool write_tiff(const DynImageOrView& dyn_img_or_view,
 
 namespace impl {
 template <typename SinkType, typename DynImageOrView>
-    bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>&,
-                                         const TIFFWriteOptions&,
-                                         MessageLog&,
-                                         const DynImageOrView&);
+    bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>&, const TIFFWriteOptions&, MessageLog&,
+                                         const DynImageOrView&, std::ptrdiff_t = -1);
 }  // namespace impl
 
 /** \brief Opaque TIFF writing object, holding internal state.
@@ -90,13 +89,38 @@ private:
 
   bool open(SinkType& sink);
   bool open(SinkType&& sink);
+  bool write_directory();
   bool flush();
+  void close();
 
   template <typename DynImageOrView, typename SinkType2> friend bool write_tiff(const DynImageOrView&, SinkType2&&, const TIFFWriteOptions&, MessageLog*, TIFFWriteObject<std::remove_reference_t<SinkType2>>*);
-  template <typename SinkType2, typename DynImageOrView> friend bool impl::tiff_write_to_current_directory(TIFFWriteObject<SinkType2>&, const TIFFWriteOptions&, MessageLog&, const DynImageOrView&);
+  template <typename SinkType2, typename DynImageOrView> friend bool impl::tiff_write_to_current_directory(TIFFWriteObject<SinkType2>&, const TIFFWriteOptions&, MessageLog&, const DynImageOrView&, std::ptrdiff_t);
+
+  friend class TIFFWriter<SinkType>;
 };
 
-// TODO: Implement TIFFWriter interface.
+template <typename SinkType>
+class TIFFWriter
+{
+public:
+  TIFFWriter() = default;
+  explicit TIFFWriter(SinkType& sink);
+
+  void set_sink(SinkType& sink);
+
+  template <typename DynImageOrView>
+      bool write_image_data(const DynImageOrView& dyn_img_or_view,
+                            const TIFFWriteOptions& options = TIFFWriteOptions{});
+  void finish_writing();
+
+  MessageLog& message_log();
+
+private:
+  SinkType* sink_{nullptr};
+  TIFFWriteObject<SinkType> write_object_;
+  MessageLog message_log_;
+  std::ptrdiff_t nr_images_written{0};
+};
 
 // ----------
 // Implementation:
@@ -140,6 +164,57 @@ bool write_tiff(const DynImageOrView& dyn_img_or_view,
 
   impl::tiff_assign_message_log(local_message_log, message_log);
   return success && flushed;
+}
+
+// -----
+
+template <typename SinkType>
+TIFFWriter<SinkType>::TIFFWriter(SinkType& sink)
+    : sink_(&sink)
+{
+  impl::tiff_set_handlers();
+  write_object_.open(*sink_);
+}
+
+template <typename SinkType>
+void TIFFWriter<SinkType>::set_sink(SinkType& sink)
+{
+  impl::tiff_set_handlers();
+  sink_ = &sink;
+  write_object_.open(*sink_);
+  nr_images_written = 0;
+}
+
+template <typename SinkType>
+template <typename DynImageOrView>
+bool TIFFWriter<SinkType>::write_image_data(const DynImageOrView& dyn_img_or_view, const TIFFWriteOptions& options)
+{
+  if (sink_ == nullptr)
+  {
+    message_log_.add("TIFFWriter sink is not set.", MessageType::Error);
+    return false;
+  }
+
+  const bool success = impl::tiff_write_to_current_directory(write_object_, options, message_log_, dyn_img_or_view,
+                                                             nr_images_written);
+
+  [[maybe_unused]] const bool write_dir = write_object_.write_directory();
+  SELENE_ASSERT(write_dir);
+
+  ++nr_images_written;
+  return success;
+}
+
+template <typename SinkType>
+void TIFFWriter<SinkType>::finish_writing()
+{
+  write_object_.close();
+}
+
+template <typename SinkType>
+MessageLog& TIFFWriter<SinkType>::message_log()
+{
+  return message_log_;
 }
 
 }  // namespace sln

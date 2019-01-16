@@ -167,7 +167,6 @@ TEST_CASE("TIFF reading of the self-produced test suite", "[img]")
 
 TEST_CASE("TIFF image reading, through TIFFReader interface", "[img]")
 {
-  const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(sln_test::full_data_path("stickers_lzw.tif").string());
   REQUIRE(source.is_open());
 
@@ -265,6 +264,96 @@ TEST_CASE("TIFF image reading, through TIFFReader interface", "[img]")
 
   source.close();
   REQUIRE(!source.is_open());
+}
+
+TEST_CASE("TIFF image writing, through TIFFWriter interface", "[img]")
+{
+  const auto tmp_path = sln_test::get_tmp_path();
+  sln::FileReader source(sln_test::full_data_path("stickers_lzw.tif").string());
+  REQUIRE(source.is_open());
+  const auto ref_img = sln::read_tiff(source);
+  REQUIRE(ref_img.is_valid());
+  REQUIRE(ref_img.width() == stickers_ref_width);
+  REQUIRE(ref_img.height() == stickers_ref_height);
+  source.close();
+
+  SECTION("Writing one TIFF directory")
+  {
+    const auto out_path = tmp_path / "test_img_out.tif";
+
+    sln::FileWriter sink{out_path};
+    REQUIRE(sink.is_open());
+
+    sln::TIFFWriter tiff_writer{sink};
+    tiff_writer.write_image_data(ref_img);
+
+    sink.close();
+    REQUIRE(!sink.is_open());
+
+    // See if we can read this image again.
+    sln::MessageLog message_log_read;
+    const auto dyn_imgs = sln::read_tiff_all(sln::FileReader{out_path}, &message_log_read);
+    REQUIRE(dyn_imgs.size() == 1);
+    const auto& dyn_img = dyn_imgs[0];
+    REQUIRE(message_log_read.messages().empty());
+    REQUIRE(dyn_img.width() == stickers_ref_width);
+    REQUIRE(dyn_img.height() == stickers_ref_height);
+    REQUIRE(dyn_img.stride_bytes() == stickers_ref_width * 3);
+    REQUIRE(dyn_img.nr_channels() == 3);
+    REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+    REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+    REQUIRE(dyn_img.is_packed());
+    REQUIRE(!dyn_img.is_empty());
+    REQUIRE(dyn_img.is_valid());
+  }
+
+  SECTION("Writing multiple TIFF directories")
+  {
+    for (std::size_t n = 1; n <= 4; ++n)
+    {
+      const auto out_path_m = tmp_path / ("test_img_out" + std::to_string(n) + ".tif");
+
+      {
+        sln::FileWriter sink{out_path_m.string()};
+        REQUIRE(sink.is_open());
+
+        sln::TIFFWriter tiff_writer{sink};
+        for (std::size_t i = 0; i < n; ++i)
+        {
+          tiff_writer.write_image_data(ref_img);
+        }
+        tiff_writer.finish_writing();
+        REQUIRE(tiff_writer.message_log().messages().empty());
+
+        sink.close();
+        REQUIRE(!sink.is_open());
+      }
+
+      // See if we can read all written images again.
+      {
+        sln::FileReader source2{out_path_m.string()};
+        REQUIRE(source2.is_open());
+        sln::MessageLog message_log_read;
+        const auto dyn_imgs = sln::read_tiff_all(source2, &message_log_read);
+        REQUIRE(message_log_read.messages().empty());
+        REQUIRE(dyn_imgs.size() == n);
+
+        for (const auto& dyn_img : dyn_imgs)
+        {
+          REQUIRE(dyn_img.width() == stickers_ref_width);
+          REQUIRE(dyn_img.height() == stickers_ref_height);
+          REQUIRE(dyn_img.stride_bytes() == stickers_ref_width * 3);
+          REQUIRE(dyn_img.nr_channels() == 3);
+          REQUIRE(dyn_img.nr_bytes_per_channel() == 1);
+          REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+          REQUIRE(dyn_img.is_packed());
+          REQUIRE(!dyn_img.is_empty());
+          REQUIRE(dyn_img.is_valid());
+        }
+      }
+
+    }
+  }
 }
 
 #endif  // defined(SELENE_WITH_LIBTIFF)

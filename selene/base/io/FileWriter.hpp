@@ -147,7 +147,7 @@ inline bool FileWriter::open(const char* filename, WriterMode mode) noexcept
     close();
   }
 
-  fp_ = std::fopen(filename, mode == WriterMode::Append ? "rb+" : "wb");
+  fp_ = std::fopen(filename, mode == WriterMode::Append ? "rb+" : "wb+");
 
   if (mode == WriterMode::Append)
   {
