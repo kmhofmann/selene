@@ -32,7 +32,7 @@ Another option for C++ developers to read or write image data is to use the refe
 directly; e.g. [libjpeg](http://www.ijg.org/), [libpng](http://www.libpng.org/pub/png/libpng.html), or
 [libtiff](http://www.simplesystems.org/libtiff/).
 
-This is also notoriously difficult to get right, because although these libraries are very well documented, their C
+This is also notoriously difficult to get right, because although these libraries are very well documented (*libtiff* excluded!), their C
 interfaces are very low-level, require lots of boilerplate code, and provide even less type safety.
 In some of these, error handling even needs to be implemented using `setjmp` and `longjmp`!
 
