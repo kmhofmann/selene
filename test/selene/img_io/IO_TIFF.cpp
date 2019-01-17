@@ -281,7 +281,7 @@ TEST_CASE("TIFF image writing, through TIFFWriter interface", "[img]")
   {
     const auto out_path = tmp_path / "test_img_out.tif";
 
-    sln::FileWriter sink{out_path};
+    sln::FileWriter sink{out_path.string()};
     REQUIRE(sink.is_open());
 
     sln::TIFFWriter tiff_writer{sink};
@@ -292,7 +292,7 @@ TEST_CASE("TIFF image writing, through TIFFWriter interface", "[img]")
 
     // See if we can read this image again.
     sln::MessageLog message_log_read;
-    const auto dyn_imgs = sln::read_tiff_all(sln::FileReader{out_path}, &message_log_read);
+    const auto dyn_imgs = sln::read_tiff_all(sln::FileReader{out_path.string()}, &message_log_read);
     REQUIRE(dyn_imgs.size() == 1);
     const auto& dyn_img = dyn_imgs[0];
     REQUIRE(message_log_read.messages().empty());
