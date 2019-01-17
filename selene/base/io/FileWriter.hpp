@@ -61,6 +61,12 @@ public:
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  bool read(T& value) noexcept;
+
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  std::size_t read(T* values, std::size_t nr_values) noexcept;
+
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
   bool write(const T& value) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -69,6 +75,12 @@ public:
 private:
   std::FILE* fp_ = nullptr;
 };
+
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+T read(FileWriter& sink);
+
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+bool read(FileWriter& sink, T& value) noexcept;
 
 template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
 bool write(FileWriter& sink, const T& value) noexcept;
@@ -317,6 +329,39 @@ inline void FileWriter::flush() noexcept
   }
 }
 
+/** \brief Reads an element of type T and writes the element to the output parameter `value`.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param[out] value An element of type T, if the read operation was successful.
+ * \return True, if read operation was successful, false otherwise.
+ */
+template <typename T, typename>
+inline bool FileWriter::read(T& value) noexcept
+{
+  SELENE_ASSERT(fp_);
+  const auto nr_values_read = std::fread(&value, sizeof(T), 1, fp_);
+  return (nr_values_read == 1);
+}
+
+/** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data elements to be read. Needs to be trivially copyable.
+ * \param[out] values A pointer to a memory location where the read elements should be written to.
+ * \param nr_values The number of data elements to read.
+ * \return The number of data elements that were successfully read.
+ */
+template <typename T, typename>
+inline std::size_t FileWriter::read(T* values, std::size_t nr_values) noexcept
+{
+  SELENE_ASSERT(fp_);
+  const auto nr_values_read = std::fread(values, sizeof(T), nr_values, fp_);
+  return nr_values_read;
+}
+
 /** \brief Writes an element of type T.
  *
  * In generic code, prefer using the corresponding non-member function.
@@ -351,6 +396,52 @@ inline std::size_t FileWriter::write(const T* values, std::size_t nr_values) noe
 }
 
 // ----------
+
+
+/** \brief Reads an element of type T from `sink` and returns the element.
+ *
+ * The function does not perform an explicit check (beyond a debug-mode assertion) whether the requested element was
+ * actually read. If the read operation failed, then the returned result is undefined.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param sink The sink FileWriter instance.
+ * \return An element of type T, if the read operation was successful.
+ */
+template <typename T, typename>
+T read(FileWriter& sink)
+{
+  T value{};
+  [[maybe_unused]] bool read = sink.read(value);
+  SELENE_ASSERT(read);
+  return value;
+}
+
+/** \brief Reads an element of type T from `sink` and writes the element to the output parameter `value`.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param sink The sink FileWriter instance.
+ * \param[out] value An element of type T, if the read operation was successful.
+ * \return True, if read operation was successful, false otherwise.
+ */
+template <typename T, typename>
+inline bool read(FileWriter& sink, T& value) noexcept
+{
+  return sink.read(value);
+}
+
+/** \brief Reads `nr_values` elements of type T from `sink` and writes the elements to the output parameter `values`.
+ *
+ * \tparam T The type of the data elements to be read. Needs to be trivially copyable.
+ * \param sink The sink FileWriter instance.
+ * \param[out] values A pointer to a memory location where the read elements should be written to.
+ * \param nr_values The number of data elements to read.
+ * \return The number of data elements that were successfully read.
+ */
+template <typename T, typename>
+inline std::size_t read(FileWriter& sink, T* values, std::size_t nr_values) noexcept
+{
+  return sink.read(values, nr_values);
+}
 
 /** \brief Writes an element of type T to `sink`.
  *

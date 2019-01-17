@@ -59,6 +59,12 @@ public:
   void flush() noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  bool read(T& value) noexcept;
+
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  std::size_t read(T* values, std::size_t nr_values) noexcept;
+
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
   bool write(const T& value) noexcept;
 
   template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -69,6 +75,15 @@ private:
   std::ptrdiff_t len_ = 0;
   std::uint8_t* ptr_ = nullptr;
 };
+
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+T read(MemoryWriter& sink);
+
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+bool read(MemoryWriter& sink, T& value) noexcept;
+
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+std::size_t read(MemoryWriter& sink, T* values, std::size_t nr_values) noexcept;
 
 template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
 bool write(MemoryWriter& sink, const T& value) noexcept;
@@ -274,6 +289,53 @@ inline void MemoryWriter::flush() noexcept
 {
 }
 
+/** \brief Reads an element of type T and writes the element to the output parameter `value`.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param[out] value An element of type T, if the read operation was successful.
+ * \return True, if read operation was successful, false otherwise.
+ */
+template <typename T, typename>
+inline bool MemoryWriter::read(T& value) noexcept
+{
+  SELENE_ASSERT(ptr_ != nullptr);
+
+  if (ptr_ + sizeof(T) > data_ + len_)
+  {
+    return false;
+  }
+
+  std::memcpy(&value, ptr_, sizeof(T));  // memory access might be unaligned
+  ptr_ += sizeof(T);
+  return true;
+}
+
+/** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
+ *
+ * In generic code, prefer using the corresponding non-member function.
+ *
+ * \tparam T The type of the data elements to be read. Needs to be trivially copyable.
+ * \param[out] values A pointer to a memory location where the read elements should be written to.
+ * \param nr_values The number of data elements to read.
+ * \return The number of data elements that were successfully read.
+ */
+template <typename T, typename>
+inline std::size_t MemoryWriter::read(T* values, std::size_t nr_values) noexcept
+{
+  SELENE_ASSERT(ptr_ != nullptr);
+  const auto data = std::intptr_t(data_);
+  const auto len = std::intptr_t(len_);
+  const auto ptr = std::intptr_t(ptr_);
+  const auto nr_values_available = static_cast<std::ptrdiff_t>((data + len - ptr) / ptrdiff_t(sizeof(T)));
+  auto nr_values_read = std::min(std::max(std::ptrdiff_t(0), nr_values_available),
+                                 static_cast<std::ptrdiff_t>(nr_values));
+  std::memcpy(values, ptr_, static_cast<std::size_t>(nr_values_read) * sizeof(T));
+  ptr_ += static_cast<std::size_t>(nr_values_read) * sizeof(T);
+  return static_cast<std::size_t>(nr_values_read);
+}
+
 /** \brief Writes an element of type T.
  *
  * In generic code, prefer using the corresponding non-member function.
@@ -319,6 +381,52 @@ inline std::size_t MemoryWriter::write(const T* values, std::size_t nr_values) n
 }
 
 // ----------
+
+
+/** \brief Reads an element of type T from `sink` and returns the element.
+ *
+ * The function does not perform an explicit check (beyond a debug-mode assertion) whether the requested element was
+ * actually read. If the read operation failed, then the returned result is undefined.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param sink The sink MemoryWriter instance.
+ * \return An element of type T, if the read operation was successful.
+ */
+template <typename T, typename>
+T read(MemoryWriter& sink)
+{
+  T value{};
+  [[maybe_unused]] bool read = sink.read(value);
+  SELENE_ASSERT(read);
+  return value;
+}
+
+/** \brief Reads an element of type T from `sink` and writes the element to the output parameter `value`.
+ *
+ * \tparam T The type of the data element to be read. Needs to be trivially copyable.
+ * \param sink The sink MemoryWriter instance.
+ * \param[out] value An element of type T, if the read operation was successful.
+ * \return True, if read operation was successful, false otherwise.
+ */
+template <typename T, typename>
+inline bool read(MemoryWriter& sink, T& value) noexcept
+{
+  return sink.read(value);
+}
+
+/** \brief Reads `nr_values` elements of type T from `sink` and writes the elements to the output parameter `values`.
+ *
+ * \tparam T The type of the data elements to be read. Needs to be trivially copyable.
+ * \param sink The sink MemoryWriter instance.
+ * \param[out] values A pointer to a memory location where the read elements should be written to.
+ * \param nr_values The number of data elements to read.
+ * \return The number of data elements that were successfully read.
+ */
+template <typename T, typename>
+inline std::size_t read(MemoryWriter& sink, T* values, std::size_t nr_values) noexcept
+{
+  return sink.read(values, nr_values);
+}
 
 /** \brief Writes an element of type T to `sink`.
  *

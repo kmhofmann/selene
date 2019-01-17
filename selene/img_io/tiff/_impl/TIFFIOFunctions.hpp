@@ -152,22 +152,12 @@ toff_t w_size_func(thandle_t data)
 template <typename Sink>
 tmsize_t w_read_func([[maybe_unused]] thandle_t data, [[maybe_unused]] void* buf, [[maybe_unused]] tmsize_t size)
 {
-  // TODO: enable the FileWriter, VectorWriter, MemoryWriter to also read
+  auto ss = reinterpret_cast<SinkStruct<Sink>*>(data);
 
-  if constexpr (std::is_same_v<Sink, sln::FileWriter>)
-  {
-    auto ss = reinterpret_cast<SinkStruct<Sink>*>(data);
-    FILE* fp = ss->sink->handle();
-    const auto nr_bytes_read = std::fread(buf, sizeof(std::uint8_t), static_cast<std::size_t>(size), fp);
-    return static_cast<tmsize_t>(nr_bytes_read);
-  }
-  else //if constexpr (std::is_same_v<Sink, sln::VectorWriter>)
-  {
-    // TODO: implement
-    return 0;
-  }
-
-//  return 0;
+  const auto nr_bytes_read =
+      ss->sink->template read<std::uint8_t>(static_cast<std::uint8_t*>(buf), static_cast<std::size_t>(size));
+  SELENE_ASSERT(nr_bytes_read == static_cast<std::size_t>(size));
+  return static_cast<tmsize_t>(nr_bytes_read);
 }
 
 template <typename Sink>
