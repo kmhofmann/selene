@@ -9,6 +9,7 @@
 
 #include <selene/base/Assert.hpp>
 #include <selene/base/io/MemoryRegion.hpp>
+#include <selene/base/io/_impl/MemoryFunctions.hpp>
 
 #include <cstdint>
 #include <cstdlib>
@@ -270,16 +271,7 @@ inline bool MemoryReader::seek_end(std::ptrdiff_t offset) noexcept
 template <typename T, typename>
 inline bool MemoryReader::read(T& value) noexcept
 {
-  SELENE_ASSERT(ptr_ != nullptr);
-
-  if (ptr_ + sizeof(T) > data_ + len_)
-  {
-    return false;
-  }
-
-  std::memcpy(&value, ptr_, sizeof(T));  // memory access might be unaligned
-  ptr_ += sizeof(T);
-  return true;
+  return impl::memory_read_value<T>(data_, len_, ptr_, value);
 }
 
 /** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
@@ -294,16 +286,7 @@ inline bool MemoryReader::read(T& value) noexcept
 template <typename T, typename>
 inline std::size_t MemoryReader::read(T* values, std::size_t nr_values) noexcept
 {
-  SELENE_ASSERT(ptr_ != nullptr);
-  const auto data = std::intptr_t(data_);
-  const auto len = std::intptr_t(len_);
-  const auto ptr = std::intptr_t(ptr_);
-  const auto nr_values_available = static_cast<std::ptrdiff_t>((data + len - ptr) / ptrdiff_t(sizeof(T)));
-  auto nr_values_read = std::min(std::max(std::ptrdiff_t(0), nr_values_available),
-                                 static_cast<std::ptrdiff_t>(nr_values));
-  std::memcpy(values, ptr_, static_cast<std::size_t>(nr_values_read) * sizeof(T));
-  ptr_ += static_cast<std::size_t>(nr_values_read) * sizeof(T);
-  return static_cast<std::size_t>(nr_values_read);
+  return impl::memory_read_values<T>(data_, len_, ptr_, values, nr_values);
 }
 
 // ----------

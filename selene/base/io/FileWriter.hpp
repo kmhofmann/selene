@@ -14,6 +14,7 @@
 
 #include <selene/base/Assert.hpp>
 #include <selene/base/io/WriterMode.hpp>
+#include <selene/base/io/_impl/FileFunctions.hpp>
 
 #include <cerrno>
 #include <cstdio>
@@ -340,9 +341,7 @@ inline void FileWriter::flush() noexcept
 template <typename T, typename>
 inline bool FileWriter::read(T& value) noexcept
 {
-  SELENE_ASSERT(fp_);
-  const auto nr_values_read = std::fread(&value, sizeof(T), 1, fp_);
-  return (nr_values_read == 1);
+  return impl::file_read_value<T>(fp_, value);
 }
 
 /** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
@@ -357,9 +356,7 @@ inline bool FileWriter::read(T& value) noexcept
 template <typename T, typename>
 inline std::size_t FileWriter::read(T* values, std::size_t nr_values) noexcept
 {
-  SELENE_ASSERT(fp_);
-  const auto nr_values_read = std::fread(values, sizeof(T), nr_values, fp_);
-  return nr_values_read;
+  return impl::file_read_values<T>(fp_, values, nr_values);
 }
 
 /** \brief Writes an element of type T.

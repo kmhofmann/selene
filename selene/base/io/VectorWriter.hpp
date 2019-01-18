@@ -9,6 +9,7 @@
 
 #include <selene/base/Assert.hpp>
 #include <selene/base/io/WriterMode.hpp>
+#include <selene/base/io/_impl/VectorFunctions.hpp>
 
 #include <algorithm>
 #include <cstdint>
@@ -298,20 +299,7 @@ inline void VectorWriter::flush() noexcept
 template <typename T, typename>
 inline bool VectorWriter::read(T& value) noexcept
 {
-  SELENE_ASSERT(data_);
-  SELENE_ASSERT(pos_ <= static_cast<std::ptrdiff_t>(data_->size()));
-
-  const std::size_t len = sizeof(T);
-  const auto bytes_to_end = data_->size() - static_cast<std::size_t>(pos_);
-
-  if (bytes_to_end < len)
-  {
-    return false;
-  }
-
-  std::memcpy(&value, data_->data() + pos_, len);
-  pos_ += len;
-  return true;
+  return impl::vector_read_value<T>(data_, pos_, value);
 }
 
 /** \brief Reads `nr_values` elements of type T and writes the elements to the output parameter `values`.
@@ -326,16 +314,7 @@ inline bool VectorWriter::read(T& value) noexcept
 template <typename T, typename>
 inline std::size_t VectorWriter::read(T* values, std::size_t nr_values) noexcept
 {
-  SELENE_ASSERT(data_);
-  SELENE_ASSERT(pos_ <= static_cast<std::ptrdiff_t>(data_->size()));
-
-  const std::size_t len = sizeof(T);
-  const auto bytes_to_end = data_->size() - static_cast<std::size_t>(pos_);
-  const auto available_values = std::min(bytes_to_end / len, nr_values);
-
-  std::memcpy(values, data_->data() + pos_, available_values * len);
-  pos_ += available_values * len;
-  return available_values;
+  return impl::vector_read_values<T>(data_, pos_, values, nr_values);
 }
 
 /** \brief Writes an element of type T.
