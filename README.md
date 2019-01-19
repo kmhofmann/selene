@@ -25,7 +25,7 @@ type-safe API.
 
 A first impression of the API:
 
-```
+```cpp
 // Decode JPEG image data from disk
 DynImage img_data = read_image(FileReader("example.jpg"));
 assert(img_data.nr_channels() == 3 && img_data.nr_bytes_per_channel() == 1);
