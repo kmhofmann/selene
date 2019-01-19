@@ -6,6 +6,7 @@
 /build*/
 /cmake-build-*/
 compile_commands.json
-/doc_gen/
 CMakeSettings.json
+/doc_gen/
+/package/conan/test_package/build/
 /vcpkg/
