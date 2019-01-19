@@ -14,6 +14,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 enum class MessageType
 {
   Headline,
@@ -61,6 +64,8 @@ private:
 std::string message_type_to_string(MessageType type);
 
 std::ostream& operator<<(std::ostream& os, const MessageLog& message_log);
+
+/// @}
 
 // ---------------
 // Implementation:

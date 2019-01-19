@@ -9,6 +9,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base-io
+/// @{
+
 /** \brief Describes the IO write mode: write from start, or append.
  */
 enum class WriterMode
@@ -16,6 +19,8 @@ enum class WriterMode
   Write = 0,  ///< Overwrite/destroy existing contents.
   Append = 1  ///< Append to existing contents.
 };
+
+/// @}
 
 }  // namespace sln
 

@@ -14,6 +14,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed
+/// @{
+
 template <typename Derived>
 class ImageBase
 {
@@ -92,6 +95,8 @@ struct IsImageType<ImageType, std::void_t<typename ImageType::PixelType,
 
 template <typename ImageType>
 constexpr bool is_image_type_v = IsImageType<ImageType>::value;
+
+/// @}
 
 }  // namespace sln
 

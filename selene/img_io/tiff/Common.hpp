@@ -19,6 +19,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io-tiff
+/// @{
+
 /** \brief Configuration of multi-channel data storage inside a TIFF file (or the current TIFF "directory").
  *
  * Multi-channel data can be stored contiguously (interleaved), or separate (planar).
@@ -88,8 +91,8 @@ enum class TIFFCompression
   JBIG,
   LZMA,
 #if defined(SELENE_LIBTIFF_ZSTD_WEBP_SUPPORT)
-  Zstd,
-  Webp,
+  Zstd,  //<<< Only available with libtiff 4.0.10 or higher present.
+  Webp,  //<<< Only available with libtiff 4.0.10 or higher present.
 #endif
 };
 
@@ -191,6 +194,8 @@ void tiff_set_handlers();
 void tiff_assign_message_log(const MessageLog& message_log, MessageLog* output_message_log);
 
 }  // namespace impl
+
+/// @}
 
 }  // namespace sln
 

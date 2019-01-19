@@ -34,6 +34,9 @@ Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src
 
 namespace impl {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <typename DerivedSrc, typename DerivedDst>
 void static_check_copy_compatibility(const ImageBase<DerivedSrc>& /*img_src*/, ImageBase<DerivedDst>& /*img_dst*/)
 {
@@ -146,6 +149,8 @@ Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src
   clone(img_src, region_src, img_dst);
   return img_dst;
 }
+
+/// @}
 
 }  // namespace sln
 

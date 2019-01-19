@@ -20,6 +20,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 // Overloads for unknown source pixel format
 
 template <PixelFormat pixel_format_src,
@@ -969,6 +972,8 @@ constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept
 {
   return Pixel<T, N>(make_array_n_equal<T, N>(src[0]));
 }
+
+/// @}
 
 }  // namespace sln
 

@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-dynamic
+/// @{
+
 template <ImageModifiability modifiability>
 class DynImageView;
 
@@ -413,6 +416,8 @@ private:
 
   friend class DynImageView<modifiability>;
 };
+
+/// @}
 
 }  // namespace sln
 

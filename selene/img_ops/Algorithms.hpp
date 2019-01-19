@@ -14,6 +14,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 /** \brief Applies a unary function to each pixel value of an image.
  *
  * @tparam DerivedSrc The typed image type.
@@ -80,6 +83,8 @@ Image<PixelTypeDst> transform_pixels(const ImageBase<DerivedSrc>& img_src, Unary
   transform_pixels(img_src, img_dst, op);
   return img_dst;
 }
+
+/// @}
 
 }  // namespace sln
 

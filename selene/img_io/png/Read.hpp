@@ -34,6 +34,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io-png
+/// @{
+
 class PNGImageInfo;
 struct PNGDecompressionOptions;
 class PNGDecompressionObject;
@@ -566,6 +569,8 @@ void PNGReader<SourceType>::reset()
   header_read_ = false;
   valid_header_read_ = false;
 }
+
+/// @}
 
 }  // namespace sln
 

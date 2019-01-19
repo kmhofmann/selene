@@ -19,6 +19,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <ImageModifiability modifiability>
 auto view(const DynImageView<modifiability>& dyn_img) -> DynImageView<modifiability>;
 
@@ -134,6 +137,8 @@ auto view(DynImage& dyn_img, const BoundingBox& region) -> MutableDynImageView
                                     dyn_img.stride_bytes()};
   return MutableDynImageView(byte_ptr, layout, dyn_img.semantics());
 }
+
+/// @}
 
 }  // namespace sln
 

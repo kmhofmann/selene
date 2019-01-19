@@ -17,6 +17,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-interop
+/// @{
+
 template <typename PixelType>
 DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
@@ -28,6 +31,8 @@ ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat 
 
 template <typename PixelType, ImageModifiability modifiability>
 DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img_view, PixelFormat new_pixel_format = PixelFormat::Invalid);
+
+/// @}
 
 // ----------
 

@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed-alias
+/// @{
+
 // clang-format off
 
 using Image_8u1 = Image<Pixel<std::uint8_t, 1>>;  ///< 8-bit unsigned 1-channel image.
@@ -94,6 +97,8 @@ SELENE_CREATE_IMAGE_TYPE_ALIAS(YCCK, 4)
 #undef SELENE_CREATE_IMAGE_TYPE_ALIAS
 
 // clang-format on
+
+/// @}
 
 }  // namespace sln
 

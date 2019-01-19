@@ -26,6 +26,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base-io
+/// @{
+
 /** \brief Class for reading binary data from files.
  *
  * Class for reading binary data from files. Provides the usual operations for random file access. As much of the
@@ -78,6 +81,8 @@ bool read(FileReader& source, T& value) noexcept;
 
 template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
 std::size_t read(FileReader& source, T* values, std::size_t nr_values) noexcept;
+
+/// @}
 
 // ----------
 // Implementation:

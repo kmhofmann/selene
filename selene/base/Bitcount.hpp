@@ -17,6 +17,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 /** \brief Performs a bit count on the supplied value.
  *
  * @tparam T The value type.
@@ -119,6 +122,8 @@ constexpr std::size_t bit_count(std::uint32_t x)
 }
 
 #endif
+
+/// @}
 
 }  // namespace sln
 

@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed
+/// @{
+
 template <typename PixelType_, ImageModifiability modifiability>
 class ImageView;
 
@@ -413,6 +416,8 @@ private:
 
   friend class ImageView<PixelType, modifiability>;
 };
+
+/// @}
 
 }  // namespace sln
 

@@ -16,6 +16,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-common
+/// @{
+
 namespace impl {
 
 class PixelIndexTag;
@@ -170,6 +173,8 @@ inline ImageRowAlignment guess_row_alignment(std::uintptr_t ptr, std::ptrdiff_t 
 }
 
 }  // namespace impl
+
+/// @}
 
 }  // namespace sln
 

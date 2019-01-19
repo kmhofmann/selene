@@ -17,6 +17,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-dynamic
+/// @{
+
 class DynImage;
 
 bool operator==(const DynImage& img0, const DynImage& img1);
@@ -168,6 +171,8 @@ private:
 
   friend void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
 };
+
+/// @}
 
 // ----------
 // Implementation:

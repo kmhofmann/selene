@@ -13,6 +13,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-common
+/// @{
+
 /** \brief Represents an axis-aligned, rectangular bounding box, to describe a sub-part of an image.
  *
  * Represents a bounding box by its top-left corner and its width and height parameters.
@@ -163,6 +166,8 @@ constexpr void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_
   width_ = std::min(width_, PixelLength{max_img_width - x0_});
   height_ = std::min(height_, PixelLength{max_img_height - y0_});
 }
+
+/// @}
 
 }  // namespace sln
 

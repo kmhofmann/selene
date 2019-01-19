@@ -15,6 +15,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <typename Derived>
 bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout = false, [[maybe_unused]] bool shrink_to_fit = false)
 {
@@ -33,6 +36,8 @@ bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout
     return did_reallocate;
   }
 }
+
+/// @}
 
 }  // namespace sln
 

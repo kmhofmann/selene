@@ -27,6 +27,9 @@ auto stack_images(Imgs... imgs);
 // ----------
 // Implementation:
 
+/// \addtogroup group-img-ops
+/// @{
+
 /** \brief Copies all channel(s) of the source image to the specified channel(s) of the target image.
  *
  * The channels [dst_start_channel, ..., dst_start_channel + nr_channels(src) - 1] of the target image will be modified.
@@ -182,6 +185,8 @@ auto stack_images(Imgs... imgs)
   impl::inject_channels_rec(img_dst, 0, std::forward<Imgs>(imgs)...);
   return img_dst;
 }
+
+/// @}
 
 }  // namespace sln
 

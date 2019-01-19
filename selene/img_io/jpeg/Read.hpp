@@ -35,6 +35,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io-jpeg
+/// @{
+
 struct JPEGImageInfo;
 class JPEGDecompressionObject;
 
@@ -517,6 +520,8 @@ void JPEGReader<SourceType>::reset()
   header_read_ = false;
   valid_header_read_ = false;
 }
+
+/// @}
 
 }  // namespace sln
 

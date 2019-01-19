@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-dynamic
+/// @{
+
 /** \brief The layout for a dynamically typed image, holding information about width, height, number of channels, the
  * number of bytes per channel, and the image's row stride in bytes.
  */
@@ -177,6 +180,7 @@ constexpr bool operator!=(const UntypedImageSemantics& l, const UntypedImageSema
   return !(l == r);
 }
 
+/// @}
 
 }  // namespace sln
 

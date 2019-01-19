@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed
+/// @{
+
 template <typename Img>
 constexpr
 std::ptrdiff_t count_nr_channels(const Img&)
@@ -34,6 +37,8 @@ std::ptrdiff_t count_nr_channels(const Img& img, Imgs&&... imgs)
 {
   return count_nr_channels(img) + count_nr_channels(std::forward<Imgs>(imgs)...);
 }
+
+/// @}
 
 }  // namespace sln
 

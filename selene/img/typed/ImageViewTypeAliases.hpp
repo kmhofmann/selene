@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed-alias
+/// @{
+
 // clang-format off
 
 #define SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(TMPL, MOD_PRE, C, MOD) \
@@ -84,6 +87,8 @@ SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(YCCK, 4)
 #undef SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS
 
 // clang-format on
+
+/// @}
 
 }  // namespace sln
 

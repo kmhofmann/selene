@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 template <typename Allocator>
 class MemoryBlock;
 
@@ -64,6 +67,8 @@ struct AlignedNewAllocator
   static MemoryBlock<AlignedNewAllocator> allocate(std::size_t nr_bytes, std::size_t alignment) noexcept;
   static void deallocate(std::uint8_t*& data) noexcept;
 };
+
+/// @}
 
 }  // namespace sln
 

@@ -19,6 +19,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-pixel
+/// @{
+
 /** \brief Class representing traits of a pixel.
  *
  * @tparam Element_ The pixel element type.
@@ -128,6 +131,8 @@ struct PixelTraits<const Pixel<T, N, pixel_format_>>
   static constexpr Pixel<T, N, pixel_format_> zero_element =
     Pixel<T, N, pixel_format_>{make_array_n_equal<Element, N>(0)};
 };
+
+/// @}
 
 // Out-of-line definitions for non-integral static declarations above:
 

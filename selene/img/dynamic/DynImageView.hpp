@@ -17,6 +17,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-dynamic
+/// @{
+
 template <ImageModifiability modifiability_ = ImageModifiability::Constant>
 class DynImageView;
 
@@ -131,6 +134,8 @@ private:
 
   friend void swap<modifiability_>(DynImageView<modifiability_>&, DynImageView<modifiability_>&) noexcept;
 };
+
+/// @}
 
 // ----------
 // Implementation:

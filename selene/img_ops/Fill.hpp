@@ -13,6 +13,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <typename PixelType, typename Derived>
 void fill(ImageBase<Derived>& img_dst, PixelType value)
 {
@@ -21,6 +24,8 @@ void fill(ImageBase<Derived>& img_dst, PixelType value)
     std::fill(img_dst.data(y), img_dst.data_row_end(y), value);
   }
 }
+
+/// @}
 
 }  // namespace sln
 

@@ -34,6 +34,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io-jpeg
+/// @{
+
 class JPEGCompressionObject;
 
 namespace impl {
@@ -233,6 +236,8 @@ bool write_jpeg(const DynImageOrView& dyn_img_or_view,
   impl::assign_message_log(obj, messages);
   return !obj.error_state();
 }
+
+/// @}
 
 }  // namespace sln
 

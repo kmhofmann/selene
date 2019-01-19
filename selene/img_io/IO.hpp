@@ -25,6 +25,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io
+/// @{
+
 /** \brief Describes a supported image format for reading or writing.
  */
 enum class ImageFormat
@@ -327,6 +330,8 @@ bool write_image([[maybe_unused]] const DynImageView<modifiability>& dyn_img_vie
 
   return false;
 }
+
+/// @}
 
 }  // namespace sln
 

@@ -18,6 +18,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base-io
+/// @{
+
 /** \brief Class for reading binary data from memory, stored in a std::vector<std::uint8_t>.
  *
  * Class for reading binary data from memory, stored in a std::vector<std::uint8_t>. Provides the usual operations for
@@ -72,6 +75,8 @@ bool read(VectorReader& source, T& value) noexcept;
 
 template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
 std::size_t read(VectorReader& source, T* values, std::size_t nr_values) noexcept;
+
+/// @}
 
 // ----------
 // Implementation:

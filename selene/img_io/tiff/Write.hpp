@@ -19,6 +19,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io-tiff
+/// @{
+
 template <typename SinkType> class TIFFWriteObject;
 template <typename SinkType> class TIFFWriter;
 
@@ -99,6 +102,37 @@ private:
   friend class TIFFWriter<SinkType>;
 };
 
+/** \brief Class with functionality to write a TIFF image data stream.
+ *
+ * Generally, the free function write_tiff() should be preferred, due to ease of use.
+ *
+ * This function, however, does not allow writing multiple images into a single TIFF file (sometimes also called
+ * multiple 'directories', or a 'multi-page' TIFF).
+ *
+ * This can be achieved by attaching a data sink to a `TIFFWriter` instance, and then calling `write_image_data`
+ * repeatedly, in the order that images should be written.
+ * At the end, to properly flush/close the TIFF stream, `finish_writing` needs to be called; this also happens when
+ * the `TIFFWriter` instance goes out of scope.
+ *
+ * Any errors will be written to an internal `MessageLog` instance, which can be queried via the `message_log`
+ * function.
+ *
+ *
+ *
+ *
+ * This is enabled by calling `read_layouts()` on an instance of this class, then allocating the respective
+ * `DynImage` instance(s) (or by providing a `DynImageView` into pre-allocated memory), and finally calling
+ * `read_image_data(DynImage&)` or `read_image_data(MutableDynImageView&)` on each TIFF directory.
+ * TIFF directories can be advanced one by one using the `advance_directory()` member function, or alternatively set
+ * to one of the contained directories by calling `set_directory` with the respective index.
+ *
+ * Multiple images can be read using the same TIFFReader<> (on the same thread).
+ * The source will need to be re-set using `set_source()` to the respective position before attempting to read a new
+ * image; there is no guarantee that after reading image data, the stream pointer will point past the end of the TIFF
+ * file.
+ *
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
+ */
 template <typename SinkType>
 class TIFFWriter
 {
@@ -168,6 +202,11 @@ bool write_tiff(const DynImageOrView& dyn_img_or_view,
 
 // -----
 
+/** \brief Constructs a TIFFReader instance with the given data stream source.
+ *
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
+ * @param sink Output sink instance.
+ */
 template <typename SinkType>
 TIFFWriter<SinkType>::TIFFWriter(SinkType& sink)
     : sink_(&sink)
@@ -176,6 +215,11 @@ TIFFWriter<SinkType>::TIFFWriter(SinkType& sink)
   write_object_.open(*sink_);
 }
 
+/** \brief Sets an output sink stream.
+ *
+ * @tparam SinkType Type of the output sink. Can be FileWriter or VectorWriter.
+ * @param sink Output sink instance.
+ */
 template <typename SinkType>
 void TIFFWriter<SinkType>::set_sink(SinkType& sink)
 {
@@ -216,6 +260,8 @@ MessageLog& TIFFWriter<SinkType>::message_log()
 {
   return message_log_;
 }
+
+/// @}
 
 }  // namespace sln
 

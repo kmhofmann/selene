@@ -17,12 +17,17 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <typename DerivedSrcDst>
 void crop(ImageBase<DerivedSrcDst>& img, const BoundingBox& region)
 {
   auto cropped_clone = clone(img, region);
   img = std::move(cropped_clone);
 }
+
+/// @}
 
 }  // namespace sln
 

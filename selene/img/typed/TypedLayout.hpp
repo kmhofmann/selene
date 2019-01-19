@@ -15,6 +15,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed
+/// @{
+
 /** \brief The layout for a statically typed image, holding information about width, height, and the image's row stride
  * in bytes.
  */
@@ -127,6 +130,8 @@ constexpr  bool operator!=(const TypedLayout& l, const TypedLayout& r)
 {
   return !(l == r);
 }
+
+/// @}
 
 }  // namespace sln
 

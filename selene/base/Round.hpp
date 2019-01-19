@@ -13,6 +13,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 template <typename Result, typename Value>
 constexpr Result constexpr_floor(Value val) noexcept;
 
@@ -37,6 +40,7 @@ Result round(Value val) noexcept;
 template <typename Result, typename Value>
 constexpr Result constexpr_round(Value val) noexcept;
 
+/// @}
 
 // ----------
 // Implementation:

@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base-io
+/// @{
+
 struct ConstantMemoryRegion
 {
   const std::uint8_t* data{nullptr};
@@ -23,6 +26,8 @@ struct MutableMemoryRegion
   std::uint8_t* data{nullptr};
   std::size_t len{0};
 };
+
+/// @}
 
 }  // namespace sln
 

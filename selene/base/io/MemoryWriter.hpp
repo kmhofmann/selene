@@ -20,6 +20,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base-io
+/// @{
+
 /** \brief Class for writing binary data to memory.
  *
  * Class for writing binary data to memory. Provides the usual operations for random memory access. As much of the
@@ -91,6 +94,8 @@ bool write(MemoryWriter& sink, const T& value) noexcept;
 
 template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
 std::size_t write(MemoryWriter& sink, const T* values, std::size_t nr_values) noexcept;
+
+/// @}
 
 // ----------
 // Implementation:

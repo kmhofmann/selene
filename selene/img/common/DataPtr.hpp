@@ -11,6 +11,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-common
+/// @{
+
 enum class ImageModifiability
 {
   Constant,
@@ -68,6 +71,8 @@ public:
 private:
   std::uint8_t* data_;
 };
+
+/// @}
 
 }  // namespace sln
 

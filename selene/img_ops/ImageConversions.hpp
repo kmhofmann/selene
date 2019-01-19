@@ -16,6 +16,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 // Overloads for unknown source pixel format
 
 template <PixelFormat pixel_format_src,
@@ -486,6 +489,7 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
+/// @}
 
 }  // namespace sln
 

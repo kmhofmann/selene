@@ -15,6 +15,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed
+/// @{
+
 template <typename PixelType_>
 class Image;
 
@@ -161,6 +164,8 @@ private:
 
   friend void swap<PixelType_>(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
 };
+
+/// @}
 
 // ----------
 // Implementation:

@@ -11,6 +11,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-pixel-alias
+/// @{
+
 // clang-format off
 
 using Pixel_8u1 = Pixel<std::uint8_t, 1, PixelFormat::Unknown>;  ///< 8-bit unsigned 1-channel pixel.
@@ -93,6 +96,8 @@ SELENE_CREATE_PIXEL_TYPE_ALIAS(YCCK, 4)
 #undef SELENE_CREATE_PIXEL_TYPE_ALIAS
 
 // clang-format on
+
+/// @}
 
 }  // namespace sln
 

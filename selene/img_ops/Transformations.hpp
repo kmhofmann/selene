@@ -22,6 +22,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 /** \brief Describes the flip direction. */
 enum class FlipDirection
 {
@@ -293,6 +296,8 @@ Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img)
   rotate<rot_dir>(img, img_r);
   return img_r;
 }
+
+/// @}
 
 }  // namespace sln
 

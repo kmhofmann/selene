@@ -23,6 +23,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 using KernelSize = std::ptrdiff_t;
 constexpr static auto kernel_size_dynamic = KernelSize{-1};
 
@@ -145,6 +148,8 @@ constexpr Kernel<OutValueType, k> integer_kernel(const Kernel<ValueType, k>& ker
 
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType>
 Kernel<OutValueType, kernel_size_dynamic> integer_kernel(const Kernel<ValueType, kernel_size_dynamic>& kernel);
+
+/// @}
 
 // ----------
 // Implementation:

@@ -18,6 +18,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
 auto view(const ImageBase<DerivedSrc>& img);
 
@@ -236,6 +239,8 @@ auto view_with_pixel_type(ImageBase<DerivedSrc>& img, const BoundingBox& region)
 
   return ImageView<PixelTypeDst, modifiability>(byte_ptr, layout);
 }
+
+/// @}
 
 }  // namespace sln
 

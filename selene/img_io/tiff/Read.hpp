@@ -20,6 +20,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-io-tiff
+/// @{
+
 template <typename SourceType> class TIFFReadObject;
 template <typename SourceType> class TIFFReader;
 
@@ -79,7 +82,7 @@ private:
  * Generally, the free functions read_tiff() or read_tiff_all() should be preferred, due to ease of use.
  *
  * Both of these, however, do not allow reading of the decompressed image data into pre-allocated memory.
- * This is enabled by calling `read_layouts()` on an instance of this class, then allocating the respective
+ * This is enabled by calling read_layouts() on an instance of this class, then allocating the respective
  * `DynImage` instance(s) (or by providing a `DynImageView` into pre-allocated memory), and finally calling
  * `read_image_data(DynImage&)` or `read_image_data(MutableDynImageView&)` on each TIFF directory.
  * TIFF directories can be advanced one by one using the `advance_directory()` member function, or alternatively set
@@ -254,6 +257,11 @@ std::vector<DynImage> read_tiff_all(SourceType&& source, MessageLog* message_log
 
 // -----
 
+/** \brief Constructs a TIFFReader instance with the given data stream source.
+ *
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
+ * @param source Input source instance.
+ */
 template <typename SourceType>
 TIFFReader<SourceType>::TIFFReader(SourceType& source)
     : source_(&source)
@@ -262,6 +270,11 @@ TIFFReader<SourceType>::TIFFReader(SourceType& source)
   read_object_.open(*source_);
 }
 
+/** \brief Sets an input source stream.
+ *
+ * @tparam SourceType Type of the input source. Can be FileReader or MemoryReader.
+ * @param source Input source instance.
+ */
 template <typename SourceType>
 void TIFFReader<SourceType>::set_source(SourceType& source)
 {
@@ -336,6 +349,8 @@ MessageLog& TIFFReader<SourceType>::message_log()
 {
   return message_log_;
 }
+
+/// @}
 
 }  // namespace sln
 

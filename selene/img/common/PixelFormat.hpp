@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-common
+/// @{
+
 /** \brief A pixel format enumeration.
  *
  * A pixel format is a semantic tag assigned to a pixel type. For example, as part of a dynamically typed image, i.e. an
@@ -157,6 +160,8 @@ constexpr bool conversion_requires_alpha_value(PixelFormat pixel_format_src,
 {
   return !has_alpha_channel(pixel_format_src) && has_alpha_channel(pixel_format_dst);
 }
+
+/// @}
 
 }  // namespace sln
 

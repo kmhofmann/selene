@@ -17,6 +17,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <ImageInterpolationMode interpolation_mode = ImageInterpolationMode::Bilinear, typename DerivedSrc>
 auto resample(const ImageBase<DerivedSrc>& img, PixelLength new_width, PixelLength new_height)
     -> Image<typename ImageBase<DerivedSrc>::PixelType>;
@@ -175,6 +178,8 @@ void resample(const ImageBase<DerivedSrcDst>& img_src, PixelLength new_width, Pi
                                  safe_boundary_left, safe_boundary_right, safe_boundary_top, safe_boundary_bottom,
                                  img_dst);
 }
+
+/// @}
 
 }  // namespace sln
 

@@ -12,6 +12,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 using float32_t = float;  ///< 32-bit floating point type.
 using float64_t = double;  ///< 64-bit floating point type.
 
@@ -68,6 +71,8 @@ template <typename T, typename Tag> decltype(auto) to_unsigned(sln::impl::Explic
 {
   return static_cast<std::make_unsigned_t<T>>(x);
 }
+
+/// @}
 
 }  // namespace sln
 

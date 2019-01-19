@@ -27,6 +27,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-ops
+/// @{
+
 template <BorderAccessMode access_mode, std::size_t shift_right = 0,
           typename DerivedSrc, typename DerivedDst, typename KernelValueType, KernelSize kernel_size>
 void convolution_x(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst,
@@ -284,6 +287,7 @@ Image<typename DerivedSrc::PixelType> convolution_y(const ImageBase<DerivedSrc>&
   return img_dst;
 }
 
+/// @}
 
 }  // namespace sln
 

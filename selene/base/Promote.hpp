@@ -13,6 +13,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 /** \brief Promote an integral type to its next larger integral type.
  *
  * Contains a using-declaration of `type` representing the promoted type.
@@ -96,6 +99,8 @@ struct promote<float64_t>
 
 template <typename T>
 using promote_t = typename promote<T>::type;  ///< Helper type for `promote<>`.
+
+/// @}
 
 }  // namespace sln
 

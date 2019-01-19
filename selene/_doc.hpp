@@ -28,3 +28,51 @@
  *
  * This is the automatically generated Doxygen documentation for the **Selene** API.
  */
+
+/// \defgroup group-base Base
+/// Base functionality and classes.
+
+/// \defgroup group-base-io Binary I/O
+/// Binary I/O functionality and classes.
+
+
+
+/// \defgroup group-img-pixel Pixel representation
+/// Pixel representation class, traits.
+
+/// \defgroup group-img-pixel-alias Pixel type aliases
+/// Pixel type aliases.
+
+/// \defgroup group-img-common Image representation (common functionality)
+/// Common image representation functionality, classes and concepts.
+
+/// \defgroup group-img-dynamic Image representation (dynamic pixel type)
+/// Image representation for images with dynamic (runtime determined) pixel type.
+
+/// \defgroup group-img-typed Image representation (static pixel type)
+/// Image representation for images with static (compile-time determined) pixel type.
+
+/// \defgroup group-img-typed-alias Typed image type aliases
+/// Typed image type aliases.
+
+/// \defgroup group-img-interop Image representation interoperability
+/// Image representation interoperability between dynamic/typed images, and external representations.
+
+
+
+/// \defgroup group-img-io Image I/O (General)
+/// Image I/O functions and classes.
+
+/// \defgroup group-img-io-jpeg Image I/O (JPEG)
+/// I/O functions and classes for JPEG images.
+
+/// \defgroup group-img-io-png Image I/O (PNG)
+/// I/O functions and classes for PNG images.
+
+/// \defgroup group-img-io-tiff Image I/O (TIFF)
+/// I/O functions and classes for TIFF images.
+
+
+
+/// \defgroup group-img-ops Image operations
+/// Functions and classes to perform operations on images and image views.

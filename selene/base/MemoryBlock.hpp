@@ -14,6 +14,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 template <typename Allocator>
 class MemoryBlock;
 
@@ -57,6 +60,7 @@ private:
                                                                                        std::size_t) noexcept;
 };
 
+/// @}
 
 // ----------
 // Implementation

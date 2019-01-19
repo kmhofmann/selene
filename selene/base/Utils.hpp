@@ -18,6 +18,9 @@
 
 namespace sln {
 
+/// \addtogroup group-base
+/// @{
+
 /** \brief Computes the value of `base` raised to the power of `exponent`, where `exponent` is integral and unsigned.
  *
  * @tparam T The type of the base.
@@ -172,6 +175,8 @@ constexpr T linear_combination(const Array& src) noexcept
 
   return sum;
 }
+
+/// @}
 
 }  // namespace sln
 

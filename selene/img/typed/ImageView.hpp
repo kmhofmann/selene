@@ -20,6 +20,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-typed
+/// @{
+
 template <typename PixelType_, ImageModifiability modifiability_>
 class ImageView;
 
@@ -125,6 +128,8 @@ private:
 
    friend void swap<PixelType_, modifiability_>(ImageView<PixelType_, modifiability_>&, ImageView<PixelType_, modifiability_>&) noexcept;
 };
+
+/// @}
 
 // ----------
 // Implementation:

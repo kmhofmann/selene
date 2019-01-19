@@ -16,6 +16,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-common
+/// @{
+
 using RowPointers = std::vector<std::uint8_t*>;
 using ConstRowPointers = std::vector<const std::uint8_t*>;
 
@@ -80,6 +83,8 @@ auto get_const_row_pointers(const ImageType& img) -> ConstRowPointers
 
   return row_pointers;
 }
+
+/// @}
 
 }  // namespace sln
 

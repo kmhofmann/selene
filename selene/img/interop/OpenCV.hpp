@@ -22,6 +22,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-interop
+/// @{
+
 template <typename PixelType>
 MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv);
 
@@ -36,6 +39,8 @@ cv::Mat wrap_in_opencv_mat(ImageBase<DerivedSrc>& img);
 
 template <typename DerivedSrc>
 cv::Mat copy_to_opencv_mat(const ImageBase<DerivedSrc>& img);
+
+/// @}
 
 // ----------
 // Implementation:

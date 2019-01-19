@@ -22,6 +22,9 @@
 
 namespace sln {
 
+/// \addtogroup group-img-pixel
+/// @{
+
 /** \brief Represents a statically typed pixel with arbitrary number of channels.
  *
  * A Pixel<T, n> represents an image element with static type T and n number of samples (channels) of this type per
@@ -195,6 +198,8 @@ struct promote<Pixel<T, nr_channels_, pixel_format_>>
 
 template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 std::ostream& operator<<(std::ostream& os, Pixel<T, nr_channels_, pixel_format_>& px);
+
+/// @}
 
 // ----------
 // Implementation:
