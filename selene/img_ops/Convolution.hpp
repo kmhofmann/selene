@@ -48,6 +48,8 @@ template <BorderAccessMode access_mode, std::size_t shift_right = 0,
     typename DerivedSrc, typename KernelValueType, KernelSize kernel_size>
 Image<typename DerivedSrc::PixelType> convolution_y(const ImageBase<DerivedSrc>& img_src, const Kernel<KernelValueType, kernel_size>& kernel);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -286,8 +288,6 @@ Image<typename DerivedSrc::PixelType> convolution_y(const ImageBase<DerivedSrc>&
   convolution_y<access_mode, shift_right>(img_src, img_dst, kernel);
   return img_dst;
 }
-
-/// @}
 
 }  // namespace sln
 

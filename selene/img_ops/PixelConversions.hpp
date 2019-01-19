@@ -60,6 +60,7 @@ constexpr auto convert_pixel(const PixelSrc& px, ElementType alpha_value) noexce
 template <std::size_t N, typename T>
 constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept;
 
+/// @}
 
 // ----------
 // Implementation:
@@ -972,8 +973,6 @@ constexpr Pixel<T, N> y_to_n_channel(const Pixel<T, 1>& src) noexcept
 {
   return Pixel<T, N>(make_array_n_equal<T, N>(src[0]));
 }
-
-/// @}
 
 }  // namespace sln
 

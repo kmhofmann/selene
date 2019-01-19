@@ -83,6 +83,7 @@ template <PixelFormat pixel_format_dst,
           typename = std::enable_if_t<conversion_requires_alpha_value(PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format, pixel_format_dst)>>
 auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alpha_value);
 
+/// @}
 
 // ----------
 // Implementation:
@@ -488,8 +489,6 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
-
-/// @}
 
 }  // namespace sln
 

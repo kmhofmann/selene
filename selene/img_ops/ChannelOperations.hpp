@@ -24,6 +24,8 @@ void inject_channels(const ImgSrc& src, ImgDst& dst, std::size_t dst_start_chann
 template <sln::PixelFormat pixel_format = sln::PixelFormat::Unknown, typename... Imgs>
 auto stack_images(Imgs... imgs);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -185,8 +187,6 @@ auto stack_images(Imgs... imgs)
   impl::inject_channels_rec(img_dst, 0, std::forward<Imgs>(imgs)...);
   return img_dst;
 }
-
-/// @}
 
 }  // namespace sln
 

@@ -92,6 +92,8 @@ constexpr bool operator==(const UntypedImageSemantics& l, const UntypedImageSema
 
 constexpr bool operator!=(const UntypedImageSemantics& l, const UntypedImageSemantics& r);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -179,8 +181,6 @@ constexpr bool operator!=(const UntypedImageSemantics& l, const UntypedImageSema
 {
   return !(l == r);
 }
-
-/// @}
 
 }  // namespace sln
 

@@ -29,6 +29,8 @@ Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src
 template <typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src, const BoundingBox& region_src);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -149,8 +151,6 @@ Image<typename DerivedSrc::PixelType> clone(const ImageBase<DerivedSrc>& img_src
   clone(img_src, region_src, img_dst);
   return img_dst;
 }
-
-/// @}
 
 }  // namespace sln
 

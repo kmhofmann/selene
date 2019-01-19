@@ -146,6 +146,8 @@ bool write_png(const DynImageOrView& dyn_img_or_view,
                PNGCompressionOptions options = PNGCompressionOptions(),
                MessageLog* messages = nullptr);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -231,8 +233,6 @@ bool write_png(const DynImageOrView& dyn_img_or_view,
   impl::assign_message_log(obj, messages);
   return !obj.error_state();
 }
-
-/// @}
 
 }  // namespace sln
 

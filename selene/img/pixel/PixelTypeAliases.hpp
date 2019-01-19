@@ -11,10 +11,23 @@
 
 namespace sln {
 
+// clang-format off
+
+#define SELENE_CREATE_PIXEL_TYPE_ALIAS(P, C) \
+    template <typename T> using Pixel ## P = Pixel<T, C, PixelFormat::P>; \
+    using Pixel ## P ## _8u  = Pixel<std::uint8_t,  C, PixelFormat::P>;   \
+    using Pixel ## P ## _8s  = Pixel<std::int8_t,   C, PixelFormat::P>;   \
+    using Pixel ## P ## _16u = Pixel<std::uint16_t, C, PixelFormat::P>;   \
+    using Pixel ## P ## _16s = Pixel<std::int16_t,  C, PixelFormat::P>;   \
+    using Pixel ## P ## _32u = Pixel<std::uint32_t, C, PixelFormat::P>;   \
+    using Pixel ## P ## _32s = Pixel<std::int32_t,  C, PixelFormat::P>;   \
+    using Pixel ## P ## _64u = Pixel<std::uint64_t, C, PixelFormat::P>;   \
+    using Pixel ## P ## _64s = Pixel<std::int64_t,  C, PixelFormat::P>;   \
+    using Pixel ## P ## _32f = Pixel<float32_t,     C, PixelFormat::P>;   \
+    using Pixel ## P ## _64f = Pixel<float64_t,     C, PixelFormat::P>;
+
 /// \addtogroup group-img-pixel-alias
 /// @{
-
-// clang-format off
 
 using Pixel_8u1 = Pixel<std::uint8_t, 1, PixelFormat::Unknown>;  ///< 8-bit unsigned 1-channel pixel.
 using Pixel_8u2 = Pixel<std::uint8_t, 2, PixelFormat::Unknown>;  ///< 8-bit unsigned 2-channel pixel.
@@ -66,18 +79,7 @@ using Pixel_64f2 = Pixel<float64_t, 2, PixelFormat::Unknown>;  ///< 64-bit float
 using Pixel_64f3 = Pixel<float64_t, 3, PixelFormat::Unknown>;  ///< 64-bit floating point 3-channel pixel.
 using Pixel_64f4 = Pixel<float64_t, 4, PixelFormat::Unknown>;  ///< 64-bit floating point 4-channel pixel.
 
-#define SELENE_CREATE_PIXEL_TYPE_ALIAS(P, C) \
-    template <typename T> using Pixel ## P = Pixel<T, C, PixelFormat::P>; \
-    using Pixel ## P ## _8u  = Pixel<std::uint8_t,  C, PixelFormat::P>;   \
-    using Pixel ## P ## _8s  = Pixel<std::int8_t,   C, PixelFormat::P>;   \
-    using Pixel ## P ## _16u = Pixel<std::uint16_t, C, PixelFormat::P>;   \
-    using Pixel ## P ## _16s = Pixel<std::int16_t,  C, PixelFormat::P>;   \
-    using Pixel ## P ## _32u = Pixel<std::uint32_t, C, PixelFormat::P>;   \
-    using Pixel ## P ## _32s = Pixel<std::int32_t,  C, PixelFormat::P>;   \
-    using Pixel ## P ## _64u = Pixel<std::uint64_t, C, PixelFormat::P>;   \
-    using Pixel ## P ## _64s = Pixel<std::int64_t,  C, PixelFormat::P>;   \
-    using Pixel ## P ## _32f = Pixel<float32_t,     C, PixelFormat::P>;   \
-    using Pixel ## P ## _64f = Pixel<float64_t,     C, PixelFormat::P>;
+
 
 SELENE_CREATE_PIXEL_TYPE_ALIAS(Y, 1)
 SELENE_CREATE_PIXEL_TYPE_ALIAS(YA, 2)

@@ -272,6 +272,7 @@ private:
   void reset();
 };
 
+/// @}
 
 // ----------
 // Implementation:
@@ -569,8 +570,6 @@ void PNGReader<SourceType>::reset()
   header_read_ = false;
   valid_header_read_ = false;
 }
-
-/// @}
 
 }  // namespace sln
 

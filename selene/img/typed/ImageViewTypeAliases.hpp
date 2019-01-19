@@ -12,9 +12,6 @@
 
 namespace sln {
 
-/// \addtogroup group-img-typed-alias
-/// @{
-
 // clang-format off
 
 #define SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(TMPL, MOD_PRE, C, MOD) \
@@ -28,6 +25,9 @@ namespace sln {
     TMPL using MOD_PRE ## ImageView_64s ## C = ImageView<Pixel<std::int64_t,  C>, MOD>; \
     TMPL using MOD_PRE ## ImageView_32f ## C = ImageView<Pixel<float32_t,     C>, MOD>; \
     TMPL using MOD_PRE ## ImageView_64f ## C = ImageView<Pixel<float64_t,     C>, MOD>; \
+
+/// \addtogroup group-img-typed-alias
+/// @{
 
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(template <ImageModifiability modifiability>, , 1, modifiability)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(template <ImageModifiability modifiability>, , 2, modifiability)
@@ -43,6 +43,8 @@ SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(, Constant, 1, ImageModifiability::Constant)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(, Constant, 2, ImageModifiability::Constant)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(, Constant, 3, ImageModifiability::Constant)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(, Constant, 4, ImageModifiability::Constant)
+
+/// @}
 
 #undef SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS
 
@@ -70,6 +72,9 @@ SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(, Constant, 4, ImageModifiability::Constant)
     using ConstantImageView ## P ## _32f = ImageView<Pixel<float32_t,     C, PixelFormat::P>, ImageModifiability::Constant>;   \
     using ConstantImageView ## P ## _64f = ImageView<Pixel<float64_t,     C, PixelFormat::P>, ImageModifiability::Constant>;   \
 
+/// \addtogroup group-img-typed-alias
+/// @{
+
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(Y, 1)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(YA, 2)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(RGB, 3)
@@ -84,11 +89,11 @@ SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(ABGR, 4)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(CMYK, 4)
 SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS(YCCK, 4)
 
+/// @}
+
 #undef SELENE_CREATE_IMAGE_VIEW_TYPE_ALIAS
 
 // clang-format on
-
-/// @}
 
 }  // namespace sln
 

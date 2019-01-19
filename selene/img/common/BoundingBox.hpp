@@ -45,6 +45,11 @@ private:
   PixelLength height_;
 };
 
+/// @}
+
+// ----------
+// Implementation:
+
 /** Default constructor. Constructs a bounding box of size (0, 0) top-left corner (0, 0).
  */
 constexpr BoundingBox::BoundingBox() noexcept
@@ -166,8 +171,6 @@ constexpr void BoundingBox::sanitize(PixelLength max_img_width, PixelLength max_
   width_ = std::min(width_, PixelLength{max_img_width - x0_});
   height_ = std::min(height_, PixelLength{max_img_height - y0_});
 }
-
-/// @}
 
 }  // namespace sln
 

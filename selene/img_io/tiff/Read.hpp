@@ -119,6 +119,8 @@ private:
   MessageLog message_log_;
 };
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -349,8 +351,6 @@ MessageLog& TIFFReader<SourceType>::message_log()
 {
   return message_log_;
 }
-
-/// @}
 
 }  // namespace sln
 

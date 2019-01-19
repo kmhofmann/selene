@@ -244,6 +244,8 @@ private:
   void reset();
 };
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -520,8 +522,6 @@ void JPEGReader<SourceType>::reset()
   header_read_ = false;
   valid_header_read_ = false;
 }
-
-/// @}
 
 }  // namespace sln
 

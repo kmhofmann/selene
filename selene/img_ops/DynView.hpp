@@ -40,6 +40,8 @@ auto view(DynImage& dyn_img, const BoundingBox& region) -> MutableDynImageView;
 
 // TODO: add overloads where pixel format (semantics?) may change?
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -137,8 +139,6 @@ auto view(DynImage& dyn_img, const BoundingBox& region) -> MutableDynImageView
                                     dyn_img.stride_bytes()};
   return MutableDynImageView(byte_ptr, layout, dyn_img.semantics());
 }
-
-/// @}
 
 }  // namespace sln
 

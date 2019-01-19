@@ -45,6 +45,8 @@ auto view_with_pixel_type(const ImageBase<DerivedSrc>& img, const BoundingBox& r
 template <typename PixelTypeDst, typename DerivedSrc, typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>
 auto view_with_pixel_type(ImageBase<DerivedSrc>& img, const BoundingBox& region);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -239,8 +241,6 @@ auto view_with_pixel_type(ImageBase<DerivedSrc>& img, const BoundingBox& region)
 
   return ImageView<PixelTypeDst, modifiability>(byte_ptr, layout);
 }
-
-/// @}
 
 }  // namespace sln
 

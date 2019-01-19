@@ -70,6 +70,8 @@ void rotate(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& i
 template <RotationDirection rot_dir, typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -296,8 +298,6 @@ Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img)
   rotate<rot_dir>(img, img_r);
   return img_r;
 }
-
-/// @}
 
 }  // namespace sln
 

@@ -59,6 +59,8 @@ constexpr bool operator==(const TypedLayout& l, const TypedLayout& r);
 
 constexpr bool operator!=(const TypedLayout& l, const TypedLayout& r);
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -130,8 +132,6 @@ constexpr  bool operator!=(const TypedLayout& l, const TypedLayout& r)
 {
   return !(l == r);
 }
-
-/// @}
 
 }  // namespace sln
 

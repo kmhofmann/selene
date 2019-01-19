@@ -12,10 +12,23 @@
 
 namespace sln {
 
+// clang-format off
+
+#define SELENE_CREATE_IMAGE_TYPE_ALIAS(P, C) \
+    template <typename T> using Image ## P = Image<Pixel<T, C, PixelFormat::P>>; \
+    using Image ## P ## _8u  = Image<Pixel<std::uint8_t,  C, PixelFormat::P>>;   \
+    using Image ## P ## _8s  = Image<Pixel<std::int8_t,   C, PixelFormat::P>>;   \
+    using Image ## P ## _16u = Image<Pixel<std::uint16_t, C, PixelFormat::P>>;   \
+    using Image ## P ## _16s = Image<Pixel<std::int16_t,  C, PixelFormat::P>>;   \
+    using Image ## P ## _32u = Image<Pixel<std::uint32_t, C, PixelFormat::P>>;   \
+    using Image ## P ## _32s = Image<Pixel<std::int32_t,  C, PixelFormat::P>>;   \
+    using Image ## P ## _64u = Image<Pixel<std::uint64_t, C, PixelFormat::P>>;   \
+    using Image ## P ## _64s = Image<Pixel<std::int64_t,  C, PixelFormat::P>>;   \
+    using Image ## P ## _32f = Image<Pixel<float32_t,     C, PixelFormat::P>>;   \
+    using Image ## P ## _64f = Image<Pixel<float64_t,     C, PixelFormat::P>>;
+
 /// \addtogroup group-img-typed-alias
 /// @{
-
-// clang-format off
 
 using Image_8u1 = Image<Pixel<std::uint8_t, 1>>;  ///< 8-bit unsigned 1-channel image.
 using Image_8u2 = Image<Pixel<std::uint8_t, 2>>;  ///< 8-bit unsigned 2-channel image.
@@ -67,19 +80,6 @@ using Image_64f2 = Image<Pixel<float64_t, 2>>;  ///< 64-bit floating point 2-cha
 using Image_64f3 = Image<Pixel<float64_t, 3>>;  ///< 64-bit floating point 3-channel image.
 using Image_64f4 = Image<Pixel<float64_t, 4>>;  ///< 64-bit floating point 4-channel image.
 
-#define SELENE_CREATE_IMAGE_TYPE_ALIAS(P, C) \
-    template <typename T> using Image ## P = Image<Pixel<T, C, PixelFormat::P>>; \
-    using Image ## P ## _8u  = Image<Pixel<std::uint8_t,  C, PixelFormat::P>>;   \
-    using Image ## P ## _8s  = Image<Pixel<std::int8_t,   C, PixelFormat::P>>;   \
-    using Image ## P ## _16u = Image<Pixel<std::uint16_t, C, PixelFormat::P>>;   \
-    using Image ## P ## _16s = Image<Pixel<std::int16_t,  C, PixelFormat::P>>;   \
-    using Image ## P ## _32u = Image<Pixel<std::uint32_t, C, PixelFormat::P>>;   \
-    using Image ## P ## _32s = Image<Pixel<std::int32_t,  C, PixelFormat::P>>;   \
-    using Image ## P ## _64u = Image<Pixel<std::uint64_t, C, PixelFormat::P>>;   \
-    using Image ## P ## _64s = Image<Pixel<std::int64_t,  C, PixelFormat::P>>;   \
-    using Image ## P ## _32f = Image<Pixel<float32_t,     C, PixelFormat::P>>;   \
-    using Image ## P ## _64f = Image<Pixel<float64_t,     C, PixelFormat::P>>;
-
 SELENE_CREATE_IMAGE_TYPE_ALIAS(Y, 1)
 SELENE_CREATE_IMAGE_TYPE_ALIAS(YA, 2)
 SELENE_CREATE_IMAGE_TYPE_ALIAS(RGB, 3)
@@ -94,11 +94,11 @@ SELENE_CREATE_IMAGE_TYPE_ALIAS(ABGR, 4)
 SELENE_CREATE_IMAGE_TYPE_ALIAS(CMYK, 4)
 SELENE_CREATE_IMAGE_TYPE_ALIAS(YCCK, 4)
 
+/// @}
+
 #undef SELENE_CREATE_IMAGE_TYPE_ALIAS
 
 // clang-format on
-
-/// @}
 
 }  // namespace sln
 

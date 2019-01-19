@@ -156,6 +156,8 @@ private:
   std::ptrdiff_t nr_images_written{0};
 };
 
+/// @}
+
 // ----------
 // Implementation:
 
@@ -260,8 +262,6 @@ MessageLog& TIFFWriter<SinkType>::message_log()
 {
   return message_log_;
 }
-
-/// @}
 
 }  // namespace sln
 
