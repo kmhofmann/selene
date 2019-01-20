@@ -7,7 +7,10 @@ By contributing, you are expected to uphold this code.
 
 ## Contact
 
-* The project lead and main author is reachable on the [Cpplang Slack channel](https://cpplang.slack.com/) (`@michaelhofmann`).
+* The project lead and main author is best reachable via:
+  * [Cpplang Slack channel](https://cpplang.slack.com/) (`@michaelhofmann`)
+  * [#include<C++>](https://www.includecpp.org/) Discord [server](https://discord.gg/ZPErMGW)
+    (`@michaelhofmann`).
 
 ## Reporting bugs
 
@@ -25,7 +28,7 @@ some sample code or a full test case that demonstrate that the expected behavior
 * Before starting work on larger non-bugfix pull requests, i.e. pull requests that would add new features,
 *please contact the project lead first* (see above) to align with the project goals, and to make sure the feature is
 not already being worked on.
-This will greatly increase the chances of your pull request being accepted. 
+  * This will greatly increase the chances of your pull request being accepted!
 * In a pull request, please provide a clear list of what you have done.
 Always write a clear log message for your commits.
 Include the relevant issue number, if applicable.

@@ -5,7 +5,36 @@
 ### Why a new library?
 
 Why implement a library for image representation, I/O and basic processing?
-It seems that popular existing solutions are somewhat lacking.
+It seems that other popular existing solutions are somewhat lacking.
+
+### What does Selene aim to provide?
+
+**Selene** aims to fill this gap by providing **lightweight components** with an **easy to use API** for the most
+common image I/O and processing needs.
+See also the [feature set](overview.md).
+
+Its goal is to provide a wide-enough feature set to be able to _build_ more complex functionality _on top_.
+
+As a starting point, the initial feature set includes
+- Type-safe and customizable representation of image data
+- Basic image processing operations, such as color channel conversions
+- Flexible I/O operations for the most common formats (currently: JPEG, PNG, TIFF) 
+
+It is not intended to become a competitor to, say, OpenCV's more specialized computer vision algorithms, and it does
+not aim to be a jack of all trades, master of none.
+
+Primary design criteria for the library are:
+- Ease of use ("easy to use correctly, hard to use incorrectly")
+- Minimal and modern interfaces
+- Modularity and composability
+- Type safety
+
+While performance is deemed important, and premature pessimization is avoided wherever possible, some of the provided
+operations could be further sped up by explicit vectorization, among other means.
+(As the library currently has one main author working on it in his free time, this is deemed out of scope
+at the moment. [Contributions](../CONTRIBUTING.md) welcome!)
+
+### Other libraries
 
 #### OpenCV's shortcomings
 
@@ -32,8 +61,9 @@ Another option for C++ developers to read or write image data is to use the refe
 directly; e.g. [libjpeg](http://www.ijg.org/), [libpng](http://www.libpng.org/pub/png/libpng.html), or
 [libtiff](http://www.simplesystems.org/libtiff/).
 
-This is also notoriously difficult to get right, because although these libraries are very well documented (*libtiff* excluded!), their C
-interfaces are very low-level, require lots of boilerplate code, and provide even less type safety.
+This is also notoriously difficult to get right, because although these libraries are very well documented
+(*libtiff* excluded!), their C interfaces are very low-level, require lots of boilerplate code, and provide even
+less type safety.
 In some of these, error handling even needs to be implemented using `setjmp` and `longjmp`!
 
 And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
@@ -41,7 +71,7 @@ image representation class.
 
 #### GIL - unmaintained (until recently) & Boost dependencies
 
-Other C++ image representation libraries include GIL, available either
+Another quite interesting C++ image representation library is GIL, available either
 [from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
 
 GIL is quite well designed and shares many of its design goals with **Selene**.
@@ -62,27 +92,60 @@ Boost.GIL is written in C++11, as opposed to a more modern standard version, and
 Depending on the Boost usage policy, this may be quite undesirable.
 **Selene does not depend on any Boost library**.
 
-### What does Selene aim to provide?
+#### CImg - a really big mess
 
-**Selene** aims to fill this gap by providing **lightweight components** with an **easy to use API** for the most common image I/O and processing needs.
-See also the [feature set](overview.md).
+[CImg](http://cimg.eu/), the “C++ Template Image Processing Toolkit”, is advertised as a small, useful, generic, and
+simple library.
+In practice, it is unfortunately anything but.
 
-Its goal is to provide a wide-enough feature set to be able to _build_ more complex functionality _on top_.
+In the bigger picture of things, it seems just a detail that CImg only supports planar data storage (according to its
+[documentation](http://cimg.eu/reference/group__cimg__storage.html)), while **Selene** by default assumes
+interleaved storage.
+Selene currently supports multiple image planes via separate single-channel images/views only; this may change in the
+future.
+CImg does not seem to support interleaved storage at all.
 
-As a starting point, the initial feature set includes
-- Type-safe and customizable representation of image data
-- Basic image processing operations, such as color channel conversions
-- Flexible I/O operations for the most common formats (currently: JPEG, PNG, TIFF) 
+More importantly, from a software engineering point of view, Selene is quite antithetical to CImg:
+* In CImg, *all* operations on an image are modeled as member functions inside its own image class; the class has
+literally hundreds of member functions.
+In Selene, classes are used only to represent either data holding entities or views, and algorithms/operations on
+images are modeled as free functions operating on these.
+* The CImg code base, which is contained in a single [header file](https://framagit.org/dtschump/CImg/raw/master/CImg.h)
+of almost 3MB, contains image representation & I/O, but also window, mouse, and event handling routines, hard-coded
+key codes, a least one hard-coded font set, a math formula parser and expression evaluator, many, many macros, string
+handling and math routines, and who knows what.
+* The main CImg author has made many such peculiar design choices, which seem to not follow good software engineering
+practices.
+The CImg entities exhibit very strong coupling and very low cohesion.
+It becomes extremely difficult to reason about the design, modularity, and correctness of CImg.
+The latter is greatly exacerbated by CImg not having *any* unit tests, as far as it seems.
+* In contrast, the **Selene** code base is structured much more modularly.
+Each header file only contains functionality of one single component, and header files follow a strict ‘include only
+what you use' pattern.
+Overall, strong attempts are made in the design to minimize coupling and maximize cohesion.
 
-It is not intended to become a competitor to, say, OpenCV's more specialized computer vision algorithms, and it does
-not aim to be a jack of all trades, master of none.
+Besides all of these issues, CImg is licensed under two niche copyleft licenses, CeCILL and CeCILL-C, roughly comparable
+to GNU GPL and GNU LGPL.
+Either of these licenses often results in greatly decreased adoption by industry.
+In contrast, **Selene** is distributed under the more permissive MIT license.
 
-Primary design criteria for the library are:
-- Ease of use ("easy to use correctly, hard to use incorrectly")
-- Minimal and modern interfaces
-- Modularity and composability
-- Type safety
+#### stb - low-level C re-implementations of I/O routines; partial format support
 
-While performance is deemed important, and premature pessimization is avoided wherever possible, some of the provided
-operations could be further sped up by explicit vectorization. As the library currently has one main author working on
-it in his free time, this is deemed out of scope at the moment.
+[stb](https://github.com/nothings/stb) is a collection of header-only C libraries for various purposes.
+Among these purposes, two header files enable image reading for a variety of formats (JPEG and PNG included, but
+not TIFF), or writing for a few formats (only PNG, TGA, BMP).
+These header files contain complete re-implementations of I/O routines for the supported formats.
+Many of these formats are only partially supported, and the I/O routines are only meant for particular use cases, e.g.
+for known, controlled image data.
+
+No attempt is made in *stb* at providing an abstraction toward coherent image representation or access;
+in every case, the image data is delivered or has to be supplied as a block of raw memory.
+With the implementation done in pure C, and without relying on other, external libraries, *stb_image.h*'s code stays
+on a very low level, without expressing its functionality using any form of higher level abstraction.
+This makes it quite difficult to reason about its correctness, but also potentially erodes the trust in the library.
+
+Several other image format I/O reference implementations (e.g. *libjpeg*/*libpng*/*libtiff*) exhibit the same
+low-level characteristics, and **Selene** depends on them for their respective purposes, but these reference
+implementations seem to be far more widely used and battle-tested than *stb* is.
+
+It may be interpreted as positive that all of *stb* is in the public domain.
