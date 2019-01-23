@@ -8,12 +8,6 @@ include(CMakePackageConfigHelpers)
 
 #------------------------------------------------------------------------------
 
-# Write config file
-
-configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_config.hpp.in selene_config.hpp)
-
-#------------------------------------------------------------------------------
-
 add_library(selene_base "")
 add_library(selene::selene_base ALIAS selene_base)
 
@@ -37,7 +31,7 @@ target_compile_options(selene_base PRIVATE ${SELENE_COMPILER_OPTIONS})
 
 target_compile_definitions(selene_base PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-if (SELENE_USE_DEFAULT_SINGLE_PRECISION)
+if(SELENE_USE_DEFAULT_SINGLE_PRECISION)
     target_compile_definitions(selene_base PUBLIC SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
 endif()
 
@@ -52,6 +46,7 @@ generate_export_header(selene_base
         EXPORT_FILE_NAME selene_export.hpp)
 
 set_target_properties(selene_base PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_base)
 
 #------------------------------------------------------------------------------
 
@@ -83,6 +78,7 @@ target_include_directories(selene_base_io PUBLIC
 target_link_libraries(selene_base_io PUBLIC selene_base)
 
 set_target_properties(selene_base_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_base_io)
 
 #------------------------------------------------------------------------------
 
@@ -140,137 +136,158 @@ target_include_directories(selene_img PUBLIC
 target_link_libraries(selene_img PUBLIC selene_base)
 
 set_target_properties(selene_img PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img)
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img_io_jpeg "")
-add_library(selene::selene_img_io_jpeg ALIAS selene_img_io_jpeg)
+if(JPEG_FOUND)
 
-target_sources(selene_img_io_jpeg PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Common.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Common.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.hpp
-        )
+    add_library(selene_img_io_jpeg "")
+    add_library(selene::selene_img_io_jpeg ALIAS selene_img_io_jpeg)
 
-target_compile_options(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+    target_sources(selene_img_io_jpeg PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Common.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Common.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.hpp
+            )
 
-target_compile_definitions(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_include_directories(selene_img_io_jpeg PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    target_compile_definitions(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-if (JPEG_FOUND)
+    target_include_directories(selene_img_io_jpeg PUBLIC
+            $<BUILD_INTERFACE:${SELENE_DIR}>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
     target_include_directories(selene_img_io_jpeg PUBLIC ${JPEG_INCLUDE_DIR})
     target_link_libraries(selene_img_io_jpeg PUBLIC ${JPEG_LIBRARIES})
     # Imported target support upcoming in CMake (commit 87f2cf3b1ce0ef7b8e71eae0f44cf9753660d423)
     #target_link_libraries(selene_img_io_jpeg PUBLIC JPEG::JPEG)
+    target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img)
+
+    set_target_properties(selene_img_io_jpeg PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+    set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_jpeg)
+
 endif()
-
-target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img)
-
-set_target_properties(selene_img_io_jpeg PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img_io_png "")
-add_library(selene::selene_img_io_png ALIAS selene_img_io_png)
+if(PNG_FOUND)
 
-target_sources(selene_img_io_png PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.hpp
-        )
+    add_library(selene_img_io_png "")
+    add_library(selene::selene_img_io_png ALIAS selene_img_io_png)
 
-target_compile_options(selene_img_io_png PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+    target_sources(selene_img_io_png PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.hpp
+            )
 
-target_compile_definitions(selene_img_io_png PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io_png PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_include_directories(selene_img_io_png PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    target_compile_definitions(selene_img_io_png PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-if (PNG_FOUND)
+    target_include_directories(selene_img_io_png PUBLIC
+            $<BUILD_INTERFACE:${SELENE_DIR}>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
     target_link_libraries(selene_img_io_png PUBLIC PNG::PNG)
+    target_link_libraries(selene_img_io_png PUBLIC selene_base_io selene_img)
+
+    set_target_properties(selene_img_io_png PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+    set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_png)
+
 endif()
-
-target_link_libraries(selene_img_io_png PUBLIC selene_base_io selene_img)
-
-set_target_properties(selene_img_io_png PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img_io_tiff "")
-add_library(selene::selene_img_io_tiff ALIAS selene_img_io_tiff)
+if(TIFF_FOUND)
 
-target_sources(selene_img_io_tiff PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFIOFunctions.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.hpp
-        )
+    add_library(selene_img_io_tiff "")
+    add_library(selene::selene_img_io_tiff ALIAS selene_img_io_tiff)
 
-target_compile_options(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+    target_sources(selene_img_io_tiff PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFIOFunctions.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.hpp
+            )
 
-target_compile_definitions(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_include_directories(selene_img_io_tiff PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    target_compile_definitions(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-if (TIFF_FOUND)
+    target_include_directories(selene_img_io_tiff PUBLIC
+            $<BUILD_INTERFACE:${SELENE_DIR}>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
     target_link_libraries(selene_img_io_tiff PUBLIC TIFF::TIFF)
+    target_link_libraries(selene_img_io_tiff PUBLIC selene_base_io selene_img)
+
+    set_target_properties(selene_img_io_tiff PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+    set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_tiff)
+
 endif()
-
-target_link_libraries(selene_img_io_tiff PUBLIC selene_base_io selene_img)
-
-set_target_properties(selene_img_io_tiff PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 
 #------------------------------------------------------------------------------
 
-add_library(selene_img_io "")
-add_library(selene::selene_img_io ALIAS selene_img_io)
+if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
 
-target_sources(selene_img_io PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
-        )
+    add_library(selene_img_io "")
+    add_library(selene::selene_img_io ALIAS selene_img_io)
 
-target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
+    target_sources(selene_img_io PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
+            )
 
-target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
 
-target_include_directories(selene_img_io PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img selene_img_io_jpeg selene_img_io_png selene_img_io_tiff)
+    target_include_directories(selene_img_io PUBLIC
+            $<BUILD_INTERFACE:${SELENE_DIR}>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-set_target_properties(selene_img_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+    target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
+    if(JPEG_FOUND)
+        target_link_libraries(selene_img_io PUBLIC selene_img_io_jpeg)
+    endif()
+    if(PNG_FOUND)
+        target_link_libraries(selene_img_io PUBLIC selene_img_io_png)
+    endif()
+    if(TIFF_FOUND)
+        target_link_libraries(selene_img_io PUBLIC selene_img_io_tiff)
+    endif()
+
+    set_target_properties(selene_img_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+    set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io)
+
+endif()
 
 #------------------------------------------------------------------------------
 
@@ -306,6 +323,7 @@ target_include_directories(selene_img_ops PUBLIC
 target_link_libraries(selene_img_ops PUBLIC selene_img)
 
 set_target_properties(selene_img_ops PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
+set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_ops)
 
 #------------------------------------------------------------------------------
 
@@ -320,11 +338,29 @@ target_link_libraries(selene INTERFACE
         selene_base
         selene_base_io
         selene_img
-        selene_img_io_jpeg
-        selene_img_io_png
-        selene_img_io_tiff
-        selene_img_io
         selene_img_ops)
+
+if(JPEG_FOUND)
+    target_link_libraries(selene INTERFACE selene_img_io_jpeg)
+endif()
+
+if(PNG_FOUND)
+    target_link_libraries(selene INTERFACE selene_img_io_png)
+endif()
+
+if(TIFF_FOUND)
+    target_link_libraries(selene INTERFACE selene_img_io_tiff)
+endif()
+
+if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
+    target_link_libraries(selene INTERFACE selene_img_io)
+endif()
+
+#------------------------------------------------------------------------------
+
+# Write configure file
+
+configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_config.hpp.in selene_config.hpp)
 
 #------------------------------------------------------------------------------
 
@@ -345,15 +381,7 @@ configure_package_config_file(
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install library files
-install(TARGETS selene
-                selene_base
-                selene_base_io
-                selene_img
-                selene_img_io_jpeg
-                selene_img_io_png
-                selene_img_io_tiff
-                selene_img_io
-                selene_img_ops
+install(TARGETS ${SELENE_INSTALL_TARGETS}
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
