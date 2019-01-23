@@ -8,6 +8,12 @@ include(CMakePackageConfigHelpers)
 
 #------------------------------------------------------------------------------
 
+# Write config file
+
+configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_config.hpp.in selene_config.hpp)
+
+#------------------------------------------------------------------------------
+
 add_library(selene_base "")
 add_library(selene::selene_base ALIAS selene_base)
 
@@ -131,11 +137,6 @@ target_include_directories(selene_img PUBLIC
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-if (OPENCV_CORE_FOUND)
-    target_compile_definitions(selene_img PUBLIC SELENE_WITH_OPENCV)
-    # No need to link against OpenCV, as it's only used in a header. The downstream user should link against it.
-endif()
-
 target_link_libraries(selene_img PUBLIC selene_base)
 
 set_target_properties(selene_img PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
@@ -166,13 +167,6 @@ target_include_directories(selene_img_io_jpeg PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 if (JPEG_FOUND)
-    target_compile_definitions(selene_img_io_jpeg PUBLIC SELENE_WITH_LIBJPEG)
-    if (JPEG_PARTIAL_DECODING)
-        target_compile_definitions(selene_img_io_jpeg PUBLIC SELENE_LIBJPEG_PARTIAL_DECODING)
-    endif()
-    if (JPEG_EXTENDED_COLORSPACES)
-        target_compile_definitions(selene_img_io_jpeg PUBLIC SELENE_LIBJPEG_EXTENDED_COLORSPACES)
-    endif()
     target_include_directories(selene_img_io_jpeg PUBLIC ${JPEG_INCLUDE_DIR})
     target_link_libraries(selene_img_io_jpeg PUBLIC ${JPEG_LIBRARIES})
     # Imported target support upcoming in CMake (commit 87f2cf3b1ce0ef7b8e71eae0f44cf9753660d423)
@@ -207,7 +201,6 @@ target_include_directories(selene_img_io_png PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 if (PNG_FOUND)
-    target_compile_definitions(selene_img_io_png PUBLIC SELENE_WITH_LIBPNG)
     target_link_libraries(selene_img_io_png PUBLIC PNG::PNG)
 endif()
 
@@ -248,10 +241,6 @@ target_include_directories(selene_img_io_tiff PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 if (TIFF_FOUND)
-    target_compile_definitions(selene_img_io_tiff PUBLIC SELENE_WITH_LIBTIFF)
-    if (TIFF_SUPPORT_ZSTD_AND_WEBP)
-        target_compile_definitions(selene_img_io_tiff PUBLIC SELENE_LIBTIFF_ZSTD_WEBP_SUPPORT)
-    endif()
     target_link_libraries(selene_img_io_tiff PUBLIC TIFF::TIFF)
 endif()
 
@@ -376,6 +365,10 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp"
                        PATTERN "_doc.hpp" EXCLUDE)
+
+# Install config file
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene_config.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/selene)
 
 # Install export header
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene_export.hpp

@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_IO_IMPL_TIFF_READ_STRIPS_HPP
 #define SELENE_IMG_IO_IMPL_TIFF_READ_STRIPS_HPP
 
+#include <selene/selene_config.hpp>
+
 #if defined(SELENE_WITH_LIBTIFF)
 
 #include <tiff.h>

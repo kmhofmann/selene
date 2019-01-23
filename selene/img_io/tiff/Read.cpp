@@ -2,6 +2,8 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
+#include <selene/selene_config.hpp>
+
 #if defined(SELENE_WITH_LIBTIFF)
 
 #include <selene/img_io/tiff/Read.hpp>

@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_IMPL_JPEG_COMMON_HPP
 #define SELENE_IMG_IMPL_JPEG_COMMON_HPP
 
+#include <selene/selene_config.hpp>
+
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/MessageLog.hpp>

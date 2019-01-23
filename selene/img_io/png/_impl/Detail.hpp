@@ -5,6 +5,8 @@
 #ifndef SELENE_IMG_IMPL_PNG_DETAIL_HPP
 #define SELENE_IMG_IMPL_PNG_DETAIL_HPP
 
+#include <selene/selene_config.hpp>
+
 #if defined(SELENE_WITH_LIBPNG)
 
 #include <selene/base/MessageLog.hpp>

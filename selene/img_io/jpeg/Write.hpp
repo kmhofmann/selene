@@ -7,6 +7,8 @@
 
 /// @file
 
+#include <selene/selene_config.hpp>
+
 #if defined(SELENE_WITH_LIBJPEG)
 
 #include <selene/base/Allocators.hpp>

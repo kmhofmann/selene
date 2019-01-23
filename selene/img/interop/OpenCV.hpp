@@ -7,6 +7,8 @@
 
 /// @file
 
+#include <selene/selene_config.hpp>
+
 #if defined(SELENE_WITH_OPENCV)
 
 #include <selene/img/pixel/Pixel.hpp>
