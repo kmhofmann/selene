@@ -350,6 +350,8 @@ if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
     target_link_libraries(selene INTERFACE selene_img_io)
 endif()
 
+set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene)
+
 #------------------------------------------------------------------------------
 
 # Write configure file
