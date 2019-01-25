@@ -6,8 +6,6 @@
 #include <selene/base/MemoryBlock.hpp>
 #include <selene/base/Utils.hpp>
 
-#include <selene/selene_export.hpp>
-
 #include <memory>
 #include <new>
 
@@ -19,7 +17,6 @@ namespace sln {
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-SELENE_EXPORT
 MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes) noexcept
 {
   if (nr_bytes == 0)
@@ -35,7 +32,6 @@ MemoryBlock<MallocAllocator> MallocAllocator::allocate(std::size_t nr_bytes) noe
  *
  * \param data A pointer to previously allocated data.
  */
-SELENE_EXPORT
 void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
 {
   std::free(data);
@@ -52,7 +48,6 @@ void MallocAllocator::deallocate(std::uint8_t*& data) noexcept
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-SELENE_EXPORT
 MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t nr_bytes,
                                                                      std::size_t alignment) noexcept
 {
@@ -96,7 +91,6 @@ MemoryBlock<AlignedMallocAllocator> AlignedMallocAllocator::allocate(std::size_t
  *
  * \param data A pointer to previously allocated data.
  */
-SELENE_EXPORT
 void AlignedMallocAllocator::deallocate(std::uint8_t*& data) noexcept
 {
   if (data != nullptr)
@@ -117,7 +111,6 @@ void AlignedMallocAllocator::deallocate(std::uint8_t*& data) noexcept
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-SELENE_EXPORT
 MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes) noexcept
 {
   if (nr_bytes == 0)
@@ -133,7 +126,6 @@ MemoryBlock<NewAllocator> NewAllocator::allocate(std::size_t nr_bytes) noexcept
  *
  * \param data A pointer to previously allocated data.
  */
-SELENE_EXPORT
 void NewAllocator::deallocate(std::uint8_t*& data) noexcept
 {
   ::delete[] data;
@@ -150,7 +142,6 @@ void NewAllocator::deallocate(std::uint8_t*& data) noexcept
  * \return A MemoryBlock instance with a pointer to the allocated data. If no data could be allocated, the MemoryBlock
  *         will point to nullptr.
  */
-SELENE_EXPORT
 MemoryBlock<AlignedNewAllocator> AlignedNewAllocator::allocate(std::size_t nr_bytes, std::size_t alignment) noexcept
 {
   if (nr_bytes == 0)
@@ -192,7 +183,6 @@ MemoryBlock<AlignedNewAllocator> AlignedNewAllocator::allocate(std::size_t nr_by
  *
  * \param data A pointer to previously allocated data.
  */
-SELENE_EXPORT
 void AlignedNewAllocator::deallocate(std::uint8_t*& data) noexcept
 {
   if (data != nullptr)

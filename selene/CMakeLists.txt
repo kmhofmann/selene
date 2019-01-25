@@ -2,7 +2,6 @@ if(NOT IS_DIRECTORY ${SELENE_DIR})
     message(FATAL_ERROR "Please build using the outermost CMakeLists.txt file.")
 endif()
 
-include(GenerateExportHeader)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
@@ -39,11 +38,6 @@ target_include_directories(selene_base PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-# Generate an export header (only once; to be used by all other libraries, too)
-generate_export_header(selene_base
-        BASE_NAME selene
-        EXPORT_FILE_NAME selene_export.hpp)
 
 set_target_properties(selene_base PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_base)
@@ -396,10 +390,6 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 
 # Install config file
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene_config.hpp
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/selene)
-
-# Install export header
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene_export.hpp
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/selene)
 
 # Install exports

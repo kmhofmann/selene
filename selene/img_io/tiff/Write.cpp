@@ -18,8 +18,6 @@
 #include <selene/img_io/tiff/_impl/TIFFDetail.hpp>
 #include <selene/img_io/tiff/_impl/TIFFIOFunctions.hpp>
 
-#include <selene/selene_export.hpp>
-
 #include <array>
 #include <type_traits>
 
@@ -182,8 +180,8 @@ void TIFFWriteObject<SinkType>::close()
 }
 
 // Explicit instantiations:
-template class SELENE_EXPORT TIFFWriteObject<FileWriter>;
-template class SELENE_EXPORT TIFFWriteObject<VectorWriter>;
+template class TIFFWriteObject<FileWriter>;
+template class TIFFWriteObject<VectorWriter>;
 
 
 namespace impl {
@@ -352,13 +350,13 @@ bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj,
 }
 
 // Explicit instantiations:
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
 
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
-template SELENE_EXPORT bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
 
 }  // namespace impl
 

@@ -9,7 +9,4 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(selene REQUIRED)
 
 add_executable(example example.cpp)
-target_link_libraries(example PRIVATE
-         selene::selene
-         #PNG::PNG
-         )
+target_link_libraries(example PRIVATE selene::selene)

@@ -9,8 +9,6 @@
 #include <selene/img_io/jpeg/Write.hpp>
 #include <selene/img_io/jpeg/_impl/Detail.hpp>
 
-#include <selene/selene_export.hpp>
-
 #include <jpeglib.h>
 
 #include <algorithm>
@@ -34,7 +32,6 @@ struct JPEGCompressionObject::Impl
   bool needs_reset = false;
 };
 
-SELENE_EXPORT
 JPEGCompressionObject::JPEGCompressionObject() : impl_(std::make_unique<JPEGCompressionObject::Impl>())
 {
   impl_->cinfo.err = jpeg_std_error(&impl_->error_manager.pub);
@@ -44,7 +41,6 @@ JPEGCompressionObject::JPEGCompressionObject() : impl_(std::make_unique<JPEGComp
   impl_->valid = true;
 }
 
-SELENE_EXPORT
 JPEGCompressionObject::~JPEGCompressionObject()
 {
   jpeg_destroy_compress(&impl_->cinfo);
@@ -56,31 +52,26 @@ JPEGCompressionObject::~JPEGCompressionObject()
   }
 }
 
-SELENE_EXPORT
 bool JPEGCompressionObject::valid() const
 {
   return impl_->valid;
 }
 
-SELENE_EXPORT
 bool JPEGCompressionObject::error_state() const
 {
   return impl_->error_manager.error_state;
 }
 
-SELENE_EXPORT
 MessageLog& JPEGCompressionObject::message_log()
 {
   return impl_->error_manager.message_log;
 }
 
-SELENE_EXPORT
 const MessageLog& JPEGCompressionObject::message_log() const
 {
   return impl_->error_manager.message_log;
 }
 
-SELENE_EXPORT
 bool JPEGCompressionObject::set_image_info(
     int width, int height, int nr_channels, int nr_bytes_per_channel, JPEGColorSpace in_color_space)
 {
@@ -119,7 +110,6 @@ failure_state:
   return false;
 }
 
-SELENE_EXPORT
 bool JPEGCompressionObject::set_compression_parameters(int quality, JPEGColorSpace color_space, bool optimize_coding)
 {
   const auto force_baseline = TRUE;
@@ -145,7 +135,6 @@ failure_state:
   return false;
 }
 
-SELENE_EXPORT
 void JPEGCompressionObject::reset_if_needed()
 {
   if (impl_->needs_reset)
@@ -159,21 +148,18 @@ void JPEGCompressionObject::reset_if_needed()
 
 namespace impl {
 
-SELENE_EXPORT
 JPEGCompressionCycle::JPEGCompressionCycle(JPEGCompressionObject& obj) : obj_(obj)
 {
   obj_.reset_if_needed();
   jpeg_start_compress(&obj_.impl_->cinfo, TRUE);
 }
 
-SELENE_EXPORT
 JPEGCompressionCycle::~JPEGCompressionCycle()
 {
   jpeg_finish_compress(&obj_.impl_->cinfo);
   obj_.impl_->needs_reset = true;
 }
 
-SELENE_EXPORT
 void JPEGCompressionCycle::compress(const ConstRowPointers& row_pointers)
 {
   auto& cinfo = obj_.impl_->cinfo;
@@ -202,7 +188,6 @@ failure_state:
 // -----------------------------
 // Compression related functions
 
-SELENE_EXPORT
 void set_destination(JPEGCompressionObject& obj, FileWriter& sink)
 {
   obj.reset_if_needed();
@@ -217,7 +202,6 @@ void set_destination(JPEGCompressionObject& obj, FileWriter& sink)
 failure_state:;
 }
 
-SELENE_EXPORT
 void set_destination(JPEGCompressionObject& obj, VectorWriter& /*sink*/)
 {
   obj.reset_if_needed();
@@ -232,13 +216,11 @@ void set_destination(JPEGCompressionObject& obj, VectorWriter& /*sink*/)
 failure_state:;
 }
 
-SELENE_EXPORT
 bool flush_data_buffer(JPEGCompressionObject& /*obj*/, FileWriter& /*sink*/)
 {
   return true;
 }
 
-SELENE_EXPORT
 bool flush_data_buffer(JPEGCompressionObject& obj, VectorWriter& sink)
 {
   if (obj.impl_->output_buffer != nullptr)

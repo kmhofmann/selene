@@ -4,28 +4,23 @@
 
 #include <selene/base/MessageLog.hpp>
 
-#include <selene/selene_export.hpp>
-
 #include <algorithm>
 #include <ostream>
 
 namespace sln {
 
-SELENE_EXPORT
 bool MessageLog::contains_warnings()
 {
   return std::any_of(messages_.cbegin(), messages_.cend(),
                      [](const auto& msg) { return msg.type == MessageType::Warning; });
 }
 
-SELENE_EXPORT
 bool MessageLog::contains_errors()
 {
   return std::any_of(messages_.cbegin(), messages_.cend(),
                      [](const auto& msg) { return msg.type == MessageType::Error; });
 }
 
-SELENE_EXPORT
 bool MessageLog::contains_warnings_or_errors()
 {
   return std::any_of(messages_.cbegin(), messages_.cend(),
@@ -33,7 +28,6 @@ bool MessageLog::contains_warnings_or_errors()
                                                || msg.type == MessageType::Error; });
 }
 
-SELENE_EXPORT
 std::string message_type_to_string(MessageType type)
 {
   switch (type)
@@ -48,7 +42,6 @@ std::string message_type_to_string(MessageType type)
   }
 }
 
-SELENE_EXPORT
 std::ostream& operator<<(std::ostream& os, const MessageLog& message_log)
 {
   for (const auto& msg : message_log.messages())
