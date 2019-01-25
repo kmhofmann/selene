@@ -350,8 +350,7 @@ configure_package_config_file(
         INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install library files
-install(TARGETS selene
-                selene_base
+install(TARGETS selene_base
                 selene_base_io
                 selene_img
                 selene_img_io_jpeg
@@ -359,6 +358,7 @@ install(TARGETS selene
                 selene_img_io_tiff
                 selene_img_io
                 selene_img_ops
+                selene
         EXPORT selene-targets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

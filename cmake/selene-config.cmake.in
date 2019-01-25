@@ -1,14 +1,9 @@
+@PACKAGE_INIT@
+
 include(CMakeFindDependencyMacro)
-
-get_filename_component(SELENE_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-list(APPEND CMAKE_MODULE_PATH ${SELENE_CMAKE_DIR})
-
 find_dependency(JPEG)
 find_dependency(PNG)
 find_dependency(TIFF)
 
-if(NOT TARGET selene::selene)
-    include("${SELENE_CMAKE_DIR}/selene-targets.cmake")
-endif()
-
-set(selene_LIBRARIES selene::selene)
+include("${CMAKE_CURRENT_LIST_DIR}/selene-targets.cmake")
+check_required_components("@PROJECT_NAME@")
