@@ -21,7 +21,6 @@ std::vector<std::uint8_t> read_file_contents(const std::string& path);
 void write_data_contents(const std::string& path, const std::uint8_t* data_ptr, std::size_t data_len);
 void write_data_contents(const std::string& path, const std::int8_t* data_ptr, std::size_t data_len);
 void write_data_contents(const std::string& path, const char* data_ptr, std::size_t data_len);
-
 void write_data_contents(const std::string& path, const std::vector<std::uint8_t>& data);
 
 /// @}

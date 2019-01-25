@@ -4,8 +4,6 @@
 
 #include <selene/img/common/PixelFormat.hpp>
 
-#include <selene/selene_export.hpp>
-
 #include <ostream>
 
 namespace sln {
@@ -16,7 +14,6 @@ namespace sln {
  * @param pixel_format The pixel format value to be converted.
  * @return A reference to the provided output stream.
  */
-SELENE_EXPORT
 std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format)
 {
   switch (pixel_format)
@@ -55,7 +52,6 @@ std::ostream& operator<<(std::ostream& os, PixelFormat pixel_format)
  * @param sample_format The sample type value to be converted.
  * @return A reference to the provided output stream.
  */
-SELENE_EXPORT
 std::ostream& operator<<(std::ostream& os, SampleFormat sample_format)
 {
   switch (sample_format)
