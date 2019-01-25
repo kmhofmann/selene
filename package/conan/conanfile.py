@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class SeleneConan(ConanFile):
     name = "selene"
-    version = "0.3"
+    version = "0.3.1"
     license = "MIT"
     url = "https://github.com/kmhofmann/selene"
     description = "A C++17 image representation, processing and I/O library."
@@ -42,4 +42,4 @@ class SeleneConan(ConanFile):
                               "selene_img_io_png",
                               "selene_img_io_tiff",
                               "selene_img_ops",
-                              "selene_io"]
+                              "selene"]
