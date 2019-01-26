@@ -94,13 +94,13 @@ jobs:
       inputs:
         workingDirectory: 'build'
         cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
-        displayName: 'Run CMake'
+      displayName: 'Run CMake'
     - task: MSBuild@1
       inputs:
         solution: 'build/ALL_BUILD.vcxproj'
         maximumCpuCount: true
         platform: 'x64'
-        displayName: 'Build, debug'
+      displayName: 'Build, debug'
     - script: |
         cd build
         .\test\Debug\selene_tests.exe -d yes
@@ -111,11 +111,33 @@ jobs:
         maximumCpuCount: true
         platform: 'x64'
         configuration: 'Release'
-        displayName: 'Build, release'
+      displayName: 'Build, release'
     - script: |
         cd build
         .\test\Release\selene_tests.exe -d yes
       displayName: 'Run tests, release'
+    - script: |
+        cp .\package\vcpkg\CONTROL ..\vcpkg\ports\selene
+        cp .\package\vcpkg\portfile.cmake ..\vcpkg\ports\selene
+        ..\vcpkg\vcpkg.exe remove selene
+        ..\vcpkg\vcpkg.exe install --head selene --triplet x64-windows
+        cd package\test_vcpkg
+        mkdir build
+      displayName: 'Install selene via vcpkg'
+    - task: CMake@1
+      inputs:
+        workingDirectory: 'package\test_vcpkg\build'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../../../vcpkg/scripts/buildsystems/vcpkg.cmake ..'
+      displayName: 'Run CMake on vcpkg example'
+    - task: MSBuild@1
+      inputs:
+        solution: 'package\test_vcpkg\build\ALL_BUILD.vcxproj'
+        maximumCpuCount: true
+        platform: 'x64'
+      displayName: 'Build vcpkg example, debug'
+    - script: |
+        .\package\test_vcpkg\build\Debug\example
+      displayName: 'Run vcpkg example'
 
   - job: Windows_vcpkg_VS2017_x86
     pool:
@@ -134,13 +156,13 @@ jobs:
       inputs:
         workingDirectory: 'build'
         cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_TESTS=ON -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
-        displayName: 'Run CMake'
+      displayName: 'Run CMake'
     - task: MSBuild@1
       inputs:
         solution: 'build/ALL_BUILD.vcxproj'
         maximumCpuCount: true
         platform: 'x86'
-        displayName: 'Build, debug'
+      displayName: 'Build, debug'
     - script: |
         cd build
         .\test\Debug\selene_tests.exe -d yes
@@ -151,11 +173,34 @@ jobs:
         maximumCpuCount: true
         platform: 'x86'
         configuration: 'Release'
-        displayName: 'Build, release'
+      displayName: 'Build, release'
     - script: |
         cd build
         .\test\Release\selene_tests.exe -d yes
       displayName: 'Run tests, release'
+    - script: |
+        cp .\package\vcpkg\CONTROL ..\vcpkg\ports\selene
+        cp .\package\vcpkg\portfile.cmake ..\vcpkg\ports\selene
+        ..\vcpkg\vcpkg.exe remove selene
+        ..\vcpkg\vcpkg.exe install --head selene
+        cd package\test_vcpkg
+        mkdir build
+      displayName: 'Install selene via vcpkg'
+    - task: CMake@1
+      inputs:
+        workingDirectory: 'package\test_vcpkg\build'
+        cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../../../vcpkg/scripts/buildsystems/vcpkg.cmake ..'
+      displayName: 'Run CMake on vcpkg example'
+    - task: MSBuild@1
+      inputs:
+        solution: 'package\test_vcpkg\build\ALL_BUILD.vcxproj'
+        maximumCpuCount: true
+        platform: 'x86'
+      displayName: 'Build vcpkg example, debug'
+    - script: |
+        .\package\test_vcpkg\build\Debug\example
+      displayName: 'Run vcpkg example'
+
 
 # CI tests on macOS are disabled until Azure Pipelines upgrades the macOS environment to provide AppleClang 10
 # (or later) instead of AppleClang 9.1. AppleClang 9.1 does not support <variant>, AppleClang 10 does.
