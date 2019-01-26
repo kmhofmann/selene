@@ -17,7 +17,7 @@ Building & usage:
   
 Documentation & status:
   
-  * [Documentation and status](docs/documentation.md): API documentation &amp; examples.
+  * [Documentation](docs/documentation.md): API documentation &amp; examples.
   * [Status](docs/status.md): Supported compilers &amp; status/roadmap of the library.
   * [Known issues](docs/known_issues.md): Known issues and possible workarounds.
   * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library.

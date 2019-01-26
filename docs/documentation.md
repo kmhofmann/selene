@@ -2,7 +2,7 @@
 
 ## Documentation
 
-**Selene** is (almost) fully documented using the [_Doxygen_](http://www.stack.nl/~dimitri/doxygen/) format.
+**Selene** is (almost) fully documented using the [_Doxygen_](http://www.doxygen.nl/) format.
 _Doxygen_ documentation can be built using the provided `Doxyfile`.
 Simply run `doxygen` in the main library directory.
 
