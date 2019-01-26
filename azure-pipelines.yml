@@ -4,6 +4,8 @@
 # the respective libraries are pre-installed via apt (test_apt) or vcpkg
 # (test_vcpkg). These Docker images are based on 'ubuntu:rolling' (currently
 # Ubuntu 18.10), to provide GCC 8 and Clang 7 out of the box.
+#
+# See https://github.com/kmhofmann/selene_ci_docker on how they are created.
 
 jobs:
   - job: Docker_Ubuntu_base_GCC_libstdcxx
@@ -75,6 +77,18 @@ jobs:
       - script: |
           docker run -v$(pwd):/home/selene/ -e "CC=clang" -e "CXX=clang++" -e "CXXFLAGS=\"-stdlib=libc++\"" -e "LDFLAGS=\"-stdlib=libc++\"" -e "VCPKG_DIR=vcpkg-libcxx" -e "BUILD_TYPE=Debug"   kmhofmann/selene_test_vcpkg bash -c "./selene/.azure-pipelines/build_project.sh"
           docker run -v$(pwd):/home/selene/ -e "CC=clang" -e "CXX=clang++" -e "CXXFLAGS=\"-stdlib=libc++\"" -e "LDFLAGS=\"-stdlib=libc++\"" -e "VCPKG_DIR=vcpkg-libcxx" -e "BUILD_TYPE=Release" kmhofmann/selene_test_vcpkg bash -c "./selene/.azure-pipelines/build_project.sh"
+        displayName: 'Run Docker image'
+
+  - job: Docker_Ubuntu_Android_NDK
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+      - script: |
+          docker pull kmhofmann/selene_test_vcpkg_android
+        displayName: 'Pull Docker image'
+      - script: |
+          docker run -v$(pwd):/home/selene/ -e "BUILD_TYPE=Debug" kmhofmann/selene_test_vcpkg_android bash -c "./selene/.azure-pipelines/build_project_android.sh"
+          docker run -v$(pwd):/home/selene/ -e "BUILD_TYPE=Release" kmhofmann/selene_test_vcpkg_android bash -c "./selene/.azure-pipelines/build_project_android.sh"
         displayName: 'Run Docker image'
 
   - job: Windows_vcpkg_VS2017_x64
