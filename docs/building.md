@@ -60,11 +60,8 @@ If you want to build shared libraries instead, add `-DBUILD_SHARED_LIBS=ON` to t
   Alternatively, the respective command provided by the build system can be used; e.g. `make install` for GNU Make,
 or `ninja install` for [Ninja](https://ninja-build.org/).
 
-  Selene can then be found by other CMake projects using the `find_package` command:
-  
-        find_package(selene)
-        # ...
-        target_link_libraries(<target_name> selene::selene)
+  Selene can then be found by other CMake projects using the `find_package` command. See the [usage page](usage.md)
+  for more information.
 
 * By default, above installation will be system-wide (e.g. to `/usr/local`) and likely requires administrator rights.
   Since this is an intrusive operation, and may result in file level conflicts (due to the single directory for all
@@ -78,7 +75,7 @@ or `ninja install` for [Ninja](https://ninja-build.org/).
   library/application level.
 
 * Even *without* explicit installation, CMake adds a reference to the build tree location to the user-level CMake cache.
-This means that **the above `find_package()` call will also work without user-level or system-level installation**, and
+This means that **a `find_package()` call will also work without user-level or system-level installation**, and
 will then find the build tree itself.
 **Selene** just needs to have been successfully built. 
 
@@ -94,6 +91,10 @@ will then find the build tree itself.
   Advantages of this approach are greatly decreased risk of inconsistent dependencies (in case you upgrade libraries),
   and IDEs more easily picking up the Selene source code (as opposed to, say, just the installed headers).
   The main disadvantage is the non-idiomatic approach to package management (or, rather, the lack of it).
+
+### Usage
+
+See [here](usage.md).
 
 ### CMake options
 
@@ -143,7 +144,7 @@ If desired, this can be explicitly disabled by one or more of the following CMak
 
 The respective functionality, i.e. image I/O, or interoperability with OpenCV's `cv::Mat`, will then be disabled.
 
-### Running tests & examples
+### Running tests &amp; examples
 
 The tests can be run by executing `./test/selene_tests` from the build directory.
 Execute it as follows to see an overview of the performed tests while running:

@@ -6,6 +6,7 @@
 
 Why implement a library for image representation, I/O and basic processing?
 It seems that other popular existing solutions are somewhat lacking.
+See below.
 
 ### What does Selene aim to provide?
 
@@ -28,11 +29,6 @@ Primary design criteria for the library are:
 - Minimal and modern interfaces
 - Modularity and composability
 - Type safety
-
-While performance is deemed important, and premature pessimization is avoided wherever possible, some of the provided
-operations could be further sped up by explicit vectorization, among other means.
-(As the library currently has one main author working on it in his free time, this is deemed out of scope
-at the moment. [Contributions](../CONTRIBUTING.md) welcome!)
 
 ### Other libraries
 
@@ -69,7 +65,7 @@ In some of these, error handling even needs to be implemented using `setjmp` and
 And even if one gets all this right, the result is still a block of memory with decoded image data; there is no unifying
 image representation class.
 
-#### GIL - unmaintained (until recently) & Boost dependencies
+#### GIL - unmaintained (until recently) &amp; Boost dependencies
 
 Another quite interesting C++ image representation library is GIL, available either
 [from Adobe](https://stlab.adobe.com/gil/) or as part of [Boost](https://www.boost.org/).
@@ -111,7 +107,7 @@ literally hundreds of member functions.
 In Selene, classes are used only to represent either data holding entities or views, and algorithms/operations on
 images are modeled as free functions operating on these.
 * The CImg code base, which is contained in a single [header file](https://framagit.org/dtschump/CImg/raw/master/CImg.h)
-of almost 3MB, contains image representation & I/O, but also window, mouse, and event handling routines, hard-coded
+of almost 3MB, contains image representation &amp; I/O, but also window, mouse, and event handling routines, hard-coded
 key codes, a least one hard-coded font set, a math formula parser and expression evaluator, many, many macros, string
 handling and math routines, and who knows what.
 * The main CImg author has made many such peculiar design choices, which seem to not follow good software engineering

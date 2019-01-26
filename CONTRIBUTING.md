@@ -39,8 +39,7 @@ Try not to submit several feature additions and/or bug fixes in one pull request
 
 ## Feature requests
 
-* At the moment, the project does not have a public roadmap, as it currently just has one major contributor working on
-it during his spare time. (But who would love to see the library grow, mature, and be adopted! :-) 
+* See also [here](docs/status.md) for information on status and roadmap.
 * Please get in touch with the project lead (see above) to discuss feasibility and planning.
 * The best feature request is eventually provided in the form of a pull request; please see above.
 
@@ -55,4 +54,4 @@ guidelines) serves as implicit documentation for the formatting conventions.
 [here](https://github.com/kmhofmann/cpp_coding_guidelines).
 * All code should be written in conforming, platform-independent C++17.
 * The project should always compile using GCC (version 8+), Clang (version 7+), and the Visual C++ compiler
-(recent version of Visual Studio 2017+).
+(recent version of Visual Studio 2017+). (This will be checked during continuous integration.)

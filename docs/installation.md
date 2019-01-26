@@ -33,11 +33,17 @@ Using CMake, this is as easy as specifying the respective CMake Toolchain file d
 
      ... -DCMAKE_TOOLCHAIN_FILE=<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake ...
 
-*Note that there may be a delay between release of a new **Selene** version and its availability via
-[vcpkg](https://github.com/Microsoft/vcpkg).*
+---
+**NOTE**
+
+There may be a delay between release of a new **Selene** version and its availability via
+[vcpkg](https://github.com/Microsoft/vcpkg).
 This is due to the centralized handling of package recipes, and their acceptance of updates through GitHub
 [pull requests](https://github.com/Microsoft/vcpkg/pulls?utf8=%E2%9C%93&q=is%3Apr+selene).
 
+Building using the `--head` option as described above will always install the latest (potentially unstable) version. 
+
+---
 
 ### Using Conan
 

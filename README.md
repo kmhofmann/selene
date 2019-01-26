@@ -7,10 +7,18 @@ type-safe API.
 
   * [Overview](docs/overview.md): Brief summary of the current feature set.
   * [Rationale](docs/rationale.md): Why implement a new library for image representation, processing, and I/O?
+  
+Building & usage:
+  
   * [Building the library](docs/building.md): How to build from source.
   * [Dependencies](docs/dependencies.md): Description of optional dependencies.
-  * [Installation](docs/installation.md): Installation using package managers.
-  * [API documentation and status](docs/documentation.md): API documentation, examples, supported compilers.
+  * [Installation](docs/installation.md): Installation using package managers (vcpkg/Conan).
+  * [Usage](docs/usage.md): Using the built and/or installed library as a dependency in other projects.
+  
+Documentation & status:
+  
+  * [Documentation and status](docs/documentation.md): API documentation &amp; examples.
+  * [Status](docs/status.md): Supported compilers &amp; status/roadmap of the library.
   * [Known issues](docs/known_issues.md): Known issues and possible workarounds.
   * [Contribution guidelines](CONTRIBUTING.md): How to contribute to the library.
 
@@ -62,15 +70,6 @@ write_image(to_dyn_image_view(img_rgba), ImageFormat::PNG,
 // Write encoded binary data to disk (or do something else with it...)
 write_data_contents("example_out.png", encoded_png_data);
 ```
-<!---
-### Introductory presentation
-
-Here is a [PDF format presentation](https://selene-lib.org/selene_presentation_20180524.pdf) that introduces Selene
-(~v.0.1.0) and some of its features, given at a meetup of the
-[Dutch C++ Group](https://www.meetup.com/The-Dutch-Cpp-Group/).
-
-[![Selene: Image representation and I/O in C++14](docs/selene_presentation_preview_small.png)](https://selene-lib.org/selene_presentation_20180524.pdf)
---->
 
 ### Package managed
 
