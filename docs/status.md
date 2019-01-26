@@ -5,8 +5,9 @@
 **Selene** requires a compiler supporting C++17 and a respective conforming standard library implementation.
 As such, it can be built on the usual major platforms, as long as these requirements are satisfied.
 
-The library is regularly tested on **Linux**, **macOS**, and **Windows**.
-There are no obvious reasons why **Selene** could not be compiled on other platforms, such as **Android**, **iOS**,
+The library is regularly tested on **Linux**, **macOS**, **Windows**, and, to a limited degree, **Android**
+(just compilation with the Android NDK).
+There are no obvious reasons why **Selene** could not be compiled on other platforms, such as **iOS**,
 **FreeBSD**, etc.
 However, these platforms are not within the testing scope (via continuous integration or otherwise).
 
@@ -17,6 +18,7 @@ Continuous integration tests are currently being run on the following platforms,
 - Ubuntu Linux 18.10, using the following compilers:
     - GCC 8.2
     - Clang 7.0 (both with and without AddressSanitizer &amp; UndefinedBehaviorSanitizer)
+    - Android NDK r19, Clang, arm64 (just compilation; not running unit tests, in absence of ARM platform)
 - Windows 10
     - Visual Studio 2017.
 
