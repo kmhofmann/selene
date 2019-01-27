@@ -129,8 +129,8 @@ private:
   UntypedLayout layout_;
   UntypedImageSemantics semantics_;
 
-  sln::Bytes compute_data_offset(PixelIndex y) const noexcept;
-  sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
+  std::ptrdiff_t compute_data_offset(PixelIndex y) const noexcept;
+  std::ptrdiff_t compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
   friend void swap<modifiability_>(DynImageView<modifiability_>&, DynImageView<modifiability_>&) noexcept;
 };
@@ -590,15 +590,15 @@ void DynImageView<modifiability_>::clear()
 }
 
 template <ImageModifiability modifiability_>
-sln::Bytes DynImageView<modifiability_>::compute_data_offset(PixelIndex y) const noexcept
+std::ptrdiff_t DynImageView<modifiability_>::compute_data_offset(PixelIndex y) const noexcept
 {
-  return sln::Bytes{layout_.stride_bytes * y};
+  return static_cast<std::ptrdiff_t>(layout_.stride_bytes * y);
 }
 
 template <ImageModifiability modifiability_>
-sln::Bytes DynImageView<modifiability_>::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
+std::ptrdiff_t DynImageView<modifiability_>::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
 {
-  return sln::Bytes{layout_.stride_bytes * y + layout_.nr_bytes_per_pixel() * x};
+  return static_cast<std::ptrdiff_t>(layout_.stride_bytes * y + layout_.nr_bytes_per_pixel() * x);
 }
 
 template <ImageModifiability modifiability_0, ImageModifiability modifiability_1>

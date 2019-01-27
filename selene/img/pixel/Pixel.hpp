@@ -91,7 +91,7 @@ public:
   constexpr Pixel<T, nr_channels_, pixel_format_> operator-() noexcept;
 
 private:
-  static_assert(std::is_arithmetic<T>::value, "Pixel element type needs to be an arithmetic type");
+  static_assert(std::is_arithmetic_v<T>, "Pixel element type needs to be an arithmetic type");
   static_assert(get_nr_channels(pixel_format_) == nr_channels_
                 || pixel_format_ == PixelFormat::Unknown, "Pixel format mismatch");
   std::array<T, nr_channels> data_;
@@ -218,8 +218,8 @@ template <typename... Args, typename>
 constexpr Pixel<T, nr_channels_, pixel_format_>::Pixel(Args... args) noexcept
     : data_{{static_cast<T>(args)...}}
 {
-  static_assert(std::is_trivial<Pixel<T, nr_channels_, pixel_format_>>::value, "Pixel type is not trivial");
-  static_assert(std::is_standard_layout<Pixel<T, nr_channels_, pixel_format_>>::value,
+  static_assert(std::is_trivial_v<Pixel<T, nr_channels_, pixel_format_>>, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout_v<Pixel<T, nr_channels_, pixel_format_>>,
                 "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_, pixel_format_>) == nr_channels_ * sizeof(T),
                 "Pixel class is not tightly packed");
@@ -238,8 +238,8 @@ template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 constexpr Pixel<T, nr_channels_, pixel_format_>::Pixel(const std::array<T, nr_channels>& arr) noexcept
     : data_(arr)
 {
-  static_assert(std::is_trivial<Pixel<T, nr_channels_, pixel_format_>>::value, "Pixel type is not trivial");
-  static_assert(std::is_standard_layout<Pixel<T, nr_channels_, pixel_format_>>::value,
+  static_assert(std::is_trivial_v<Pixel<T, nr_channels_, pixel_format_>>, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout_v<Pixel<T, nr_channels_, pixel_format_>>,
                 "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_, pixel_format_>) == nr_channels_ * sizeof(T),
                 "Pixel class is not tightly packed");
@@ -258,8 +258,8 @@ template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 template <typename U>
 constexpr Pixel<T, nr_channels_, pixel_format_>::Pixel(const Pixel<U, nr_channels_, pixel_format_>& other)
 {
-  static_assert(std::is_trivial<Pixel<T, nr_channels_>>::value, "Pixel type is not trivial");
-  static_assert(std::is_standard_layout<Pixel<T, nr_channels_>>::value, "Pixel type is not standard layout");
+  static_assert(std::is_trivial_v<Pixel<T, nr_channels_>>, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout_v<Pixel<T, nr_channels_>>, "Pixel type is not standard layout");
   static_assert(sizeof(Pixel<T, nr_channels_>) == nr_channels_ * sizeof(T), "Pixel class is not tightly packed");
 
   for (std::size_t i = 0; i < nr_channels; ++i)

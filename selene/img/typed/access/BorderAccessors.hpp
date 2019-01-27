@@ -93,7 +93,7 @@ ImageBorderAccessor<BorderAccessMode::Unchecked>::access(const ImageBase<Derived
 {
   // Disabled, since it might be legal to go outside bounds when inside a sub-view.
   //SELENE_ASSERT(x >= 0 && x < img.width() && y >= 0 && y < img.height());
-  return img(to_pixel_index(x), to_pixel_index(y));
+  return img(x, y);
 }
 
 /** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
@@ -132,13 +132,12 @@ ImageBorderAccessor<BorderAccessMode::ZeroPadding>::access(const ImageBase<Deriv
 {
   using PixelType = typename ImageBase<DerivedSrc>::PixelType;
 
-  if (x < 0 || x >= static_cast<PixelIndex>(img.width()) || y < 0
-      || y >= static_cast<PixelIndex>(img.height()))
+  if (x < 0 || x >= PixelIndex{img.width()} || y < 0 || y >= PixelIndex{img.height()})
   {
     return PixelTraits<PixelType>::zero_element;
   }
 
-  return img(to_pixel_index(x), to_pixel_index(y));
+  return img(x, y);
 }
 
 /** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode
@@ -179,21 +178,21 @@ ImageBorderAccessor<BorderAccessMode::Replicated>::access(const ImageBase<Derive
   {
     x = 0_idx;
   }
-  else if (x >= static_cast<PixelIndex>(img.width()))
+  else if (x >= PixelIndex{img.width()})
   {
-    x = static_cast<PixelIndex>(img.width() - 1);
+    x = PixelIndex{img.width() - 1};
   }
 
   if (y < 0)
   {
     y = 0_idx;
   }
-  else if (y >= static_cast<PixelIndex>(img.height()))
+  else if (y >= PixelIndex{img.height()})
   {
-    y = static_cast<PixelIndex>(img.height() - 1);
+    y = PixelIndex{img.height() - 1};
   }
 
-  return img(to_pixel_index(x), to_pixel_index(y));
+  return img(x, y);
 }
 
 /** \brief Accesses the pixel value of `img` at relative location (rx, ry) using the border access mode

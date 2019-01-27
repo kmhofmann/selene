@@ -152,7 +152,7 @@ void flip_horizontally_in_place(ImageBase<DerivedSrcDst>& img)
     {
       using std::swap;
       const auto x_right = img.width() - x_left - 1;
-      swap(row_ptr[x_left], row_ptr[x_right]);
+      swap(row_ptr[ptrdiff_t{x_left}], row_ptr[ptrdiff_t{x_right}]);
     }
   }
 }

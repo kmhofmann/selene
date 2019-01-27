@@ -49,7 +49,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img_view.width(); ++x)
         {
-          REQUIRE(img_view(x, y) == x + y);
+          REQUIRE(img_view(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -67,7 +67,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img_view.width(); ++x)
         {
-          REQUIRE(img_view(x, y) == x + y);
+          REQUIRE(img_view(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -85,7 +85,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img_view.width(); ++x)
         {
-          REQUIRE(img_view(x, y) == x + y);
+          REQUIRE(img_view(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -102,7 +102,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img.width(); ++x)
         {
-          REQUIRE(img(x, y) == x + y);
+          REQUIRE(img(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -125,7 +125,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img_view.width(); ++x)
         {
-          REQUIRE(img_view(x, y) == x + y);
+          REQUIRE(img_view(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -143,7 +143,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img_view.width(); ++x)
         {
-          REQUIRE(img_view(x, y) == x + y);
+          REQUIRE(img_view(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -161,7 +161,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img_view.width(); ++x)
         {
-          REQUIRE(img_view(x, y) == x + y);
+          REQUIRE(img_view(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }
@@ -178,7 +178,7 @@ TEST_CASE("Dynamic image to typed image", "[img]")
       {
         for (auto x = 0_idx; x < img.width(); ++x)
         {
-          REQUIRE(img(x, y) == x + y);
+          REQUIRE(img(x, y) == sln::Pixel_8u1{x + y});
         }
       }
     }

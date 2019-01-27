@@ -156,8 +156,8 @@ void resample(const ImageBase<DerivedSrcDst>& img_src, PixelLength new_width, Pi
 
   allocate(img_dst, {new_width, new_height});
 
-  const auto dst_to_src_factor_x = img_src.width() / static_cast<default_float_t>(new_width);
-  const auto dst_to_src_factor_y = img_src.height() / static_cast<default_float_t>(new_height);
+  const auto dst_to_src_factor_x = default_float_t{img_src.width() / static_cast<default_float_t>(new_width)};
+  const auto dst_to_src_factor_y = default_float_t{img_src.height() / static_cast<default_float_t>(new_height)};
 
   const auto safe_boundary_left = to_pixel_length(
       std::ceil(ImageInterpolator<interpolation_mode>::index_to_left / dst_to_src_factor_x));

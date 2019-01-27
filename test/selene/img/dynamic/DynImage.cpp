@@ -77,8 +77,8 @@ void test_dyn_image_construction(std::mt19937& rng)
     // Check pixel access
     for (std::size_t j = 0; j < 100; ++j)
     {
-      const auto x = sln::PixelIndex{std::min(width - 1, dist_wh(rng))};
-      const auto y = sln::PixelIndex{std::min(height - 1, dist_wh(rng))};
+      const auto x = std::min(sln::to_pixel_index(width - 1), sln::to_pixel_index(dist_wh(rng)));
+      const auto y = std::min(sln::to_pixel_index(height - 1), sln::to_pixel_index(dist_wh(rng)));
       const auto& px0 = dyn_img.pixel<PixelType>(x, y);
       const auto& px1 = dyn_img_view.pixel<PixelType>(x, y);
       REQUIRE(px0 == px1);

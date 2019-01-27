@@ -56,10 +56,10 @@ public:
   bool seek_rel(std::ptrdiff_t offset) noexcept;
   bool seek_end(std::ptrdiff_t offset) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   bool read(T& value) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   std::size_t read(T* values, std::size_t nr_values) noexcept;
 
 private:
@@ -67,13 +67,13 @@ private:
   std::ptrdiff_t pos_ = 0;
 };
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 T read(VectorReader& source);
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 bool read(VectorReader& source, T& value) noexcept;
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 std::size_t read(VectorReader& source, T* values, std::size_t nr_values) noexcept;
 
 /// @}

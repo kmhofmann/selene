@@ -35,22 +35,22 @@ struct PixelTraits
   static constexpr std::int16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise.
-  static constexpr bool is_integral = std::is_integral<Element>::value;
+  static constexpr bool is_integral = std::is_integral_v<Element>;
 
   /// True, if the pixel elements are floating point values; false otherwise.
-  static constexpr bool is_floating_point = std::is_floating_point<Element>::value;
+  static constexpr bool is_floating_point = std::is_floating_point_v<Element>;
 
   /// True, if the pixel elements are unsigned; false otherwise.
-  static constexpr bool is_unsigned = std::is_unsigned<Element>::value;
+  static constexpr bool is_unsigned = std::is_unsigned_v<Element>;
 
   /// The pixel format.
   static constexpr PixelFormat pixel_format = PixelFormat::Unknown;
 
   /// The sample format (unsigned/signed integer or floating point number).
   static constexpr SampleFormat sample_format =
-      std::is_integral<Element>::value
-          ? (std::is_unsigned<Element>::value ? SampleFormat::UnsignedInteger : SampleFormat::SignedInteger)
-          : (std::is_floating_point<Element>::value ? SampleFormat::FloatingPoint : SampleFormat::Unknown);
+      std::is_integral_v<Element>
+          ? (std::is_unsigned_v<Element> ? SampleFormat::UnsignedInteger : SampleFormat::SignedInteger)
+          : (std::is_floating_point_v<Element> ? SampleFormat::FloatingPoint : SampleFormat::Unknown);
 
   /// The value of the zero element.
   static constexpr Element zero_element = Element{0};
@@ -66,28 +66,28 @@ template <typename T, std::size_t N, PixelFormat pixel_format_>
 struct PixelTraits<Pixel<T, N, pixel_format_>>
 {
   using Element = T;  ///< The pixel element type.
-  static constexpr std::int16_t nr_channels = N;  ///< The number of channels per pixel.
+  static constexpr std::int16_t nr_channels = static_cast<std::int16_t>(N);  ///< The number of channels per pixel.
   static constexpr std::int16_t nr_bytes = sizeof(Pixel<T, N, pixel_format_>);  ///< The number of bytes per pixel.
   static constexpr std::int16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise.
-  static constexpr bool is_integral = std::is_integral<T>::value;
+  static constexpr bool is_integral = std::is_integral_v<T>;
 
   /// True, if the pixel elements are floating point values; false otherwise.
-  static constexpr bool is_floating_point = std::is_floating_point<T>::value;
+  static constexpr bool is_floating_point = std::is_floating_point_v<T>;
 
   /// True, if the pixel elements are unsigned; false otherwise.
-  static constexpr bool is_unsigned = std::is_unsigned<T>::value;
+  static constexpr bool is_unsigned = std::is_unsigned_v<T>;
 
   /// The pixel format.
   static constexpr PixelFormat pixel_format = pixel_format_;
 
   /// The sample format (unsigned/signed integer or floating point number).
-  static constexpr SampleFormat sample_format = std::is_integral<T>::value
-                                                    ? (std::is_unsigned<T>::value ? SampleFormat::UnsignedInteger
-                                                                                  : SampleFormat::SignedInteger)
-                                                    : (std::is_floating_point<T>::value ? SampleFormat::FloatingPoint
-                                                                                        : SampleFormat::Unknown);
+  static constexpr SampleFormat sample_format = std::is_integral_v<T>
+                                                    ? (std::is_unsigned_v<T> ? SampleFormat::UnsignedInteger
+                                                                             : SampleFormat::SignedInteger)
+                                                    : (std::is_floating_point_v<T> ? SampleFormat::FloatingPoint
+                                                                                   : SampleFormat::Unknown);
 
   /// The value of the zero element.
   static constexpr Pixel<T, N, pixel_format_> zero_element =
@@ -104,28 +104,28 @@ template <typename T, std::size_t N, PixelFormat pixel_format_>
 struct PixelTraits<const Pixel<T, N, pixel_format_>>
 {
   using Element = T;  ///< The pixel element type.
-  static constexpr std::int16_t nr_channels = N;  ///< The number of channels per pixel.
+  static constexpr std::int16_t nr_channels = static_cast<std::int16_t>(N);  ///< The number of channels per pixel.
   static constexpr std::int16_t nr_bytes = sizeof(const Pixel<T, N, pixel_format_>);  ///< The number of bytes per pixel.
   static constexpr std::int16_t nr_bytes_per_channel = sizeof(Element);  ///< The number of bytes per pixel channel.
 
   /// True, if the pixel elements are integral values; false otherwise.
-  static constexpr bool is_integral = std::is_integral<T>::value;
+  static constexpr bool is_integral = std::is_integral_v<T>;
 
   /// True, if the pixel elements are floating point values; false otherwise.
-  static constexpr bool is_floating_point = std::is_floating_point<T>::value;
+  static constexpr bool is_floating_point = std::is_floating_point_v<T>;
 
   /// True, if the pixel elements are unsigned; false otherwise.
-  static constexpr bool is_unsigned = std::is_unsigned<T>::value;
+  static constexpr bool is_unsigned = std::is_unsigned_v<T>;
 
   /// The pixel format.
   static constexpr PixelFormat pixel_format = pixel_format_;
 
   /// The sample format (unsigned/signed integer or floating point number).
-  static constexpr SampleFormat sample_format = std::is_integral<T>::value
-                                                    ? (std::is_unsigned<T>::value ? SampleFormat::UnsignedInteger
-                                                                                  : SampleFormat::SignedInteger)
-                                                    : (std::is_floating_point<T>::value ? SampleFormat::FloatingPoint
-                                                                                        : SampleFormat::Unknown);
+  static constexpr SampleFormat sample_format = std::is_integral_v<T>
+                                                    ? (std::is_unsigned_v<T> ? SampleFormat::UnsignedInteger
+                                                                             : SampleFormat::SignedInteger)
+                                                    : (std::is_floating_point_v<T> ? SampleFormat::FloatingPoint
+                                                                                   : SampleFormat::Unknown);
 
   /// The value of the zero element.
   static constexpr Pixel<T, N, pixel_format_> zero_element =

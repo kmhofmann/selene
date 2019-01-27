@@ -180,8 +180,9 @@ bool JPEGDecompressionCycle::decompress(RowPointers& row_pointers)
   auto& cinfo = obj_.impl_->cinfo;
 
   const auto region_valid = !region_.empty();
-  const auto skip_lines_top = region_valid ? region_.y0() : value_type{0};
-  const auto skip_lines_bottom = region_valid ? static_cast<value_type>(cinfo.output_height) - region_.y1() : value_type{0};
+  const auto skip_lines_top = region_valid ? value_type{region_.y0()} : value_type{0};
+  const auto skip_lines_bottom = region_valid ? static_cast<value_type>(cinfo.output_height) - value_type{region_.y1()}
+                                              : value_type{0};
 
   if (setjmp(obj_.impl_->error_manager.setjmp_buffer))
   {

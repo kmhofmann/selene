@@ -164,9 +164,7 @@ template <typename ImageType_>
 inline decltype(auto)
 RelativeAccessor<ImageType_>::get(PixelIndex x, PixelIndex y) const noexcept
 {
-  const auto abs_x = PixelIndex{anchor_x_ + x};
-  const auto abs_y = PixelIndex{anchor_y_ + y};
-  return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
+  return img_(anchor_x_ + x, anchor_y_ + y);
 }
 
 /** \brief Accesses an image pixel with relative coordinates.
@@ -182,9 +180,7 @@ template <typename ImageType_>
 inline decltype(auto)
 RelativeAccessor<ImageType_>::get(PixelIndex x, PixelIndex y) noexcept
 {
-  const auto abs_x = PixelIndex{anchor_x_ + x};
-  const auto abs_y = PixelIndex{anchor_y_ + y};
-  return img_(to_pixel_index(abs_x), to_pixel_index(abs_y));
+  return img_(anchor_x_ + x, anchor_y_ + y);
 }
 
 

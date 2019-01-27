@@ -125,8 +125,8 @@ void static_check_view_pixel_types()
 {
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
-  static_assert(std::is_same<typename PixelTraits<PixelTypeSrc>::Element,
-                             typename PixelTraits<PixelTypeDst>::Element>::value,
+  static_assert(std::is_same_v<typename PixelTraits<PixelTypeSrc>::Element,
+                               typename PixelTraits<PixelTypeDst>::Element>,
                 "Incompatible source and target pixel types");
   static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
                 "Incompatible source and target pixel types");

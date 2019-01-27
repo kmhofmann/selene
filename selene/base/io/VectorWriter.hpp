@@ -60,16 +60,16 @@ public:
   bool seek_end(std::ptrdiff_t offset) noexcept;
   void flush() noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   bool read(T& value) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   std::size_t read(T* values, std::size_t nr_values) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   bool write(const T& value) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   std::size_t write(const T* values, std::size_t nr_values) noexcept;
 
 private:
@@ -79,19 +79,19 @@ private:
   bool write_bytes(const std::uint8_t* ptr, std::size_t len);
 };
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 T read(VectorWriter& sink);
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 bool read(VectorWriter& sink, T& value) noexcept;
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 std::size_t read(VectorWriter& sink, T* values, std::size_t nr_values) noexcept;
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 bool write(VectorWriter& sink, const T& value) noexcept;
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 std::size_t write(VectorWriter& sink, const T* values, std::size_t nr_values) noexcept;
 
 /// @}

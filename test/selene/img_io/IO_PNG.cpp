@@ -448,7 +448,7 @@ TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
     const auto info = png_reader.get_output_image_info();
     REQUIRE(info.is_valid());
 
-    sln::DynImage dyn_img({sln::PixelLength{info.width + 1}, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    sln::DynImage dyn_img({info.width + 1, info.height, info.nr_channels, info.nr_bytes_per_channel()});
     sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
     auto res = png_reader.read_image_data(dyn_img_view);
     REQUIRE(!res);

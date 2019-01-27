@@ -32,8 +32,8 @@ namespace sln {
 template <typename T, typename U>
 constexpr T power(T base, U exponent) noexcept
 {
-  static_assert(std::is_integral<U>::value, "Exponent needs to be integral");
-  static_assert(std::is_unsigned<U>::value, "Exponent needs to be unsigned");
+  static_assert(std::is_integral_v<U>, "Exponent needs to be integral");
+  static_assert(std::is_unsigned_v<U>, "Exponent needs to be unsigned");
   return (exponent == 0) ? T{1} : T(base * power(base, U(exponent - 1)));
 }
 
@@ -129,7 +129,7 @@ constexpr PT rounded_linear_combination_coeff_func(std::size_t i)
 template <typename T, std::size_t N, typename Coeff, typename PromotedType = promote_t<T>, typename Array>
 constexpr T approximate_linear_combination(const Array& src) noexcept
 {
-  static_assert(std::is_integral<T>::value, "Conversion type has to be integral");
+  static_assert(std::is_integral_v<T>, "Conversion type has to be integral");
 
   // Compute integer coefficients at compile time
   using PT = PromotedType;  // Larger type
@@ -165,7 +165,7 @@ constexpr T approximate_linear_combination(const Array& src) noexcept
 template <typename T, std::size_t N, typename Coeff, typename Array>
 constexpr T linear_combination(const Array& src) noexcept
 {
-  static_assert(std::is_floating_point<T>::value, "Conversion type has to be floating point");
+  static_assert(std::is_floating_point_v<T>, "Conversion type has to be floating point");
 
   auto sum = T{0};
   for (std::size_t i = 0; i < N; ++i)  // N is known at compile time

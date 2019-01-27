@@ -115,7 +115,7 @@ constexpr std::ptrdiff_t UntypedLayout::nr_bytes_per_pixel() const noexcept
  */
 constexpr std::ptrdiff_t UntypedLayout::row_bytes() const noexcept
 {
-  return width * nr_bytes_per_pixel();
+  return std::ptrdiff_t{width * nr_bytes_per_pixel()};
 }
 
 /** \brief Returns the total number of bytes occupied by the image data in memory.
@@ -124,7 +124,7 @@ constexpr std::ptrdiff_t UntypedLayout::row_bytes() const noexcept
  */
 constexpr std::ptrdiff_t UntypedLayout::total_bytes() const noexcept
 {
-  return stride_bytes * height;
+  return std::ptrdiff_t{stride_bytes * height};
 }
 
 /** \brief Returns whether image data is stored packed in memory using this layout.
@@ -133,7 +133,8 @@ constexpr std::ptrdiff_t UntypedLayout::total_bytes() const noexcept
  */
 constexpr bool UntypedLayout::is_packed() const noexcept
 {
-  return stride_bytes == width * nr_channels * nr_bytes_per_channel;
+  SELENE_ASSERT(stride_bytes >= Stride{width * nr_channels * nr_bytes_per_channel});
+  return stride_bytes == Stride{width * nr_channels * nr_bytes_per_channel};
 }
 
 /** \brief Equality comparison for two untyped layouts.

@@ -259,13 +259,13 @@ struct PixelConversion<sln::PixelFormat::YA, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::Y>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
@@ -275,13 +275,13 @@ struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::YA>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src), a};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::RGBToYCoefficients>(src), a};
@@ -355,13 +355,13 @@ struct PixelConversion<sln::PixelFormat::RGB, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::Y>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 3, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
@@ -371,13 +371,13 @@ struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::YA>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src), a};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 3, pixel_format>& src, const T a) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::BGRToYCoefficients>(src), a};
@@ -451,13 +451,13 @@ struct PixelConversion<sln::PixelFormat::BGR, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::Y>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::RGBToYCoefficients>(src)};
@@ -467,13 +467,13 @@ struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::YA>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src), src[3]};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::RGBToYCoefficients>(src), src[3]};
@@ -547,13 +547,13 @@ struct PixelConversion<sln::PixelFormat::RGBA, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::Y>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::BGRToYCoefficients>(src)};
@@ -563,13 +563,13 @@ struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::YA>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src), src[3]};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::BGRToYCoefficients>(src), src[3]};
@@ -643,13 +643,13 @@ struct PixelConversion<sln::PixelFormat::BGRA, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::Y>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1)};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1)};
@@ -659,13 +659,13 @@ struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::YA>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1), src[0]};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::RGBToYCoefficients>(src.data() + 1), src[0]};
@@ -739,13 +739,13 @@ struct PixelConversion<sln::PixelFormat::ARGB, sln::PixelFormat::ABGR>
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::Y>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1)};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 1, PixelFormat::Y> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 1, PixelFormat::Y>{linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1)};
@@ -755,13 +755,13 @@ struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::Y>
 template <>
 struct PixelConversion<sln::PixelFormat::ABGR, sln::PixelFormat::YA>
 {
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral<T>::value>>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_integral_v<T>>>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{approximate_linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1), src[0]};
   }
 
-  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+  template <typename T, PixelFormat pixel_format, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
   static constexpr Pixel<T, 2, PixelFormat::YA> apply(const Pixel<T, 4, pixel_format>& src) noexcept
   {
     return Pixel<T, 2, PixelFormat::YA>{linear_combination<T, 3, impl::BGRToYCoefficients>(src.data() + 1), src[0]};

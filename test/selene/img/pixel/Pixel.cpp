@@ -103,27 +103,27 @@ TEST_CASE("Pixel operations", "[img]")
   SECTION("Pixel arithmetic 2")
   {
     constexpr auto px1 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + std::uint32_t{40};
-    REQUIRE(std::is_same<std::decay_t<decltype(px1)>, sln::Pixel<std::uint32_t, 3>>::value);
+    REQUIRE(std::is_same_v<std::decay_t<decltype(px1)>, sln::Pixel<std::uint32_t, 3>>);
     REQUIRE(px1 == sln::Pixel<std::uint32_t, 3>(50, 60, 70));
 
     constexpr auto px2 = std::uint32_t{40} + sln::Pixel<std::uint8_t, 3>(10, 20, 30);
-    REQUIRE(std::is_same<std::decay_t<decltype(px2)>, sln::Pixel<std::uint32_t, 3>>::value);
+    REQUIRE(std::is_same_v<std::decay_t<decltype(px2)>, sln::Pixel<std::uint32_t, 3>>);
     REQUIRE(px2 == sln::Pixel<std::uint32_t, 3>(50, 60, 70));
 
     constexpr auto px3 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) * std::uint32_t{5};
-    REQUIRE(std::is_same<std::decay_t<decltype(px3)>, sln::Pixel<std::uint32_t, 3>>::value);
+    REQUIRE(std::is_same_v<std::decay_t<decltype(px3)>, sln::Pixel<std::uint32_t, 3>>);
     REQUIRE(px3 == sln::Pixel<std::uint32_t, 3>(50, 100, 150));
 
     constexpr auto px4 = std::uint32_t{5} * sln::Pixel<std::uint8_t, 3>(10, 20, 30);
-    REQUIRE(std::is_same<std::decay_t<decltype(px4)>, sln::Pixel<std::uint32_t, 3>>::value);
+    REQUIRE(std::is_same_v<std::decay_t<decltype(px4)>, sln::Pixel<std::uint32_t, 3>>);
     REQUIRE(px4 == sln::Pixel<std::uint32_t, 3>(50, 100, 150));
 
     constexpr auto px5 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::float32_t{40.0f};
-    REQUIRE(std::is_same<std::decay_t<decltype(px5)>, sln::Pixel<sln::float32_t, 3>>::value);
+    REQUIRE(std::is_same_v<std::decay_t<decltype(px5)>, sln::Pixel<sln::float32_t, 3>>);
     REQUIRE(px5 == sln::Pixel<sln::float32_t, 3>(50.0f, 60.0f, 70.0f));
 
     constexpr auto px6 = sln::Pixel<std::uint8_t, 3>(10, 20, 30) + sln::float32_t{40.0f};
-    REQUIRE(std::is_same<std::decay_t<decltype(px6)>, sln::Pixel<sln::float32_t, 3>>::value);
+    REQUIRE(std::is_same_v<std::decay_t<decltype(px6)>, sln::Pixel<sln::float32_t, 3>>);
     REQUIRE(px6 == sln::Pixel<sln::float32_t, 3>(50.0f, 60.0f, 70.0f));
 
     constexpr auto px7 = -sln::Pixel<std::int32_t, 3>(10, 20, 30);

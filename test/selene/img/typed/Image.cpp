@@ -28,7 +28,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   sln::Image<T> img0({width, height});
   REQUIRE(img0.width() == width);
   REQUIRE(img0.height() == height);
-  REQUIRE(img0.stride_bytes() == img0.width() * static_cast<std::ptrdiff_t>(sizeof(T)));
+  REQUIRE(img0.stride_bytes() == sln::Stride{img0.width() * static_cast<std::ptrdiff_t>(sizeof(T))});
   REQUIRE(img0.is_packed());
   REQUIRE(!img0.is_empty());
 
@@ -63,7 +63,7 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
     }
 
     const auto alignment2 = alignment / 2;
-    img.reallocate({sln::PixelLength{width + 1}, sln::PixelLength{height + 1}}, sln::ImageRowAlignment{alignment2});
+    img.reallocate({width + 1, height + 1}, sln::ImageRowAlignment{alignment2});
     REQUIRE(img.width() == width + 1);
     REQUIRE(img.height() == height + 1);
     REQUIRE((alignment2 == 0 || img.stride_bytes() % alignment2 == 0));

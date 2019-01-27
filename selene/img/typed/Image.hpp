@@ -158,7 +158,7 @@ private:
   void copy_rows_from(const ImageBase<Derived>& src);
 
   ImageView<PixelType, ImageModifiability::Mutable>
-  allocate_memory(TypedLayout layout, std::ptrdiff_t base_alignment_bytes, std::ptrdiff_t row_alignment_bytes);
+  allocate_memory(TypedLayout layout, ImageRowAlignment base_alignment_bytes, ImageRowAlignment row_alignment_bytes);
 
   void deallocate_memory();
 
@@ -177,7 +177,7 @@ private:
  */
 template <typename PixelType_>
 Image<PixelType_>::Image(TypedLayout layout)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0))
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, ImageRowAlignment{0}))
 {
 }
 
@@ -857,8 +857,8 @@ void Image<PixelType_>::copy_rows_from(const ImageBase<Derived>& src)
 template <typename PixelType_>
 ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_memory(
     TypedLayout layout,
-    std::ptrdiff_t base_alignment_bytes,
-    std::ptrdiff_t row_alignment_bytes)
+    ImageRowAlignment base_alignment_bytes,
+    ImageRowAlignment row_alignment_bytes)
 {
   const auto stride_bytes = impl::compute_stride_bytes(
       std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)), row_alignment_bytes);

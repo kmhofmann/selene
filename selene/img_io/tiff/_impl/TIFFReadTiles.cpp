@@ -49,9 +49,9 @@ bool read_data_tiles_interleaved(TIFF* tif,
   constexpr uint16 sample_index = 0;
 
   // For each tile...
-  for (auto src_y = 0_idx; src_y < static_cast<value_type>(src.height); src_y += tile_layout.height)
+  for (auto src_y = 0_idx; src_y < static_cast<value_type>(src.height); src_y += to_pixel_index(tile_layout.height))
   {
-    for (auto src_x = 0_idx; src_x < static_cast<value_type>(src.width); src_x += tile_layout.width)
+    for (auto src_x = 0_idx; src_x < static_cast<value_type>(src.width); src_x += to_pixel_index(tile_layout.width))
     {
       // Read tile data into buffer
       std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
@@ -172,9 +172,12 @@ bool read_data_tiles_planar(TIFF* tif,
 
   for (uint16 sample_index = 0; sample_index < src.samples_per_pixel; ++sample_index)
   {
-    for (auto src_y = 0_idx; src_y < static_cast<value_type>(src.height); src_y += tile_layout.height)
+    const auto width = to_pixel_index(src.width);
+    const auto height = to_pixel_index(src.height);
+
+    for (auto src_y = 0_idx; src_y < height; src_y += to_pixel_index(tile_layout.height))
     {
-      for (auto src_x = 0_idx; src_x < static_cast<value_type>(src.width); src_x += tile_layout.width)
+      for (auto src_x = 0_idx; src_x < width; src_x += to_pixel_index(tile_layout.width))
       {
         std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
         const auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<uint32>(src_x), static_cast<uint32>(src_y), 0, sample_index);

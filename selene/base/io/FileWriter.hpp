@@ -64,32 +64,32 @@ public:
   bool seek_end(std::ptrdiff_t offset) noexcept;
   void flush() noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   bool read(T& value) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   std::size_t read(T* values, std::size_t nr_values) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   bool write(const T& value) noexcept;
 
-  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+  template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
   std::size_t write(const T* values, std::size_t nr_values) noexcept;
 
 private:
   std::FILE* fp_ = nullptr;
 };
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 T read(FileWriter& sink);
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 bool read(FileWriter& sink, T& value) noexcept;
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 bool write(FileWriter& sink, const T& value) noexcept;
 
-template <typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noexcept;
 
 /// @}

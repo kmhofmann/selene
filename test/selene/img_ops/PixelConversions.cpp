@@ -81,12 +81,12 @@ void check_pixel_conversions(T upper_bound = std::numeric_limits<T>::max(),
   }
 }
 
-template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
 void floating_point_conversions(const sln::Pixel<T, 3>&, const sln::Pixel<T, 4>&)
 {
 }
 
-template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>, typename = void>
+template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>, typename = void>
 void floating_point_conversions(const sln::Pixel<T, 3>& src_xxx, const sln::Pixel<T, 4>& src_xxxx)
 {
   constexpr auto f_r = sln::impl::RGBToYCoefficients::values[0];

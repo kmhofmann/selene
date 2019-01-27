@@ -33,7 +33,7 @@ template <ImageInterpolationMode InterpolationMode = ImageInterpolationMode::Bil
           BorderAccessMode AccessMode = BorderAccessMode::Unchecked,
           typename ImageType,
           typename Index,
-          typename = std::enable_if_t<std::is_floating_point<Index>::value>>
+          typename = std::enable_if_t<sln::impl::is_floating_point_v<Index>>>
 inline decltype(auto) get(const ImageType& img,
                           Index x,
                           Index y,
@@ -59,7 +59,7 @@ inline decltype(auto) get(const ImageType& img,
 template <BorderAccessMode AccessMode,
           typename ImageType,
           typename Index,
-          typename = std::enable_if_t<std::is_floating_point<Index>::value>>
+          typename = std::enable_if_t<sln::impl::is_floating_point_v<Index>>>
 inline decltype(auto) get(const ImageType& img,
                           Index x,
                           Index y,

@@ -113,7 +113,7 @@ constexpr PixelLength operator"" _px(unsigned long long length) noexcept
 
 namespace impl {
 
-inline Stride compute_stride_bytes(std::ptrdiff_t row_bytes, std::ptrdiff_t alignment_bytes)
+inline Stride compute_stride_bytes(Stride row_bytes, ImageRowAlignment alignment_bytes)
 {
   if (alignment_bytes <= 1)
   {
@@ -132,7 +132,7 @@ inline Stride compute_stride_bytes(std::ptrdiff_t row_bytes, std::ptrdiff_t alig
   return stride_bytes;
 }
 
-inline ImageRowAlignment guess_row_alignment(std::uintptr_t ptr, std::ptrdiff_t stride_bytes)
+inline ImageRowAlignment guess_row_alignment(std::uintptr_t ptr, Stride stride_bytes)
 {
   if (ptr % 128 == 0 && stride_bytes % 128 == 0)
   {

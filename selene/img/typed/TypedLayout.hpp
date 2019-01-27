@@ -84,7 +84,7 @@ template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::nr_bytes_per
  */
 template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::row_bytes() const noexcept
 {
-  return width * nr_bytes_per_pixel<PixelType>();
+  return std::ptrdiff_t{width * nr_bytes_per_pixel<PixelType>()};
 }
 
 /** \brief Returns the total number of bytes occupied by the image data in memory.
@@ -95,7 +95,7 @@ template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::row_bytes() 
 template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::total_bytes() const noexcept
 {
   SELENE_ASSERT(stride_bytes >= PixelTraits<PixelType>::nr_bytes * width);
-  return stride_bytes * height;
+  return std::ptrdiff_t{stride_bytes * height};
 }
 
 /** \brief Returns whether image data is stored packed in memory using this layout.
@@ -105,8 +105,8 @@ template <typename PixelType> constexpr std::ptrdiff_t TypedLayout::total_bytes(
  */
 template <typename PixelType> constexpr bool TypedLayout::is_packed() const noexcept
 {
-  SELENE_ASSERT(stride_bytes >= PixelTraits<PixelType>::nr_bytes * width);
-  return stride_bytes == PixelTraits<PixelType>::nr_bytes * width;
+  SELENE_ASSERT(stride_bytes >= Stride{PixelTraits<PixelType>::nr_bytes * width});
+  return stride_bytes == Stride{PixelTraits<PixelType>::nr_bytes * width};
 }
 
 /** \brief Equality comparison for two typed layouts.

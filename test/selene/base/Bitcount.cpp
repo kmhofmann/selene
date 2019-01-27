@@ -17,7 +17,7 @@ namespace {
 template <typename T>
 std::size_t simple_bitcount(T x)
 {
-  static_assert(std::is_unsigned<T>::value, "type not unsigned");
+  static_assert(std::is_unsigned_v<T>, "type not unsigned");
   std::size_t count = 0;
 
   while (x > 0)

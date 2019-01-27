@@ -53,8 +53,8 @@ int main(int argc, char** argv)
   {
     for (auto x = 0_idx; x < target_width; ++x)
     {
-      const double fx = 130.0 + 0.83 * x;
-      const double fy = 100.0 + 1.46 * y;
+      const double fx = double{130.0 + 0.83 * x};
+      const double fy = double{100.0 + 1.46 * y};
       img_interpolation(x, y) = get(img, fx, fy);
     }
   }

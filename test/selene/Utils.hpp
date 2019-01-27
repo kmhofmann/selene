@@ -42,8 +42,8 @@ inline auto uniform_distribution(T lb, T ub)
   // long long, unsigned short, unsigned int, unsigned long, or unsigned long long.
   using DT = std::conditional_t<(sizeof(T) < sizeof(short)), sln::promote_t<T>, T>;
 
-  constexpr auto is_int = std::is_integral<T>::value;
-  constexpr auto is_fp = std::is_floating_point<T>::value;
+  constexpr auto is_int = std::is_integral_v<T>;
+  constexpr auto is_fp = std::is_floating_point_v<T>;
 
   using DieType = std::conditional_t<is_int, std::uniform_int_distribution<DT>,
       std::conditional_t<is_fp, std::uniform_real_distribution<T>, void>>;

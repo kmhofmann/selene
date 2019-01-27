@@ -11,6 +11,9 @@
 #include <cstdint>
 #include <type_traits>
 
+#include <selene/base/_impl/ExplicitType.hpp>
+#include <selene/base/_impl/TypeTraits.hpp>
+
 namespace sln {
 
 /// \addtogroup group-base
@@ -103,9 +106,9 @@ constexpr Result constexpr_ceil(Value val) noexcept
 template <typename Result, typename Value>
 inline Result round_half_up(Value val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
-  static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
-  return static_cast<Result>(std::floor(val + Value{0.5}));
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_floating_point_v<Value>, "Argument to round not floating point");
+  return static_cast<Result>(std::floor(sln::impl::value(val + Value{0.5})));
 }
 
 /** \brief Rounds the given floating point value to the nearest integer value.
@@ -123,8 +126,8 @@ inline Result round_half_up(Value val) noexcept
 template <typename Result, typename Value>
 constexpr Result constexpr_round_half_up(Value val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
-  static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_floating_point_v<Value>, "Argument to round not floating point");
   return constexpr_floor<Result>(val + Value{0.5});
 }
 
@@ -140,9 +143,9 @@ constexpr Result constexpr_round_half_up(Value val) noexcept
 template <typename Result, typename Value>
 inline Result round_half_down(Value val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
-  static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
-  return static_cast<Result>(std::ceil(val - Value{0.5}));
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_floating_point_v<Value>, "Argument to round not floating point");
+  return static_cast<Result>(std::ceil(sln::impl::value(val - Value{0.5})));
 }
 
 /** \brief Rounds the given floating point value to the nearest integer value.
@@ -160,8 +163,8 @@ inline Result round_half_down(Value val) noexcept
 template <typename Result, typename Value>
 constexpr Result constexpr_round_half_down(Value val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
-  static_assert(std::is_floating_point<Value>::value, "Argument to round not floating point");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_floating_point_v<Value>, "Argument to round not floating point");
   return constexpr_ceil<Result>(val - Value{0.5});
 }
 
@@ -205,77 +208,77 @@ constexpr Result constexpr_round(Value val) noexcept
 template <typename Result>
 constexpr Result round(char val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(signed char val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(unsigned char val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(short val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(unsigned short val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(int val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(unsigned int val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(long val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(unsigned long val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(long long val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 
 template <typename Result>
 constexpr Result round(unsigned long long val) noexcept
 {
-  static_assert(std::is_integral<Result>::value, "Cannot round to non-integral type");
+  static_assert(sln::impl::is_integral_v<Result>, "Cannot round to non-integral type");
   return static_cast<Result>(val);
 }
 

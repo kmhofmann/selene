@@ -24,6 +24,7 @@ target_sources(selene_base PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/Types.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Utils.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/_impl/ExplicitType.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/TypeTraits.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/_impl/Utils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/base/_impl/Utils.hpp
         )

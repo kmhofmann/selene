@@ -7,6 +7,8 @@
 
 /// @file
 
+#include <selene/base/_impl/TypeTraits.hpp>
+
 #include <selene/img/common/DataPtr.hpp>
 
 #include <selene/img/typed/ImageBase.hpp>
@@ -117,14 +119,14 @@ public:
   void clear();
 
 private:
-  static_assert(std::is_trivial<PixelType>::value, "Pixel type is not trivial");
-  static_assert(std::is_standard_layout<PixelType>::value, "Pixel type is not standard layout");
+  static_assert(std::is_trivial_v<PixelType>, "Pixel type is not trivial");
+  static_assert(std::is_standard_layout_v<PixelType>, "Pixel type is not standard layout");
 
   DataPtr<modifiability_> ptr_;
   TypedLayout layout_;
 
-  sln::Bytes compute_data_offset(PixelIndex y) const noexcept;
-  sln::Bytes compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
+  std::ptrdiff_t compute_data_offset(PixelIndex y) const noexcept;
+  std::ptrdiff_t compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
    friend void swap<PixelType_, modifiability_>(ImageView<PixelType_, modifiability_>&, ImageView<PixelType_, modifiability_>&) noexcept;
 };
@@ -531,15 +533,15 @@ void ImageView<PixelType_, modifiability_>::clear()
 }
 
 template <typename PixelType_, ImageModifiability modifiability_>
-sln::Bytes ImageView<PixelType_, modifiability_>::compute_data_offset(PixelIndex y) const noexcept
+std::ptrdiff_t ImageView<PixelType_, modifiability_>::compute_data_offset(PixelIndex y) const noexcept
 {
-  return sln::Bytes{layout_.stride_bytes * y};
+  return static_cast<std::ptrdiff_t>(layout_.stride_bytes * y);
 }
 
 template <typename PixelType_, ImageModifiability modifiability_>
-sln::Bytes ImageView<PixelType_, modifiability_>::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
+std::ptrdiff_t ImageView<PixelType_, modifiability_>::compute_data_offset(PixelIndex x, PixelIndex y) const noexcept
 {
-  return sln::Bytes{layout_.stride_bytes * y + PixelTraits<PixelType>::nr_bytes * x};
+  return static_cast<std::ptrdiff_t>(layout_.stride_bytes * y + PixelTraits<PixelType>::nr_bytes * x);
 }
 
 template <typename PixelType0, ImageModifiability modifiability_0,
@@ -549,8 +551,7 @@ bool equal(const ImageView<PixelType0, modifiability_0>& img_0, const ImageView<
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
   static_assert(
-      std::is_same<typename PixelTraits<PixelType0>::Element,
-          typename PixelTraits<PixelType1>::Element>::value,
+      std::is_same_v<typename PixelTraits<PixelType0>::Element, typename PixelTraits<PixelType1>::Element>,
       "Incompatible pixel types for equality comparison");
   static_assert(
       PixelTraits<PixelType0>::nr_channels == PixelTraits<PixelType1>::nr_channels,

@@ -537,7 +537,6 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
 
       SELENE_ASSERT(buf_ptr <= buf.data() + nr_bytes_read);
 
-//      std::cout << "WRITING NEW MINIBATCH:\n";
       for (std::uint32_t dy = 0; dy < sv; ++dy)
       {
         for (std::uint32_t dx = 0; dx < sh; ++dx)
@@ -547,7 +546,6 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
           uint32 b = 0;
           const auto Y = y_data_unit[dy * sh + dx];
           ycbcr_converter.convert(Y, Cb, Cr, r, g, b);
-//          std::cout << "  (" << Y << ", " << Cb << ", " << Cr << ") - >(" << r << ", " << g << ", " << b << ") @ [" << x + dx << ", " << y + dy << "]\n";
           out_img(sln::to_pixel_index(x + dx), sln::to_pixel_index(y + dy))
               = sln::Pixel_8u3(static_cast<std::uint8_t>(r),
                                static_cast<std::uint8_t>(g),

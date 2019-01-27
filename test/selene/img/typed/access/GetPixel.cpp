@@ -294,15 +294,15 @@ TEST_CASE("Image access convenience function", "[img]")
         const auto ry = 1_idx;
         const auto r_img = sln::relative_accessor(img, rx, ry);
 
-        REQUIRE(sln::get(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{0 - ry}) == 10);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{0 - ry}) == 20);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{0 - ry}) == 30);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{1 - ry}) == 40);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{1 - ry}) == 50);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{1 - ry}) == 60);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{2 - ry}) == 70);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{2 - ry}) == 80);
-        REQUIRE(sln::get(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{2 - ry}) == 90);
+        REQUIRE(sln::get(r_img, 0 - rx, 0 - ry) == 10);
+        REQUIRE(sln::get(r_img, 1 - rx, 0 - ry) == 20);
+        REQUIRE(sln::get(r_img, 2 - rx, 0 - ry) == 30);
+        REQUIRE(sln::get(r_img, 0 - rx, 1 - ry) == 40);
+        REQUIRE(sln::get(r_img, 1 - rx, 1 - ry) == 50);
+        REQUIRE(sln::get(r_img, 2 - rx, 1 - ry) == 60);
+        REQUIRE(sln::get(r_img, 0 - rx, 2 - ry) == 70);
+        REQUIRE(sln::get(r_img, 1 - rx, 2 - ry) == 80);
+        REQUIRE(sln::get(r_img, 2 - rx, 2 - ry) == 90);
       }
     }
 
@@ -363,52 +363,52 @@ TEST_CASE("Image access convenience function", "[img]")
         const auto r_img = sln::relative_accessor(img, rx, ry);
 
         //   - replication
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{0 - ry}) == 10);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{0 - ry}) == 20);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{0 - ry}) == 30);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{1 - ry}) == 40);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{1 - ry}) == 50);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{1 - ry}) == 60);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{2 - ry}) == 70);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{2 - ry}) == 80);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{2 - ry}) == 90);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 0 - rx, 0 - ry) == 10);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 1 - rx, 0 - ry) == 20);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 2 - rx, 0 - ry) == 30);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 0 - rx, 1 - ry) == 40);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 1 - rx, 1 - ry) == 50);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 2 - rx, 1 - ry) == 60);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 0 - rx, 2 - ry) == 70);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 1 - rx, 2 - ry) == 80);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, 2 - rx, 2 - ry) == 90);
 
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{-1 - rx}, sln::PixelIndex{ 0 - ry}) == 10);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{-1 - rx}, sln::PixelIndex{ 1 - ry}) == 40);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{-1 - rx}, sln::PixelIndex{ 2 - ry}) == 70);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 0 - rx}, sln::PixelIndex{-1 - ry}) == 10);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 1 - rx}, sln::PixelIndex{-1 - ry}) == 20);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 2 - rx}, sln::PixelIndex{-1 - ry}) == 30);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 3 - rx}, sln::PixelIndex{ 0 - ry}) == 30);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 3 - rx}, sln::PixelIndex{ 1 - ry}) == 60);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 3 - rx}, sln::PixelIndex{ 2 - ry}) == 90);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 0 - rx}, sln::PixelIndex{ 3 - ry}) == 70);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 1 - rx}, sln::PixelIndex{ 3 - ry}) == 80);
-        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, sln::PixelIndex{ 2 - rx}, sln::PixelIndex{ 3 - ry}) == 90);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, -1 - rx,  0 - ry) == 10);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, -1 - rx,  1 - ry) == 40);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img, -1 - rx,  2 - ry) == 70);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  0 - rx, -1 - ry) == 10);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  1 - rx, -1 - ry) == 20);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  2 - rx, -1 - ry) == 30);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  3 - rx,  0 - ry) == 30);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  3 - rx,  1 - ry) == 60);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  3 - rx,  2 - ry) == 90);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  0 - rx,  3 - ry) == 70);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  1 - rx,  3 - ry) == 80);
+        REQUIRE(sln::get<sln::BorderAccessMode::Replicated>(r_img,  2 - rx,  3 - ry) == 90);
 
         //   - zero padding
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{0 - ry}) == 10);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{0 - ry}) == 20);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{0 - ry}) == 30);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{1 - ry}) == 40);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{1 - ry}) == 50);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{1 - ry}) == 60);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{0 - rx}, sln::PixelIndex{2 - ry}) == 70);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{1 - rx}, sln::PixelIndex{2 - ry}) == 80);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{2 - rx}, sln::PixelIndex{2 - ry}) == 90);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 0 - rx, 0 - ry) == 10);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 1 - rx, 0 - ry) == 20);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 2 - rx, 0 - ry) == 30);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 0 - rx, 1 - ry) == 40);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 1 - rx, 1 - ry) == 50);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 2 - rx, 1 - ry) == 60);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 0 - rx, 2 - ry) == 70);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 1 - rx, 2 - ry) == 80);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, 2 - rx, 2 - ry) == 90);
 
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{-1 - rx}, sln::PixelIndex{ 0 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{-1 - rx}, sln::PixelIndex{ 1 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{-1 - rx}, sln::PixelIndex{ 2 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 0 - rx}, sln::PixelIndex{-1 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 1 - rx}, sln::PixelIndex{-1 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 2 - rx}, sln::PixelIndex{-1 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 3 - rx}, sln::PixelIndex{ 0 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 3 - rx}, sln::PixelIndex{ 1 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 3 - rx}, sln::PixelIndex{ 2 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 0 - rx}, sln::PixelIndex{ 3 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 1 - rx}, sln::PixelIndex{ 3 - ry}) == 0);
-        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, sln::PixelIndex{ 2 - rx}, sln::PixelIndex{ 3 - ry}) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, -1 - rx,  0 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, -1 - rx,  1 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img, -1 - rx,  2 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  0 - rx, -1 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  1 - rx, -1 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  2 - rx, -1 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  3 - rx,  0 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  3 - rx,  1 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  3 - rx,  2 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  0 - rx,  3 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  1 - rx,  3 - ry) == 0);
+        REQUIRE(sln::get<sln::BorderAccessMode::ZeroPadding>(r_img,  2 - rx,  3 - ry) == 0);
       }
     }
   }

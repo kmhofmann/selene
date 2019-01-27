@@ -47,8 +47,8 @@ void static_check_copy_compatibility(const ImageBase<DerivedSrc>& /*img_src*/, I
 
   // Underlying element type and nr of channels both have to match; the pixel format has to match at least in the
   // nr of channels, or be PixelFormat::Unknown in either source or target.
-  static_assert(std::is_same<std::remove_cv_t<typename PixelTraits<PixelTypeSrc>::Element>,
-                    std::remove_cv_t<typename PixelTraits<PixelTypeDst>::Element>>::value,
+  static_assert(std::is_same_v<std::remove_cv_t<typename PixelTraits<PixelTypeSrc>::Element>,
+                               std::remove_cv_t<typename PixelTraits<PixelTypeDst>::Element>>,
                 "Incompatible source and target pixel types");
   static_assert(PixelTraits<PixelTypeSrc>::nr_channels == PixelTraits<PixelTypeDst>::nr_channels,
                 "Incompatible source and target pixel types");

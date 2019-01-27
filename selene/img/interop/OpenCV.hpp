@@ -210,9 +210,9 @@ Image<PixelType> copy_opencv_mat(const cv::Mat& img_cv)
   Image<PixelType> img({width, height, stride_bytes});
   for (PixelIndex y = 0_idx; y < height; ++y)
   {
-    const auto begin = img_cv.ptr(y);
-    const auto end = img_cv.ptr(y) + nr_bytes_per_row;
-    std::copy(begin, end, img.byte_ptr(y));
+    const auto begin = img_cv.ptr(int(y));
+    const auto end = img_cv.ptr(int(y)) + nr_bytes_per_row;
+    std::copy(begin, end, img.byte_ptr(int(y)));
   }
   return img;
 }
@@ -239,7 +239,7 @@ inline cv::Mat wrap_in_opencv_mat(ImageBase<DerivedSrc>& img)
   const auto type = impl::PixelToOpenCVType<PixelType>::type;
   const auto data = static_cast<void*>(img.byte_ptr());
 
-  return cv::Mat(height, width, type, data, static_cast<std::size_t>(stride_bytes));
+  return cv::Mat(int(height), int(width), type, data, static_cast<std::size_t>(stride_bytes));
 }
 
 /** \brief Copies an `Image<PixelType>` to an OpenCV cv::Mat.
@@ -262,7 +262,7 @@ cv::Mat copy_to_opencv_mat(const ImageBase<DerivedSrc>& img)
   const auto nr_bytes_per_row = img.row_bytes();
 
   const auto type = impl::PixelToOpenCVType<PixelType>::type;
-  cv::Mat img_cv(height, width, type);
+  cv::Mat img_cv(int(height), int(width), type);
 
   for (int row = 0; row < img_cv.rows; ++row)
   {

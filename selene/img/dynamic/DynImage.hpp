@@ -163,8 +163,8 @@ private:
 
   DynImageView<ImageModifiability::Mutable> allocate_memory(
       UntypedLayout layout,
-      std::ptrdiff_t base_alignment_bytes,
-      std::ptrdiff_t row_alignment_bytes,
+      ImageRowAlignment base_alignment_bytes,
+      ImageRowAlignment row_alignment_bytes,
       UntypedImageSemantics semantics);
 
   void deallocate_memory();
@@ -183,7 +183,7 @@ private:
  * @param semantics The pixel semantics.
  */
 inline DynImage::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, 0, semantics))
+    : view_(this->allocate_memory(layout, default_base_alignment_bytes, ImageRowAlignment{0}, semantics))
 {
 }
 
@@ -850,8 +850,8 @@ inline void DynImage::copy_rows_from(const DynImage& src)
 
 inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(
     UntypedLayout layout,
-    std::ptrdiff_t base_alignment_bytes,
-    std::ptrdiff_t row_alignment_bytes,
+    ImageRowAlignment base_alignment_bytes,
+    ImageRowAlignment row_alignment_bytes,
     UntypedImageSemantics semantics)
 {
   const auto stride_bytes = impl::compute_stride_bytes(

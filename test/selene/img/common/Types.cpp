@@ -25,26 +25,26 @@ TEST_CASE("Pixel index/length conversion", "[img]")
 
 TEST_CASE("Stride computation", "[img]")
 {
-  REQUIRE(sln::impl::compute_stride_bytes(128, 16) == sln::Stride{128});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{128}, sln::ImageRowAlignment{16}) == sln::Stride{128});
 
-  REQUIRE(sln::impl::compute_stride_bytes(129, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(130, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(131, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(132, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(133, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(134, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(135, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(136, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(137, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(138, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(139, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(140, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(141, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(142, 16) == sln::Stride{128 + 16});
-  REQUIRE(sln::impl::compute_stride_bytes(143, 16) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{129}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{130}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{131}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{132}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{133}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{134}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{135}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{136}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{137}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{138}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{139}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{140}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{141}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{142}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{143}, sln::ImageRowAlignment{16}) == sln::Stride{128 + 16});
 
-  REQUIRE(sln::impl::compute_stride_bytes(144, 16) == sln::Stride{144});
-  REQUIRE(sln::impl::compute_stride_bytes(145, 16) == sln::Stride{144 + 16});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{144}, sln::ImageRowAlignment{16}) == sln::Stride{144});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{145}, sln::ImageRowAlignment{16}) == sln::Stride{144 + 16});
 
-  REQUIRE(sln::impl::compute_stride_bytes(129, 0) == sln::Stride{129});
+  REQUIRE(sln::impl::compute_stride_bytes(sln::Stride{129}, sln::ImageRowAlignment{0}) == sln::Stride{129});
 }

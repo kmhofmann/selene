@@ -28,7 +28,7 @@ TEST_CASE("Image resampling", "[img]")
     {
       for (auto x = 0_idx; x < img_r.width(); ++x)
       {
-        REQUIRE(img_r(x, y) == img(sln::PixelIndex{x / 2}, sln::PixelIndex{y / 2}));
+        REQUIRE(img_r(x, y) == img(x / 2, y / 2));
       }
     }
   }

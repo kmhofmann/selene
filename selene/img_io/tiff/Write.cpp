@@ -272,9 +272,9 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
 
   // For each tile...
   uint32 tile_ctr = 0;
-  for (auto src_y = 0_idx; src_y < height; src_y += static_cast<value_type>(tile_height))
+  for (auto src_y = 0_idx; src_y < height; src_y += to_pixel_index(tile_height))
   {
-    for (auto src_x = 0_idx; src_x < width; src_x += static_cast<value_type>(tile_width))
+    for (auto src_x = 0_idx; src_x < width; src_x += to_pixel_index(tile_width))
     {
       const auto x = static_cast<uint32>(src_x);
       const auto y = static_cast<uint32>(src_y);
@@ -285,8 +285,8 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
       // std::fill(buffer.begin(), buffer.end(), std::uint8_t{0});
 
       // Compute buffer size
-      const auto this_tile_width = std::min(width - src_x, static_cast<value_type>(tile_width));
-      const auto this_tile_height = std::min(height - src_y, static_cast<value_type>(tile_height));
+      const auto this_tile_width = std::min(static_cast<value_type>(width - src_x), static_cast<value_type>(tile_width));
+      const auto this_tile_height = std::min(static_cast<value_type>(height - src_y), static_cast<value_type>(tile_height));
       const auto nr_bytes_per_this_tile_row = static_cast<std::size_t>(this_tile_width * nr_bytes_per_pixel);
 
       // Copy region to buffer
@@ -294,7 +294,7 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
       {
         auto dst = buffer.data() + static_cast<std::size_t>(tile_y) * tile_width * static_cast<std::size_t>(nr_bytes_per_pixel);
         SELENE_ASSERT(dst + tile_width * static_cast<std::size_t>(nr_bytes_per_pixel) <= buffer.data() + buffer.size());
-        auto src = view.byte_ptr(to_pixel_index(src_x), to_pixel_index(src_y + tile_y));
+        auto src = view.byte_ptr(src_x, PixelIndex{src_y + tile_y});
         std::memcpy(dst, src, nr_bytes_per_this_tile_row);
       }
 

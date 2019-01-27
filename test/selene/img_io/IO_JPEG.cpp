@@ -261,7 +261,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(img_data.height() == targeted_height);
   REQUIRE(img_data.nr_channels() == 3);
   REQUIRE(img_data.nr_bytes_per_channel() == 1);
-  REQUIRE(img_data.stride_bytes() == expected_width * 3);
+  REQUIRE(img_data.stride_bytes() == sln::Stride{expected_width * 3});
   REQUIRE(img_data.total_bytes() == img_data.stride_bytes() * img_data.height());
   REQUIRE(img_data.is_packed());
   REQUIRE(!img_data.is_empty());
@@ -271,7 +271,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 
   REQUIRE(img.width() == expected_width);
   REQUIRE(img.height() == targeted_height);
-  REQUIRE(img.stride_bytes() == expected_width * 3);
+  REQUIRE(img.stride_bytes() == sln::Stride{expected_width * 3});
 
   // Test writing of RGB image
   sln::FileWriter sink((tmp_path / "test_duck_crop.jpg").string());
@@ -296,7 +296,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
   REQUIRE(messages_read_2.messages().empty());
   REQUIRE(img_data_2.width() == expected_width);
   REQUIRE(img_data_2.height() == targeted_height);
-  REQUIRE(img_data_2.stride_bytes() == expected_width * 3);
+  REQUIRE(img_data_2.stride_bytes() == sln::Stride{expected_width * 3});
   REQUIRE(img_data_2.nr_channels() == 3);
   REQUIRE(img_data_2.nr_bytes_per_channel() == 1);
   REQUIRE(img_data_2.total_bytes() == img_data_2.stride_bytes() * img_data_2.height());
@@ -461,7 +461,7 @@ TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
     const auto info = jpeg_reader.get_output_image_info();
     REQUIRE(info.is_valid());
 
-    sln::DynImage dyn_img({sln::PixelLength{info.width + 1}, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    sln::DynImage dyn_img({info.width + 1, info.height, info.nr_channels, info.nr_bytes_per_channel()});
     sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
     auto res = jpeg_reader.read_image_data(dyn_img_view);
     REQUIRE(!res);

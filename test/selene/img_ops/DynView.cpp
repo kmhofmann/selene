@@ -47,7 +47,7 @@ void check_result(sln::PixelIndex x_beg, sln::PixelIndex y_beg,
     for (auto x = x_beg; x < x_end; ++x)
     {
       const auto idx = std::size_t(y * 4 + x);
-      REQUIRE(img.template pixel<PixelType>(sln::PixelIndex{x - x_beg}, sln::PixelIndex{y - y_beg}) == PixelType{dyn_img_arr_44[idx]});
+      REQUIRE(img.template pixel<PixelType>(x - x_beg, y - y_beg) == PixelType{dyn_img_arr_44[idx]});
     }
   }
 }
@@ -65,8 +65,8 @@ TEST_CASE("Dynamic image view creation", "[img]")
     auto v = sln::view(constant_dyn_img_view);
     REQUIRE(v.width() == constant_dyn_img_view.width());
     REQUIRE(v.height() == constant_dyn_img_view.height());
-    check_result<PixelType>(sln::to_pixel_index(0), sln::to_pixel_index(0),
-                            sln::to_pixel_index(v.width()), sln::to_pixel_index(v.height()), v);
+    check_result<PixelType>(sln::PixelIndex{0}, sln::PixelIndex{0},
+                            sln::PixelIndex{v.width()}, sln::PixelIndex{v.height()}, v);
   }
 
   SECTION("Mutable view")
@@ -75,8 +75,8 @@ TEST_CASE("Dynamic image view creation", "[img]")
     auto v = sln::view(mutable_dyn_img_view);
     REQUIRE(v.width() == mutable_dyn_img_view.width());
     REQUIRE(v.height() == mutable_dyn_img_view.height());
-    check_result<PixelType>(sln::to_pixel_index(0), sln::to_pixel_index(0),
-                            sln::to_pixel_index(v.width()), sln::to_pixel_index(v.height()), v);
+    check_result<PixelType>(sln::PixelIndex{0}, sln::PixelIndex{0},
+                            sln::PixelIndex{v.width()}, sln::PixelIndex{v.height()}, v);
   }
 
   SECTION("Constant image")
@@ -85,8 +85,8 @@ TEST_CASE("Dynamic image view creation", "[img]")
     auto v = sln::view(const_dyn_img);
     REQUIRE(v.width() == const_dyn_img.width());
     REQUIRE(v.height() == const_dyn_img.height());
-    check_result<PixelType>(sln::to_pixel_index(0), sln::to_pixel_index(0),
-                            sln::to_pixel_index(v.width()), sln::to_pixel_index(v.height()), v);
+    check_result<PixelType>(sln::PixelIndex{0}, sln::PixelIndex{0},
+                            sln::PixelIndex{v.width()}, sln::PixelIndex{v.height()}, v);
   }
 
   SECTION("Mutable image")
@@ -95,8 +95,8 @@ TEST_CASE("Dynamic image view creation", "[img]")
     auto v = sln::view(dyn_img);
     REQUIRE(v.width() == dyn_img.width());
     REQUIRE(v.height() == dyn_img.height());
-    check_result<PixelType>(sln::to_pixel_index(0), sln::to_pixel_index(0),
-                            sln::to_pixel_index(v.width()), sln::to_pixel_index(v.height()), v);
+    check_result<PixelType>(sln::PixelIndex{0}, sln::PixelIndex{0},
+                            sln::PixelIndex{v.width()}, sln::PixelIndex{v.height()}, v);
   }
 
   SECTION("Constant view, with region")
