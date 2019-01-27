@@ -98,6 +98,62 @@ enum class TIFFCompression
 #endif
 };
 
+enum class TIFFOrientation
+{
+  TopLeft,
+  TopRight,
+  BottomRight,
+  BottomLeft,
+  LeftTop,
+  RightTop,
+  RightBottom,
+  LeftBottom,
+};
+
+struct TIFFAuxiliaryInfo
+{
+  std::uint16_t min_sample_value{0};
+  std::uint16_t max_sample_value{0};
+  float x_resolution{1.0f};
+  float y_resolution{1.0f};
+  std::uint16_t resolution_unit{2};  // RESUNIT_NONE = 1; RESUNIT_INCH = 2; RESUNIT_CENTIMETER = 3;
+
+  std::string software;
+  std::string date_time;  // Format: "YYYY:MM:DD HH:MM:SS". Length is 20 bytes (incl '\0').
+  std::string description;
+  std::string artist;
+  std::string host_computer;
+  std::string scanner_manufacturer;
+  std::string scanner_model;
+
+  TIFFAuxiliaryInfo(std::uint16_t min_sample_value_,
+                    std::uint16_t max_sample_value_,
+                    float x_resolution_,
+                    float y_resolution_,
+                    std::uint16_t resolution_unit_,
+                    std::string software_,
+                    std::string date_time_,
+                    std::string description_,
+                    std::string artist_,
+                    std::string host_computer_,
+                    std::string scanner_manufacturer_,
+                    std::string scanner_model_)
+      : min_sample_value(min_sample_value_)
+      , max_sample_value(max_sample_value_)
+      , x_resolution(x_resolution_)
+      , y_resolution(y_resolution_)
+      , resolution_unit(resolution_unit_)
+      , software(std::move(software_))
+      , date_time(std::move(date_time_))
+      , description(std::move(description_))
+      , artist(std::move(artist_))
+      , host_computer(std::move(host_computer_))
+      , scanner_manufacturer(std::move(scanner_manufacturer_))
+      , scanner_model(std::move(scanner_model_))
+  {
+  }
+};
+
 /** \brief Describes the layout and some storage properties of a TIFF image.
  *
  * Details about the storage type (strips or tiles), or the particular strip or tile storage details are not included
@@ -110,10 +166,17 @@ struct TiffImageLayout
   std::uint32_t depth;  ///< The image depth. Selene can only read images where depth == 1.
   std::uint16_t samples_per_pixel;  ///< The number of samples (channels) per pixel.
   std::uint16_t bits_per_sample;  ///< The number of bits per sample (pixel element/channel).
+
   sln::TIFFPlanarConfig planar_config;  ///< The multi-channel data storage configuration (continuous or separate).
   sln::TIFFPhotometricTag photometric;  ///< The photometric tag.
   sln::TIFFSampleFormat sample_format;  ///< The sample format.
   sln::TIFFCompression compression;  ///< The data compression type.
+  sln::TIFFOrientation orientation;  ///< The image orientation.
+
+  std::uint32_t subfile_type;  ///< The subfile type (see https://www.awaresystems.be/imaging/tiff/tifftags/newsubfiletype.html)/
+  std::uint16_t page_number;  ///< The page number (in a multi-page TIFF file).
+
+  TIFFAuxiliaryInfo auxiliary_info;  ///< Auxiliary information contained in the TIFF file/
 
   TiffImageLayout(std::uint32_t width_,
                   std::uint32_t height_,
@@ -123,7 +186,11 @@ struct TiffImageLayout
                   sln::TIFFPlanarConfig planar_config_,
                   sln::TIFFPhotometricTag photometric_,
                   sln::TIFFSampleFormat sample_format_,
-                  sln::TIFFCompression compression_)
+                  sln::TIFFCompression compression_,
+                  sln::TIFFOrientation orientation_,
+                  std::uint32_t subfile_type_,
+                  std::uint16_t page_number_,
+                  TIFFAuxiliaryInfo auxiliary_info_)
       : width(width_)
       , height(height_)
       , depth(depth_)
@@ -133,6 +200,10 @@ struct TiffImageLayout
       , photometric(photometric_)
       , sample_format(sample_format_)
       , compression(compression_)
+      , orientation(orientation_)
+      , subfile_type(subfile_type_)
+      , page_number(page_number_)
+      , auxiliary_info(std::move(auxiliary_info_))
   {
   }
 
@@ -184,6 +255,7 @@ struct TiffImageLayout
   }
 };
 
+std::ostream& operator<<(std::ostream& os, const TIFFAuxiliaryInfo& info);
 std::ostream& operator<<(std::ostream& os, const TiffImageLayout& info);
 
 MessageLog global_tiff_message_log();

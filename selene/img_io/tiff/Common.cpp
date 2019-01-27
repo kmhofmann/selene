@@ -17,6 +17,26 @@
 
 namespace sln {
 
+std::ostream& operator<<(std::ostream& os, const TIFFAuxiliaryInfo& info)
+{
+  using namespace impl::tiff;
+  os << "TIFFAuxiliaryInfo:\n";
+  os << "- min_sample_value = " << info.min_sample_value << '\n';
+  os << "- max_sample_value = " << info.max_sample_value << '\n';
+  os << "- x_resolution = " << info.x_resolution << '\n';
+  os << "- y_resolution = " << info.y_resolution << '\n';
+  os << "- resolution_unit = " << info.resolution_unit << '\n';
+
+  os << "- software = " << info.software << '\n';
+  os << "- date_time = " << info.date_time << '\n';
+  os << "- description = " << info.description << '\n';
+  os << "- artist = " << info.artist << '\n';
+  os << "- host_computer = " << info.host_computer << '\n';
+  os << "- scanner_manufacturer = " << info.scanner_manufacturer << '\n';
+  os << "- scanner_model = " << info.scanner_model << '\n';
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const TiffImageLayout& info)
 {
   using namespace impl::tiff;
@@ -25,9 +45,12 @@ std::ostream& operator<<(std::ostream& os, const TiffImageLayout& info)
   os << "                 planar_config = " << planar_config_to_string(info.planar_config)
      << ", photometric = " << photometric_to_string(info.photometric)
      << ", sample_format = " << sample_format_to_string(info.sample_format)
-     << ", compression = " << compression_to_string(info.compression) << '\n';
+     << ", compression = " << compression_to_string(info.compression)
+     << ", orientation = " << orientation_to_string(info.orientation)
+     << '\n';
   return os;
 }
+
 
 namespace {
 

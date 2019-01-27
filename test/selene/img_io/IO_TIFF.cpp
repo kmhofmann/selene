@@ -43,7 +43,7 @@ constexpr auto stickers_ref_height = 320;
 
 namespace {
 
-void check_write_read(sln::DynImage& dyn_img,
+void check_write_read(const sln::DynImage& dyn_img,
                       const sln_fs::path& tmp_path,
                       sln::TIFFReadObject<sln::FileReader>& read_object,
                       sln::TIFFWriteObject<sln::FileWriter>& write_object)
@@ -101,7 +101,7 @@ void check_test_suite(const sln_fs::path& test_suite_path,
       REQUIRE(source.is_open());
 
       sln::MessageLog messages_read;
-      auto dyn_img = sln::read_tiff(source, &messages_read, &read_object);
+      auto dyn_imgs = sln::read_tiff_all(source, &messages_read, &read_object);
 
       const bool cannot_be_read = std::any_of(cannot_read_list.cbegin(), cannot_read_list.cend(),
                                               [&e](const auto& s) { return s == e.path().stem().string(); });
@@ -110,24 +110,27 @@ void check_test_suite(const sln_fs::path& test_suite_path,
       {
         REQUIRE(!messages_read.messages().empty());
         REQUIRE(messages_read.contains_errors());
-//        REQUIRE(!dyn_img.is_valid());
       }
       else
       {
         const bool may_have_error = std::any_of(may_have_error_list.cbegin(), may_have_error_list.cend(),
                                                 [&e](const auto& s) { return s == e.path().stem().string(); });
-        REQUIRE(static_cast<bool>(!messages_read.contains_errors() || may_have_error));
-        REQUIRE(dyn_img.width() > 0);
-        REQUIRE(dyn_img.height() > 0);
-        REQUIRE(dyn_img.stride_bytes() > 0);
-        REQUIRE(dyn_img.nr_channels() > 0);
-        REQUIRE(dyn_img.nr_bytes_per_channel() > 0);
-        REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
-        REQUIRE(dyn_img.is_packed());
-        REQUIRE(!dyn_img.is_empty());
-        REQUIRE(dyn_img.is_valid());
 
-        check_write_read(dyn_img, tmp_path, read_object, write_object);
+        for (const auto& dyn_img : dyn_imgs)
+        {
+          REQUIRE(static_cast<bool>(!messages_read.contains_errors() || may_have_error));
+          REQUIRE(dyn_img.width() > 0);
+          REQUIRE(dyn_img.height() > 0);
+          REQUIRE(dyn_img.stride_bytes() > 0);
+          REQUIRE(dyn_img.nr_channels() > 0);
+          REQUIRE(dyn_img.nr_bytes_per_channel() > 0);
+          REQUIRE(dyn_img.total_bytes() == dyn_img.stride_bytes() * dyn_img.height());
+          REQUIRE(dyn_img.is_packed());
+          REQUIRE(!dyn_img.is_empty());
+          REQUIRE(dyn_img.is_valid());
+
+          check_write_read(dyn_img, tmp_path, read_object, write_object);
+        }
       }
     }
   }

@@ -44,6 +44,9 @@ TIFFSampleFormat sample_format_lib_to_pub(std::uint16_t fmt);
 std::uint16_t compression_pub_to_lib(TIFFCompression cpr);
 TIFFCompression compression_lib_to_pub(std::uint16_t cpr);
 
+std::uint16_t orientation_pub_to_lib(TIFFOrientation o);
+TIFFOrientation orientation_lib_to_pub(std::uint16_t o);
+
 sln::PixelFormat photometric_to_pixel_format(TIFFPhotometricTag tag, std::uint16_t nr_channels);
 sln::PixelFormat photometric_to_pixel_format(std::uint16_t value, std::uint16_t nr_channels);
 std::uint16_t pixel_format_to_photometric(sln::PixelFormat fmt);
@@ -56,11 +59,13 @@ std::string planar_config_to_string(TIFFPlanarConfig cfg);
 std::string photometric_to_string(TIFFPhotometricTag tag);
 std::string sample_format_to_string(TIFFSampleFormat fmt);
 std::string compression_to_string(TIFFCompression cpr);
+std::string orientation_to_string(TIFFOrientation o);
 
 std::string planar_config_to_string(std::uint16_t value);
 std::string photometric_to_string(std::uint16_t value);
 std::string sample_format_to_string(std::uint16_t value);
 std::string compression_to_string(std::uint16_t value);
+std::string orientation_to_string(std::uint16_t value);
 
 template <typename T> T get_field(TIFF* tif, uint32 tag)
 {
@@ -89,6 +94,24 @@ template <typename T> std::pair<T, T> get_field_2(TIFF* tif, uint32 tag)
     throw std::runtime_error("Error getting field");
   }
   return std::make_pair(var0, var1);
+}
+
+template <typename T> std::pair<T, T> get_field_2(TIFF* tif, uint32 tag, T default_value)
+{
+  T var0{}, var1{};
+  const int val = TIFFGetFieldDefaulted(tif, tag, &var0, &var1);
+  return (val == 1) ? std::make_pair(var0, var1) : std::make_pair(default_value, default_value);
+}
+
+inline std::string get_string_field(TIFF* tif, uint32 tag)
+{
+  char* buf = nullptr;
+  const int val = TIFFGetFieldDefaulted(tif, tag, &buf);
+  if (val == 0 || buf == nullptr)
+  {
+    return std::string{};
+  }
+  return std::string{buf};
 }
 
 template <typename... Ts>

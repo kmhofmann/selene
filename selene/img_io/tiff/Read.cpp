@@ -9,6 +9,7 @@
 #include <selene/img_io/tiff/Read.hpp>
 
 #include <selene/base/Assert.hpp>
+#include <selene/base/Utils.hpp>
 #include <selene/base/io/FileReader.hpp>
 #include <selene/base/io/MemoryReader.hpp>
 
@@ -28,6 +29,30 @@ namespace sln {
 
 namespace {
 
+TIFFAuxiliaryInfo get_tiff_auxiliary_info(TIFF* tif, uint16 bits_per_sample)
+{
+  using namespace impl::tiff;
+  const auto min_sample_value = get_field<uint16>(tif, TIFFTAG_MINSAMPLEVALUE, uint16{0});
+  const auto max_sample_value = get_field<uint16>(tif, TIFFTAG_MAXSAMPLEVALUE,
+                                                  static_cast<uint16>(sln::power(uint16{2}, bits_per_sample) - 1));
+  const auto x_resolution = get_field<float>(tif, TIFFTAG_XRESOLUTION, 1.0f);
+  const auto y_resolution = get_field<float>(tif, TIFFTAG_YRESOLUTION, 1.0f);
+  const auto resolution_unit = get_field<uint16>(tif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
+
+  auto software = get_string_field(tif, TIFFTAG_SOFTWARE);
+  auto date_time = get_string_field(tif, TIFFTAG_DATETIME);
+  auto description = get_string_field(tif, TIFFTAG_IMAGEDESCRIPTION);
+  auto artist = get_string_field(tif, TIFFTAG_ARTIST);
+  auto host_computer = get_string_field(tif, TIFFTAG_HOSTCOMPUTER);
+  auto scanner_manufacturer = get_string_field(tif, TIFFTAG_MAKE);
+  auto scanner_model = get_string_field(tif, TIFFTAG_MODEL);
+
+  return TIFFAuxiliaryInfo(min_sample_value, max_sample_value,
+                           x_resolution, y_resolution, resolution_unit,
+                           software, date_time, description, artist,
+                           host_computer, scanner_manufacturer, scanner_model);
+}
+
 TiffImageLayout get_tiff_layout(TIFF* tif)
 {
   using namespace impl::tiff;
@@ -42,11 +67,22 @@ TiffImageLayout get_tiff_layout(TIFF* tif)
   const auto sample_format = get_field<uint16>(tif, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
   const auto compression = get_field<uint16>(tif, TIFFTAG_COMPRESSION);
 
+  const auto orientation = get_field<uint16>(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+
+  const auto subfile_type = get_field<uint32>(tif, TIFFTAG_SUBFILETYPE, uint32{0});
+  const auto page_number = get_field_2<uint16>(tif, TIFFTAG_PAGENUMBER, uint16{0});
+
+  auto auxiliary_info = get_tiff_auxiliary_info(tif, bits_per_sample);
+
   return TiffImageLayout(width, height, depth, samples_per_pixel, bits_per_sample,
                          planar_config_lib_to_pub(planar_config),
                          photometric_tag_lib_to_pub(photometric),
                          sample_format_lib_to_pub(sample_format),
-                         compression_lib_to_pub(compression));
+                         compression_lib_to_pub(compression),
+                         orientation_lib_to_pub(orientation),
+                         subfile_type,
+                         page_number.first,
+                         std::move(auxiliary_info));
 }
 
 struct ConversionStructures

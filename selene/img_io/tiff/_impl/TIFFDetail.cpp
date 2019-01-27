@@ -171,6 +171,38 @@ TIFFCompression compression_lib_to_pub(std::uint16_t cpr)
   }
 }
 
+std::uint16_t orientation_pub_to_lib(TIFFOrientation o)
+{
+  switch (o)
+  {
+    case TIFFOrientation::TopLeft: return ORIENTATION_TOPLEFT;
+    case TIFFOrientation::TopRight: return ORIENTATION_TOPRIGHT;
+    case TIFFOrientation::BottomRight: return ORIENTATION_BOTRIGHT;
+    case TIFFOrientation::BottomLeft: return ORIENTATION_BOTLEFT;
+    case TIFFOrientation::LeftTop: return ORIENTATION_LEFTTOP;
+    case TIFFOrientation::RightTop: return ORIENTATION_RIGHTTOP;
+    case TIFFOrientation::RightBottom: return ORIENTATION_RIGHTBOT;
+    case TIFFOrientation::LeftBottom: return ORIENTATION_LEFTBOT;
+    default: return ORIENTATION_TOPLEFT;
+  }
+}
+
+TIFFOrientation orientation_lib_to_pub(std::uint16_t o)
+{
+  switch (o)
+  {
+    case ORIENTATION_TOPLEFT: return TIFFOrientation::TopLeft;
+    case ORIENTATION_TOPRIGHT: return TIFFOrientation::TopRight;
+    case ORIENTATION_BOTRIGHT: return TIFFOrientation::BottomRight;
+    case ORIENTATION_BOTLEFT: return TIFFOrientation::BottomLeft;
+    case ORIENTATION_LEFTTOP: return TIFFOrientation::LeftTop;
+    case ORIENTATION_RIGHTTOP: return TIFFOrientation::RightTop;
+    case ORIENTATION_RIGHTBOT: return TIFFOrientation::RightBottom;
+    case ORIENTATION_LEFTBOT: return TIFFOrientation::LeftBottom;
+    default: return TIFFOrientation::TopLeft;
+  }
+}
+
 // -----
 
 sln::PixelFormat photometric_to_pixel_format(TIFFPhotometricTag tag, std::uint16_t nr_channels)
@@ -264,6 +296,11 @@ std::string compression_to_string(TIFFCompression cpr)
   return compression_to_string(compression_pub_to_lib(cpr));
 }
 
+std::string orientation_to_string(TIFFOrientation o)
+{
+  return orientation_to_string(orientation_pub_to_lib(o));
+}
+
 std::string planar_config_to_string(std::uint16_t value)
 {
   switch (value)
@@ -337,6 +374,22 @@ std::string compression_to_string(std::uint16_t value)
     case COMPRESSION_WEBP: return "COMPRESSION_WEBP";
 #endif
     default: return "UNKNOWN_" + std::to_string(value);
+  }
+}
+
+std::string orientation_to_string(std::uint16_t value)
+{
+  switch (value)
+  {
+    case ORIENTATION_TOPLEFT: return "ORIENTATION_TOPLEFT";
+    case ORIENTATION_TOPRIGHT: return "ORIENTATION_TOPRIGHT";
+    case ORIENTATION_BOTRIGHT: return "ORIENTATION_BOTRIGHT";
+    case ORIENTATION_BOTLEFT: return "ORIENTATION_BOTLEFT";
+    case ORIENTATION_LEFTTOP: return "ORIENTATION_LEFTTOP";
+    case ORIENTATION_RIGHTTOP: return "ORIENTATION_RIGHTTOP";
+    case ORIENTATION_RIGHTBOT: return "ORIENTATION_RIGHTBOT";
+    case ORIENTATION_LEFTBOT: return "ORIENTATION_LEFTBOT";
+    default: return "UNKNOWN";
   }
 }
 
