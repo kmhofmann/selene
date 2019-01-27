@@ -9,6 +9,7 @@
 #include <selene/img_io/tiff/Write.hpp>
 
 #include <selene/base/Assert.hpp>
+#include <selene/base/_impl/Utils.hpp>
 #include <selene/base/io/FileWriter.hpp>
 #include <selene/base/io/VectorWriter.hpp>
 
@@ -19,6 +20,7 @@
 #include <selene/img_io/tiff/_impl/TIFFIOFunctions.hpp>
 
 #include <array>
+#include <ctime>
 #include <type_traits>
 
 #include <tiff.h>
@@ -57,6 +59,7 @@ void set_tiff_layout(TIFF* tif, const ConstantDynImageView& view, const TIFFWrit
   }
 
   set_field<const char*>(tif, TIFFTAG_SOFTWARE, "Selene");
+  set_string_field(tif, TIFFTAG_DATETIME, sln::impl::get_date_time_string());
 }
 
 void set_tiff_layout_strips(TIFF* tif, std::size_t nr_rows_per_strip)

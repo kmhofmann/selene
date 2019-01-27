@@ -2,8 +2,8 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_BASE_STRONG_TYPE_HPP
-#define SELENE_BASE_STRONG_TYPE_HPP
+#ifndef SELENE_BASE_IMPL_EXPLICIT_TYPE_HPP
+#define SELENE_BASE_IMPL_EXPLICIT_TYPE_HPP
 
 /// @file
 
@@ -74,4 +74,4 @@ private:
 }  // namespace impl
 }  // namespace sln
 
-#endif  // SELENE_BASE_STRONG_TYPE_HPP
+#endif  // SELENE_BASE_IMPL_EXPLICIT_TYPE_HPP

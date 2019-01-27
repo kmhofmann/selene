@@ -121,6 +121,12 @@ inline void set_field(TIFF* tif, uint32 tag, Ts... values)
   SELENE_ASSERT(res != 0);
 }
 
+inline void set_string_field(TIFF* tif, uint32 tag, const std::string& str)
+{
+  [[maybe_unused]] int res = TIFFSetField(tif, tag, str.c_str());
+  SELENE_ASSERT(res != 0);
+}
+
 struct ImageLayoutStrips
 {
   uint32 nr_strips;
