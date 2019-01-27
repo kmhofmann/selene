@@ -21,6 +21,7 @@
 
 #include <array>
 #include <ctime>
+#include <string>
 #include <type_traits>
 
 #include <tiff.h>
@@ -58,7 +59,8 @@ void set_tiff_layout(TIFF* tif, const ConstantDynImageView& view, const TIFFWrit
     set_field<int>(tif, TIFFTAG_JPEGQUALITY, write_options.jpeg_quality);
   }
 
-  set_field<const char*>(tif, TIFFTAG_SOFTWARE, "Selene");
+  const auto software = std::string{"Selene " + std::string{SELENE_VERSION_STR}};
+  set_string_field(tif, TIFFTAG_SOFTWARE, software);
   set_string_field(tif, TIFFTAG_DATETIME, sln::impl::get_date_time_string());
 }
 

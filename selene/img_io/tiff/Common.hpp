@@ -114,8 +114,8 @@ struct TIFFAuxiliaryInfo
 {
   std::uint16_t min_sample_value{0};
   std::uint16_t max_sample_value{0};
-  float x_resolution{1.0f};
-  float y_resolution{1.0f};
+  float x_resolution{0.0f};
+  float y_resolution{0.0f};
   std::uint16_t resolution_unit{2};  // RESUNIT_NONE = 1; RESUNIT_INCH = 2; RESUNIT_CENTIMETER = 3;
 
   std::string software;
