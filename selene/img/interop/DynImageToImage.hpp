@@ -48,7 +48,7 @@ void check_dyn_img_to_img_compatibility(const DynImageView<modifiability>& dyn_i
 
   if (!dyn_img.is_valid())
   {
-    throw std::runtime_error("Supplied image data is not valid.");
+    throw std::runtime_error("Supplied image is not valid.");
   }
 
   if (dyn_img.nr_channels() != nr_channels || dyn_img.nr_bytes_per_channel() != nr_bytes_per_channel)

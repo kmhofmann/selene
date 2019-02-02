@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <optional>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -70,11 +71,8 @@ std::string orientation_to_string(std::uint16_t value);
 template <typename T> T get_field(TIFF* tif, uint32 tag)
 {
   T var{};
-  const int val = TIFFGetFieldDefaulted(tif, tag, &var);
-  if (val == 0)
-  {
-    throw std::runtime_error("Error getting field");
-  }
+  [[maybe_unused]] const int val = TIFFGetFieldDefaulted(tif, tag, &var);
+  SELENE_ASSERT(val != 0);
   return var;
 }
 
@@ -88,11 +86,8 @@ template <typename T> T get_field(TIFF* tif, uint32 tag, T default_value)
 template <typename T> std::pair<T, T> get_field_2(TIFF* tif, uint32 tag)
 {
   T var0{}, var1{};
-  const int val = TIFFGetFieldDefaulted(tif, tag, &var0, &var1);
-  if (val == 0)
-  {
-    throw std::runtime_error("Error getting field");
-  }
+  [[maybe_unused]] const int val = TIFFGetFieldDefaulted(tif, tag, &var0, &var1);
+  SELENE_ASSERT(val != 0);
   return std::make_pair(var0, var1);
 }
 
