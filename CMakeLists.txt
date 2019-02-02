@@ -36,6 +36,7 @@ if (EXISTS ${CMAKE_BINARY_DIR}/conan_paths.cmake)
     include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 endif()
 
+include(cmake/build_types.cmake)
 include(cmake/get_external.cmake)
 include(cmake/find_dependencies.cmake)
 include(cmake/compiler_options.cmake)
