@@ -42,7 +42,6 @@ target_include_directories(selene_base PUBLIC
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-set_target_properties(selene_base PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_base)
 
 #------------------------------------------------------------------------------
@@ -74,7 +73,6 @@ target_include_directories(selene_base_io PUBLIC
 
 target_link_libraries(selene_base_io PUBLIC selene_base)
 
-set_target_properties(selene_base_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_base_io)
 
 #------------------------------------------------------------------------------
@@ -132,7 +130,6 @@ target_include_directories(selene_img PUBLIC
 
 target_link_libraries(selene_img PUBLIC selene_base)
 
-set_target_properties(selene_img PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img)
 
 #------------------------------------------------------------------------------
@@ -168,7 +165,6 @@ if(JPEG_FOUND)
     #target_link_libraries(selene_img_io_jpeg PUBLIC JPEG::JPEG)
     target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img)
 
-    set_target_properties(selene_img_io_jpeg PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_jpeg)
 
 endif()
@@ -201,7 +197,6 @@ if(PNG_FOUND)
     target_link_libraries(selene_img_io_png PUBLIC PNG::PNG)
     target_link_libraries(selene_img_io_png PUBLIC selene_base_io selene_img)
 
-    set_target_properties(selene_img_io_png PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_png)
 
 endif()
@@ -243,7 +238,6 @@ if(TIFF_FOUND)
     target_link_libraries(selene_img_io_tiff PUBLIC TIFF::TIFF)
     target_link_libraries(selene_img_io_tiff PUBLIC selene_base_io selene_img)
 
-    set_target_properties(selene_img_io_tiff PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_tiff)
 
 endif()
@@ -281,7 +275,6 @@ if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
         target_link_libraries(selene_img_io PUBLIC selene_img_io_tiff)
     endif()
 
-    set_target_properties(selene_img_io PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io)
 
 endif()
@@ -319,7 +312,6 @@ target_include_directories(selene_img_ops PUBLIC
 
 target_link_libraries(selene_img_ops PUBLIC selene_img)
 
-set_target_properties(selene_img_ops PROPERTIES CXX_VISIBILITY_PRESET ${SELENE_VISIBILITY_PRESET})
 set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_ops)
 
 #------------------------------------------------------------------------------

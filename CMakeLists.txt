@@ -21,8 +21,6 @@ option(SELENE_ARCH_NATIVE "Build for the native architecture of the host system 
 option(SELENE_USE_DEFAULT_SINGLE_PRECISION "Use single precision for floating point calculations by default (instead of double precision)" OFF)
 option(SELENE_WARNINGS_AS_ERRORS "Treat warnings as errors (mainly intended for CI)" OFF)
 
-set(SELENE_VISIBILITY_PRESET "default" CACHE STRING "The symbol visibility setting (e.g. 'default' or 'hidden').")
-
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard whose features are requested to build this target.")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Boolean describing whether the value of CXX_STANDARD is a requirement.")
