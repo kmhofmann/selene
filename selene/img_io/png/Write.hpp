@@ -194,7 +194,11 @@ bool write_png(const DynImageOrView& dyn_img_or_view,
 
   if (dyn_img_or_view.nr_bytes_per_channel() != 1 && dyn_img_or_view.nr_bytes_per_channel() != 2)
   {
-    throw std::runtime_error("Unsupported bit depth of image data for PNG output");
+    if (messages)
+    {
+      messages->add("Unsupported bit depth of image data for PNG output", MessageType::Error);
+    }
+    return false;
   }
 
   impl::set_destination(obj, sink);

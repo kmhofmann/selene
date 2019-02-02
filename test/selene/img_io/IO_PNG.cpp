@@ -254,10 +254,10 @@ TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img
 {
   const auto tmp_path = sln_test::get_tmp_path();
   const auto file_contents = sln::read_file_contents(sln_test::full_data_path("bike_duck.png").string());
-  REQUIRE(!file_contents.empty());
+  REQUIRE(file_contents);
 
   // Test reading from memory
-  sln::MemoryReader source(sln::ConstantMemoryRegion{file_contents.data(), file_contents.size()});
+  sln::MemoryReader source(sln::ConstantMemoryRegion{file_contents->data(), file_contents->size()});
   REQUIRE(source.is_open());
 
   // Test reading without conversion

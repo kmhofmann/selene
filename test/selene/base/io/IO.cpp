@@ -209,9 +209,10 @@ TEST_CASE("Test binary data I/O", "[io]")
         "deserunt mollit anim id est laborum.";
 
     sln::write_data_contents(filename.string(), data_str.data(), data_str.size());
-    const std::vector<std::uint8_t> data_read = sln::read_file_contents(filename.string());
-    REQUIRE(data_read.size() == data_str.size());
-    REQUIRE(std::memcmp(data_str.data(), data_read.data(), data_str.size()) == 0);
+    const auto data_read = sln::read_file_contents(filename.string());
+    REQUIRE(data_read);
+    REQUIRE(data_read->size() == data_str.size());
+    REQUIRE(std::memcmp(data_str.data(), data_read->data(), data_str.size()) == 0);
   }
 
   SECTION("From random data")
@@ -231,20 +232,22 @@ TEST_CASE("Test binary data I/O", "[io]")
                     [&]() { return static_cast<std::int8_t>(dist_i8(rng)); });
 
       sln::write_data_contents(filename.string(), data_vec_i.data(), data_vec_i.size());
-      const std::vector<std::uint8_t> data_read_i = sln::read_file_contents(filename.string());
+      const auto data_read_i = sln::read_file_contents(filename.string());
+      REQUIRE(data_read_i);
       REQUIRE(data_vec_i.size() == len);
-      REQUIRE(data_read_i.size() == len);
-      REQUIRE(std::memcmp(data_vec_i.data(), data_read_i.data(), data_read_i.size()) == 0);
+      REQUIRE(data_read_i->size() == len);
+      REQUIRE(std::memcmp(data_vec_i.data(), data_read_i->data(), data_read_i->size()) == 0);
 
       std::vector<std::uint8_t> data_vec_u(len);
       std::generate(std::begin(data_vec_u), std::end(data_vec_u),
                     [&]() { return static_cast<std::uint8_t>(dist_u8(rng)); });
 
       sln::write_data_contents(filename.string(), data_vec_u.data(), data_vec_u.size());
-      const std::vector<std::uint8_t> data_read_u = sln::read_file_contents(filename.string());
+      const auto data_read_u = sln::read_file_contents(filename.string());
+      REQUIRE(data_read_u);
       REQUIRE(data_vec_u.size() == len);
-      REQUIRE(data_read_u.size() == len);
-      REQUIRE(std::memcmp(data_vec_u.data(), data_read_u.data(), data_read_u.size()) == 0);
+      REQUIRE(data_read_u->size() == len);
+      REQUIRE(std::memcmp(data_vec_u.data(), data_read_u->data(), data_read_u->size()) == 0);
     }
   }
 }

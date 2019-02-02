@@ -30,7 +30,6 @@ namespace sln {
  */
 enum class TIFFPlanarConfig
 {
-  Unknown,  ///< Storage is unknown.
   Contiguous,  ///< Storage is contiguous (interleaved).
   Separate,  ///< Storate is separate (planar).
 };
@@ -39,7 +38,6 @@ enum class TIFFPlanarConfig
  */
 enum class TIFFPhotometricTag
 {
-  Unknown,
   MinIsWhite,
   MinIsBlack,
   RGB,
@@ -59,7 +57,6 @@ enum class TIFFPhotometricTag
  */
 enum class TIFFSampleFormat
 {
-  Unknown,
   UnsignedInt,
   Int,
   Float,
@@ -72,7 +69,6 @@ enum class TIFFSampleFormat
  */
 enum class TIFFCompression
 {
-  Unknown,
   None,
   CCITT_RLE,
   CCITT_Fax3,

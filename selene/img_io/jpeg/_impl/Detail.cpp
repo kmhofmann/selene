@@ -35,7 +35,7 @@ J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space)
     case JPEGColorSpace::EXT_XBGR: return JCS_EXT_XBGR;
     case JPEGColorSpace::EXT_XRGB: return JCS_EXT_XRGB;
 #endif
-    default: throw std::runtime_error("Unknown color space");
+    default: return JCS_UNKNOWN;
   }
 }
 
@@ -61,7 +61,7 @@ JPEGColorSpace color_space_lib_to_pub(J_COLOR_SPACE color_space)
     case JCS_EXT_XBGR: return JPEGColorSpace::EXT_XBGR;
     case JCS_EXT_XRGB: return JPEGColorSpace::EXT_XRGB;
 #endif
-    default: throw std::runtime_error("Unknown color space");
+    default: return JPEGColorSpace::Unknown;
   }
 }
 

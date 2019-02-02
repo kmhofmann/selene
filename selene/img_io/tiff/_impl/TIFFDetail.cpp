@@ -25,7 +25,7 @@ std::uint16_t planar_config_pub_to_lib(TIFFPlanarConfig cfg)
   {
     case TIFFPlanarConfig::Contiguous: return PLANARCONFIG_CONTIG;
     case TIFFPlanarConfig::Separate: return PLANARCONFIG_SEPARATE;
-    default: return 0;  // ?
+    default: return PLANARCONFIG_CONTIG;
   }
 }
 
@@ -35,7 +35,7 @@ TIFFPlanarConfig planar_config_lib_to_pub(std::uint16_t cfg)
   {
     case PLANARCONFIG_CONTIG: return TIFFPlanarConfig::Contiguous;
     case PLANARCONFIG_SEPARATE: return TIFFPlanarConfig::Separate;
-    default: return TIFFPlanarConfig::Unknown;
+    default: return TIFFPlanarConfig::Contiguous;
   }
 }
 
@@ -56,7 +56,7 @@ std::uint16_t photometric_tag_pub_to_lib(TIFFPhotometricTag tag)
     case TIFFPhotometricTag::CFA: return PHOTOMETRIC_CFA;
     case TIFFPhotometricTag::LogL: return PHOTOMETRIC_LOGL;
     case TIFFPhotometricTag::LogLUV: return PHOTOMETRIC_LOGLUV;
-    default: return 0;  // ?
+    default: return PHOTOMETRIC_MINISWHITE;
   }
 }
 
@@ -77,7 +77,7 @@ TIFFPhotometricTag photometric_tag_lib_to_pub(std::uint16_t tag)
     case PHOTOMETRIC_CFA: return TIFFPhotometricTag::CFA;
     case PHOTOMETRIC_LOGL: return TIFFPhotometricTag::LogL;
     case PHOTOMETRIC_LOGLUV: return TIFFPhotometricTag::LogLUV;
-    default: return TIFFPhotometricTag::Unknown;
+    default: return TIFFPhotometricTag::MinIsWhite;
   }
 }
 
@@ -91,7 +91,7 @@ std::uint16_t sample_format_pub_to_lib(TIFFSampleFormat fmt)
     case TIFFSampleFormat::Void: return SAMPLEFORMAT_VOID;
     case TIFFSampleFormat::ComplexInt: return SAMPLEFORMAT_COMPLEXINT;
     case TIFFSampleFormat::ComplexFloat: return SAMPLEFORMAT_COMPLEXIEEEFP;
-    default: return 0;  // ?
+    default: return SAMPLEFORMAT_UINT;
   }
 }
 
@@ -105,7 +105,7 @@ TIFFSampleFormat sample_format_lib_to_pub(std::uint16_t fmt)
     case SAMPLEFORMAT_VOID: return TIFFSampleFormat::Void;
     case SAMPLEFORMAT_COMPLEXINT: return TIFFSampleFormat::ComplexInt;
     case SAMPLEFORMAT_COMPLEXIEEEFP: return TIFFSampleFormat::ComplexFloat;
-    default: return TIFFSampleFormat::Unknown;
+    default: return TIFFSampleFormat::UnsignedInt;
   }
 }
 
@@ -136,7 +136,7 @@ std::uint16_t compression_pub_to_lib(TIFFCompression cpr)
     case TIFFCompression::Zstd: return COMPRESSION_ZSTD;
     case TIFFCompression::Webp: return COMPRESSION_WEBP;
 #endif
-    default: return 0;  // ?
+    default: return COMPRESSION_NONE;
   }
 }
 
@@ -167,7 +167,7 @@ TIFFCompression compression_lib_to_pub(std::uint16_t cpr)
     case COMPRESSION_ZSTD: return TIFFCompression::Zstd;
     case COMPRESSION_WEBP: return TIFFCompression::Webp;
 #endif
-    default: return TIFFCompression::Unknown;
+    default: return TIFFCompression::None;
   }
 }
 
@@ -242,7 +242,7 @@ std::uint16_t pixel_format_to_photometric(sln::PixelFormat fmt)
     case PixelFormat::YCbCr: return PHOTOMETRIC_YCBCR;
     case PixelFormat::CIELab: return PHOTOMETRIC_CIELAB;
     case PixelFormat::ICCLab: return PHOTOMETRIC_ICCLAB;
-    default: throw std::runtime_error("Cannot convert given pixel format to TIFF photometric tag.");
+    default: return std::uint16_t(-1);
   }
 }
 

@@ -89,32 +89,26 @@ std::size_t read(FileReader& source, T* values, std::size_t nr_values) noexcept;
 
 /** \brief Opens the specified file for reading and sets the file stream pointer to the beginning of the file.
  *
- * If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+ * If the file `filename` can not be opened, then is_open() will return false.
  * See also FileReader::open.
  *
  * \param filename The name of the file to be opened for reading.
  */
 inline FileReader::FileReader(const char* filename)
 {
-  if (!open(filename))
-  {
-    throw std::runtime_error(std::strerror(errno));
-  }
+  open(filename);
 }
 
 /** \brief Opens the specified file for reading and sets the file stream pointer to the beginning of the file.
  *
- * If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+ * If the file `filename` can not be opened, then is_open() will return false.
  * See also FileReader::open.
  *
  * \param filename The name of the file to be opened for reading.
  */
 inline FileReader::FileReader(const std::string& filename)
 {
-  if (!open(filename))
-  {
-    throw std::runtime_error(std::strerror(errno));
-  }
+  open(filename);
 }
 
 /** \brief Destructor; closes the previously opened file stream. */

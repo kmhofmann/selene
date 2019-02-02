@@ -102,7 +102,7 @@ std::size_t write(MemoryWriter& sink, const T* values, std::size_t nr_values) no
 
 /** \brief Opens the specified memory region for writing.
  *
- * If the open operation fails (e.g. if `nullptr` was passed), the function will throw a `std::runtime_error` exception.
+ * If the open operation fails (e.g. if `nullptr` was passed), then is_open() will return false.
  * See also MemoryWriter::open.
  *
  * \param data A pointer to the beginning of the memory region to be written to.
@@ -111,10 +111,7 @@ std::size_t write(MemoryWriter& sink, const T* values, std::size_t nr_values) no
  */
 inline MemoryWriter::MemoryWriter(const MutableMemoryRegion region, WriterMode mode)
 {
-  if (!open(region, mode))
-  {
-    throw std::runtime_error("Invalid memory region or append mode");
-  }
+  open(region, mode);
 }
 
 /** \brief Returns a native handle to the memory region.

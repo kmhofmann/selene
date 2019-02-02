@@ -19,11 +19,14 @@ namespace sln {
 /// @{
 
 template <typename Derived>
-bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout = false, [[maybe_unused]] bool shrink_to_fit = false)
+void allocate(ImageBase<Derived>& img_dst,
+              TypedLayout layout,
+              bool force_layout = false,
+              [[maybe_unused]] bool shrink_to_fit = false)
 {
   if (!force_layout && img_dst.width() == layout.width && img_dst.height() == layout.height)
   {
-    return false;
+    return;
   }
 
   if constexpr(ImageBase<Derived>::is_view)
@@ -32,8 +35,10 @@ bool allocate(ImageBase<Derived>& img_dst, TypedLayout layout, bool force_layout
   }
   else
   {
-    const bool did_reallocate = img_dst.derived().reallocate(layout, guess_row_alignment(reinterpret_cast<std::uintptr_t>(img_dst.byte_ptr()), img_dst.stride_bytes()), shrink_to_fit);
-    return did_reallocate;
+    img_dst.derived().reallocate(layout,
+                                 guess_row_alignment(reinterpret_cast<std::uintptr_t>(img_dst.byte_ptr()),
+                                                     img_dst.stride_bytes()),
+                                 shrink_to_fit);
   }
 }
 

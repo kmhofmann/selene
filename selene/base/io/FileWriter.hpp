@@ -99,7 +99,7 @@ std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noex
 
 /** \brief Opens the specified file for writing.
  *
- * If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+ * If the file `filename` can not be opened, then is_open() will return false.
  * See also FileWriter::open.
  *
  * \param filename The name of the file to be opened for reading.
@@ -107,15 +107,12 @@ std::size_t write(FileWriter& sink, const T* values, std::size_t nr_values) noex
  */
 inline FileWriter::FileWriter(const char* filename, WriterMode mode)
 {
-  if (!open(filename, mode))
-  {
-    throw std::runtime_error(std::strerror(errno));
-  }
+  open(filename, mode);
 }
 
 /** \brief Opens the specified file for writing.
  *
- * If the file `filename` can not be opened, the function will throw a `std::runtime_error` exception.
+ * If the file `filename` can not be opened, then is_open() will return false.
  * See also FileWriter::open.
  *
  * \param filename The name of the file to be opened for reading.
@@ -123,10 +120,7 @@ inline FileWriter::FileWriter(const char* filename, WriterMode mode)
  */
 inline FileWriter::FileWriter(const std::string& filename, WriterMode mode)
 {
-  if (!open(filename, mode))
-  {
-    throw std::runtime_error(std::strerror(errno));
-  }
+  open(filename, mode);
 }
 
 /** \brief Destructor; closes the previously opened file stream. */

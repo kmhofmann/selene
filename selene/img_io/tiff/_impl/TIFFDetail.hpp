@@ -253,10 +253,8 @@ public:
     ycbcr_ = (TIFFYCbCrToRGB*)_TIFFmalloc(std::max(sizeof(TIFFYCbCrToRGB), sizeof(long))
                                           + 4*256*sizeof(TIFFRGBValue) + 2*256*sizeof(int) + 3*256*sizeof(int32));
     SELENE_ASSERT(ycbcr_ != nullptr);
-    if (TIFFYCbCrToRGBInit(ycbcr_, ycbcr_coefficients, reference_blackwhite) < 0)
-    {
-      throw std::runtime_error("Could not allocate TIFFYCbCrToRGB*");
-    }
+    [[maybe_unused]] const auto success = TIFFYCbCrToRGBInit(ycbcr_, ycbcr_coefficients, reference_blackwhite);
+    SELENE_ASSERT(success >= 0);
   }
 
   ~YCbCrConverter()
@@ -304,10 +302,8 @@ public:
     ref_white[0] = white_point_coefficients[0] / white_point_coefficients[1] * ref_white[1];
     ref_white[2] = (1.0F - white_point_coefficients[0] - white_point_coefficients[1]) / white_point_coefficients[1] * ref_white[1];
 
-    if (TIFFCIELabToRGBInit(cielab_, &display_sRGB, ref_white) < 0)
-    {
-      throw std::runtime_error("Could not allocate TIFFCIELabToRGB*");
-    }
+    [[maybe_unused]] const auto success = TIFFCIELabToRGBInit(cielab_, &display_sRGB, ref_white);
+    SELENE_ASSERT(success >= 0);
   }
 
   ~LabConverter()

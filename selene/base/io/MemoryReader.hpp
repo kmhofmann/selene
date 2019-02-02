@@ -84,7 +84,7 @@ std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) noexcep
 
 /** \brief Opens the specified memory region for reading and sets the read pointer to the beginning of the region.
  *
- * If the open operation fails (e.g. if `nullptr` was passed), the function will throw a `std::runtime_error` exception.
+ * If the open operation fails (e.g. if `nullptr` was passed), then is_open() will return false.
  * See also MemoryReader::open.
  *
  * \param data A pointer to the beginning of the memory region to be read.
@@ -92,10 +92,7 @@ std::size_t read(MemoryReader& source, T* values, std::size_t nr_values) noexcep
  */
 inline MemoryReader::MemoryReader(const ConstantMemoryRegion region)
 {
-  if (!open(region))
-  {
-    throw std::runtime_error("Invalid memory region");
-  }
+  open(region);
 }
 
 /** \brief Returns a native handle to the memory region.
