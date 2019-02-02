@@ -7,7 +7,7 @@
 
 /// @file
 
-#include <selene/img/dynamic/DynImageIterators.hpp>
+#include <selene/img/common/Iterators.hpp>
 #include <selene/img/dynamic/UntypedLayout.hpp>
 
 #include <cstring>
@@ -17,11 +17,38 @@
 
 namespace sln {
 
-/// \addtogroup group-img-dynamic
-/// @{
-
 template <ImageModifiability modifiability_ = ImageModifiability::Constant>
 class DynImageView;
+
+namespace impl {
+
+// Proxy class for iteration.
+template <typename PixelType_, ImageModifiability modifiability, bool is_const>
+class TypedDynImageView
+{
+public:
+  using ViewPtr = std::conditional_t<is_const, const DynImageView<modifiability>*, DynImageView<modifiability>*>;
+  using PixelType = PixelType_;
+  using PixelTypePtr = typename DynImageView<modifiability>::template PixelTypePtr<PixelType>;
+
+  explicit TypedDynImageView(ViewPtr view) : view_(view) { }
+
+  PixelTypePtr data() const noexcept { return view_->template data<PixelType>(); }
+  PixelTypePtr data(PixelIndex y) const noexcept { return view_->template data<PixelType>(y); }
+  PixelTypePtr data_row_end(PixelIndex y) const noexcept { return view_->template data_row_end<PixelType>(y); }
+  PixelTypePtr data(PixelIndex x, PixelIndex y) const noexcept { return view_->template data<PixelType>(x, y); }
+
+  template <bool is_const_2> bool operator==(const TypedDynImageView<PixelType_, modifiability, is_const_2>& v) const noexcept { return view_ == v.view_; }
+
+private:
+  ViewPtr view_;
+  template <typename PixelType2, ImageModifiability modifiability_2, bool is_const_2> friend class TypedDynImageView;
+};
+
+} // namespace impl
+
+/// \addtogroup group-img-dynamic
+/// @{
 
 using MutableDynImageView = DynImageView<ImageModifiability::Mutable>;  ///< A dynamic image view pointing to mutable data.
 using ConstantDynImageView = DynImageView<ImageModifiability::Constant>;  ///< A dynamic image view pointing to constant data.
@@ -56,12 +83,20 @@ void swap(DynImageView<modifiability_>& dyn_img_view_l, DynImageView<modifiabili
 template <ImageModifiability modifiability_>
 class DynImageView
 {
+  template <typename PixelType, bool is_const>
+    using TypedProxyView = impl::TypedDynImageView<PixelType, modifiability_, is_const>;
+  template <typename PixelType> using IteratorRow = DynImageRow<TypedProxyView<PixelType, false>, PixelType, false>;
+  template <typename PixelType> using ConstIteratorRow = DynImageRow<TypedProxyView<PixelType, true>, PixelType, true>;
+
 public:
   using DataPtrType = typename DataPtr<modifiability_>::Type;
-  template <typename PixelType> using PixelTypePtr = std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
+  template <typename PixelType>
+    using PixelTypePtr = std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
 
-  template <typename PixelType> using iterator = DynImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
-  template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
+  template <typename PixelType> using iterator = ImageRowIterator<TypedProxyView<PixelType, false>,
+                                                                  IteratorRow<PixelType>>;  ///< The iterator type.
+  template <typename PixelType> using const_iterator = ImageRowIterator<TypedProxyView<PixelType, true>,
+                                                                        ConstIteratorRow<PixelType>>;  ///< The const_iterator type.
 
   constexpr static bool is_view = true;
   constexpr static bool is_owning = false;
@@ -337,7 +372,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::begin() noexcept -> iterator<PixelType>
 {
-  return DynImageRowIterator<PixelType, modifiability_>(DynImageRow<PixelType, modifiability_>(this, 0_idx));
+  auto row = IteratorRow<PixelType>(TypedProxyView<PixelType, false>(this), 0_idx);
+  return iterator<PixelType>(row);
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -350,7 +386,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::begin() const noexcept -> const_iterator<PixelType>
 {
-  return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
+  auto row = ConstIteratorRow<PixelType>(TypedProxyView<PixelType, true>(this), 0_idx);
+  return const_iterator<PixelType>(row);
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -363,7 +400,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::cbegin() const noexcept -> const_iterator<PixelType>
 {
-  return ConstDynImageRowIterator<PixelType, modifiability_>(ConstDynImageRow<PixelType, modifiability_>(this, 0_idx));
+  auto row = ConstIteratorRow<PixelType>(TypedProxyView<PixelType, true>(this), 0_idx);
+  return const_iterator<PixelType>(row);
 }
 
 /** \brief Returns an iterator to the row after the last row of the image.
@@ -376,8 +414,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::end() noexcept -> iterator<PixelType>
 {
-  return DynImageRowIterator<PixelType, modifiability_>(
-      DynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
+  auto row = IteratorRow<PixelType>(TypedProxyView<PixelType, false>(this), PixelIndex{this->height()});
+  return iterator<PixelType>(row);
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -390,8 +428,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::end() const noexcept -> const_iterator<PixelType>
 {
-  return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
+  auto row = ConstIteratorRow<PixelType>(TypedProxyView<PixelType, true>(this), PixelIndex{this->height()});
+  return const_iterator<PixelType>(row);
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -404,8 +442,8 @@ template <ImageModifiability modifiability_>
 template <typename PixelType>
 auto DynImageView<modifiability_>::cend() const noexcept -> const_iterator<PixelType>
 {
-  return ConstDynImageRowIterator<PixelType, modifiability_>(
-      ConstDynImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
+  auto row = ConstIteratorRow<PixelType>(TypedProxyView<PixelType, true>(this), PixelIndex{this->height()});
+  return const_iterator<PixelType>(row);
 }
 
 /** \brief Returns a pointer to the first byte storing image data (in row 0).

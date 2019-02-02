@@ -78,6 +78,15 @@ void compare_iteration(sln::DynImage& img)
 
     REQUIRE(elements_0 == elements_1);
   }
+
+  auto it_begin = img.begin<PixelType>();
+  auto it_cbegin = img.cbegin<PixelType>();
+  auto it_end = img.end<PixelType>();
+  auto it_cend = img.cend<PixelType>();
+  REQUIRE(it_begin == it_cbegin);
+  REQUIRE(it_end == it_cend);
+  REQUIRE(it_begin != it_end);
+  REQUIRE(it_cbegin != it_cend);
 }
 
 template <typename ElementType, typename RNG>
@@ -91,7 +100,7 @@ void random_iteration(sln::PixelLength w, sln::PixelLength h, RNG& rng)
 }  // namespace
 
 
-TEST_CASE("Dynamic Image iteration", "[img]")
+TEST_CASE("Dynamic image iteration", "[img]")
 {
   std::mt19937 rng(42ul);
 

@@ -30,7 +30,7 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/dynamic/_Utils.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Image.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/ImageIterators.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Iterators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/TypedLayout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Utilities.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/_Utils.hpp

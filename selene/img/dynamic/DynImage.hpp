@@ -56,8 +56,8 @@ public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
-  template <typename PixelType> using iterator = DynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
-  template <typename PixelType> using const_iterator = ConstDynImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
+  template <typename PixelType> using iterator = typename DynImageView<ImageModifiability::Mutable>::iterator<PixelType>;  ///< The iterator type.
+  template <typename PixelType> using const_iterator = typename DynImageView<ImageModifiability::Mutable>::const_iterator<PixelType>;  ///< The const_iterator type.
 
   constexpr static bool is_view = false;
   constexpr static bool is_owning = true;

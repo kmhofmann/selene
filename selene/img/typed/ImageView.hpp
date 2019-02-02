@@ -10,9 +10,9 @@
 #include <selene/base/_impl/TypeTraits.hpp>
 
 #include <selene/img/common/DataPtr.hpp>
+#include <selene/img/common/Iterators.hpp>
 
 #include <selene/img/typed/ImageBase.hpp>
-#include <selene/img/typed/ImageIterators.hpp>
 #include <selene/img/typed/TypedLayout.hpp>
 
 #include <selene/img/pixel/PixelTraits.hpp>
@@ -60,13 +60,16 @@ template <typename PixelType_, ImageModifiability modifiability_>
 class ImageView
     : public ImageBase<ImageView<PixelType_, modifiability_>>
 {
+  using IteratorRow = ImageRow<ImageView<PixelType_, modifiability_>, false>;
+  using ConstIteratorRow = ImageRow<ImageView<PixelType_, modifiability_>, true>;
+
 public:
   using PixelType = PixelType_;
   using DataPtrType = typename DataPtr<modifiability_>::Type;
   using PixelTypePtr = std::conditional_t<modifiability_ == ImageModifiability::Constant, const PixelType*, PixelType*>;
 
-  using iterator = ImageRowIterator<PixelType, modifiability_>;  ///< The iterator type.
-  using const_iterator = ConstImageRowIterator<PixelType, modifiability_>;  ///< The const_iterator type.
+  using iterator = ImageRowIterator<ImageView<PixelType, modifiability_>, IteratorRow>;  ///< The iterator type.
+  using const_iterator = ImageRowIterator<ImageView<PixelType, modifiability_>, ConstIteratorRow>;  ///< The const_iterator type.
 
   constexpr static bool is_view = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_view;
   constexpr static bool is_modifiable = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_modifiable;
@@ -285,7 +288,7 @@ bool ImageView<PixelType_, modifiability_>::is_valid() const noexcept
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::begin() noexcept -> iterator
 {
-  return ImageRowIterator<PixelType, modifiability_>(ImageRow<PixelType, modifiability_>(this, 0_idx));
+  return iterator(IteratorRow(this, 0_idx));
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -297,7 +300,7 @@ auto ImageView<PixelType_, modifiability_>::begin() noexcept -> iterator
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::begin() const noexcept -> const_iterator
 {
-  return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx));
+  return const_iterator(ConstIteratorRow(this, 0_idx));
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -309,7 +312,7 @@ auto ImageView<PixelType_, modifiability_>::begin() const noexcept -> const_iter
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::cbegin() const noexcept -> const_iterator
 {
-  return ConstImageRowIterator<PixelType, modifiability_>(ConstImageRow<PixelType, modifiability_>(this, 0_idx));
+  return const_iterator(ConstIteratorRow(this, 0_idx));
 }
 
 /** \brief Returns an iterator to the row after the last row of the image.
@@ -321,8 +324,7 @@ auto ImageView<PixelType_, modifiability_>::cbegin() const noexcept -> const_ite
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::end() noexcept -> iterator
 {
-  return ImageRowIterator<PixelType, modifiability_>(
-      ImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
+  return iterator(IteratorRow(this, PixelIndex{this->height()}));
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -334,8 +336,7 @@ auto ImageView<PixelType_, modifiability_>::end() noexcept -> iterator
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::end() const noexcept -> const_iterator
 {
-  return ConstImageRowIterator<PixelType, modifiability_>(
-      ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
+  return const_iterator(ConstIteratorRow(this, PixelIndex{this->height()}));
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -347,8 +348,7 @@ auto ImageView<PixelType_, modifiability_>::end() const noexcept -> const_iterat
 template <typename PixelType_, ImageModifiability modifiability_>
 auto ImageView<PixelType_, modifiability_>::cend() const noexcept -> const_iterator
 {
-  return ConstImageRowIterator<PixelType, modifiability_>(
-      ConstImageRow<PixelType, modifiability_>(this, PixelIndex{this->height()}));
+  return const_iterator(ConstIteratorRow(this, PixelIndex{this->height()}));
 }
 
 /** \brief Returns a pointer to the first byte storing image data (in row 0).

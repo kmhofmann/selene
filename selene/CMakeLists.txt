@@ -83,6 +83,7 @@ add_library(selene::selene_img ALIAS selene_img)
 target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/DataPtr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/Iterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/common/Types.hpp
@@ -92,7 +93,6 @@ target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/pixel/PixelTypeAliases.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/RuntimeChecks.hpp
@@ -101,7 +101,6 @@ target_sources(selene_img PRIVATE
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageBase.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageIterators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageViewTypeAliases.hpp

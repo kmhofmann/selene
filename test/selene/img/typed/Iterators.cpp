@@ -104,6 +104,15 @@ void compare_iteration(sln::Image<T>& img)
     REQUIRE(elements_0 == elements_1);
     REQUIRE(elements_0 == elements_2);
   }
+
+  auto it_begin = img.begin();
+  auto it_cbegin = img.cbegin();
+  auto it_end = img.end();
+  auto it_cend = img.cend();
+  REQUIRE(it_begin == it_cbegin);
+  REQUIRE(it_end == it_cend);
+  REQUIRE(it_begin != it_end);
+  REQUIRE(it_cbegin != it_cend);
 }
 
 template <typename ElementType, typename RNG>

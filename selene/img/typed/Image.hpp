@@ -60,8 +60,8 @@ public:
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
-  using iterator = ImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The iterator type.
-  using const_iterator = ConstImageRowIterator<PixelType, ImageModifiability::Mutable>;  ///< The const_iterator type.
+  using iterator = typename ImageView<PixelType_, ImageModifiability::Mutable>::iterator;  ///< The iterator type.
+  using const_iterator = typename ImageView<PixelType_, ImageModifiability::Mutable>::const_iterator;  ///< The const_iterator type.
 
   constexpr static bool is_view = impl::ImageBaseTraits<Image<PixelType>>::is_view;
   constexpr static bool is_modifiable = impl::ImageBaseTraits<Image<PixelType>>::is_modifiable;
