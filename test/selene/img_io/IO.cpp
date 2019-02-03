@@ -48,7 +48,7 @@ auto read_img(Source&& source, std::int32_t ref_width, std::int32_t ref_height)
 }
 
 template <typename Sink>
-void write_img(const sln::DynImage& dyn_img, sln::ImageFormat format, Sink&& sink)
+void write_img(const sln::DynImage<>& dyn_img, sln::ImageFormat format, Sink&& sink)
 {
   REQUIRE(sink.is_open());
 

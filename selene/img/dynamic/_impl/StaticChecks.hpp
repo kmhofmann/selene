@@ -19,7 +19,7 @@ namespace impl {
 template <typename DynImageOrView>
 constexpr bool static_check_is_dyn_image()
 {
-  return std::is_same_v<DynImageOrView, DynImage>;
+  return std::is_same_v<DynImageOrView, DynImage<>>;  // TODO: this fails in case we're not using the default allocator!
 }
 
 template <typename DynImageOrView>

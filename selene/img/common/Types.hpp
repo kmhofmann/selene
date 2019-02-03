@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <memory>
 
 namespace sln {
 
@@ -24,7 +25,6 @@ namespace impl {
 class PixelIndexTag;
 class PixelLengthTag;
 class StrideTag;
-class ImageRowAlignmentTag;
 
 }  // namespace impl
 
@@ -38,10 +38,7 @@ using PixelLength = sln::impl::ExplicitType<std::int32_t, sln::impl::PixelLength
 using Stride = sln::impl::ExplicitType<std::ptrdiff_t, sln::impl::StrideTag>;  ///< Type representing an image stride
                                                                                ///< (nr of bytes per row).
 
-using ImageRowAlignment = sln::impl::ExplicitType<std::ptrdiff_t,sln::impl::ImageRowAlignmentTag>;  ///< Type
-                                                                                                    ///< representing an
-                                                                                                    ///< image row
-                                                                                                    ///< alignment.
+using default_bytes_allocator = std::allocator<std::uint8_t>;
 
 /** \brief Explicitly converts the provided value to `PixelIndex` type.
  *
@@ -108,71 +105,6 @@ constexpr PixelLength operator"" _px(unsigned long long length) noexcept
 }
 
 }  // namespace literals
-
-// ----------
-
-namespace impl {
-
-inline Stride compute_stride_bytes(Stride row_bytes, ImageRowAlignment alignment_bytes)
-{
-  if (alignment_bytes <= 1)
-  {
-    return Stride{row_bytes};
-  }
-
-  const auto mod = row_bytes % alignment_bytes;
-
-  if (mod == 0)
-  {
-    return Stride{row_bytes};
-  }
-
-  const auto stride_bytes = Stride{row_bytes + alignment_bytes - mod};
-  SELENE_ASSERT(stride_bytes % alignment_bytes == 0);
-  return stride_bytes;
-}
-
-inline ImageRowAlignment guess_row_alignment(std::uintptr_t ptr, Stride stride_bytes)
-{
-  if (ptr % 128 == 0 && stride_bytes % 128 == 0)
-  {
-    return ImageRowAlignment{128};
-  }
-
-  if (ptr % 64 == 0 && stride_bytes % 64 == 0)
-  {
-    return ImageRowAlignment{64};
-  }
-
-  if (ptr % 32 == 0 && stride_bytes % 32 == 0)
-  {
-    return ImageRowAlignment{32};
-  }
-
-  if (ptr % 16 == 0 && stride_bytes % 16 == 0)
-  {
-    return ImageRowAlignment{16};
-  }
-
-  if (ptr % 8 == 0 && stride_bytes % 8 == 0)
-  {
-    return ImageRowAlignment{8};
-  }
-
-  if (ptr % 4 == 0 && stride_bytes % 4 == 0)
-  {
-    return ImageRowAlignment{4};
-  }
-
-  if (ptr % 2 == 0 && stride_bytes % 2 == 0)
-  {
-    return ImageRowAlignment{2};
-  }
-
-  return ImageRowAlignment{1};
-}
-
-}  // namespace impl
 
 /// @}
 

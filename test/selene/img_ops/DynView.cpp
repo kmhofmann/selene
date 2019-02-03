@@ -21,10 +21,10 @@ std::array<std::uint8_t, 16> dyn_img_arr_44 = {{
    90, 100, 110, 120,
   130, 140, 150, 160 }};
 
-sln::DynImage create_dyn_image()
+sln::DynImage<> create_dyn_image()
 {
-  sln::DynImage dyn_img{sln::UntypedLayout{4_px, 4_px, 1, 1},
-                        sln::UntypedImageSemantics{}};
+  sln::DynImage<> dyn_img{sln::UntypedLayout{4_px, 4_px, 1, 1},
+                          sln::UntypedImageSemantics{}};
   std::copy(dyn_img_arr_44.cbegin(), dyn_img_arr_44.cend(), dyn_img.byte_ptr());
   return dyn_img;
 }

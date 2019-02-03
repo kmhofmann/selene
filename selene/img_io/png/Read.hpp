@@ -198,9 +198,9 @@ PNGImageInfo read_png_header(PNGDecompressionObject& obj,
  * otherwise.
  */
 template <typename SourceType>
-DynImage read_png(SourceType&& source,
-                  PNGDecompressionOptions options = PNGDecompressionOptions(),
-                  MessageLog* messages = nullptr);
+DynImage<> read_png(SourceType&& source,
+                    PNGDecompressionOptions options = PNGDecompressionOptions(),
+                    MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a PNG image data stream.
  *
@@ -220,11 +220,11 @@ DynImage read_png(SourceType&& source,
  * otherwise.
  */
 template <typename SourceType>
-DynImage read_png(PNGDecompressionObject& obj,
-                  SourceType&& source,
-                  PNGDecompressionOptions options = PNGDecompressionOptions(),
-                  MessageLog* messages = nullptr,
-                  const PNGImageInfo* provided_header_info = nullptr);
+DynImage<> read_png(PNGDecompressionObject& obj,
+                    SourceType&& source,
+                    PNGDecompressionOptions options = PNGDecompressionOptions(),
+                    MessageLog* messages = nullptr,
+                    const PNGImageInfo* provided_header_info = nullptr);
 
 /** Class with functionality to read header and data of a PNG image data stream.
  *
@@ -258,7 +258,7 @@ public:
   void set_decompression_options(PNGDecompressionOptions options);
 
   PNGImageInfo get_output_image_info();
-  DynImage read_image_data();
+  DynImage<> read_image_data();
   template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
 
   MessageLog& message_log();
@@ -335,7 +335,7 @@ PNGImageInfo read_png_header(PNGDecompressionObject& obj, SourceType&& source, b
 }
 
 template <typename SourceType>
-DynImage read_png(SourceType&& source, PNGDecompressionOptions options, MessageLog* messages)
+DynImage<> read_png(SourceType&& source, PNGDecompressionOptions options, MessageLog* messages)
 {
   PNGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
@@ -343,11 +343,11 @@ DynImage read_png(SourceType&& source, PNGDecompressionOptions options, MessageL
 }
 
 template <typename SourceType>
-DynImage read_png(PNGDecompressionObject& obj,
-                  SourceType&& source,
-                  PNGDecompressionOptions options,
-                  MessageLog* messages,
-                  const PNGImageInfo* provided_header_info)
+DynImage<> read_png(PNGDecompressionObject& obj,
+                    SourceType&& source,
+                    PNGDecompressionOptions options,
+                    MessageLog* messages,
+                    const PNGImageInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -356,7 +356,7 @@ DynImage read_png(PNGDecompressionObject& obj,
     if (obj.error_state())
     {
       impl::assign_message_log(obj, messages);
-      return DynImage();
+      return DynImage<>();
     }
   }
 
@@ -365,7 +365,7 @@ DynImage read_png(PNGDecompressionObject& obj,
   if (!header_info.is_valid())
   {
     impl::assign_message_log(obj, messages);
-    return DynImage();
+    return DynImage<>();
   }
 
   const bool pars_set = obj.set_decompression_parameters(
@@ -376,7 +376,7 @@ DynImage read_png(PNGDecompressionObject& obj,
   if (!pars_set)
   {
     impl::assign_message_log(obj, messages);
-    return DynImage();
+    return DynImage<>();
   }
 
   impl::PNGDecompressionCycle cycle(obj);
@@ -384,7 +384,7 @@ DynImage read_png(PNGDecompressionObject& obj,
   if (cycle.error_state())
   {
     impl::assign_message_log(obj, messages);
-    return DynImage();
+    return DynImage<>();
   }
 
   const auto output_info = cycle.get_output_info();
@@ -397,9 +397,9 @@ DynImage read_png(PNGDecompressionObject& obj,
   const auto output_pixel_format = obj.get_pixel_format();
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  DynImage dyn_img({output_width, output_height, static_cast<std::int16_t>(output_nr_channels),
-                   static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_stride_bytes},
-                   {output_pixel_format, output_sample_format});
+  DynImage<> dyn_img({output_width, output_height, static_cast<std::int16_t>(output_nr_channels),
+                     static_cast<std::uint8_t>(output_nr_bytes_per_channel), output_stride_bytes},
+                     {output_pixel_format, output_sample_format});
   auto row_pointers = get_row_pointers(dyn_img);
   const auto dec_success = cycle.decompress(row_pointers);
 
@@ -497,9 +497,9 @@ PNGImageInfo PNGReader<SourceType>::get_output_image_info()
 }
 
 template <typename SourceType>
-DynImage PNGReader<SourceType>::read_image_data()
+DynImage<> PNGReader<SourceType>::read_image_data()
 {
-  DynImage dyn_img;
+  DynImage<> dyn_img;
   read_image_data(dyn_img);
   return dyn_img;
 }

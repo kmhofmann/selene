@@ -21,7 +21,7 @@ bool prepare_image_or_view(DynImageOrView& dyn_img_or_view, const UntypedLayout&
 
   if constexpr (impl::static_check_is_dyn_image<DynImageOrView>())
   {
-    dyn_img_or_view.reallocate(layout, ImageRowAlignment{0}, semantics, false);
+    dyn_img_or_view.reallocate(layout, semantics);
   }
   else
   {

@@ -49,7 +49,7 @@ constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
 
 namespace {
 
-void check_write_read(sln::DynImage& dyn_img, const sln_fs::path& tmp_path)
+void check_write_read(sln::DynImage<>& dyn_img, const sln_fs::path& tmp_path)
 {
   // Write as PNG file...
   sln::FileWriter sink((tmp_path / "test_img.png").string());

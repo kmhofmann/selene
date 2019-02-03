@@ -29,7 +29,7 @@ int main(/*int argc, char** argv*/)
   std::cout << "sizeof(UntypedImageSemantics) == " << sizeof(UntypedImageSemantics) << "  == PixelFormat (" << sizeof(PixelFormat) << ") + SampleFormat (" << sizeof(SampleFormat) << ")\n";
   std::cout << '\n';
   std::cout << "sizeof(MutableDynImageView)   == " << sizeof(MutableDynImageView) << '\n';
-  std::cout << "sizeof(DynImage)              == " << sizeof(DynImage) << '\n';
+  std::cout << "sizeof(DynImage<>)            == " << sizeof(DynImage<>) << '\n';
   std::cout << "--------------------------------\n";
   std::cout << "sizeof(DataPtr<IM::Mutable>)  == " << sizeof(DataPtr<ImageModifiability::Mutable>) << '\n';
   std::cout << "sizeof(TypedLayout)           == " << sizeof(TypedLayout) << "  == PixelLength + PixelLength + Stride\n";

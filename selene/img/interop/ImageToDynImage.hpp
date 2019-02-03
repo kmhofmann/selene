@@ -20,14 +20,14 @@ namespace sln {
 /// \addtogroup group-img-interop
 /// @{
 
-template <typename PixelType>
-DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
+template <typename PixelType, typename Allocator>
+DynImage<Allocator> to_dyn_image(Image<PixelType, Allocator>&& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
-template <typename PixelType>
-MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
+template <typename PixelType, typename Allocator>
+MutableDynImageView to_dyn_image_view(Image<PixelType, Allocator>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
-template <typename PixelType>
-ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
+template <typename PixelType, typename Allocator>
+ConstantDynImageView to_dyn_image_view(const Image<PixelType, Allocator>& img, PixelFormat new_pixel_format = PixelFormat::Invalid);
 
 template <typename PixelType, ImageModifiability modifiability>
 DynImageView<modifiability> to_dyn_image_view(const ImageView<PixelType, modifiability>& img_view, PixelFormat new_pixel_format = PixelFormat::Invalid);
@@ -83,8 +83,8 @@ PixelFormat check_img_to_dyn_img_compatibility(const ImageView<PixelType, modifi
  *                     `PixelFormat::Unknown`.
  * @return A dynamically typed `DynImage` instance.
  */
-template <typename PixelType>
-DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format)
+template <typename PixelType, typename Allocator>
+DynImage<Allocator> to_dyn_image(Image<PixelType, Allocator>&& img, PixelFormat new_pixel_format)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
@@ -94,9 +94,9 @@ DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format)
 
   const auto img_layout = img.layout();
   auto memory = img.relinquish_data_ownership();
-  return DynImage{std::move(memory),
-                  {img_layout.width, img_layout.height, nr_channels, nr_bytes_per_channel, img_layout.stride_bytes},
-                  {new_pixel_format, sample_format}};
+  return DynImage<Allocator>{memory.transfer_data(),
+                             UntypedLayout{img_layout.width, img_layout.height, nr_channels, nr_bytes_per_channel, img_layout.stride_bytes},
+                             UntypedImageSemantics{new_pixel_format, sample_format}};
 }
 
 /** \brief Creates a dynamically typed `MutableDynImageView` view from a statically typed `Image<PixelType>` instance.
@@ -120,8 +120,8 @@ DynImage to_dyn_image(Image<PixelType>&& img, PixelFormat new_pixel_format)
  *                     `PixelFormat::Unknown`.
  * @return A dynamically typed `MutableDynImageView` instance.
  */
-template <typename PixelType>
-MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pixel_format)
+template <typename PixelType, typename Allocator>
+MutableDynImageView to_dyn_image_view(Image<PixelType, Allocator>& img, PixelFormat new_pixel_format)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;
@@ -155,8 +155,8 @@ MutableDynImageView to_dyn_image_view(Image<PixelType>& img, PixelFormat new_pix
  *                     `PixelFormat::Unknown`.
  * @return A dynamically typed `ConstantDynImageView` instance.
  */
-template <typename PixelType>
-ConstantDynImageView to_dyn_image_view(const Image<PixelType>& img, PixelFormat new_pixel_format)
+template <typename PixelType, typename Allocator>
+ConstantDynImageView to_dyn_image_view(const Image<PixelType, Allocator>& img, PixelFormat new_pixel_format)
 {
   constexpr auto nr_channels = PixelTraits<PixelType>::nr_channels;
   constexpr auto nr_bytes_per_channel = PixelTraits<PixelType>::nr_bytes_per_channel;

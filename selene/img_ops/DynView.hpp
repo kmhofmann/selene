@@ -25,18 +25,20 @@ namespace sln {
 template <ImageModifiability modifiability>
 auto view(const DynImageView<modifiability>& dyn_img) -> DynImageView<modifiability>;
 
-auto view(const DynImage& dyn_img) -> ConstantDynImageView;
+template <typename Allocator>
+auto view(const DynImage<Allocator>& dyn_img) -> ConstantDynImageView;
 
-auto view(DynImage& dyn_img) -> MutableDynImageView;
+template <typename Allocator>
+auto view(DynImage<Allocator>& dyn_img) -> MutableDynImageView;
 
 template <typename PixelType, ImageModifiability modifiability>
 auto view(const DynImageView<modifiability>& dyn_img, const BoundingBox& region) -> DynImageView<modifiability>;
 
-template <typename PixelType>
-auto view(const DynImage& dyn_img, const BoundingBox& region) -> ConstantDynImageView;
+template <typename PixelType, typename Allocator>
+auto view(const DynImage<Allocator>& dyn_img, const BoundingBox& region) -> ConstantDynImageView;
 
-template <typename PixelType>
-auto view(DynImage& dyn_img, const BoundingBox& region) -> MutableDynImageView;
+template <typename PixelType, typename Allocator>
+auto view(DynImage<Allocator>& dyn_img, const BoundingBox& region) -> MutableDynImageView;
 
 // TODO: add overloads where pixel format (semantics?) may change?
 
@@ -64,7 +66,8 @@ auto view(const DynImageView<modifiability>& dyn_img) -> DynImageView<modifiabil
  * @param dyn_img The input image.
  * @return A non-owning constant view onto the input image.
  */
-inline auto view(const DynImage& dyn_img) -> ConstantDynImageView
+template <typename Allocator>
+auto view(const DynImage<Allocator>& dyn_img) -> ConstantDynImageView
 {
   return dyn_img.constant_view();
 }
@@ -74,7 +77,8 @@ inline auto view(const DynImage& dyn_img) -> ConstantDynImageView
  * @param dyn_img The input image.
  * @return A non-owning mutable view onto the input image.
  */
-inline auto view(DynImage& dyn_img) -> MutableDynImageView
+template <typename Allocator>
+auto view(DynImage<Allocator>& dyn_img) -> MutableDynImageView
 {
   return dyn_img.view();
 }
@@ -107,8 +111,8 @@ auto view(const DynImageView<modifiability>& dyn_img, const BoundingBox& region)
  * @param region The sub-region to create a view of.
  * @return A non-owning constant view onto the sub-region of the input image.
  */
-template <typename PixelType>
-auto view(const DynImage& dyn_img, const BoundingBox& region) -> ConstantDynImageView
+template <typename PixelType, typename Allocator>
+auto view(const DynImage<Allocator>& dyn_img, const BoundingBox& region) -> ConstantDynImageView
 {
   const auto data_offset = Bytes(dyn_img.stride_bytes() * region.y0() + PixelTraits<PixelType>::nr_bytes * region.x0());
   const auto byte_ptr = dyn_img.byte_ptr() + data_offset;
@@ -127,8 +131,8 @@ auto view(const DynImage& dyn_img, const BoundingBox& region) -> ConstantDynImag
  * @param region The sub-region to create a view of.
  * @return A non-owning mutable view onto the sub-region of the input image.
  */
-template <typename PixelType>
-auto view(DynImage& dyn_img, const BoundingBox& region) -> MutableDynImageView
+template <typename PixelType, typename Allocator>
+auto view(DynImage<Allocator>& dyn_img, const BoundingBox& region) -> MutableDynImageView
 {
   const auto data_offset = Bytes(dyn_img.stride_bytes() * region.y0() + PixelTraits<PixelType>::nr_bytes * region.x0());
   const auto byte_ptr = dyn_img.byte_ptr() + data_offset;

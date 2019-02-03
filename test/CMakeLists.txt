@@ -10,7 +10,6 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/Catch.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/Utils.hpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/selene/base/Allocators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Bitcount.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Kernel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Round.cpp

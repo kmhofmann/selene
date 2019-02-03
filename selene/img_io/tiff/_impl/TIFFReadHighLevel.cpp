@@ -50,7 +50,7 @@ std::uint8_t get_a(std::uint32_t x) // ABGR
 
 bool read_data_high_level(TIFF* tif,
                           const sln::TiffImageLayout& src,
-                          sln::DynImage& dyn_img,
+                          sln::DynImage<>& dyn_img,
                           sln::MessageLog& message_log)
 {
   const auto width = src.width;
@@ -82,7 +82,7 @@ bool read_data_high_level(TIFF* tif,
                                             std::int16_t{4}, std::int16_t{1}, Stride{0}};
   const auto dyn_img_semantics = UntypedImageSemantics{PixelFormat::RGBA,
                                                        impl::tiff::sample_format_to_sample_format(src.sample_format)};
-  dyn_img.reallocate(dyn_img_layout, sln::ImageRowAlignment{0}, dyn_img_semantics);
+  dyn_img.reallocate(dyn_img_layout, dyn_img_semantics);
 
   // convert each pixel from ABGR to RGBA
   auto dyn_ptr = dyn_img.byte_ptr();

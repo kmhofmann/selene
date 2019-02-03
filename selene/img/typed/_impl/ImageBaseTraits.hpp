@@ -14,7 +14,7 @@ namespace sln {
 template <typename PixelType_, ImageModifiability modifiability_>
 class ImageView;
 
-template <typename PixelType_>
+template <typename PixelType_, typename Allocator_>
 class Image;
 
 namespace impl {
@@ -22,8 +22,8 @@ namespace impl {
 template <typename Derived>
 struct ImageBaseTraits;
 
-template <typename PixelType_>
-struct ImageBaseTraits<Image<PixelType_>>
+template <typename PixelType_, typename Allocator_>
+struct ImageBaseTraits<Image<PixelType_, Allocator_>>
 {
   using PixelType = PixelType_;
 

@@ -347,7 +347,7 @@ template bool read_data_strips(TIFF*,
                                const sln::impl::tiff::YCbCrInfo&,
                                const sln::impl::tiff::YCbCrConverter&,
                                const sln::impl::tiff::LabConverter&,
-                               sln::DynImage&,
+                               sln::DynImage<>&,
                                sln::MessageLog&);
 template bool read_data_strips(TIFF*,
                                const sln::TiffImageLayout&,

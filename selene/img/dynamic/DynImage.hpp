@@ -7,9 +7,9 @@
 
 /// @file
 
-#include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
 #include <selene/base/MemoryBlock.hpp>
+#include <selene/base/_impl/CompressedPair.hpp>
 
 #include <selene/img/dynamic/DynImageView.hpp>
 
@@ -20,21 +20,26 @@ namespace sln {
 /// \addtogroup group-img-dynamic
 /// @{
 
+template <typename Allocator_ = default_bytes_allocator>
 class DynImage;
 
-bool operator==(const DynImage& img0, const DynImage& img1);
+template <typename Allocator0, typename Allocator1>
+bool operator==(const DynImage<Allocator0>& img0, const DynImage<Allocator1>& img1);
 
-bool operator!=(const DynImage& img0, const DynImage& img1);
+template <typename Allocator0, typename Allocator1>
+bool operator!=(const DynImage<Allocator0>& img0, const DynImage<Allocator1>& img1);
 
-inline bool equal(const DynImage& dyn_img_0, const DynImage& dyn_img_1);
+template <typename Allocator0, typename Allocator1>
+inline bool equal(const DynImage<Allocator0>& dyn_img_0, const DynImage<Allocator1>& dyn_img_1);
 
-template <ImageModifiability modifiability>
-bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1);
+template <ImageModifiability modifiability, typename Allocator>
+bool equal(const DynImage<Allocator>& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1);
 
-template <ImageModifiability modifiability>
-bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1);
+template <ImageModifiability modifiability, typename Allocator>
+bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage<Allocator>& dyn_img_1);
 
-void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
+template <typename Allocator>
+void swap(DynImage<Allocator>& dyn_img_l, DynImage<Allocator>& dyn_img_r) noexcept;
 
 /** \brief Dynamically typed image class.
  *
@@ -50,9 +55,11 @@ void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
  * The memory of a `DynImage` instance is always owned by the instance.
  * To express a non-owning relation to the underlying data, use a `DynImageView<modifiability>`.
  */
+template <typename Allocator_>
 class DynImage
 {
 public:
+  using Allocator = Allocator_;
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
@@ -70,25 +77,30 @@ public:
 
   DynImage() = default;  ///< Default constructor.
 
-  explicit DynImage(UntypedLayout layout, UntypedImageSemantics semantics = UntypedImageSemantics{});
+  explicit DynImage(const Allocator& alloc);
 
-  DynImage(UntypedLayout layout,
-           ImageRowAlignment row_alignment_bytes,
-           UntypedImageSemantics semantics = UntypedImageSemantics{});
+  explicit DynImage(UntypedLayout layout,
+                    UntypedImageSemantics semantics = UntypedImageSemantics{});
 
-  DynImage(MemoryBlock<AlignedNewAllocator>&& memory,
+  explicit DynImage(UntypedLayout layout,
+                    UntypedImageSemantics semantics,
+                    const Allocator& alloc);
+
+  DynImage(std::uint8_t* memory,
            UntypedLayout layout,
-           UntypedImageSemantics semantics = UntypedImageSemantics{});
+           UntypedImageSemantics semantics = UntypedImageSemantics{},
+           const Allocator& alloc = Allocator{});
 
   ~DynImage();
 
-  DynImage(const DynImage&);
-  DynImage& operator=(const DynImage&);
+  DynImage(const DynImage<Allocator>&);
+  DynImage& operator=(const DynImage<Allocator>&);
 
-  DynImage(DynImage&&) noexcept;
-  DynImage& operator=(DynImage&&) noexcept;
+  DynImage(DynImage<Allocator>&&) noexcept;
+  DynImage<Allocator>& operator=(DynImage<Allocator>&&) noexcept;
 
-  template <ImageModifiability modifiability> explicit DynImage(const DynImageView<modifiability>&);
+  template <ImageModifiability modifiability> explicit DynImage(const DynImageView<modifiability>&,
+                                                                const Allocator& alloc = Allocator());
 
   template <ImageModifiability modifiability> DynImage& operator=(const DynImageView<modifiability>&);
 
@@ -148,28 +160,29 @@ public:
   void clear();
 
   bool reallocate(UntypedLayout layout,
-                  ImageRowAlignment row_alignment_bytes,
-                  UntypedImageSemantics semantics = UntypedImageSemantics{},
-                  bool shrink_to_fit = true);
+                  UntypedImageSemantics semantics = UntypedImageSemantics{});
 
-  MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
+  MemoryBlock<Allocator> relinquish_data_ownership();
 
 private:
-  constexpr static auto default_base_alignment_bytes = ImageRowAlignment{16ul};
+//  DynImageView<ImageModifiability::Mutable> view_;
+  impl::CompressedPair<DynImageView<ImageModifiability::Mutable>, Allocator> view_and_alloc_;
 
-  DynImageView<ImageModifiability::Mutable> view_;
+  DynImageView<ImageModifiability::Mutable>& mem_view() { return view_and_alloc_.first(); }
+  const DynImageView<ImageModifiability::Mutable>& mem_view() const { return view_and_alloc_.first(); }
+
+  Allocator& mem_alloc() { return view_and_alloc_.second(); }
+  const Allocator& mem_alloc() const { return view_and_alloc_.second(); }
 
   void copy_rows_from(const DynImage& src);
 
   DynImageView<ImageModifiability::Mutable> allocate_memory(
       UntypedLayout layout,
-      ImageRowAlignment base_alignment_bytes,
-      ImageRowAlignment row_alignment_bytes,
       UntypedImageSemantics semantics);
 
   void deallocate_memory();
 
-  friend void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept;
+  friend void swap<Allocator>(DynImage<Allocator>& dyn_img_l, DynImage<Allocator>& dyn_img_r) noexcept;
 };
 
 /// @}
@@ -177,24 +190,26 @@ private:
 // ----------
 // Implementation:
 
+template <typename Allocator_>
+DynImage<Allocator_>::DynImage(const Allocator& alloc)
+    : view_and_alloc_(DynImageView<ImageModifiability::Mutable>{}, alloc)
+{
+}
+
+template <typename Allocator_>
+DynImage<Allocator_>::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
+    : view_and_alloc_(this->allocate_memory(layout, semantics), Allocator{})
+{
+}
+
 /** \brief Constructs a dynamic image with the specified layout and pixel semantics.
  *
  * @param layout The image layout.
  * @param semantics The pixel semantics.
  */
-inline DynImage::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, ImageRowAlignment{0}, semantics))
-{
-}
-
-/** \brief Constructs a dynamic image with the specified layout, row alignment, and pixel semantics.
- *
- * @param layout The image layout.
- * @param row_alignment_bytes The row alignment in bytes.
- * @param semantics The pixel semantics.
- */
-inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_bytes, UntypedImageSemantics semantics)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, semantics))
+template <typename Allocator_>
+DynImage<Allocator_>::DynImage(UntypedLayout layout, UntypedImageSemantics semantics, const Allocator& alloc)
+    : view_and_alloc_(this->allocate_memory(layout, semantics), alloc)
 {
 }
 
@@ -206,11 +221,13 @@ inline DynImage::DynImage(UntypedLayout layout, ImageRowAlignment row_alignment_
  * @param layout The image layout.
  * @param semantics The pixel semantics.
  */
-inline DynImage::DynImage(
-    MemoryBlock<AlignedNewAllocator>&& memory,
+template <typename Allocator_>
+DynImage<Allocator_>::DynImage(
+    std::uint8_t* memory,
     UntypedLayout layout,
-    UntypedImageSemantics semantics)
-    : view_(memory.transfer_data(), layout, semantics)
+    UntypedImageSemantics semantics,
+    const Allocator& alloc)
+    : view_and_alloc_({memory, layout, semantics}, alloc)
 {
 }
 
@@ -218,7 +235,8 @@ inline DynImage::DynImage(
  *
  * All owned memory will be deallocated.
  */
-inline DynImage::~DynImage()
+template <typename Allocator_>
+DynImage<Allocator_>::~DynImage()
 {
   this->deallocate_memory();
 }
@@ -227,12 +245,11 @@ inline DynImage::~DynImage()
  *
  * @param other The image to be copied from.
  */
-inline DynImage::DynImage(const DynImage& other)
-    : view_(allocate_memory(other.layout(),
-                            default_base_alignment_bytes,
-                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes()),
-                            other.semantics()))
+template <typename Allocator_>
+DynImage<Allocator_>::DynImage(const DynImage<Allocator>& other)
+    : view_and_alloc_(allocate_memory(other.layout(),
+                                      other.semantics()),
+                      other.mem_alloc())
 {
   copy_rows_from(other);
 }
@@ -242,7 +259,8 @@ inline DynImage::DynImage(const DynImage& other)
  * @param other The image to be assigned from.
  * @return A reference to this image.
  */
-inline DynImage& DynImage::operator=(const DynImage& other)
+template <typename Allocator_>
+DynImage<Allocator_>& DynImage<Allocator_>::operator=(const DynImage<Allocator>& other)
 {
   // Check for self-assignment
   if (this == & other)
@@ -258,10 +276,9 @@ inline DynImage& DynImage::operator=(const DynImage& other)
     this->deallocate_memory();
 
     // Allocate new memory
-    view_ = allocate_memory(
-        other.layout(), default_base_alignment_bytes,
-        impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()), other.stride_bytes()),
-        other.semantics());
+    mem_view() = allocate_memory(other.layout(), other.semantics());
+
+    mem_alloc() = other.mem_alloc();
   }
 
   copy_rows_from(other);
@@ -273,10 +290,11 @@ inline DynImage& DynImage::operator=(const DynImage& other)
  *
  * @param other The image to be moved from.
  */
-inline DynImage::DynImage(DynImage&& other) noexcept
-    : view_(other.view_)
+template <typename Allocator_>
+DynImage<Allocator_>::DynImage(DynImage<Allocator>&& other) noexcept
+    : view_and_alloc_(other.view_and_alloc_)
 {
-  other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
+  other.mem_view() = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
 }
 
 /** \brief Move assignment operator.
@@ -284,7 +302,8 @@ inline DynImage::DynImage(DynImage&& other) noexcept
  * @param other The image to be move-assigned from.
  * @return A reference to this image.
  */
-inline DynImage& DynImage::operator=(DynImage&& other) noexcept
+template <typename Allocator_>
+DynImage<Allocator_>& DynImage<Allocator_>::operator=(DynImage<Allocator>&& other) noexcept
 {
   // Check for self-assignment
   if (this == & other)
@@ -295,8 +314,8 @@ inline DynImage& DynImage::operator=(DynImage&& other) noexcept
   // Clean up own memory
   this->deallocate_memory();
 
-  view_ = other.view_;
-  other.view_ = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
+  view_and_alloc_ = other.view_and_alloc_;
+  other.mem_view() = DynImageView<ImageModifiability::Mutable>{{nullptr}, UntypedLayout{}, UntypedImageSemantics{}};
 
   return * this;
 }
@@ -306,13 +325,10 @@ inline DynImage& DynImage::operator=(DynImage&& other) noexcept
  * @tparam modifiability_ The modifiability value of the other image.
  * @param other The image to be copied from.
  */
+template <typename Allocator_>
 template <ImageModifiability modifiability_>
-DynImage::DynImage(const DynImageView<modifiability_>& other)
-    : view_(allocate_memory(other.layout(),
-                            default_base_alignment_bytes,
-                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes()),
-                            other.semantics()))
+DynImage<Allocator_>::DynImage(const DynImageView<modifiability_>& other, const Allocator& alloc)
+    : view_and_alloc_(allocate_memory(other.layout(), other.semantics()), alloc)
 {
   copy_rows_from(other);
 }
@@ -322,11 +338,12 @@ DynImage::DynImage(const DynImageView<modifiability_>& other)
  * @tparam modifiability_ The modifiability value of the other image.
  * @param other The image to be copied from.
  */
+template <typename Allocator_>
 template <ImageModifiability modifiability_>
-DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
+DynImage<Allocator_>& DynImage<Allocator_>::operator=(const DynImageView<modifiability_>& other)
 {
   // Check for self-assignment
-  if (& this->view_ == & other)
+  if (& this->mem_view() == & other)
   {
     return * this;
   }
@@ -339,10 +356,7 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
     this->deallocate_memory();
 
     // Allocate new memory
-    view_ = allocate_memory(
-        other.layout(), default_base_alignment_bytes,
-        impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()), other.stride_bytes()),
-        other.semantics());
+    mem_view() = allocate_memory(other.layout(), other.semantics());
   }
 
   copy_rows_from(other);
@@ -355,9 +369,10 @@ DynImage& DynImage::operator=(const DynImageView<modifiability_>& other)
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The untyped image layout.
  */
-inline const UntypedLayout& DynImage::layout() const noexcept
+template <typename Allocator_>
+const UntypedLayout& DynImage<Allocator_>::layout() const noexcept
 {
-  return view_.layout();
+  return mem_view().layout();
 }
 
 /** \brief Returns the pixel semantics for the dynamic image.
@@ -365,45 +380,50 @@ inline const UntypedLayout& DynImage::layout() const noexcept
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The pixel semantics.
  */
-inline const UntypedImageSemantics& DynImage::semantics() const noexcept
+template <typename Allocator_>
+const UntypedImageSemantics& DynImage<Allocator_>::semantics() const noexcept
 {
-  return view_.semantics();
+  return mem_view().semantics();
 }
 
 /** \brief Returns the image width.
  *
  * @return The image width.
  */
-inline PixelLength DynImage::width() const noexcept
+template <typename Allocator_>
+PixelLength DynImage<Allocator_>::width() const noexcept
 {
-  return view_.width();
+  return mem_view().width();
 }
 
 /** \brief Returns the image height.
  *
  * @return The image height.
  */
-inline PixelLength DynImage::height() const noexcept
+template <typename Allocator_>
+PixelLength DynImage<Allocator_>::height() const noexcept
 {
-  return view_.height();
+  return mem_view().height();
 }
 
 /** \brief Returns the number of channels for the image.
  *
  * @return The number of channels.
  */
-inline std::int16_t DynImage::nr_channels() const noexcept
+template <typename Allocator_>
+std::int16_t DynImage<Allocator_>::nr_channels() const noexcept
 {
-  return view_.nr_channels();
+  return mem_view().nr_channels();
 }
 
 /** \brief Returns the number of bytes per channel for the image.
  *
  * @return The number of bytes per channel.
  */
-inline std::int16_t DynImage::nr_bytes_per_channel() const noexcept
+template <typename Allocator_>
+std::int16_t DynImage<Allocator_>::nr_bytes_per_channel() const noexcept
 {
-  return view_.nr_bytes_per_channel();
+  return mem_view().nr_bytes_per_channel();
 }
 
 /** \brief Returns the row stride of the image in bytes.
@@ -415,9 +435,10 @@ inline std::int16_t DynImage::nr_bytes_per_channel() const noexcept
  *
  * @return The row stride of the image in bytes.
  */
-inline Stride DynImage::stride_bytes() const noexcept
+template <typename Allocator_>
+Stride DynImage<Allocator_>::stride_bytes() const noexcept
 {
-  return view_.stride_bytes();
+  return mem_view().stride_bytes();
 }
 
 /** \brief Returns the number of data bytes occupied by each image row.
@@ -427,9 +448,10 @@ inline Stride DynImage::stride_bytes() const noexcept
  *
  * @return The number of data bytes occupied by each image row.
  */
-inline std::ptrdiff_t DynImage::row_bytes() const noexcept
+template <typename Allocator_>
+std::ptrdiff_t DynImage<Allocator_>::row_bytes() const noexcept
 {
-  return view_.row_bytes();
+  return mem_view().row_bytes();
 }
 
 /** \brief Returns the total number of bytes occupied by the image data in memory.
@@ -438,9 +460,10 @@ inline std::ptrdiff_t DynImage::row_bytes() const noexcept
  *
  * @return The total number of bytes occupied by the image data in memory.
  */
-inline std::ptrdiff_t DynImage::total_bytes() const noexcept
+template <typename Allocator_>
+std::ptrdiff_t DynImage<Allocator_>::total_bytes() const noexcept
 {
-  return view_.total_bytes();
+  return mem_view().total_bytes();
 }
 
 /** \brief Returns the specified pixel format of the dynamic image.
@@ -448,9 +471,10 @@ inline std::ptrdiff_t DynImage::total_bytes() const noexcept
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The pixel format.
  */
-inline PixelFormat DynImage::pixel_format() const noexcept
+template <typename Allocator_>
+PixelFormat DynImage<Allocator_>::pixel_format() const noexcept
 {
-  return view_.pixel_format();
+  return mem_view().pixel_format();
 }
 
 /** \brief Returns the specified sample format of the dynamic image.
@@ -458,9 +482,10 @@ inline PixelFormat DynImage::pixel_format() const noexcept
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The sample format.
  */
-inline SampleFormat DynImage::sample_format() const noexcept
+template <typename Allocator_>
+SampleFormat DynImage<Allocator_>::sample_format() const noexcept
 {
-  return view_.sample_format();
+  return mem_view().sample_format();
 }
 
 /** \brief Returns whether the image view is stored packed in memory.
@@ -469,9 +494,10 @@ inline SampleFormat DynImage::sample_format() const noexcept
  *
  * @return True, if the image view data is stored packed; false otherwise.
  */
-inline bool DynImage::is_packed() const noexcept
+template <typename Allocator_>
+bool DynImage<Allocator_>::is_packed() const noexcept
 {
-  return view_.is_packed();
+  return mem_view().is_packed();
 }
 
 /** \brief Returns whether the image is empty.
@@ -481,9 +507,10 @@ inline bool DynImage::is_packed() const noexcept
  *
  * @return True, if the image is empty; false if it is non-empty.
  */
-inline bool DynImage::is_empty() const noexcept
+template <typename Allocator_>
+bool DynImage<Allocator_>::is_empty() const noexcept
 {
-  return view_.is_empty();
+  return mem_view().is_empty();
 }
 
 /** \brief Returns whether the image is valid.
@@ -492,19 +519,21 @@ inline bool DynImage::is_empty() const noexcept
  *
  * @return True, if the image is valid; false otherwise.
  */
-inline bool DynImage::is_valid() const noexcept
+template <typename Allocator_>
+bool DynImage<Allocator_>::is_valid() const noexcept
 {
-  return view_.is_valid();
+  return mem_view().is_valid();
 }
 
 /** \brief Returns an iterator to the first row.
  *
  * @return Iterator to the first image row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-auto DynImage::begin() noexcept -> iterator<PixelType>
+auto DynImage<Allocator_>::begin() noexcept -> iterator<PixelType>
 {
-  return view_.begin<PixelType>();
+  return mem_view().template begin<PixelType>();
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -512,10 +541,11 @@ auto DynImage::begin() noexcept -> iterator<PixelType>
  * @tparam PixelType The pixel type.
  * @return Constant iterator to the first image row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-auto DynImage::begin() const noexcept -> const_iterator<PixelType>
+auto DynImage<Allocator_>::begin() const noexcept -> const_iterator<PixelType>
 {
-  return view_.begin<PixelType>();
+  return mem_view().template begin<PixelType>();
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -523,10 +553,11 @@ auto DynImage::begin() const noexcept -> const_iterator<PixelType>
  * @tparam PixelType The pixel type.
  * @return Constant iterator to the first image row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-auto DynImage::cbegin() const noexcept -> const_iterator<PixelType>
+auto DynImage<Allocator_>::cbegin() const noexcept -> const_iterator<PixelType>
 {
-  return view_.cbegin<PixelType>();
+  return mem_view().template cbegin<PixelType>();
 }
 
 /** \brief Returns an iterator to the row after the last row of the image.
@@ -534,10 +565,11 @@ auto DynImage::cbegin() const noexcept -> const_iterator<PixelType>
  * @tparam PixelType The pixel type.
  * @return Iterator to the image row after the last row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-auto DynImage::end() noexcept -> iterator<PixelType>
+auto DynImage<Allocator_>::end() noexcept -> iterator<PixelType>
 {
-  return view_.end<PixelType>();
+  return mem_view().template end<PixelType>();
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -545,10 +577,11 @@ auto DynImage::end() noexcept -> iterator<PixelType>
  * @tparam PixelType The pixel type.
  * @return Constant iterator to the image row after the last row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-auto DynImage::end() const noexcept -> const_iterator<PixelType>
+auto DynImage<Allocator_>::end() const noexcept -> const_iterator<PixelType>
 {
-  return view_.end<PixelType>();
+  return mem_view().template end<PixelType>();
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -556,28 +589,31 @@ auto DynImage::end() const noexcept -> const_iterator<PixelType>
  * @tparam PixelType The pixel type.
  * @return Constant iterator to the image row after the last row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-auto DynImage::cend() const noexcept -> const_iterator<PixelType>
+auto DynImage<Allocator_>::cend() const noexcept -> const_iterator<PixelType>
 {
-  return view_.cend<PixelType>();
+  return mem_view().template cend<PixelType>();
 }
 
 /** \brief Returns a pointer to the first byte storing image data (in row 0).
  *
  * @return Pointer to the first image data byte.
  */
-inline auto DynImage::byte_ptr() noexcept -> DataPtrType
+template <typename Allocator_>
+auto DynImage<Allocator_>::byte_ptr() noexcept -> DataPtrType
 {
-  return view_.byte_ptr();
+  return mem_view().byte_ptr();
 }
 
 /** \brief Returns a constant pointer to the first byte storing image data (in row 0).
  *
  * @return Constant pointer to the first image data byte.
  */
-inline auto DynImage::byte_ptr() const noexcept -> ConstDataPtrType
+template <typename Allocator_>
+auto DynImage<Allocator_>::byte_ptr() const noexcept -> ConstDataPtrType
 {
-  return view_.byte_ptr();
+  return mem_view().byte_ptr();
 }
 
 /** \brief Returns a pointer to the first byte storing image data in row `y`.
@@ -585,9 +621,10 @@ inline auto DynImage::byte_ptr() const noexcept -> ConstDataPtrType
  * @param y Row index.
  * @return Pointer to the first image data byte of row `y`.
  */
-inline auto DynImage::byte_ptr(PixelIndex y) noexcept -> DataPtrType
+template <typename Allocator_>
+auto DynImage<Allocator_>::byte_ptr(PixelIndex y) noexcept -> DataPtrType
 {
-  return view_.byte_ptr(y);
+  return mem_view().byte_ptr(y);
 }
 
 /** \brief Returns a constant pointer to the first byte storing image data in row `y`.
@@ -595,9 +632,10 @@ inline auto DynImage::byte_ptr(PixelIndex y) noexcept -> DataPtrType
  * @param y Row index.
  * @return Constant pointer to the first image data byte of row `y`.
  */
-inline auto DynImage::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
+template <typename Allocator_>
+auto DynImage<Allocator_>::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
 {
-  return view_.byte_ptr(y);
+  return mem_view().byte_ptr(y);
 }
 
 /** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -606,9 +644,10 @@ inline auto DynImage::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
  * @param y Row index.
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
-inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
+template <typename Allocator_>
+auto DynImage<Allocator_>::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
 {
-  return view_.byte_ptr(x, y);
+  return mem_view().byte_ptr(x, y);
 }
 
 /** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -617,9 +656,10 @@ inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrTy
  * @param y Row index.
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
-inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
+template <typename Allocator_>
+auto DynImage<Allocator_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
 {
-  return view_.byte_ptr(x, y);
+  return mem_view().byte_ptr(x, y);
 }
 
 /** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
@@ -627,10 +667,11 @@ inline auto DynImage::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> Con
  * @tparam PixelType The pixel type.
  * @return Pointer to the first pixel element.
  */
+template <typename Allocator_>
 template <typename PixelType>
-PixelType* DynImage::data() noexcept
+PixelType* DynImage<Allocator_>::data() noexcept
 {
-  return view_.data<PixelType>();
+  return mem_view().template data<PixelType>();
 }
 
 /** \brief Returns a constant pointer to the first pixel element (i.e. at row 0, column 0).
@@ -638,10 +679,11 @@ PixelType* DynImage::data() noexcept
  * @tparam PixelType The pixel type.
  * @return Constant pointer to the first pixel element.
  */
+template <typename Allocator_>
 template <typename PixelType>
-const PixelType* DynImage::data() const noexcept
+const PixelType* DynImage<Allocator_>::data() const noexcept
 {
-  return view_.data<PixelType>();
+  return mem_view().template data<PixelType>();
 }
 
 /** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
@@ -650,10 +692,11 @@ const PixelType* DynImage::data() const noexcept
  * @param y Row index.
  * @return Pointer to the first pixel element of the y-th row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-PixelType* DynImage::data(PixelIndex y) noexcept
+PixelType* DynImage<Allocator_>::data(PixelIndex y) noexcept
 {
-  return view_.data<PixelType>(y);
+  return mem_view().template data<PixelType>(y);
 }
 
 /** \brief Returns a constant pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
@@ -662,10 +705,11 @@ PixelType* DynImage::data(PixelIndex y) noexcept
  * @param y Row index.
  * @return Constant pointer to the first pixel element of the y-th row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-const PixelType* DynImage::data(PixelIndex y) const noexcept
+const PixelType* DynImage<Allocator_>::data(PixelIndex y) const noexcept
 {
-  return view_.data<PixelType>(y);
+  return mem_view().template data<PixelType>(y);
 }
 
 /** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
@@ -674,10 +718,11 @@ const PixelType* DynImage::data(PixelIndex y) const noexcept
  * @param y Row index.
  * @return Pointer to the one-past-the-last pixel element of the y-th row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-PixelType* DynImage::data_row_end(PixelIndex y) noexcept
+PixelType* DynImage<Allocator_>::data_row_end(PixelIndex y) noexcept
 {
-  return view_.data_row_end<PixelType>(y);
+  return mem_view().template data_row_end<PixelType>(y);
 }
 
 /** \brief Returns a constant pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
@@ -686,10 +731,11 @@ PixelType* DynImage::data_row_end(PixelIndex y) noexcept
  * @param y Row index.
  * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-const PixelType* DynImage::data_row_end(PixelIndex y) const noexcept
+const PixelType* DynImage<Allocator_>::data_row_end(PixelIndex y) const noexcept
 {
-  return view_.data_row_end<PixelType>(y);
+  return mem_view().template data_row_end<PixelType>(y);
 }
 
 /** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
@@ -699,10 +745,11 @@ const PixelType* DynImage::data_row_end(PixelIndex y) const noexcept
  * @param y Row index.
  * @return Pointer to the x-th pixel element of the y-th row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-PixelType* DynImage::data(PixelIndex x, PixelIndex y) noexcept
+PixelType* DynImage<Allocator_>::data(PixelIndex x, PixelIndex y) noexcept
 {
-  return view_.data<PixelType>(x, y);
+  return mem_view().template data<PixelType>(x, y);
 }
 
 /** \brief Returns a constant pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
@@ -712,10 +759,11 @@ PixelType* DynImage::data(PixelIndex x, PixelIndex y) noexcept
  * @param y Row index.
  * @return Constant pointer to the x-th pixel element of the y-th row.
  */
+template <typename Allocator_>
 template <typename PixelType>
-const PixelType* DynImage::data(PixelIndex x, PixelIndex y) const noexcept
+const PixelType* DynImage<Allocator_>::data(PixelIndex x, PixelIndex y) const noexcept
 {
-  return view_.data<PixelType>(x, y);
+  return mem_view().template data<PixelType>(x, y);
 }
 
 /** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -725,10 +773,11 @@ const PixelType* DynImage::data(PixelIndex x, PixelIndex y) const noexcept
  * @param y Row index.
  * @return Reference to the pixel element at location `(x, y)`.
  */
+template <typename Allocator_>
 template <typename PixelType>
-PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) noexcept
+PixelType& DynImage<Allocator_>::pixel(PixelIndex x, PixelIndex y) noexcept
 {
-  return view_.pixel<PixelType>(x, y);
+  return mem_view().template pixel<PixelType>(x, y);
 }
 
 /** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -738,47 +787,52 @@ PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) noexcept
  * @param y Row index.
  * @return Constant reference to the pixel element at location `(x, y)`.
  */
+template <typename Allocator_>
 template <typename PixelType>
-const PixelType& DynImage::pixel(PixelIndex x, PixelIndex y) const noexcept
+const PixelType& DynImage<Allocator_>::pixel(PixelIndex x, PixelIndex y) const noexcept
 {
-  return view_.pixel<PixelType>(x, y);
+  return mem_view().template pixel<PixelType>(x, y);
 }
 
 /** \brief Returns the underlying (mutable) dynamic image view.
  *
  * @return The underlying (mutable) dynamic image view.
  */
-inline DynImageView<ImageModifiability::Mutable>& DynImage::view() noexcept
+template <typename Allocator_>
+DynImageView<ImageModifiability::Mutable>& DynImage<Allocator_>::view() noexcept
 {
-  return view_.view();
+  return mem_view().view();
 }
 
 /** \brief Returns a constant image view on the underlying data.
  *
  * @return A constant image view.
  */
-inline DynImageView<ImageModifiability::Constant> DynImage::view() const noexcept
+template <typename Allocator_>
+DynImageView<ImageModifiability::Constant> DynImage<Allocator_>::view() const noexcept
 {
-  return view_.constant_view();
+  return mem_view().constant_view();
 }
 
 /** \brief Returns a constant image view on the underlying data.
  *
  * @return A constant image view.
  */
-inline DynImageView<ImageModifiability::Constant> DynImage::constant_view() const noexcept
+template <typename Allocator_>
+DynImageView<ImageModifiability::Constant> DynImage<Allocator_>::constant_view() const noexcept
 {
-  return view_.constant_view();
+  return mem_view().constant_view();
 }
 
 /** \brief Clears the dynamic image; i.e. resets the internal state to the image state after default construction.
  *
  * All allocated memory will be deallocated.
  */
-inline void DynImage::clear()
+template <typename Allocator_>
+void DynImage<Allocator_>::clear()
 {
   deallocate_memory();
-  view_.clear();
+  mem_view().clear();
 }
 
 /** \brief Reallocates the image data according to the specified layout and alignment.
@@ -791,34 +845,18 @@ inline void DynImage::clear()
  *                      less than already allocated.
  * @return True, if a memory reallocation took place; false otherwise.
  */
-inline bool DynImage::reallocate(
-    UntypedLayout layout,
-    ImageRowAlignment row_alignment_bytes,
-    UntypedImageSemantics semantics,
-    bool shrink_to_fit)
+template <typename Allocator_>
+bool DynImage<Allocator_>::reallocate(UntypedLayout layout, UntypedImageSemantics semantics)
 {
-  if (layout == this->view_.layout())
+  if (layout == this->mem_view().layout())
   {
     return false;
   }
 
-  layout.stride_bytes = impl::compute_stride_bytes(
-      std::max(layout.stride_bytes, Stride{layout.nr_bytes_per_channel * layout.nr_channels * layout.width}),
-      row_alignment_bytes);
-  const auto nr_bytes_to_allocate = layout.stride_bytes * layout.height;
-  const auto nr_currently_allocated_bytes = this->stride_bytes() * this->height();
-
-  // No need to act if size parameters match
-  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
-                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
-  if (bytes_match)
-  {
-    view_ = DynImageView<ImageModifiability::Mutable>(this->byte_ptr(), layout);
-    return false;
-  }
+  layout.stride_bytes = std::max(layout.stride_bytes, Stride{layout.nr_bytes_per_channel * layout.nr_channels * layout.width});
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes, semantics);
+  mem_view() = this->allocate_memory(layout, semantics);
   return true;
 }
 
@@ -828,88 +866,89 @@ inline bool DynImage::reallocate(
  *
  * @return The owned memory block.
  */
-inline MemoryBlock<AlignedNewAllocator> DynImage::relinquish_data_ownership()
+template <typename Allocator_>
+MemoryBlock<Allocator_> DynImage<Allocator_>::relinquish_data_ownership()
 {
   const auto ptr = this->byte_ptr();
   const auto len = this->total_bytes();
 
-  view_.clear();
-  return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, static_cast<std::size_t>(len));
+  mem_view().clear();
+  return construct_memory_block_from_existing_memory<Allocator>(ptr, static_cast<std::size_t>(len));
 }
 
-inline void DynImage::copy_rows_from(const DynImage& src)
+template <typename Allocator_>
+void DynImage<Allocator_>::copy_rows_from(const DynImage& src)
 {
   SELENE_ASSERT(byte_ptr() && src.byte_ptr());
   SELENE_ASSERT(width() == src.width() && height() == src.height());
 
-  for (PixelIndex y = 0_idx; y < view_.height(); ++y)
+  for (PixelIndex y = 0_idx; y < mem_view().height(); ++y)
   {
     std::copy(src.byte_ptr(y), src.byte_ptr(y) + src.row_bytes(), byte_ptr(y));
   }
 }
 
-inline DynImageView<ImageModifiability::Mutable> DynImage::allocate_memory(
+template <typename Allocator_>
+DynImageView<ImageModifiability::Mutable> DynImage<Allocator_>::allocate_memory(
     UntypedLayout layout,
-    ImageRowAlignment base_alignment_bytes,
-    ImageRowAlignment row_alignment_bytes,
     UntypedImageSemantics semantics)
 {
-  const auto stride_bytes = impl::compute_stride_bytes(
-      std::max(layout.stride_bytes, Stride{layout.nr_bytes_per_channel * layout.nr_channels * layout.width}),
-      row_alignment_bytes);
-  const auto nr_bytes_to_allocate = stride_bytes * layout.height;
+  const auto stride_bytes = std::max(layout.stride_bytes, Stride{layout.nr_bytes_per_channel * layout.nr_channels * layout.width});
+  const auto nr_bytes_to_allocate = static_cast<std::size_t>(stride_bytes * layout.height);
 
-  base_alignment_bytes = std::max(row_alignment_bytes, base_alignment_bytes);
-  auto memory = sln::AlignedNewAllocator::allocate(
-      static_cast<std::size_t>(nr_bytes_to_allocate),
-      static_cast<std::size_t>(base_alignment_bytes));
-  SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
+  auto* memory = mem_alloc().allocate(nr_bytes_to_allocate);
 
   return DynImageView<ImageModifiability::Mutable>{
-      {memory.transfer_data()},
+      {memory},
       {layout.width, layout.height, layout.nr_channels, layout.nr_bytes_per_channel, stride_bytes},
       semantics};
 }
 
-inline void DynImage::deallocate_memory()
+template <typename Allocator_>
+void DynImage<Allocator_>::deallocate_memory()
 {
-  std::uint8_t* ptr = view_.byte_ptr();
-  sln::AlignedNewAllocator::deallocate(ptr);
+  std::uint8_t* ptr = mem_view().byte_ptr();
+  const auto nr_bytes_to_deallocate = this->total_bytes();
+  mem_alloc().deallocate(ptr, static_cast<std::size_t>(nr_bytes_to_deallocate));
 }
 
 // -----
 
-inline bool operator==(const DynImage& img0, const DynImage& img1)
+template <typename Allocator0, typename Allocator1>
+bool operator==(const DynImage<Allocator0>& img0, const DynImage<Allocator1>& img1)
 {
   return equal(img0.view(), img1.view());
 }
 
-inline bool operator!=(const DynImage& img0, const DynImage& img1)
+template <typename Allocator0, typename Allocator1>
+bool operator!=(const DynImage<Allocator0>& img0, const DynImage<Allocator1>& img1)
 {
   return !(img0 == img1);
 }
 
-inline bool equal(const DynImage& dyn_img_0, const DynImage& dyn_img_1)
+template <typename Allocator0, typename Allocator1>
+inline bool equal(const DynImage<Allocator0>& dyn_img_0, const DynImage<Allocator1>& dyn_img_1)
 {
   return equal(dyn_img_0.view(), dyn_img_1.view());
 }
 
-template <ImageModifiability modifiability>
-bool equal(const DynImage& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1)
+template <ImageModifiability modifiability, typename Allocator>
+bool equal(const DynImage<Allocator>& dyn_img_0, const DynImageView<modifiability>& dyn_img_view_1)
 {
   return equal(dyn_img_0.view(), dyn_img_view_1);
 }
 
-template <ImageModifiability modifiability>
-bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage& dyn_img_1)
+template <ImageModifiability modifiability, typename Allocator>
+bool equal(const DynImageView<modifiability>& dyn_img_view_0, const DynImage<Allocator>& dyn_img_1)
 {
   return equal(dyn_img_view_0, dyn_img_1.view());
 }
 
-inline void swap(DynImage& dyn_img_l, DynImage& dyn_img_r) noexcept
+template <typename Allocator>
+void swap(DynImage<Allocator>& dyn_img_l, DynImage<Allocator>& dyn_img_r) noexcept
 {
   using std::swap;
-  swap(dyn_img_l.view_, dyn_img_r.view_);
+  swap(dyn_img_l.view_and_alloc_, dyn_img_r.view_and_alloc_);
 }
 
 }  // namespace sln

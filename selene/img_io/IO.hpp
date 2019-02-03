@@ -44,10 +44,10 @@ enum class ImageFormat
 };
 
 template <typename SourceType>
-DynImage read_image(SourceType&& source, MessageLog* message_log = nullptr);
+DynImage<> read_image(SourceType&& source, MessageLog* message_log = nullptr);
 
-template <typename SinkType>
-bool write_image(const DynImage& dyn_img,
+template <typename SinkType, typename Allocator>
+bool write_image(const DynImage<Allocator>& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log = nullptr,
@@ -90,7 +90,7 @@ void add_messages(const MessageLog& message_log_src, MessageLog* message_log_dst
 #if defined(SELENE_WITH_LIBJPEG)
 
 template <typename SourceType>
-[[nodiscard]] bool try_read_as_jpeg_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
+[[nodiscard]] bool try_read_as_jpeg_image(SourceType&& source, DynImage<>& dyn_img, MessageLog* message_log)
 {
   MessageLog message_log_jpeg;
   JPEGDecompressionObject obj;
@@ -113,7 +113,7 @@ template <typename SourceType>
 #if defined(SELENE_WITH_LIBPNG)
 
 template <typename SourceType>
-[[nodiscard]] bool try_read_as_png_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
+[[nodiscard]] bool try_read_as_png_image(SourceType&& source, DynImage<>& dyn_img, MessageLog* message_log)
 {
   MessageLog message_log_png;
   PNGDecompressionObject obj;
@@ -135,7 +135,7 @@ template <typename SourceType>
 #if defined(SELENE_WITH_LIBTIFF)
 
 template <typename SourceType>
-[[nodiscard]] bool try_read_as_tiff_image(SourceType&& source, DynImage& dyn_img, MessageLog* message_log)
+[[nodiscard]] bool try_read_as_tiff_image(SourceType&& source, DynImage<>& dyn_img, MessageLog* message_log)
 {
   const auto source_pos = source.position();
 
@@ -168,12 +168,12 @@ template <typename SourceType>
  * otherwise.
  */
 template <typename SourceType>
-DynImage read_image(SourceType&& source,
-                    [[maybe_unused]] MessageLog* message_log)
+DynImage<> read_image(SourceType&& source,
+                      [[maybe_unused]] MessageLog* message_log)
 {
   [[maybe_unused]] bool reading_attempted = false;
   [[maybe_unused]] const auto source_pos = source.position();
-  DynImage dyn_img;
+  DynImage<> dyn_img;
 
   // First, try to read as JPEG image:
 
@@ -236,8 +236,8 @@ DynImage read_image(SourceType&& source,
  * @param options Writing/compression options for the respective format. If omitted, default options will be used.
  * @return True, if the write operation was successful; false otherwise.
  */
-template <typename SinkType>
-bool write_image(const DynImage& dyn_img,
+template <typename SinkType, typename Allocator>
+bool write_image(const DynImage<Allocator>& dyn_img,
                  ImageFormat format,
                  SinkType&& sink,
                  MessageLog* message_log,

@@ -7,37 +7,39 @@
 
 /// @file
 
-#include <selene/base/Allocators.hpp>
 #include <selene/base/Assert.hpp>
 #include <selene/base/MemoryBlock.hpp>
+#include <selene/base/_impl/CompressedPair.hpp>
 
 #include <selene/img/typed/ImageView.hpp>
+
+#include <memory>
 
 namespace sln {
 
 /// \addtogroup group-img-typed
 /// @{
 
-template <typename PixelType_>
+template <typename PixelType_, typename Allocator_ = default_bytes_allocator>
 class Image;
 
-template <typename PixelType0, typename PixelType1>
-bool operator==(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
+bool operator==(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1);
 
-template <typename PixelType0, typename PixelType1>
-bool operator!=(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
+bool operator!=(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1);
 
-template <typename PixelType0, typename PixelType1>
-bool equal(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1);
+template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
+bool equal(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1);
 
-template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
-bool equal(const Image<PixelType0>& img_0, const ImageView<PixelType1, modifiability>& img_view_1);
+template <typename PixelType0, typename PixelType1, typename Allocator, ImageModifiability modifiability>
+bool equal(const Image<PixelType0, Allocator>& img_0, const ImageView<PixelType1, modifiability>& img_view_1);
 
-template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
-bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1);
+template <typename PixelType0, typename PixelType1, typename Allocator, ImageModifiability modifiability>
+bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1, Allocator>& img_1);
 
-template <typename PixelType_>
-void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
+template <typename PixelType, typename Allocator>
+void swap(Image<PixelType, Allocator>& img_l, Image<PixelType, Allocator>& img_r) noexcept;
 
 /** \brief Statically typed image class.
  *
@@ -51,12 +53,13 @@ void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
  *
  * @tparam PixelType_ The pixel type. Usually of type `Pixel<>`.
  */
-template <typename PixelType_>
+template <typename PixelType_, typename Allocator_>
 class Image
     : public ImageBase<Image<PixelType_>>
 {
 public:
   using PixelType = PixelType_;
+  using Allocator = Allocator_;
   using DataPtrType = DataPtr<ImageModifiability::Mutable>::Type;
   using ConstDataPtrType = DataPtr<ImageModifiability::Mutable>::ConstType;
 
@@ -73,24 +76,26 @@ public:
 
   Image() = default;  ///< Default constructor.
 
+  explicit Image(const Allocator& alloc);
+
   explicit Image(TypedLayout layout);
 
-  Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes);
+  explicit Image(TypedLayout layout, const Allocator& alloc);
 
-  Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout layout);
+  Image(std::uint8_t* memory, TypedLayout layout, const Allocator& alloc = Allocator{});
 
   ~Image();
 
-  Image(const Image<PixelType>&);
+  Image(const Image<PixelType, Allocator>&);
 
-  Image<PixelType>& operator=(const Image<PixelType>&);
+  Image<PixelType, Allocator>& operator=(const Image<PixelType, Allocator>&);
 
-  Image(Image<PixelType>&&) noexcept;
+  Image(Image<PixelType, Allocator>&&) noexcept;
 
-  Image<PixelType>& operator=(Image<PixelType>&&) noexcept;
+  Image<PixelType, Allocator>& operator=(Image<PixelType, Allocator>&&) noexcept;
 
   template <ImageModifiability modifiability>
-  explicit Image(const ImageView<PixelType, modifiability>&);
+  explicit Image(const ImageView<PixelType, modifiability>&, const Allocator& alloc = Allocator{});
 
   template <ImageModifiability modifiability>
   Image<PixelType>& operator=(const ImageView<PixelType, modifiability>&);
@@ -145,24 +150,30 @@ public:
 
   void clear();
 
-  bool reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit = true);
+  bool reallocate(TypedLayout layout);
 
-  MemoryBlock<AlignedNewAllocator> relinquish_data_ownership();
+  MemoryBlock<Allocator> relinquish_data_ownership();
 
 private:
-  constexpr static auto default_base_alignment_bytes = ImageRowAlignment{16ul};
+//  ImageView<PixelType, ImageModifiability::Mutable> view_;
+//  Allocator alloc_;
+  impl::CompressedPair<ImageView<PixelType, ImageModifiability::Mutable>, Allocator> view_and_alloc_;
 
-  ImageView<PixelType, ImageModifiability::Mutable> view_;
+  ImageView<PixelType, ImageModifiability::Mutable>& mem_view() { return view_and_alloc_.first(); }
+  const ImageView<PixelType, ImageModifiability::Mutable>& mem_view() const { return view_and_alloc_.first(); }
+
+  Allocator& mem_alloc() { return view_and_alloc_.second(); }
+  const Allocator& mem_alloc() const { return view_and_alloc_.second(); }
 
   template <typename Derived>
   void copy_rows_from(const ImageBase<Derived>& src);
 
   ImageView<PixelType, ImageModifiability::Mutable>
-  allocate_memory(TypedLayout layout, ImageRowAlignment base_alignment_bytes, ImageRowAlignment row_alignment_bytes);
+  allocate_memory(TypedLayout layout);
 
   void deallocate_memory();
 
-  friend void swap<PixelType_>(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept;
+  friend void swap<PixelType, Allocator>(Image<PixelType, Allocator>& img_l, Image<PixelType, Allocator>& img_r) noexcept;
 };
 
 /// @}
@@ -170,26 +181,26 @@ private:
 // ----------
 // Implementation:
 
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::Image(const Allocator& alloc)
+    : view_and_alloc_(ImageView<PixelType, ImageModifiability::Mutable>{}, alloc)
+{
+}
+
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::Image(TypedLayout layout)
+    : view_and_alloc_(this->allocate_memory(layout), Allocator{})
+{
+}
+
 /** \brief Constructs an image with the specified layout.
  *
  * @tparam PixelType_ The pixel type.
  * @param layout The image layout.
  */
-template <typename PixelType_>
-Image<PixelType_>::Image(TypedLayout layout)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, ImageRowAlignment{0}))
-{
-}
-
-/** \brief Constructs an image with the specified layout and row alignment.
- *
- * @tparam PixelType_ The pixel type.
- * @param layout The image layout.
- * @param row_alignment_bytes The row alignment in bytes.
- */
-template <typename PixelType_>
-Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_bytes)
-    : view_(this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes))
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::Image(TypedLayout layout, const Allocator& alloc)
+    : view_and_alloc_(this->allocate_memory(layout), alloc)
 {
 }
 
@@ -201,9 +212,9 @@ Image<PixelType_>::Image(TypedLayout layout, ImageRowAlignment row_alignment_byt
  * @param memory The memory block representing the image.
  * @param layout The image layout.
  */
-template <typename PixelType_>
-Image<PixelType_>::Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout layout)
-    : view_(memory.transfer_data(), layout)
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::Image(std::uint8_t* memory, TypedLayout layout, const Allocator& alloc)
+    : view_and_alloc_({memory, layout}, alloc)
 {
 }
 
@@ -213,8 +224,8 @@ Image<PixelType_>::Image(MemoryBlock<AlignedNewAllocator>&& memory, TypedLayout 
  *
  * @tparam PixelType_ The pixel type.
  */
-template <typename PixelType_>
-Image<PixelType_>::~Image()
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::~Image()
 {
   this->deallocate_memory();
 }
@@ -224,12 +235,9 @@ Image<PixelType_>::~Image()
  * @tparam PixelType_ The pixel type.
  * @param other The image to be copied from.
  */
-template <typename PixelType_>
-Image<PixelType_>::Image(const Image<PixelType>& other)
-    : view_(allocate_memory(other.layout(),
-                            default_base_alignment_bytes,
-                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
-                                                      other.stride_bytes())))
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::Image(const Image<PixelType, Allocator>& other)
+    : view_and_alloc_(allocate_memory(other.layout()),  other.mem_alloc())
 {
   copy_rows_from(other);
 }
@@ -240,8 +248,8 @@ Image<PixelType_>::Image(const Image<PixelType>& other)
  * @param other The image to be assigned from.
  * @return A reference to this image.
  */
-template <typename PixelType_>
-Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>& Image<PixelType_, Allocator_>::operator=(const Image<PixelType, Allocator>& other)
 {
   // Check for self-assignment
   if (this == & other)
@@ -257,12 +265,9 @@ Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
     this->deallocate_memory();
 
     // Allocate new memory
-    view_ = allocate_memory(
-        other.layout(),
-        default_base_alignment_bytes,
-        impl::guess_row_alignment(
-            reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-            other.stride_bytes()));
+    mem_view() = allocate_memory(other.layout());
+
+    mem_alloc() = other.mem_alloc();
   }
 
   copy_rows_from(other);
@@ -275,12 +280,12 @@ Image<PixelType_>& Image<PixelType_>::operator=(const Image<PixelType>& other)
  * @tparam PixelType_ The pixel type.
  * @param other The image to be moved from.
  */
-template <typename PixelType_>
-Image<PixelType_>::Image(Image<PixelType>&& other) noexcept
-    : view_(other.view_)
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>::Image(Image<PixelType, Allocator>&& other) noexcept
+    : view_and_alloc_(other.view_and_alloc_)
 {
-  other.view_ = ImageView<PixelType, ImageModifiability::Mutable>{{nullptr},
-                                                                  {PixelLength{0}, PixelLength{0}, Stride{0}}};
+  other.mem_view() = ImageView<PixelType, ImageModifiability::Mutable>{{nullptr},
+                                                                       {PixelLength{0}, PixelLength{0}, Stride{0}}};
 }
 
 /** \brief Move assignment operator.
@@ -289,8 +294,8 @@ Image<PixelType_>::Image(Image<PixelType>&& other) noexcept
  * @param other The image to be move-assigned from.
  * @return A reference to this image.
  */
-template <typename PixelType_>
-Image<PixelType_>& Image<PixelType_>::operator=(Image<PixelType>&& other) noexcept
+template <typename PixelType_, typename Allocator_>
+Image<PixelType_, Allocator_>& Image<PixelType_, Allocator_>::operator=(Image<PixelType, Allocator>&& other) noexcept
 {
   // Check for self-assignment
   if (this == & other)
@@ -301,10 +306,9 @@ Image<PixelType_>& Image<PixelType_>::operator=(Image<PixelType>&& other) noexce
   // Clean up own memory
   this->deallocate_memory();
 
-  view_ = other.view_;
-  other.view_ = ImageView<PixelType, ImageModifiability::Mutable>{{nullptr},
-                                                                  {PixelLength{0}, PixelLength{0}, Stride{0}}};
-
+  view_and_alloc_ = other.view_and_alloc_;
+  other.mem_view() = ImageView<PixelType, ImageModifiability::Mutable>{{nullptr},
+                                                                       {PixelLength{0}, PixelLength{0}, Stride{0}}};
   return * this;
 }
 
@@ -314,13 +318,10 @@ Image<PixelType_>& Image<PixelType_>::operator=(Image<PixelType>&& other) noexce
  * @tparam modifiability_ The modifiability value of the other image.
  * @param other The image to be copied from.
  */
-template <typename PixelType_>
+template <typename PixelType_, typename Allocator_>
 template <ImageModifiability modifiability_>
-Image<PixelType_>::Image(const ImageView<PixelType, modifiability_>& other)
-    : view_(allocate_memory(other.layout(),
-                            default_base_alignment_bytes,
-                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.data()),
-                                                      other.stride_bytes())))
+Image<PixelType_, Allocator_>::Image(const ImageView<PixelType, modifiability_>& other, const Allocator& alloc)
+    : view_and_alloc_(allocate_memory(other.layout()), alloc)
 {
   copy_rows_from(other);
 }
@@ -331,14 +332,14 @@ Image<PixelType_>::Image(const ImageView<PixelType, modifiability_>& other)
  * @tparam modifiability_ The modifiability value of the other image.
  * @param other The image to be assigned from.
  */
-template <typename PixelType_>
+template <typename PixelType_, typename Allocator_>
 template <ImageModifiability modifiability_>
-Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modifiability_>& other)
+Image<PixelType_>& Image<PixelType_, Allocator_>::operator=(const ImageView<PixelType, modifiability_>& other)
 {
   // Check for self-assignment
-  if (& this->view_ == & other)
+  if (&this->mem_view() == &other)
   {
-    return * this;
+    return *this;
   }
 
   const auto equal_size = (total_bytes() == other.total_bytes());
@@ -349,15 +350,12 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
     this->deallocate_memory();
 
     // Allocate new memory
-    view_ = allocate_memory(other.layout(),
-                            default_base_alignment_bytes,
-                            impl::guess_row_alignment(reinterpret_cast<std::uintptr_t>(other.byte_ptr()),
-                                                      other.stride_bytes()));
+    mem_view() = allocate_memory(other.layout());
   }
 
   copy_rows_from(other);
 
-  return * this;
+  return *this;
 }
 
 /** \brief Returns the image layout.
@@ -365,10 +363,10 @@ Image<PixelType_>& Image<PixelType_>::operator=(const ImageView<PixelType, modif
  * @tparam PixelType_ The pixel type.
  * @return The typed image layout.
  */
-template <typename PixelType_>
-const TypedLayout& Image<PixelType_>::layout() const noexcept
+template <typename PixelType_, typename Allocator_>
+const TypedLayout& Image<PixelType_, Allocator_>::layout() const noexcept
 {
-  return view_.layout();
+  return mem_view().layout();
 }
 
 /** \brief Returns the image width.
@@ -376,10 +374,10 @@ const TypedLayout& Image<PixelType_>::layout() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return The image width.
  */
-template <typename PixelType_>
-PixelLength Image<PixelType_>::width() const noexcept
+template <typename PixelType_, typename Allocator_>
+PixelLength Image<PixelType_, Allocator_>::width() const noexcept
 {
-  return view_.width();
+  return mem_view().width();
 }
 
 /** \brief Returns the image height.
@@ -387,10 +385,10 @@ PixelLength Image<PixelType_>::width() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return The image height.
  */
-template <typename PixelType_>
-PixelLength Image<PixelType_>::height() const noexcept
+template <typename PixelType_, typename Allocator_>
+PixelLength Image<PixelType_, Allocator_>::height() const noexcept
 {
-  return view_.height();
+  return mem_view().height();
 }
 
 /** \brief Returns the row stride of the image in bytes.
@@ -404,10 +402,10 @@ PixelLength Image<PixelType_>::height() const noexcept
  * @tparam modifiability_ Determines whether image contents are constant or mutable.
  * @return The row stride of the image in bytes.
  */
-template <typename PixelType_>
-Stride Image<PixelType_>::stride_bytes() const noexcept
+template <typename PixelType_, typename Allocator_>
+Stride Image<PixelType_, Allocator_>::stride_bytes() const noexcept
 {
-  return view_.stride_bytes();
+  return mem_view().stride_bytes();
 }
 
 /** \brief Returns the number of data bytes occupied by each image row.
@@ -418,10 +416,10 @@ Stride Image<PixelType_>::stride_bytes() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return The number of data bytes occupied by each image row.
  */
-template <typename PixelType_>
-std::ptrdiff_t Image<PixelType_>::row_bytes() const noexcept
+template <typename PixelType_, typename Allocator_>
+std::ptrdiff_t Image<PixelType_, Allocator_>::row_bytes() const noexcept
 {
-  return view_.row_bytes();
+  return mem_view().row_bytes();
 }
 
 /** \brief Returns the total number of bytes occupied by the image data in memory.
@@ -431,10 +429,10 @@ std::ptrdiff_t Image<PixelType_>::row_bytes() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return The total number of bytes occupied by the image data in memory.
  */
-template <typename PixelType_>
-std::ptrdiff_t Image<PixelType_>::total_bytes() const noexcept
+template <typename PixelType_, typename Allocator_>
+std::ptrdiff_t Image<PixelType_, Allocator_>::total_bytes() const noexcept
 {
-  return view_.total_bytes();
+  return mem_view().total_bytes();
 }
 
 /** \brief Returns whether the image is stored packed in memory.
@@ -444,10 +442,10 @@ std::ptrdiff_t Image<PixelType_>::total_bytes() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return True, if the image data is stored packed; false otherwise.
  */
-template <typename PixelType_>
-bool Image<PixelType_>::is_packed() const noexcept
+template <typename PixelType_, typename Allocator_>
+bool Image<PixelType_, Allocator_>::is_packed() const noexcept
 {
-  return view_.is_packed();
+  return mem_view().is_packed();
 }
 
 /** \brief Returns whether the image is empty.
@@ -458,10 +456,10 @@ bool Image<PixelType_>::is_packed() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return True, if the image is empty; false if it is non-empty.
  */
-template <typename PixelType_>
-bool Image<PixelType_>::is_empty() const noexcept
+template <typename PixelType_, typename Allocator_>
+bool Image<PixelType_, Allocator_>::is_empty() const noexcept
 {
-  return view_.is_empty();
+  return mem_view().is_empty();
 }
 
 /** \brief Returns whether the image is valid.
@@ -471,10 +469,10 @@ bool Image<PixelType_>::is_empty() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return True, if the image is valid; false otherwise.
  */
-template <typename PixelType_>
-bool Image<PixelType_>::is_valid() const noexcept
+template <typename PixelType_, typename Allocator_>
+bool Image<PixelType_, Allocator_>::is_valid() const noexcept
 {
-  return view_.is_valid();
+  return mem_view().is_valid();
 }
 
 /** \brief Returns an iterator to the first row.
@@ -482,10 +480,10 @@ bool Image<PixelType_>::is_valid() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return Iterator to the first image row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::begin() noexcept -> iterator
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::begin() noexcept -> iterator
 {
-  return view_.begin();
+  return mem_view().begin();
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -493,10 +491,10 @@ auto Image<PixelType_>::begin() noexcept -> iterator
  * @tparam PixelType_ The pixel type.
  * @return Constant iterator to the first image row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::begin() const noexcept -> const_iterator
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::begin() const noexcept -> const_iterator
 {
-  return view_.begin();
+  return mem_view().begin();
 }
 
 /** \brief Returns a constant iterator to the first row.
@@ -504,10 +502,10 @@ auto Image<PixelType_>::begin() const noexcept -> const_iterator
  * @tparam PixelType_ The pixel type.
  * @return Constant iterator to the first image row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::cbegin() const noexcept -> const_iterator
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::cbegin() const noexcept -> const_iterator
 {
-  return view_.cbegin();
+  return mem_view().cbegin();
 }
 
 /** \brief Returns an iterator to the row after the last row of the image.
@@ -515,10 +513,10 @@ auto Image<PixelType_>::cbegin() const noexcept -> const_iterator
  * @tparam PixelType_ The pixel type.
  * @return Iterator to the image row after the last row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::end() noexcept -> iterator
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::end() noexcept -> iterator
 {
-  return view_.end();
+  return mem_view().end();
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -526,10 +524,10 @@ auto Image<PixelType_>::end() noexcept -> iterator
  * @tparam PixelType_ The pixel type.
  * @return Constant iterator to the image row after the last row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::end() const noexcept -> const_iterator
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::end() const noexcept -> const_iterator
 {
-  return view_.end();
+  return mem_view().end();
 }
 
 /** \brief Returns a constant iterator to the row after the last row of the image.
@@ -537,10 +535,10 @@ auto Image<PixelType_>::end() const noexcept -> const_iterator
  * @tparam PixelType_ The pixel type.
  * @return Constant iterator to the image row after the last row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::cend() const noexcept -> const_iterator
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::cend() const noexcept -> const_iterator
 {
-  return view_.cend();
+  return mem_view().cend();
 }
 
 /** \brief Returns a pointer to the first byte storing image data (in row 0).
@@ -548,10 +546,10 @@ auto Image<PixelType_>::cend() const noexcept -> const_iterator
  * @tparam PixelType_ The pixel type.
  * @return Pointer to the first image data byte.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::byte_ptr() noexcept -> DataPtrType
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::byte_ptr() noexcept -> DataPtrType
 {
-  return view_.byte_ptr();
+  return mem_view().byte_ptr();
 }
 
 /** \brief Returns a constant pointer to the first byte storing image data (in row 0).
@@ -559,10 +557,10 @@ auto Image<PixelType_>::byte_ptr() noexcept -> DataPtrType
  * @tparam PixelType_ The pixel type.
  * @return Constant pointer to the first image data byte.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::byte_ptr() const noexcept -> ConstDataPtrType
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::byte_ptr() const noexcept -> ConstDataPtrType
 {
-  return view_.byte_ptr();
+  return mem_view().byte_ptr();
 }
 
 /** \brief Returns a pointer to the first byte storing image data in row `y`.
@@ -571,10 +569,10 @@ auto Image<PixelType_>::byte_ptr() const noexcept -> ConstDataPtrType
  * @param y Row index.
  * @return Pointer to the first image data byte of row `y`.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::byte_ptr(PixelIndex y) noexcept -> DataPtrType
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::byte_ptr(PixelIndex y) noexcept -> DataPtrType
 {
-  return view_.byte_ptr(y);
+  return mem_view().byte_ptr(y);
 }
 
 /** \brief Returns a constant pointer to the first byte storing image data in row `y`.
@@ -583,10 +581,10 @@ auto Image<PixelType_>::byte_ptr(PixelIndex y) noexcept -> DataPtrType
  * @param y Row index.
  * @return Constant pointer to the first image data byte of row `y`.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrType
 {
-  return view_.byte_ptr(y);
+  return mem_view().byte_ptr(y);
 }
 
 /** \brief Returns a pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -596,10 +594,10 @@ auto Image<PixelType_>::byte_ptr(PixelIndex y) const noexcept -> ConstDataPtrTyp
  * @param y Row index.
  * @return Pointer to the first byte of the pixel element at location `(x, y)`.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtrType
 {
-  return view_.byte_ptr(x, y);
+  return mem_view().byte_ptr(x, y);
 }
 
 /** \brief Returns a constant pointer to the first byte of the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -609,10 +607,10 @@ auto Image<PixelType_>::byte_ptr(PixelIndex x, PixelIndex y) noexcept -> DataPtr
  * @param y Row index.
  * @return Constant pointer to the first byte of the pixel element at location `(x, y)`.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> ConstDataPtrType
 {
-  return view_.byte_ptr(x, y);
+  return mem_view().byte_ptr(x, y);
 }
 
 /** \brief Returns a pointer to the first pixel element (i.e. at row 0, column 0).
@@ -620,10 +618,10 @@ auto Image<PixelType_>::byte_ptr(PixelIndex x, PixelIndex y) const noexcept -> C
  * @tparam PixelType_ The pixel type.
  * @return Pointer to the first pixel element.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data() noexcept -> PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data() noexcept -> PixelType*
 {
-  return view_.data();
+  return mem_view().data();
 }
 
 /** \brief Returns a constant pointer to the first pixel element (i.e. at row 0, column 0).
@@ -631,10 +629,10 @@ auto Image<PixelType_>::data() noexcept -> PixelType*
  * @tparam PixelType_ The pixel type.
  * @return Constant pointer to the first pixel element.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data() const noexcept -> const PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data() const noexcept -> const PixelType*
 {
-  return view_.data();
+  return mem_view().data();
 }
 
 /** \brief Returns a pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
@@ -643,10 +641,10 @@ auto Image<PixelType_>::data() const noexcept -> const PixelType*
  * @param y Row index.
  * @return Pointer to the first pixel element of the y-th row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data(PixelIndex y) noexcept -> PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data(PixelIndex y) noexcept -> PixelType*
 {
-  return view_.data(y);
+  return mem_view().data(y);
 }
 
 /** \brief Returns a constant pointer to the first pixel element of the y-th row (i.e. at row y, column 0).
@@ -655,10 +653,10 @@ auto Image<PixelType_>::data(PixelIndex y) noexcept -> PixelType*
  * @param y Row index.
  * @return Constant pointer to the first pixel element of the y-th row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data(PixelIndex y) const noexcept -> const PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data(PixelIndex y) const noexcept -> const PixelType*
 {
-  return view_.data(y);
+  return mem_view().data(y);
 }
 
 /** \brief Returns a pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
@@ -667,10 +665,10 @@ auto Image<PixelType_>::data(PixelIndex y) const noexcept -> const PixelType*
  * @param y Row index.
  * @return Pointer to the one-past-the-last pixel element of the y-th row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data_row_end(PixelIndex y) noexcept -> PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data_row_end(PixelIndex y) noexcept -> PixelType*
 {
-  return view_.data_row_end(y);
+  return mem_view().data_row_end(y);
 }
 
 /** \brief Returns a constant pointer to the one-past-the-last pixel element of the y-th row (i.e. at row y, column `width()`).
@@ -679,10 +677,10 @@ auto Image<PixelType_>::data_row_end(PixelIndex y) noexcept -> PixelType*
  * @param y Row index.
  * @return Constant pointer to the one-past-the-last pixel element of the y-th row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data_row_end(PixelIndex y) const noexcept -> const PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data_row_end(PixelIndex y) const noexcept -> const PixelType*
 {
-  return view_.data_row_end(y);
+  return mem_view().data_row_end(y);
 }
 
 /** \brief Returns a pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
@@ -692,10 +690,10 @@ auto Image<PixelType_>::data_row_end(PixelIndex y) const noexcept -> const Pixel
  * @param y Row index.
  * @return Pointer to the x-th pixel element of the y-th row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data(PixelIndex x, PixelIndex y) noexcept -> PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data(PixelIndex x, PixelIndex y) noexcept -> PixelType*
 {
-  return view_.data(x, y);
+  return mem_view().data(x, y);
 }
 
 /** \brief Returns a constant pointer to the x-th pixel element of the y-th row (i.e. at row y, column x).
@@ -705,10 +703,10 @@ auto Image<PixelType_>::data(PixelIndex x, PixelIndex y) noexcept -> PixelType*
  * @param y Row index.
  * @return Pointer to the x-th pixel element of the y-th row.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::data(PixelIndex x, PixelIndex y) const noexcept -> const PixelType*
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::data(PixelIndex x, PixelIndex y) const noexcept -> const PixelType*
 {
-  return view_.data(x, y);
+  return mem_view().data(x, y);
 }
 
 /** \brief Returns a reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -718,10 +716,10 @@ auto Image<PixelType_>::data(PixelIndex x, PixelIndex y) const noexcept -> const
  * @param y Row index.
  * @return Reference to the pixel element at location `(x, y)`.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::operator()(PixelIndex x, PixelIndex y) noexcept -> PixelType&
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::operator()(PixelIndex x, PixelIndex y) noexcept -> PixelType&
 {
-  return view_.operator()(x, y);
+  return mem_view().operator()(x, y);
 }
 
 /** \brief Returns a constant reference to the pixel element at location `(x, y)`, i.e. row `y`, column `x`.
@@ -731,10 +729,10 @@ auto Image<PixelType_>::operator()(PixelIndex x, PixelIndex y) noexcept -> Pixel
  * @param y Row index.
  * @return Constant reference to the pixel element at location `(x, y)`.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::operator()(PixelIndex x, PixelIndex y) const noexcept -> const PixelType&
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::operator()(PixelIndex x, PixelIndex y) const noexcept -> const PixelType&
 {
-  return view_.operator()(x, y);
+  return mem_view().operator()(x, y);
 }
 
 /** \brief Returns the underlying (mutable) image view.
@@ -742,11 +740,11 @@ auto Image<PixelType_>::operator()(PixelIndex x, PixelIndex y) const noexcept ->
  * @tparam PixelType_ The pixel type.
  * @return The underlying (mutable) image view.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::view() noexcept
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::view() noexcept
     -> ImageView<PixelType, ImageModifiability::Mutable>&
 {
-  return view_.view();
+  return mem_view().view();
 }
 
 /** \brief Returns a constant image view on the underlying data.
@@ -754,11 +752,11 @@ auto Image<PixelType_>::view() noexcept
  * @tparam PixelType_ The pixel type.
  * @return A constant image view.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::view() const noexcept
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::view() const noexcept
     -> ImageView<PixelType, ImageModifiability::Constant>
 {
-  return view_.constant_view();
+  return mem_view().constant_view();
 }
 
 /** \brief Returns a constant image view on the underlying data.
@@ -766,11 +764,11 @@ auto Image<PixelType_>::view() const noexcept
  * @tparam PixelType_ The pixel type.
  * @return A constant image view.
  */
-template <typename PixelType_>
-auto Image<PixelType_>::constant_view() const noexcept
+template <typename PixelType_, typename Allocator_>
+auto Image<PixelType_, Allocator_>::constant_view() const noexcept
     -> ImageView<PixelType, ImageModifiability::Constant>
 {
-  return view_.constant_view();
+  return mem_view().constant_view();
 }
 
 /** \brief Clears the image; i.e. resets the internal state to the image state after default construction.
@@ -779,11 +777,11 @@ auto Image<PixelType_>::constant_view() const noexcept
  *
  * @tparam PixelType_ The pixel type.
  */
-template <typename PixelType_>
-void Image<PixelType_>::clear()
+template <typename PixelType_, typename Allocator_>
+void Image<PixelType_, Allocator_>::clear()
 {
   deallocate_memory();
-  view_.clear();
+  mem_view().clear();
 }
 
 /** \brief Reallocates the image data according to the specified layout and alignment.
@@ -796,31 +794,18 @@ void Image<PixelType_>::clear()
  *                      less than already allocated.
  * @return True, if a memory reallocation took place; false otherwise.
  */
-template <typename PixelType_>
-bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_alignment_bytes, bool shrink_to_fit)
+template <typename PixelType_, typename Allocator_>
+bool Image<PixelType_, Allocator_>::reallocate(TypedLayout layout)
 {
-  if (layout == this->view_.layout())
+  if (layout == this->mem_view().layout())
   {
     return false;
   }
 
-  layout.stride_bytes = impl::compute_stride_bytes(
-      std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)),
-      row_alignment_bytes);
-  const auto nr_bytes_to_allocate = layout.stride_bytes * layout.height;
-  const auto nr_currently_allocated_bytes = this->stride_bytes() * this->height();
-
-  // No need to act if size parameters match
-  const auto bytes_match = shrink_to_fit ? (nr_bytes_to_allocate == nr_currently_allocated_bytes)
-                                         : (nr_bytes_to_allocate <= nr_currently_allocated_bytes);
-  if (bytes_match)
-  {
-    view_ = ImageView<PixelType, ImageModifiability::Mutable>(this->byte_ptr(), layout);
-    return false;
-  }
+  layout.stride_bytes = std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width));
 
   this->deallocate_memory();
-  view_ = this->allocate_memory(layout, default_base_alignment_bytes, row_alignment_bytes);
+  mem_view() = this->allocate_memory(layout);
   return true;
 }
 
@@ -831,93 +816,84 @@ bool Image<PixelType_>::reallocate(TypedLayout layout, ImageRowAlignment row_ali
  * @tparam PixelType_ The pixel type.
  * @return The owned memory block.
  */
-template <typename PixelType_>
-MemoryBlock<AlignedNewAllocator> Image<PixelType_>::relinquish_data_ownership()
+template <typename PixelType_, typename Allocator_>
+MemoryBlock<Allocator_> Image<PixelType_, Allocator_>::relinquish_data_ownership()
 {
   const auto ptr = this->byte_ptr();
   const auto len = this->total_bytes();
 
-  view_.clear();
-  return construct_memory_block_from_existing_memory<AlignedNewAllocator>(ptr, static_cast<std::size_t>(len));
+  mem_view().clear();
+  return construct_memory_block_from_existing_memory<Allocator>(ptr, static_cast<std::size_t>(len));
 }
 
-template <typename PixelType_>
+template <typename PixelType_, typename Allocator_>
 template <typename Derived>
-void Image<PixelType_>::copy_rows_from(const ImageBase<Derived>& src)
+void Image<PixelType_, Allocator_>::copy_rows_from(const ImageBase<Derived>& src)
 {
   SELENE_ASSERT(data() && src.data());
   SELENE_ASSERT(width() == src.width() && height() == src.height());
 
-  for (PixelIndex y = 0_idx; y < view_.height(); ++y)
+  for (PixelIndex y = 0_idx; y < mem_view().height(); ++y)
   {
     std::copy(src.data(y), src.data_row_end(y), data(y));
   }
 }
 
-template <typename PixelType_>
-ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_>::allocate_memory(
-    TypedLayout layout,
-    ImageRowAlignment base_alignment_bytes,
-    ImageRowAlignment row_alignment_bytes)
+template <typename PixelType_, typename Allocator_>
+ImageView<PixelType_, ImageModifiability::Mutable> Image<PixelType_, Allocator_>::allocate_memory(TypedLayout layout)
 {
-  const auto stride_bytes = impl::compute_stride_bytes(
-      std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width)), row_alignment_bytes);
-  const auto nr_bytes_to_allocate = stride_bytes * layout.height;
+  const auto stride_bytes = std::max(layout.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout.width));
+  const auto nr_bytes_to_allocate = static_cast<std::size_t>(stride_bytes * layout.height);
 
-  base_alignment_bytes = std::max(row_alignment_bytes, base_alignment_bytes);
-  auto memory = sln::AlignedNewAllocator::allocate(
-      static_cast<std::size_t>(nr_bytes_to_allocate),
-      static_cast<std::size_t>(base_alignment_bytes));
-  SELENE_ASSERT(static_cast<std::ptrdiff_t>(memory.size()) == nr_bytes_to_allocate);
-
-  return ImageView<PixelType, ImageModifiability::Mutable>{{memory.transfer_data()},
+  auto* memory = mem_alloc().allocate(nr_bytes_to_allocate);
+  return ImageView<PixelType, ImageModifiability::Mutable>{{memory},
                                                            {layout.width, layout.height, stride_bytes}};
 }
 
-template <typename PixelType_>
-void Image<PixelType_>::deallocate_memory()
+template <typename PixelType_, typename Allocator_>
+void Image<PixelType_, Allocator_>::deallocate_memory()
 {
-  std::uint8_t* ptr = view_.byte_ptr();
-  sln::AlignedNewAllocator::deallocate(ptr);
+  std::uint8_t* ptr = mem_view().byte_ptr();
+  mem_alloc().deallocate(ptr, static_cast<std::size_t>(this->total_bytes()));
 }
 
 // -----
 
-template <typename PixelType0, typename PixelType1>
-bool operator==(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1)
+template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
+bool operator==(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1)
 {
   return equal(img_0.view(), img_1.view());
 }
 
-template <typename PixelType0, typename PixelType1>
-bool operator!=(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1)
+template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
+bool operator!=(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1)
 {
   return !(img_0 == img_1);
 }
 
-template <typename PixelType0, typename PixelType1>
-bool equal(const Image<PixelType0>& img_0, const Image<PixelType1>& img_1)
+template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
+bool equal(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1)
 {
   return equal(img_0.view(), img_1.view());
 }
 
-template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
-bool equal(const Image<PixelType0>& img_0, const ImageView<PixelType1, modifiability>& img_view_1)
+template <typename PixelType0, typename PixelType1, typename Allocator, ImageModifiability modifiability>
+bool equal(const Image<PixelType0, Allocator>& img_0, const ImageView<PixelType1, modifiability>& img_view_1)
 {
   return equal(img_0.view(), img_view_1);
 }
 
-template <typename PixelType0, typename PixelType1, ImageModifiability modifiability>
-bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1>& img_1)
+template <typename PixelType0, typename PixelType1, typename Allocator, ImageModifiability modifiability>
+bool equal(const ImageView<PixelType0, modifiability>& img_view_0, const Image<PixelType1, Allocator>& img_1)
 {
   return equal(img_view_0, img_1.view());
 }
 
-template <typename PixelType_>
-void swap(Image<PixelType_>& img_l, Image<PixelType_>& img_r) noexcept
+template <typename PixelType, typename Allocator>
+void swap(Image<PixelType, Allocator>& img_l, Image<PixelType, Allocator>& img_r) noexcept
 {
   using std::swap;
-  swap(img_l.view_, img_r.view_);
+  swap(img_l.view_and_alloc_, img_r.view_and_alloc_);
 }
 
 }  // namespace sln

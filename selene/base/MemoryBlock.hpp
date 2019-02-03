@@ -7,10 +7,9 @@
 
 /// @file
 
-#include <selene/base/Allocators.hpp>
-
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 
 namespace sln {
 
@@ -34,17 +33,19 @@ MemoryBlock<Allocator> construct_memory_block_from_existing_memory(std::uint8_t*
  *
  * \tparam Allocator An allocator to use for deallocation of the memory inside a MemoryBlock instance.
  */
-template <typename Allocator>
+template <typename Allocator_ = std::allocator<std::uint8_t>>
 class MemoryBlock
 {
 public:
+  using Allocator = Allocator_;
+
   ~MemoryBlock();
 
   MemoryBlock(const MemoryBlock&) = delete;
   MemoryBlock& operator=(const MemoryBlock&) = delete;
 
-  MemoryBlock(MemoryBlock&& other) noexcept;
-  MemoryBlock& operator=(MemoryBlock&& other) noexcept;
+  MemoryBlock(MemoryBlock&& other) noexcept = default;
+  MemoryBlock& operator=(MemoryBlock&& other) noexcept = default;
 
   std::uint8_t* data() const noexcept;
   std::size_t size() const noexcept;
@@ -54,6 +55,7 @@ public:
 private:
   std::uint8_t* data_;
   std::size_t size_;
+  Allocator alloc_;  // TODO: use EBCO
 
   MemoryBlock(std::uint8_t* data, std::size_t size);
   friend MemoryBlock<Allocator> construct_memory_block_from_existing_memory<Allocator>(std::uint8_t*,
@@ -66,7 +68,8 @@ private:
 // Implementation
 
 template <typename Allocator>
-inline MemoryBlock<Allocator>::MemoryBlock(std::uint8_t* data, std::size_t size) : data_(data), size_(size)
+inline MemoryBlock<Allocator>::MemoryBlock(std::uint8_t* data, std::size_t size)
+    : data_(data), size_(size)
 {
 }
 
@@ -75,24 +78,8 @@ inline MemoryBlock<Allocator>::~MemoryBlock()
 {
   if (data_ != nullptr)
   {
-    Allocator::deallocate(data_);
+    alloc_.deallocate(data_, size_);
   }
-}
-
-/** Move constructor. */
-template <typename Allocator>
-inline MemoryBlock<Allocator>::MemoryBlock(MemoryBlock<Allocator>&& other) noexcept
-    : data_(other.data_), size_(other.size_)
-{
-}
-
-/** Move assignment operator. */
-template <typename Allocator>
-inline MemoryBlock<Allocator>& MemoryBlock<Allocator>::operator=(MemoryBlock<Allocator>&& other) noexcept
-{
-  data_ = other.data_;
-  size_ = other.size_;
-  return *this;
 }
 
 /** \brief Returns a read-write pointer to the allocated memory.

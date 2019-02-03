@@ -49,30 +49,6 @@ void basic_image_tests(sln::PixelLength width, sln::PixelLength height, T fill_v
   REQUIRE(img1.stride_bytes() == img0.stride_bytes());
   REQUIRE(img1.is_packed());
   REQUIRE(!img1.is_empty());
-
-  for (std::ptrdiff_t alignment = 1; alignment <= 128; alignment <<= 1)
-  {
-    sln::Image<T> img({width, height}, sln::ImageRowAlignment{alignment});
-    REQUIRE(img.width() == width);
-    REQUIRE(img.height() == height);
-    REQUIRE(img.stride_bytes() % alignment == 0);
-    REQUIRE(!img.is_empty());
-    for (auto y = 0_idx; y < img.height(); ++y)
-    {
-      REQUIRE(reinterpret_cast<std::uintptr_t>(img.data(y)) % std::uintptr_t(alignment) == 0);
-    }
-
-    const auto alignment2 = alignment / 2;
-    img.reallocate({width + 1, height + 1}, sln::ImageRowAlignment{alignment2});
-    REQUIRE(img.width() == width + 1);
-    REQUIRE(img.height() == height + 1);
-    REQUIRE((alignment2 == 0 || img.stride_bytes() % alignment2 == 0));
-    REQUIRE(!img.is_empty());
-    for (auto y = 0_idx; y < img.height(); ++y)
-    {
-      REQUIRE((alignment2 == 0 || reinterpret_cast<std::uintptr_t>(img.data(y)) % std::uintptr_t(alignment2) == 0));
-    }
-  }
 }
 
 }  // namespace

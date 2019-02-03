@@ -28,16 +28,14 @@ void test_dyn_image_construction(std::mt19937& rng)
   constexpr auto nr_bytes_per_channel = sln::PixelTraits<PixelType>::nr_bytes_per_channel;
 
   std::uniform_int_distribution<sln::PixelIndex::value_type> dist_wh(0, 30);  // width/height
-  std::uniform_int_distribution<std::size_t> dist_algn(4, 6);  // log2(alignment_bytes)
 
   for (std::size_t i = 0; i < 10; ++i)
   {
     // Randomly determine image data properties
     const auto width = sln::PixelLength{dist_wh(rng)};
     const auto height = sln::PixelLength{dist_wh(rng)};
-    const auto alignment_bytes = sln::power(std::ptrdiff_t{2}, dist_algn(rng));
 
-    sln::DynImage dyn_img{{width, height, nr_channels, nr_bytes_per_channel}, sln::ImageRowAlignment{alignment_bytes}};
+    sln::DynImage dyn_img{{width, height, nr_channels, nr_bytes_per_channel}};
     REQUIRE(dyn_img.width() == width);
     REQUIRE(dyn_img.height() == height);
     REQUIRE(dyn_img.nr_channels() == nr_channels);
@@ -79,7 +77,7 @@ void test_dyn_image_construction(std::mt19937& rng)
     {
       const auto x = std::min(sln::to_pixel_index(width - 1), sln::to_pixel_index(dist_wh(rng)));
       const auto y = std::min(sln::to_pixel_index(height - 1), sln::to_pixel_index(dist_wh(rng)));
-      const auto& px0 = dyn_img.pixel<PixelType>(x, y);
+      const auto& px0 = dyn_img.template pixel<PixelType>(x, y);
       const auto& px1 = dyn_img_view.pixel<PixelType>(x, y);
       REQUIRE(px0 == px1);
 

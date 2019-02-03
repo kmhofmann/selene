@@ -43,7 +43,7 @@ constexpr auto stickers_ref_height = 320;
 
 namespace {
 
-void check_write_read(const sln::DynImage& dyn_img,
+void check_write_read(const sln::DynImage<>& dyn_img,
                       const sln_fs::path& tmp_path,
                       sln::TIFFReadObject<sln::FileReader>& read_object,
                       sln::TIFFWriteObject<sln::FileWriter>& write_object)
@@ -274,7 +274,7 @@ TEST_CASE("TIFF image reading, through TIFFReader interface", "[img]")
 namespace {
 
 template <typename SinkType, typename SourceType, typename SinkArg, typename SourceArgFunc>
-void write_one_tiff_directory(const sln::DynImage& ref_img, SinkArg&& sink_arg, SourceArgFunc source_arg_func)
+void write_one_tiff_directory(const sln::DynImage<>& ref_img, SinkArg&& sink_arg, SourceArgFunc source_arg_func)
 {
   SinkType sink{sink_arg};
   REQUIRE(sink.is_open());
@@ -303,7 +303,7 @@ void write_one_tiff_directory(const sln::DynImage& ref_img, SinkArg&& sink_arg, 
 }
 
 template <typename SinkType, typename SourceType, typename SinkArg, typename SourceArgFunc>
-void write_multiple_tiff_directories(const sln::DynImage& ref_img, SinkArg&& sink_arg, SourceArgFunc source_arg_func)
+void write_multiple_tiff_directories(const sln::DynImage<>& ref_img, SinkArg&& sink_arg, SourceArgFunc source_arg_func)
 {
   for (std::size_t n = 1; n <= 4; ++n)
   {

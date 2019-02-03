@@ -20,14 +20,14 @@ namespace sln {
 /// \addtogroup group-img-interop
 /// @{
 
-template <typename PixelType>
-Image<PixelType> to_image(DynImage&& dyn_img);
+template <typename PixelType, typename Allocator>
+Image<PixelType, Allocator> to_image(DynImage<Allocator>&& dyn_img);
 
-template <typename PixelType>
-MutableImageView<PixelType> to_image_view(DynImage& dyn_img);
+template <typename PixelType, typename Allocator>
+MutableImageView<PixelType> to_image_view(DynImage<Allocator>& dyn_img);
 
-template <typename PixelType>
-ConstantImageView<PixelType> to_image_view(const DynImage& dyn_img);
+template <typename PixelType, typename Allocator>
+ConstantImageView<PixelType> to_image_view(const DynImage<Allocator>& dyn_img);
 
 template <typename PixelType, ImageModifiability modifiability>
 ImageView<PixelType, modifiability> to_image_view(const DynImageView<modifiability>& dyn_img_view);
@@ -87,15 +87,15 @@ void check_dyn_img_to_img_compatibility(const DynImageView<modifiability>& dyn_i
  * @param dyn_img The dynamically typed image.
  * @return An `Image<PixelType>` instance.
  */
-template <typename PixelType>
-Image<PixelType> to_image(DynImage&& dyn_img)
+template <typename PixelType, typename Allocator>
+Image<PixelType, Allocator> to_image(DynImage<Allocator>&& dyn_img)
 {
   impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img.view());
 
   const auto dyn_img_layout = dyn_img.layout();
   auto memory = dyn_img.relinquish_data_ownership();
-  return Image<PixelType>{std::move(memory),
-                          TypedLayout{dyn_img_layout.width, dyn_img_layout.height, dyn_img_layout.stride_bytes}};
+  return Image<PixelType, Allocator>{memory.transfer_data(),
+                                     TypedLayout{dyn_img_layout.width, dyn_img_layout.height, dyn_img_layout.stride_bytes}};
 }
 
 /** \brief Creates a statically typed `MutableImageView<PixelType>` view from a dynamically typed `DynImage` instance.
@@ -114,8 +114,8 @@ Image<PixelType> to_image(DynImage&& dyn_img)
  * @param dyn_img The dynamically typed image.
  * @return A `MutableImageView<PixelType>` instance.
  */
-template <typename PixelType>
-MutableImageView<PixelType> to_image_view(DynImage& dyn_img)
+template <typename PixelType, typename Allocator>
+MutableImageView<PixelType> to_image_view(DynImage<Allocator>& dyn_img)
 {
   impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img.view());
 
@@ -139,8 +139,8 @@ MutableImageView<PixelType> to_image_view(DynImage& dyn_img)
  * @param dyn_img The dynamically typed image.
  * @return A `ConstantImageView<PixelType>` instance.
  */
-template <typename PixelType>
-ConstantImageView<PixelType> to_image_view(const DynImage& dyn_img)
+template <typename PixelType, typename Allocator>
+ConstantImageView<PixelType> to_image_view(const DynImage<Allocator>& dyn_img)
 {
   impl::check_dyn_img_to_img_compatibility<PixelType>(dyn_img.view());
 

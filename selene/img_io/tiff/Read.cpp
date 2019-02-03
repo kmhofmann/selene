@@ -306,10 +306,10 @@ bool tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj,
 }
 
 // Explicit instantiations:
-template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, DynImage&);
+template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, DynImage<>&);
 template bool tiff_read_current_directory(TIFFReadObject<FileReader>&, MessageLog&, MutableDynImageView&);
 
-template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, DynImage&);
+template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, DynImage<>&);
 template bool tiff_read_current_directory(TIFFReadObject<MemoryReader>&, MessageLog&, MutableDynImageView&);
 
 }  // namespace impl

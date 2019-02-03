@@ -23,7 +23,7 @@ namespace impl {
 
 bool read_data_high_level(TIFF* tif,
                           const sln::TiffImageLayout& src,
-                          sln::DynImage& dyn_img,
+                          sln::DynImage<>& dyn_img,
                           sln::MessageLog& message_log);
 
 }  // namespace impl

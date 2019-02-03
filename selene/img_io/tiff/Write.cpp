@@ -355,11 +355,11 @@ bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj,
 }
 
 // Explicit instantiations:
-template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage<>&, std::ptrdiff_t);
 template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
 template bool tiff_write_to_current_directory(TIFFWriteObject<FileWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
 
-template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage&, std::ptrdiff_t);
+template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const DynImage<>&, std::ptrdiff_t);
 template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const ConstantDynImageView&, std::ptrdiff_t);
 template bool tiff_write_to_current_directory(TIFFWriteObject<VectorWriter>&, const TIFFWriteOptions&, MessageLog&, const MutableDynImageView&, std::ptrdiff_t);
 

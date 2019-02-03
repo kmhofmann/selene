@@ -16,7 +16,7 @@
 namespace sln_test {
 
 template <typename PixelType, typename RNG>
-sln::DynImage construct_random_dynamic_image(sln::PixelLength width, sln::PixelLength height, RNG& rng)
+sln::DynImage<> construct_random_dynamic_image(sln::PixelLength width, sln::PixelLength height, RNG& rng)
 {
   using namespace sln::literals;
   using Element = typename sln::PixelTraits<PixelType>::Element;
@@ -33,11 +33,11 @@ sln::DynImage construct_random_dynamic_image(sln::PixelLength width, sln::PixelL
   const auto stride_bytes = sln::Stride(width * sln::PixelTraits<PixelType>::nr_bytes + extra_stride_bytes);
   const auto semantics = sln::UntypedImageSemantics{sln::PixelTraits<PixelType>::pixel_format,
                                                     sln::PixelTraits<PixelType>::sample_format};
-  sln::DynImage img{{width, height, nr_channels, nr_bytes_per_channel, stride_bytes}, semantics};
+  sln::DynImage<> img{{width, height, nr_channels, nr_bytes_per_channel, stride_bytes}, semantics};
 
   for (auto y = 0_idx; y < img.height(); ++y)
   {
-    auto ptr = img.data<PixelType>(y);
+    auto ptr = img.template data<PixelType>(y);
     for (auto x = 0_idx; x < img.width(); ++x, ++ptr)
     {
       for (auto c = std::size_t{0}; c < nr_channels; ++c)

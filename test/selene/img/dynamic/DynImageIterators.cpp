@@ -13,7 +13,7 @@ using namespace sln::literals;
 namespace {
 
 template <typename PixelType>
-void compare_iteration(sln::DynImage& img)
+void compare_iteration(sln::DynImage<>& img)
 {
   // const iteration
 
@@ -30,7 +30,7 @@ void compare_iteration(sln::DynImage& img)
     }
 
     std::vector<PixelType> elements_1;
-    for (sln::DynImage::const_iterator<PixelType> it = img2.cbegin<PixelType>(); it != img2.cend<PixelType>(); ++it)
+    for (sln::DynImage<>::const_iterator<PixelType> it = img2.cbegin<PixelType>(); it != img2.cend<PixelType>(); ++it)
     {
       const auto& row = *it;
       for (auto it_el = row.cbegin(); it_el != row.cend(); ++it_el)
@@ -56,7 +56,7 @@ void compare_iteration(sln::DynImage& img)
     }
 
     std::vector<PixelType> elements_1;
-    for (sln::DynImage::iterator<PixelType> it = img.begin<PixelType>(); it != img.end<PixelType>(); ++it)
+    for (sln::DynImage<>::iterator<PixelType> it = img.begin<PixelType>(); it != img.end<PixelType>(); ++it)
     {
       auto& row = *it;
       for (auto it_el = row.begin(); it_el != row.end(); ++it_el)

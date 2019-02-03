@@ -33,8 +33,8 @@ MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv);
 template <typename PixelType>
 ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv);
 
-template <typename PixelType>
-Image<PixelType> copy_opencv_mat(const cv::Mat& img_cv);
+template <typename PixelType, typename Allocator = default_bytes_allocator>
+Image<PixelType, Allocator> copy_opencv_mat(const cv::Mat& img_cv);
 
 template <typename DerivedSrc>
 cv::Mat wrap_in_opencv_mat(ImageBase<DerivedSrc>& img);
@@ -190,8 +190,8 @@ inline ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv)
  * @param img_cv An OpenCV matrix.
  * @return An `Image<PixelType>`, providing a copy of the contents of the OpenCV matrix `img_cv`.
  */
-template <typename PixelType>
-Image<PixelType> copy_opencv_mat(const cv::Mat& img_cv)
+template <typename PixelType, typename Allocator>
+Image<PixelType, Allocator> copy_opencv_mat(const cv::Mat& img_cv)
 {
   SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
 
@@ -207,7 +207,7 @@ Image<PixelType> copy_opencv_mat(const cv::Mat& img_cv)
 
   const auto nr_bytes_per_row = width * PixelTraits<PixelType>::nr_bytes;
 
-  Image<PixelType> img({width, height, stride_bytes});
+  Image<PixelType, Allocator> img({width, height, stride_bytes});
   for (PixelIndex y = 0_idx; y < height; ++y)
   {
     const auto begin = img_cv.ptr(int(y));

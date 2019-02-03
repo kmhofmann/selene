@@ -21,8 +21,7 @@ namespace sln {
 template <typename Derived>
 void allocate(ImageBase<Derived>& img_dst,
               TypedLayout layout,
-              bool force_layout = false,
-              [[maybe_unused]] bool shrink_to_fit = false)
+              bool force_layout = false)
 {
   if (!force_layout && img_dst.width() == layout.width && img_dst.height() == layout.height)
   {
@@ -35,10 +34,7 @@ void allocate(ImageBase<Derived>& img_dst,
   }
   else
   {
-    img_dst.derived().reallocate(layout,
-                                 guess_row_alignment(reinterpret_cast<std::uintptr_t>(img_dst.byte_ptr()),
-                                                     img_dst.stride_bytes()),
-                                 shrink_to_fit);
+    img_dst.derived().reallocate(layout);
   }
 }
 

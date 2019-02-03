@@ -14,9 +14,9 @@ using namespace sln::literals;
 
 namespace {
 
-sln::DynImage create_test_dyn_image(sln::UntypedLayout layout, sln::UntypedImageSemantics semantics)
+sln::DynImage<> create_test_dyn_image(sln::UntypedLayout layout, sln::UntypedImageSemantics semantics)
 {
-  sln::DynImage dyn_img(layout, semantics);
+  sln::DynImage<> dyn_img(layout, semantics);
 
   for (auto y = 0_idx; y < dyn_img.height(); ++y)
   {
