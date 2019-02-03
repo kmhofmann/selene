@@ -35,7 +35,7 @@ std::optional<std::vector<std::uint8_t>> read_file_contents(const std::string& p
   }
 
   std::fclose(fp);
-  return std::optional{std::move(contents)};
+  return std::optional<std::vector<std::uint8_t>>{std::move(contents)};
 }
 
 /** \brief Writes the contents of `data` to a file.
