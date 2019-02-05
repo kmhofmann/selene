@@ -4,13 +4,6 @@ endif()
 
 #------------------------------------------------------------------------------
 
-add_executable(class_sizes "")
-target_sources(class_sizes PRIVATE ${CMAKE_CURRENT_LIST_DIR}/class_sizes.cpp)
-target_compile_options(class_sizes PRIVATE ${SELENE_COMPILER_OPTIONS})
-target_compile_definitions(class_sizes PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-target_include_directories(class_sizes PRIVATE ${SELENE_DIR}/examples)
-target_link_libraries(class_sizes selene)
-
 if(PNG_FOUND)
     add_executable(image_access "")
     target_sources(image_access PRIVATE ${CMAKE_CURRENT_LIST_DIR}/image_access.cpp ${CMAKE_CURRENT_LIST_DIR}/Utils.hpp)

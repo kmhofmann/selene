@@ -16,10 +16,13 @@ namespace sln {
 
 namespace impl {
 
+template <typename> struct is_dyn_image : std::false_type {};
+template <typename Allocator> struct is_dyn_image<DynImage<Allocator>> : std::true_type {};
+
 template <typename DynImageOrView>
 constexpr bool static_check_is_dyn_image()
 {
-  return std::is_same_v<DynImageOrView, DynImage<>>;  // TODO: this fails in case we're not using the default allocator!
+  return is_dyn_image<DynImageOrView>::value;
 }
 
 template <typename DynImageOrView>
