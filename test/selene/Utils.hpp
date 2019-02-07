@@ -9,6 +9,7 @@
 
 #include <wrappers/fs/Filesystem.hpp>
 
+#include <numeric>
 #include <random>
 #include <type_traits>
 
@@ -57,6 +58,43 @@ inline std::vector<std::uint8_t> generate_random_data(std::size_t nr_bytes)
   std::for_each(data.begin(), data.end(), [&bytes_engine](auto& x) { x = static_cast<std::uint8_t>(bytes_engine()); });
   return data;
 }
+
+template <class T>
+class IotaAllocator
+{
+public:
+  using size_type = std::size_t;
+  using difference_type = std::ptrdiff_t;
+  using pointer = T*;
+  using const_pointer = const T*;
+  using reference = T&;
+  using const_reference = const T&;
+  using value_type = T;
+
+  explicit IotaAllocator(T value) : value_(value)
+  { }
+
+  template <class U> explicit IotaAllocator(const IotaAllocator<U>& other)
+  {
+    value_ = other.value_;
+  }
+
+  pointer allocate(size_type n, [[maybe_unused]] const void* hint = nullptr)
+  {
+    auto ptr = new T[n];
+    std::iota(ptr, ptr + n, value_);
+    return ptr;
+  }
+
+  void deallocate(pointer p, [[maybe_unused]] size_type n)
+  {
+    delete [] p;
+  }
+
+private:
+  T value_{0};
+  template <typename U> friend class Allocator;
+};
 
 }  // namespace sln_test
 

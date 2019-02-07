@@ -189,8 +189,9 @@ Image<PixelType_, Allocator_>::Image(const Allocator& alloc)
 
 template <typename PixelType_, typename Allocator_>
 Image<PixelType_, Allocator_>::Image(TypedLayout layout)
-    : view_and_alloc_(this->allocate_memory(layout), Allocator{})
+    : view_and_alloc_(ImageView<PixelType, ImageModifiability::Mutable>{}, Allocator{})
 {
+  mem_view() = this->allocate_memory(layout);
 }
 
 /** \brief Constructs an image with the specified layout.
@@ -200,8 +201,9 @@ Image<PixelType_, Allocator_>::Image(TypedLayout layout)
  */
 template <typename PixelType_, typename Allocator_>
 Image<PixelType_, Allocator_>::Image(TypedLayout layout, const Allocator& alloc)
-    : view_and_alloc_(this->allocate_memory(layout), alloc)
+    : view_and_alloc_(ImageView<PixelType, ImageModifiability::Mutable>{}, alloc)
 {
+  mem_view() = this->allocate_memory(layout);
 }
 
 /** \brief Constructs an image with the specified layout, from an existing block of memory.
@@ -237,8 +239,9 @@ Image<PixelType_, Allocator_>::~Image()
  */
 template <typename PixelType_, typename Allocator_>
 Image<PixelType_, Allocator_>::Image(const Image<PixelType, Allocator>& other)
-    : view_and_alloc_(allocate_memory(other.layout()),  other.mem_alloc())
+    : view_and_alloc_(ImageView<PixelType, ImageModifiability::Mutable>{}, other.mem_alloc())
 {
+  mem_view() = allocate_memory(other.layout());
   copy_rows_from(other);
 }
 
@@ -265,9 +268,8 @@ Image<PixelType_, Allocator_>& Image<PixelType_, Allocator_>::operator=(const Im
     this->deallocate_memory();
 
     // Allocate new memory
-    mem_view() = allocate_memory(other.layout());
-
     mem_alloc() = other.mem_alloc();
+    mem_view() = allocate_memory(other.layout());
   }
 
   copy_rows_from(other);
@@ -321,8 +323,9 @@ Image<PixelType_, Allocator_>& Image<PixelType_, Allocator_>::operator=(Image<Pi
 template <typename PixelType_, typename Allocator_>
 template <ImageModifiability modifiability_>
 Image<PixelType_, Allocator_>::Image(const ImageView<PixelType, modifiability_>& other, const Allocator& alloc)
-    : view_and_alloc_(allocate_memory(other.layout()), alloc)
+    : view_and_alloc_(ImageView<PixelType, ImageModifiability::Mutable>{}, alloc)
 {
+  mem_view() = allocate_memory(other.layout());
   copy_rows_from(other);
 }
 

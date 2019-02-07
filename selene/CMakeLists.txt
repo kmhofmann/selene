@@ -11,8 +11,6 @@ add_library(selene_base "")
 add_library(selene::selene_base ALIAS selene_base)
 
 target_sources(selene_base PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/base/Allocators.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Assert.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.hpp
         ${CMAKE_CURRENT_LIST_DIR}/base/Kernel.hpp

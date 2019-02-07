@@ -198,8 +198,9 @@ DynImage<Allocator_>::DynImage(const Allocator& alloc)
 
 template <typename Allocator_>
 DynImage<Allocator_>::DynImage(UntypedLayout layout, UntypedImageSemantics semantics)
-    : view_and_alloc_(this->allocate_memory(layout, semantics), Allocator{})
+    : view_and_alloc_(DynImageView<ImageModifiability::Mutable>{}, Allocator{})
 {
+  mem_view() = this->allocate_memory(layout, semantics);
 }
 
 /** \brief Constructs a dynamic image with the specified layout and pixel semantics.
@@ -209,8 +210,9 @@ DynImage<Allocator_>::DynImage(UntypedLayout layout, UntypedImageSemantics seman
  */
 template <typename Allocator_>
 DynImage<Allocator_>::DynImage(UntypedLayout layout, UntypedImageSemantics semantics, const Allocator& alloc)
-    : view_and_alloc_(this->allocate_memory(layout, semantics), alloc)
+    : view_and_alloc_(DynImageView<ImageModifiability::Mutable>{}, alloc)
 {
+  mem_view() = this->allocate_memory(layout, semantics);
 }
 
 /** \brief Constructs a dynamic image with the specified layout and pixel semantics, from an existing block of memory.
@@ -247,10 +249,9 @@ DynImage<Allocator_>::~DynImage()
  */
 template <typename Allocator_>
 DynImage<Allocator_>::DynImage(const DynImage<Allocator>& other)
-    : view_and_alloc_(allocate_memory(other.layout(),
-                                      other.semantics()),
-                      other.mem_alloc())
+    : view_and_alloc_(DynImageView<ImageModifiability::Mutable>{}, other.mem_alloc())
 {
+  mem_view() = allocate_memory(other.layout(), other.semantics());
   copy_rows_from(other);
 }
 
@@ -276,9 +277,8 @@ DynImage<Allocator_>& DynImage<Allocator_>::operator=(const DynImage<Allocator>&
     this->deallocate_memory();
 
     // Allocate new memory
-    mem_view() = allocate_memory(other.layout(), other.semantics());
-
     mem_alloc() = other.mem_alloc();
+    mem_view() = allocate_memory(other.layout(), other.semantics());
   }
 
   copy_rows_from(other);
@@ -328,8 +328,9 @@ DynImage<Allocator_>& DynImage<Allocator_>::operator=(DynImage<Allocator>&& othe
 template <typename Allocator_>
 template <ImageModifiability modifiability_>
 DynImage<Allocator_>::DynImage(const DynImageView<modifiability_>& other, const Allocator& alloc)
-    : view_and_alloc_(allocate_memory(other.layout(), other.semantics()), alloc)
+    : view_and_alloc_(DynImageView<ImageModifiability::Mutable>{}, alloc)
 {
+  mem_view() = allocate_memory(other.layout(), other.semantics());
   copy_rows_from(other);
 }
 

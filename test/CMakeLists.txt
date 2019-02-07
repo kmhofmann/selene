@@ -24,11 +24,13 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/pixel/Pixel.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/dynamic/DynImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/dynamic/DynImageAllocation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/dynamic/DynImageIterators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/dynamic/UntypedLayout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/dynamic/_Utils.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/ImageAllocation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Iterators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/TypedLayout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Utilities.cpp
