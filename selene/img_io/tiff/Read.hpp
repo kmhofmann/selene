@@ -29,13 +29,19 @@ template <typename SourceType> class TIFFReadObject;
 template <typename SourceType> class TIFFReader;
 
 template <typename SourceType>
-std::vector<TiffImageLayout> read_tiff_layouts(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
+std::vector<TiffImageLayout> read_tiff_layouts(SourceType&&,
+                                               MessageLog* = nullptr,
+                                               TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
 
-template <typename SourceType>
-DynImage<> read_tiff(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
+template <typename Allocator = default_bytes_allocator, typename SourceType>
+DynImage<Allocator> read_tiff(SourceType&&,
+                              MessageLog* = nullptr,
+                              TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
 
-template <typename SourceType>
-std::vector<DynImage<>> read_tiff_all(SourceType&&, MessageLog* = nullptr, TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
+template <typename Allocator = default_bytes_allocator, typename SourceType>
+std::vector<DynImage<Allocator>> read_tiff_all(SourceType&&,
+                                               MessageLog* = nullptr,
+                                               TIFFReadObject<std::remove_reference_t<SourceType>>* = nullptr);
 
 
 namespace impl {
@@ -71,8 +77,8 @@ private:
   bool set_directory(std::uint16_t index);
 
   template <typename SourceType2> friend std::vector<TiffImageLayout> read_tiff_layouts(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
-  template <typename SourceType2> friend DynImage<> read_tiff(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
-  template <typename SourceType2> friend std::vector<DynImage<>> read_tiff_all(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
+  template <typename Allocator, typename SourceType2> friend DynImage<Allocator> read_tiff(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
+  template <typename Allocator, typename SourceType2> friend std::vector<DynImage<Allocator>> read_tiff_all(SourceType2&&, MessageLog*, TIFFReadObject<std::remove_reference_t<SourceType2>>*);
 
   template <typename SourceType2, typename DynImageOrView> friend bool impl::tiff_read_current_directory(TIFFReadObject<SourceType2>&, MessageLog&, DynImageOrView&);
 
@@ -110,7 +116,7 @@ public:
   bool advance_directory();
   bool set_directory(std::size_t index);
 
-  DynImage<> read_image_data();
+  template <typename Allocator = default_bytes_allocator> DynImage<Allocator> read_image_data();
   template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
 
   MessageLog& message_log();
@@ -189,8 +195,10 @@ std::vector<TiffImageLayout> read_tiff_layouts(SourceType&& source, MessageLog* 
  * @return The read TIFF image from the data stream/file. In case the image could not be read successfully, it will not
  * be valid (i.e. `is_valid() == false`).
  */
-template <typename SourceType>
-DynImage<> read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
+template <typename Allocator, typename SourceType>
+DynImage<Allocator> read_tiff(SourceType&& source,
+                              MessageLog* message_log,
+                              TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
 {
   impl::tiff_set_handlers();
   TIFFReadObject<std::remove_reference_t<SourceType>> local_tiff_object;
@@ -204,10 +212,10 @@ DynImage<> read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObjec
   {
     local_message_log.add("Data stream could not be opened.", MessageType::Error);
     impl::tiff_assign_message_log(local_message_log, message_log);
-    return DynImage<>{};
+    return DynImage<Allocator>{};
   }
 
-  DynImage<> dyn_img;
+  DynImage<Allocator> dyn_img;
   [[maybe_unused]] const bool read_successfully = impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
 
   impl::tiff_assign_message_log(local_message_log, message_log);
@@ -229,15 +237,17 @@ DynImage<> read_tiff(SourceType&& source, MessageLog* message_log, TIFFReadObjec
  * @return A vector with all read TIFF images from the data stream/file. Images that could not be read successfully
  * will not be valid (i.e. `is_valid() == false`).
  */
-template <typename SourceType>
-std::vector<DynImage<>> read_tiff_all(SourceType&& source, MessageLog* message_log, TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
+template <typename Allocator, typename SourceType>
+std::vector<DynImage<Allocator>> read_tiff_all(SourceType&& source,
+                                               MessageLog* message_log,
+                                               TIFFReadObject<std::remove_reference_t<SourceType>>* tiff_object)
 {
   impl::tiff_set_handlers();
   TIFFReadObject<std::remove_reference_t<SourceType>> local_tiff_object;
   TIFFReadObject<std::remove_reference_t<SourceType>>* obj = tiff_object ? tiff_object : &local_tiff_object;
 
   MessageLog local_message_log;
-  std::vector<DynImage<>> images;
+  std::vector<DynImage<Allocator>> images;
 
   SELENE_ASSERT(source.is_open());
 
@@ -250,7 +260,7 @@ std::vector<DynImage<>> read_tiff_all(SourceType&& source, MessageLog* message_l
 
   do
   {
-    DynImage<> dyn_img;
+    DynImage<Allocator> dyn_img;
     [[maybe_unused]] const bool read_successfully = impl::tiff_read_current_directory(*obj, local_message_log, dyn_img);
     images.push_back(std::move(dyn_img));
   } while (obj->advance_directory());
@@ -321,7 +331,8 @@ bool TIFFReader<SourceType>::set_directory(std::size_t index)
 }
 
 template <typename SourceType>
-DynImage<> TIFFReader<SourceType>::read_image_data()
+template <typename Allocator>
+DynImage<Allocator> TIFFReader<SourceType>::read_image_data()
 {
   if (source_ == nullptr)
   {
@@ -329,7 +340,7 @@ DynImage<> TIFFReader<SourceType>::read_image_data()
     return DynImage<>{};
   }
 
-  DynImage<> dyn_img;
+  DynImage<Allocator> dyn_img;
   [[maybe_unused]] const bool success = impl::tiff_read_current_directory(read_object_, message_log_, dyn_img);
   return dyn_img;
 }

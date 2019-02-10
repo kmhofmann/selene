@@ -168,10 +168,10 @@ JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj,
  * @return A `DynImage` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
-template <typename SourceType>
-DynImage<> read_jpeg(SourceType&& source,
-                     JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-                     MessageLog* messages = nullptr);
+template <typename Allocator = default_bytes_allocator, typename SourceType>
+DynImage<Allocator> read_jpeg(SourceType&& source,
+                              JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                              MessageLog* messages = nullptr);
 
 /** \brief Reads contents of a JPEG image data stream.
  *
@@ -190,12 +190,12 @@ DynImage<> read_jpeg(SourceType&& source,
  * @return A `DynImage` instance. Reading the JPEG stream was successful, if `is_valid() == true`, and unsuccessful
  * otherwise.
  */
-template <typename SourceType>
-DynImage<> read_jpeg(JPEGDecompressionObject& obj,
-                     SourceType&& source,
-                     JPEGDecompressionOptions options = JPEGDecompressionOptions(),
-                     MessageLog* messages = nullptr,
-                     const JPEGImageInfo* provided_header_info = nullptr);
+template <typename Allocator = default_bytes_allocator, typename SourceType>
+DynImage<Allocator> read_jpeg(JPEGDecompressionObject& obj,
+                              SourceType&& source,
+                              JPEGDecompressionOptions options = JPEGDecompressionOptions(),
+                              MessageLog* messages = nullptr,
+                              const JPEGImageInfo* provided_header_info = nullptr);
 
 /** Class with functionality to read header and data of a JPEG image data stream.
  *
@@ -229,7 +229,7 @@ public:
   void set_decompression_options(JPEGDecompressionOptions options);
 
   JPEGImageInfo get_output_image_info();
-  DynImage<> read_image_data();
+  template <typename Allocator = default_bytes_allocator> DynImage<Allocator> read_image_data();
   template <typename DynImageOrView> bool read_image_data(DynImageOrView& dyn_img_or_view);
 
   MessageLog& message_log();
@@ -305,20 +305,20 @@ JPEGImageInfo read_jpeg_header(JPEGDecompressionObject& obj, SourceType&& source
   return header_info;
 }
 
-template <typename SourceType>
-DynImage<> read_jpeg(SourceType&& source, JPEGDecompressionOptions options, MessageLog* messages)
+template <typename Allocator, typename SourceType>
+DynImage<Allocator> read_jpeg(SourceType&& source, JPEGDecompressionOptions options, MessageLog* messages)
 {
   JPEGDecompressionObject obj;
   SELENE_ASSERT(obj.valid());
   return read_jpeg(obj, std::forward<SourceType>(source), options, messages, nullptr);
 }
 
-template <typename SourceType>
-DynImage<> read_jpeg(JPEGDecompressionObject& obj,
-                     SourceType&& source,
-                     JPEGDecompressionOptions options,
-                     MessageLog* messages,
-                     const JPEGImageInfo* provided_header_info)
+template <typename Allocator, typename SourceType>
+DynImage<Allocator> read_jpeg(JPEGDecompressionObject& obj,
+                              SourceType&& source,
+                              JPEGDecompressionOptions options,
+                              MessageLog* messages,
+                              const JPEGImageInfo* provided_header_info)
 {
   if (!provided_header_info)
   {
@@ -327,7 +327,7 @@ DynImage<> read_jpeg(JPEGDecompressionObject& obj,
     if (obj.error_state())
     {
       impl::assign_message_log(obj, messages);
-      return DynImage<>();
+      return DynImage<Allocator>();
     }
   }
 
@@ -336,7 +336,7 @@ DynImage<> read_jpeg(JPEGDecompressionObject& obj,
   if (!header_info.is_valid())
   {
     impl::assign_message_log(obj, messages);
-    return DynImage<>();
+    return DynImage<Allocator>();
   }
 
   obj.set_decompression_parameters(options.out_color_space);
@@ -352,8 +352,9 @@ DynImage<> read_jpeg(JPEGDecompressionObject& obj,
   const auto output_pixel_format = impl::color_space_to_pixel_format(output_info.color_space);
   const auto output_sample_format = SampleFormat::UnsignedInteger;
 
-  DynImage<> dyn_img({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel, output_stride_bytes},
-                     {output_pixel_format, output_sample_format});
+  DynImage<Allocator> dyn_img({output_width, output_height, output_nr_channels, output_nr_bytes_per_channel,
+                               output_stride_bytes},
+                              {output_pixel_format, output_sample_format});
   auto row_pointers = get_row_pointers(dyn_img);
   const auto dec_success = cycle.decompress(row_pointers);
 
@@ -442,9 +443,10 @@ JPEGImageInfo JPEGReader<SourceType>::get_output_image_info()
 }
 
 template <typename SourceType>
-DynImage<> JPEGReader<SourceType>::read_image_data()
+template <typename Allocator>
+DynImage<Allocator> JPEGReader<SourceType>::read_image_data()
 {
-  DynImage<> dyn_img;
+  DynImage<Allocator> dyn_img;
   read_image_data(dyn_img);
   return dyn_img;
 }

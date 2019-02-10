@@ -11,6 +11,7 @@
 
 #include <selene/img/typed/TypedLayout.hpp>
 #include <selene/img/typed/_impl/ImageBaseTraits.hpp>
+#include <selene/img/typed/_impl/StaticChecks.hpp>
 
 namespace sln {
 
@@ -21,6 +22,8 @@ template <typename Derived>
 class ImageBase
 {
 public:
+  static_assert(impl::is_image_type_v<Derived>);
+
   using PixelType = typename impl::ImageBaseTraits<Derived>::PixelType;
 
   constexpr static bool is_view = impl::ImageBaseTraits<Derived>::is_view;
