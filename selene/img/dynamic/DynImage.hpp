@@ -20,9 +20,6 @@ namespace sln {
 /// \addtogroup group-img-dynamic
 /// @{
 
-template <typename Allocator_ = default_bytes_allocator>
-class DynImage;
-
 template <typename Allocator0, typename Allocator1>
 bool operator==(const DynImage<Allocator0>& img0, const DynImage<Allocator1>& img1);
 
@@ -165,7 +162,6 @@ public:
   MemoryBlock<Allocator> relinquish_data_ownership();
 
 private:
-//  DynImageView<ImageModifiability::Mutable> view_;
   impl::CompressedPair<DynImageView<ImageModifiability::Mutable>, Allocator> view_and_alloc_;
 
   DynImageView<ImageModifiability::Mutable>& mem_view() { return view_and_alloc_.first(); }

@@ -182,7 +182,7 @@ bool write_tiff(const DynImageOrView& dyn_img_or_view,
                 MessageLog* message_log,
                 TIFFWriteObject<std::remove_reference_t<SinkType>>* tiff_object)
 {
-  impl::static_check_is_dyn_image_or_view<DynImageOrView>();
+  impl::static_assert_is_dyn_image_or_view<DynImageOrView>();
 
   impl::tiff_set_handlers();
   TIFFWriteObject<std::remove_reference_t<SinkType>> local_tiff_object;

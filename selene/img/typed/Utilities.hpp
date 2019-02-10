@@ -8,7 +8,9 @@
 /// @file
 
 #include <selene/img/pixel/PixelTraits.hpp>
+
 #include <selene/img/typed/Image.hpp>
+#include <selene/img/typed/_impl/StaticChecks.hpp>
 
 namespace sln {
 
@@ -19,6 +21,8 @@ template <typename Img>
 constexpr
 std::ptrdiff_t count_nr_channels(const Img&)
 {
+  impl::static_assert_is_image_or_view<Img>();
+
   using PixelType = typename Img::PixelType;
   return sln::PixelTraits<PixelType>::nr_channels;
 }

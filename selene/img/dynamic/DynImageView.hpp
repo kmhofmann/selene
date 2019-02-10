@@ -9,6 +9,7 @@
 
 #include <selene/img/common/Iterators.hpp>
 #include <selene/img/dynamic/UntypedLayout.hpp>
+#include <selene/img/dynamic/_impl/DynImageFwd.hpp>
 
 #include <cstring>
 #include <iterator>
@@ -16,9 +17,6 @@
 #include <utility>
 
 namespace sln {
-
-template <ImageModifiability modifiability_ = ImageModifiability::Constant>
-class DynImageView;
 
 namespace impl {
 

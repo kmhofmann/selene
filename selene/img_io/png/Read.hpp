@@ -507,7 +507,7 @@ template <typename SourceType>
 template <typename DynImageOrView>
 bool PNGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 {
-  impl::static_check_is_dyn_image_or_mutable_view<DynImageOrView>();
+  impl::static_assert_is_dyn_image_or_mutable_view<DynImageOrView>();
 
   if (!header_read_)
   {

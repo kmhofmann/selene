@@ -20,9 +20,6 @@ namespace sln {
 /// \addtogroup group-img-typed
 /// @{
 
-template <typename PixelType_, typename Allocator_ = default_bytes_allocator>
-class Image;
-
 template <typename PixelType0, typename Allocator0, typename PixelType1, typename Allocator1>
 bool operator==(const Image<PixelType0, Allocator0>& img_0, const Image<PixelType1, Allocator1>& img_1);
 
@@ -155,8 +152,6 @@ public:
   MemoryBlock<Allocator> relinquish_data_ownership();
 
 private:
-//  ImageView<PixelType, ImageModifiability::Mutable> view_;
-//  Allocator alloc_;
   impl::CompressedPair<ImageView<PixelType, ImageModifiability::Mutable>, Allocator> view_and_alloc_;
 
   ImageView<PixelType, ImageModifiability::Mutable>& mem_view() { return view_and_alloc_.first(); }

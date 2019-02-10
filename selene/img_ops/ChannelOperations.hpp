@@ -13,6 +13,7 @@
 
 #include <selene/img/typed/Image.hpp>
 #include <selene/img/typed/Utilities.hpp>
+#include <selene/img/typed/_impl/StaticChecks.hpp>
 
 #include <selene/img_ops/Clone.hpp>
 
@@ -48,7 +49,7 @@ auto stack_images(Imgs... imgs);
 template <typename ImgSrc, typename ImgDst>
 void inject_channels(const ImgSrc& src, ImgDst& dst, std::size_t dst_start_channel)
 {
-  static_assert(is_image_type_v<ImgSrc> && is_image_type_v<ImgDst>,
+  static_assert(impl::is_image_type_v<ImgSrc> && impl::is_image_type_v<ImgDst>,
                 "Need to supply a typed image (owning or view) as input/output argument to inject_channels");
 
   constexpr auto nr_channels_src = sln::PixelTraits<typename ImgSrc::PixelType>::nr_channels;

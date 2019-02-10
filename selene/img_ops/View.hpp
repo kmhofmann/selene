@@ -13,6 +13,7 @@
 
 #include <selene/img/typed/ImageBase.hpp>
 #include <selene/img/typed/ImageView.hpp>
+#include <selene/img/typed/_impl/StaticChecks.hpp>
 
 #include <type_traits>
 
@@ -21,16 +22,16 @@ namespace sln {
 /// \addtogroup group-img-ops
 /// @{
 
-template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+template <typename DerivedSrc, typename = std::enable_if_t<impl::is_image_type_v<DerivedSrc>>>
 auto view(const ImageBase<DerivedSrc>& img);
 
-template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+template <typename DerivedSrc, typename = std::enable_if_t<impl::is_image_type_v<DerivedSrc>>>
 auto view(ImageBase<DerivedSrc>& img);
 
-template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+template <typename DerivedSrc, typename = std::enable_if_t<impl::is_image_type_v<DerivedSrc>>>
 auto view(const ImageBase<DerivedSrc>& img, const BoundingBox& region);
 
-template <typename DerivedSrc, typename = std::enable_if_t<is_image_type_v<DerivedSrc>>>
+template <typename DerivedSrc, typename = std::enable_if_t<impl::is_image_type_v<DerivedSrc>>>
 auto view(ImageBase<DerivedSrc>& img, const BoundingBox& region);
 
 template <typename PixelTypeDst, typename DerivedSrc, typename = std::enable_if_t<is_pixel_type_v<PixelTypeDst>>>

@@ -30,6 +30,9 @@ public:
   using PixelType = typename View::PixelType;
   constexpr static bool is_const = is_const_;
 
+  using iterator = PixelType*;  ///< The iterator type.
+  using const_iterator = const PixelType*;  ///< The const_iterator type.
+
   ~ImageRow() = default;  ///< Destructor.
   ImageRow(const ImageRow<View_, is_const_>&) = default;  ///< Copy constructor.
   ImageRow& operator=(const ImageRow<View_, is_const_>&) = default;  ///< Copy assigment operator.
@@ -40,7 +43,7 @@ public:
    *
    * @return Iterator to the first row element.
    */
-  PixelType* begin() noexcept
+  iterator begin() noexcept
   {
     return img_->data(row_index_);
   }
@@ -49,7 +52,7 @@ public:
    *
    * @return Const iterator to the first row element.
    */
-  const PixelType* begin() const noexcept
+  const_iterator begin() const noexcept
   {
     return img_->data(row_index_);
   }
@@ -58,7 +61,7 @@ public:
    *
    * @return Const iterator to the first row element.
    */
-  const PixelType* cbegin() const noexcept
+  const_iterator cbegin() const noexcept
   {
     return img_->data(row_index_);
   }
@@ -67,7 +70,7 @@ public:
    *
    * @return Iterator to the one-past-the-last row element.
    */
-  PixelType* end() noexcept
+  iterator end() noexcept
   {
     return img_->data_row_end(row_index_);
   }
@@ -76,7 +79,7 @@ public:
    *
    * @return Const iterator to the one-past-the-last row element.
    */
-  const PixelType* end() const noexcept
+  const_iterator end() const noexcept
   {
     return img_->data_row_end(row_index_);
   }
@@ -85,7 +88,7 @@ public:
    *
    * @return Const iterator to the one-past-the-last row element.
    */
-  const PixelType* cend() const noexcept
+  const_iterator cend() const noexcept
   {
     return img_->data_row_end(row_index_);
   }

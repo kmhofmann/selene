@@ -7,48 +7,44 @@
 
 /// @file
 
-#include <selene/img/dynamic/DynImage.hpp>
-#include <selene/img/dynamic/DynImageView.hpp>
+#include <selene/img/dynamic/_impl/DynImageFwd.hpp>
 
 #include <type_traits>
 
-namespace sln {
-
-namespace impl {
+namespace sln::impl {
 
 template <typename> struct is_dyn_image : std::false_type {};
 template <typename Allocator> struct is_dyn_image<DynImage<Allocator>> : std::true_type {};
+template <typename Img> constexpr bool is_dyn_image_v = is_dyn_image<Img>::value;
 
-template <typename DynImageOrView>
-constexpr bool static_check_is_dyn_image()
-{
-  return is_dyn_image<DynImageOrView>::value;
-}
+template <typename> struct is_dyn_image_view : std::false_type {};
+template <ImageModifiability modifiability> struct is_dyn_image_view<DynImageView<modifiability>> : std::true_type {};
+template <typename Img> constexpr bool is_dyn_image_view_v = is_dyn_image_view<Img>::value;
 
-template <typename DynImageOrView>
-constexpr bool static_check_is_dyn_image_view()
-{
-  return std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Mutable>>
-      || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Constant>>;
-}
+template <typename> struct is_constant_dyn_image_view : std::false_type {};
+template <> struct is_constant_dyn_image_view<DynImageView<ImageModifiability::Constant>> : std::true_type {};
+template <typename Img> constexpr bool is_constant_dyn_image_view_v = is_constant_dyn_image_view<Img>::value;
 
-template <typename DynImageOrView>
-constexpr void static_check_is_dyn_image_or_view()
+template <typename> struct is_mutable_dyn_image_view : std::false_type {};
+template <> struct is_mutable_dyn_image_view<DynImageView<ImageModifiability::Mutable>> : std::true_type {};
+template <typename Img> constexpr bool is_mutable_dyn_image_view_v = is_mutable_dyn_image_view<Img>::value;
+
+// -----
+
+template <typename DynImgOrView>
+constexpr void static_assert_is_dyn_image_or_view()
 {
-  static_assert(static_check_is_dyn_image<DynImageOrView>() || static_check_is_dyn_image_view<DynImageOrView>(),
+  static_assert(is_dyn_image_v<DynImgOrView> || is_dyn_image_view_v<DynImgOrView>,
                 "Supplied type needs be either a sln::DynImage or a sln::DynImageView<>.");
 }
 
-template <typename DynImageOrView>
-constexpr void static_check_is_dyn_image_or_mutable_view()
+template <typename DynImgOrView>
+constexpr void static_assert_is_dyn_image_or_mutable_view()
 {
-  static_assert(static_check_is_dyn_image<DynImageOrView>()
-                || std::is_same_v<DynImageOrView, DynImageView<ImageModifiability::Mutable>>,
+  static_assert(is_dyn_image_v<DynImgOrView> || is_mutable_dyn_image_view_v<DynImgOrView>,
                 "Supplied type needs be either a sln::DynImage or a sln::MutableDynImageView<>.");
 }
 
-} // namespace impl
-
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // SELENE_IMG_DYNAMIC_IMPL_STATIC_CHECKS_HPP

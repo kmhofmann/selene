@@ -10,16 +10,15 @@
 #include <selene/img/dynamic/_impl/RuntimeChecks.hpp>
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 template <typename DynImageOrView>
 [[nodiscard]] inline
 bool prepare_image_or_view(DynImageOrView& dyn_img_or_view, const UntypedLayout& layout, const UntypedImageSemantics& semantics)
 {
-  impl::static_check_is_dyn_image_or_mutable_view<DynImageOrView>();
+  impl::static_assert_is_dyn_image_or_mutable_view<DynImageOrView>();
 
-  if constexpr (impl::static_check_is_dyn_image<DynImageOrView>())
+  if constexpr (impl::is_dyn_image_v<DynImageOrView>)
   {
     dyn_img_or_view.reallocate(layout, semantics);
   }
@@ -39,7 +38,6 @@ bool prepare_image_or_view(DynImageOrView& dyn_img_or_view, const UntypedLayout&
   return true;
 }
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // SELENE_IMG_DYNAMIC_IMPL_UTILS_HPP

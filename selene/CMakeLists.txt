@@ -94,6 +94,7 @@ target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/DynImageFwd.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/RuntimeChecks.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/StaticChecks.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/Utils.hpp
@@ -106,6 +107,8 @@ target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageBaseTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageFwd.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/StaticChecks.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/BorderAccessors.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/GetPixel.hpp

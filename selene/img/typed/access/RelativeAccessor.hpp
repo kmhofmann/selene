@@ -9,6 +9,8 @@
 
 #include <selene/img/common/Types.hpp>
 
+#include <selene/img/typed/_impl/StaticChecks.hpp>
+
 #include <type_traits>
 
 namespace sln {
@@ -61,6 +63,8 @@ public:
   decltype(auto) get(PixelIndex x, PixelIndex y) noexcept;
 
 private:
+  static_assert(impl::is_image_type_v<std::remove_cv_t<ImageType>>);
+
   ImageType_& img_;
   PixelIndex anchor_x_;
   PixelIndex anchor_y_;

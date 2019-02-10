@@ -10,9 +10,7 @@
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/dynamic/DynImageView.hpp>
 
-namespace sln {
-
-namespace impl {
+namespace sln::impl {
 
 template <typename DynImageOrView>
 inline bool check_is_layout_compatible(const DynImageOrView& img, const UntypedLayout& layout)
@@ -24,8 +22,6 @@ inline bool check_is_layout_compatible(const DynImageOrView& img, const UntypedL
       && img.layout().nr_bytes_per_channel == layout.nr_bytes_per_channel;
 }
 
-} // namespace impl
-
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // SELENE_IMG_DYNAMIC_IMPL_RUNTIME_CHECKS_HPP

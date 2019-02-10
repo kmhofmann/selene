@@ -2,22 +2,16 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_TYPED_IMAGE_BASE_TRAITS_HPP
-#define SELENE_IMG_TYPED_IMAGE_BASE_TRAITS_HPP
+#ifndef SELENE_IMG_TYPED_IMPL_IMAGE_BASE_TRAITS_HPP
+#define SELENE_IMG_TYPED_IMPL_IMAGE_BASE_TRAITS_HPP
 
 /// @file
 
 #include <selene/img/common/DataPtr.hpp>
 
-namespace sln {
+#include <selene/img/typed/_impl/ImageFwd.hpp>
 
-template <typename PixelType_, ImageModifiability modifiability_>
-class ImageView;
-
-template <typename PixelType_, typename Allocator_>
-class Image;
-
-namespace impl {
+namespace sln::impl {
 
 template <typename Derived>
 struct ImageBaseTraits;
@@ -50,8 +44,6 @@ struct ImageBaseTraits<ImageView<PixelType_, modifiability_>>
   }
 };
 
-}  // namespace impl
+}  // namespace sln::impl
 
-}  // namespace sln
-
-#endif  // SELENE_IMG_TYPED_IMAGE_BASE_TRAITS_HPP
+#endif  // SELENE_IMG_TYPED_IMPL_IMAGE_BASE_TRAITS_HPP

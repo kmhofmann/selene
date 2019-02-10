@@ -14,6 +14,7 @@
 
 #include <selene/img/typed/ImageBase.hpp>
 #include <selene/img/typed/TypedLayout.hpp>
+#include <selene/img/typed/_impl/ImageFwd.hpp>
 
 #include <selene/img/pixel/PixelTraits.hpp>
 
@@ -24,9 +25,6 @@ namespace sln {
 
 /// \addtogroup group-img-typed
 /// @{
-
-template <typename PixelType_, ImageModifiability modifiability_>
-class ImageView;
 
 template <typename PixelType> using MutableImageView = ImageView<PixelType, ImageModifiability::Mutable>;  ///< An image view pointing to mutable data.
 template <typename PixelType> using ConstantImageView = ImageView<PixelType, ImageModifiability::Constant>;  ///< An image view pointing to constant data.
