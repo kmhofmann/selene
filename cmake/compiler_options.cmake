@@ -6,10 +6,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
         set(SELENE_COMPILER_OPTIONS ${SELENE_COMPILER_OPTIONS} -Werror)
     endif()
 
-    if (SELENE_ARCH_NATIVE)
-        set(SELENE_COMPILER_OPTIONS ${SELENE_COMPILER_OPTIONS} -march=native)
-    endif()
-
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(SELENE_IMG_COMPILER_OPTIONS -Wno-clobbered)
     endif()
