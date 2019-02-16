@@ -1,19 +1,28 @@
 # Centralized dependency handling
+# (for the main library)
 
-set(selene_fp_failure_msg_user " (requested by user)")
-set(selene_fp_failure_msg_nf " (*** NOT FOUND ***)")
+# Define helper macro that is called below.
+
+macro(find_package_if PKG_NAME CONDITION NAME)
+    set(selene_fp_failure_msg " (requested by user)")
+
+    if(${CONDITION})
+        find_package(${PKG_NAME} QUIET)
+        set(selene_fp_failure_msg " (*** NOT FOUND ***)")
+    endif()
+
+    if (NOT ${PKG_NAME}_FOUND)
+        message(STATUS "Building WITHOUT ${NAME} support${selene_fp_failure_msg}.")
+    endif()
+endmacro()
 
 # libjpeg-turbo (or libjpeg)
 
-set(selene_fp_failure_msg ${selene_fp_failure_msg_user})
-if(SELENE_USE_LIBJPEG)
-    find_package(JPEG QUIET)
-    set(selene_fp_failure_msg ${selene_fp_failure_msg_nf})
-endif()
+find_package_if(JPEG SELENE_USE_LIBJPEG "libjpeg")
 
 if(JPEG_FOUND)
-    set(SELENE_WITH_LIBJPEG ON)
     message(STATUS "Building with libjpeg support (${JPEG_LIBRARY}; version ${JPEG_VERSION}).")
+    set(SELENE_WITH_LIBJPEG ON)
 
     # Detect some features provided by libjpeg-turbo: partial image decoding and extended colorspaces
     if(JPEG_INCLUDE_DIR AND EXISTS "${JPEG_INCLUDE_DIR}/jpeglib.h")
@@ -38,36 +47,24 @@ if(JPEG_FOUND)
     if(SELENE_LIBJPEG_EXTENDED_COLORSPACES)
         message(STATUS "  libjpeg-turbo supports extended color spaces.")
     endif()
-else()
-    message(STATUS "Building WITHOUT libjpeg support${selene_fp_failure_msg}.")
 endif()
 
 # libpng
 
-set(selene_fp_failure_msg ${selene_fp_failure_msg_user})
-if(SELENE_USE_LIBPNG)
-    find_package(PNG QUIET)
-    set(selene_fp_failure_msg ${selene_fp_failure_msg_nf})
-endif()
+find_package_if(PNG SELENE_USE_LIBPNG "libpng")
 
 if(PNG_FOUND)
-    set(SELENE_WITH_LIBPNG ON)
     message(STATUS "Building with libpng support (${PNG_LIBRARY}; version ${PNG_VERSION_STRING}).")
-else()
-    message(STATUS "Building WITHOUT libpng support${selene_fp_failure_msg}.")
+    set(SELENE_WITH_LIBPNG ON)
 endif()
 
 # libtiff
 
-set(selene_fp_failure_msg ${selene_fp_failure_msg_user})
-if(SELENE_USE_LIBTIFF)
-    find_package(TIFF QUIET)
-    set(selene_fp_failure_msg ${selene_fp_failure_msg_nf})
-endif()
+find_package_if(TIFF SELENE_USE_LIBTIFF "libtiff")
 
 if(TIFF_FOUND)
-    set(SELENE_WITH_LIBTIFF ON)
     message(STATUS "Building with libtiff support (${TIFF_LIBRARY}; version ${TIFF_VERSION_STRING}).")
+    set(SELENE_WITH_LIBTIFF ON)
 
     # Detect some features provided only by recent libtiff versions (v4.0.10 and up)
     if(TIFF_INCLUDE_DIR AND EXISTS "${TIFF_INCLUDE_DIR}/tiff.h")
@@ -83,21 +80,13 @@ if(TIFF_FOUND)
     if(SELENE_LIBTIFF_ZSTD_WEBP_SUPPORT)
         message(STATUS "  libtiff supports Zstd and WebP (de)compression, if respective libraries are present.")
     endif()
-else()
-    message(STATUS "Building WITHOUT libtiff support${selene_fp_failure_msg}.")
 endif()
 
 # OpenCV
 
-set(selene_fp_failure_msg ${selene_fp_failure_msg_user})
-if(SELENE_USE_OPENCV)
-    find_package(OpenCV QUIET)
-    set(selene_fp_failure_msg ${selene_fp_failure_msg_nf})
-endif()
+find_package_if(OpenCV SELENE_USE_OPENCV "OpenCV")
 
 if(OPENCV_CORE_FOUND)
-    set(SELENE_WITH_OPENCV ON)
     message(STATUS "Building with OpenCV support (${OpenCV_INSTALL_PATH}; version ${OpenCV_VERSION}).")
-else()
-    message(STATUS "Building WITHOUT OpenCV support${selene_fp_failure_msg}.")
+    set(SELENE_WITH_OPENCV ON)
 endif()
