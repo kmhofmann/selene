@@ -9,9 +9,9 @@ include(CMakePackageConfigHelpers)
 
 # Write configure files
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_config.hpp.in selene_config.hpp)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_version.hpp.in selene_version.hpp)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_version.cpp.in selene_version.cpp)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/selene_config.hpp.in selene_config.hpp)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/selene_version.hpp.in selene_version.hpp)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/selene_version.cpp.in selene_version.cpp)
 
 #------------------------------------------------------------------------------
 
@@ -49,8 +49,7 @@ endif()
 
 target_include_directories(selene_base PUBLIC
         $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>)
 
 set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_base)
 
@@ -323,7 +322,9 @@ write_basic_package_version_file(
 configure_package_config_file(
         ${SELENE_DIR}/cmake/selene-config.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
-        INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR})
+        INSTALL_DESTINATION ${SELENE_INSTALL_CONFIGDIR}
+        NO_SET_AND_CHECK_MACRO
+        NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 # Install library files
 install(TARGETS ${SELENE_INSTALL_TARGETS}
@@ -331,7 +332,8 @@ install(TARGETS ${SELENE_INSTALL_TARGETS}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install headers
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -346,16 +348,15 @@ install(FILES
         DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/selene)
 
-# Install exports
+# Install export set
 install(EXPORT selene-targets
         FILE selene-targets.cmake
         NAMESPACE selene::
         DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 # Install config and config-version files
-install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/selene-config-version.cmake
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene-config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/selene-config-version.cmake
         DESTINATION ${SELENE_INSTALL_CONFIGDIR})
 
 #------------------------------------------------------------------------------
