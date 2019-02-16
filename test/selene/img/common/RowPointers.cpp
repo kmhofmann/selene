@@ -11,7 +11,7 @@
 
 using namespace sln::literals;
 
-TEST_CASE("Row pointers, typed image", "[img]")
+TEST_CASE("Row pointers / typed image", "[img]")
 {
   using namespace sln::literals;
   using PixelType = sln::Pixel<std::uint8_t, 1>;
@@ -32,7 +32,7 @@ TEST_CASE("Row pointers, typed image", "[img]")
   }
 }
 
-TEST_CASE("Row pointers, dynamic image", "[img]")
+TEST_CASE("Row pointers / dynamic image", "[img]")
 {
   using namespace sln::literals;
 

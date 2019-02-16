@@ -8,7 +8,6 @@ add_executable(selene_tests "")
 
 target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/Catch.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/selene/Utils.hpp
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Bitcount.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/base/Kernel.cpp
@@ -65,20 +64,14 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/View.cpp
         )
 
-target_compile_options(selene_tests PRIVATE
-        ${SELENE_COMPILER_OPTIONS})
-
-target_compile_definitions(selene_tests PRIVATE
-        ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_tests PRIVATE
-        ${SELENE_DIR}
-        ${SELENE_DIR}/external/Catch2/single_include)
-
-target_link_libraries(selene_tests
-        selene
-        selene_wrapper_fs)
-
+target_compile_options(selene_tests PRIVATE ${SELENE_COMPILER_OPTIONS})
+target_compile_definitions(selene_tests PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_link_libraries(selene_tests selene selene_test_utils selene_wrapper_fs Catch2::Catch2)
 if (OPENCV_CORE_FOUND)
     target_link_libraries(selene_tests opencv_core)
 endif()
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../external/Catch2/contrib)
+
+include(ParseAndAddCatchTests)
+ParseAndAddCatchTests(selene_tests)

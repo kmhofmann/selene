@@ -16,7 +16,7 @@
 #include <random>
 #include <type_traits>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 #include <test/selene/img/typed/_Utils.hpp>
 
 using namespace sln::literals;

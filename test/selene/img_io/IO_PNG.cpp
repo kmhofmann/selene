@@ -34,7 +34,7 @@
 #include <selene/img_io/png/Read.hpp>
 #include <selene/img_io/png/Write.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 #include <wrappers/fs/Filesystem.hpp>
 
@@ -85,7 +85,7 @@ void check_write_read(sln::DynImage<>& dyn_img, const sln_fs::path& tmp_path)
 
 }  // namespace
 
-TEST_CASE("PNG image reading and writing, no conversion", "[img]")
+TEST_CASE("PNG image reading and writing / no conversion", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(sln_test::full_data_path("bike_duck.png").string());
@@ -129,7 +129,7 @@ TEST_CASE("PNG image reading and writing, no conversion", "[img]")
   REQUIRE(messages_write.messages().empty());
 }
 
-TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
+TEST_CASE("PNG image reading and writing / conversion to grayscale", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(sln_test::full_data_path("bike_duck.png").string());
@@ -177,7 +177,7 @@ TEST_CASE("PNG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(messages_write.messages().empty());
 }
 
-TEST_CASE("PNG image reading, reusing decompression object", "[img]")
+TEST_CASE("PNG image reading / reusing decompression object", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -224,7 +224,7 @@ TEST_CASE("PNG image reading, reusing decompression object", "[img]")
   }
 }
 
-TEST_CASE("PNG image writing, reusing compression object", "[img]")
+TEST_CASE("PNG image writing / reusing compression object", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -250,7 +250,7 @@ TEST_CASE("PNG image writing, reusing compression object", "[img]")
   }
 }
 
-TEST_CASE("PNG image reading and writing, reading/writing from/to memory", "[img]")
+TEST_CASE("PNG image reading and writing / reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
   const auto file_contents = sln::read_file_contents(sln_test::full_data_path("bike_duck.png").string());
@@ -347,7 +347,7 @@ TEST_CASE("PNG reading of the official test suite", "[img]")
   }
 }
 
-TEST_CASE("PNG image reading, through PNGReader interface", "[img]")
+TEST_CASE("PNG image reading / through PNGReader interface", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 

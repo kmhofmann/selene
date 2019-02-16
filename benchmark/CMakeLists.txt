@@ -30,5 +30,5 @@ target_compile_definitions(benchmark_image_convolution PRIVATE ${SELENE_COMPILER
 target_include_directories(benchmark_image_convolution PRIVATE ${SELENE_DIR}/examples)
 target_link_libraries(benchmark_image_convolution selene selene_wrapper_fs benchmark::benchmark)
 if (OPENCV_IMGPROC_FOUND)
-    target_link_libraries(benchmark_image_convolution opencv_core opencv_imgproc)
+    target_link_libraries(benchmark_image_convolution selene_test_utils opencv_core opencv_imgproc)
 endif()

@@ -13,7 +13,7 @@
 #include <selene/base/io/VectorReader.hpp>
 #include <selene/base/io/VectorWriter.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 #include <algorithm>
 #include <array>

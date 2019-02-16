@@ -32,7 +32,7 @@
 #include <selene/img_io/tiff/Read.hpp>
 #include <selene/img_io/tiff/Write.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 #include <wrappers/fs/Filesystem.hpp>
 
@@ -45,11 +45,12 @@ namespace {
 
 void check_write_read(const sln::DynImage<>& dyn_img,
                       const sln_fs::path& tmp_path,
+                      const std::string& image_filename,
                       sln::TIFFReadObject<sln::FileReader>& read_object,
                       sln::TIFFWriteObject<sln::FileWriter>& write_object)
 {
   // Write as TIFF file...
-  sln::FileWriter sink((tmp_path / "test_img.tif").string());
+  sln::FileWriter sink((tmp_path / image_filename).string());
   REQUIRE(sink.is_open());
   sln::MessageLog messages_write;
   bool status_write = sln::write_tiff(dyn_img, sink, sln::TIFFWriteOptions(), &messages_write, &write_object);
@@ -59,7 +60,7 @@ void check_write_read(const sln::DynImage<>& dyn_img,
   REQUIRE(!sink.is_open());
 
   // ...and read again
-  sln::FileReader source((tmp_path / "test_img.tif").string());
+  sln::FileReader source((tmp_path / image_filename).string());
   sln::MessageLog messages_read;
   auto dyn_img_2 = sln::read_tiff(source, &messages_read, &read_object);
   REQUIRE(messages_read.messages().empty());
@@ -82,6 +83,7 @@ void check_write_read(const sln::DynImage<>& dyn_img,
 
 void check_test_suite(const sln_fs::path& test_suite_path,
                       const sln_fs::path& tmp_path,
+                      const std::string& image_filename,
                       const std::vector<std::string>& cannot_read_list,
                       const std::vector<std::string>& may_have_error_list)
 {
@@ -129,7 +131,7 @@ void check_test_suite(const sln_fs::path& test_suite_path,
           REQUIRE(!dyn_img.is_empty());
           REQUIRE(dyn_img.is_valid());
 
-          check_write_read(dyn_img, tmp_path, read_object, write_object);
+          check_write_read(dyn_img, tmp_path, image_filename, read_object, write_object);
         }
       }
     }
@@ -159,7 +161,7 @@ TEST_CASE("TIFF reading of the official test suite", "[img]")
       "text"
   };
 
-  check_test_suite(test_suite_path, tmp_path, cannot_read_list, may_have_error_list);
+  check_test_suite(test_suite_path, tmp_path, "test_suite_img.tif", cannot_read_list, may_have_error_list);
 }
 
 TEST_CASE("TIFF reading of the self-produced test suite", "[img]")
@@ -167,10 +169,10 @@ TEST_CASE("TIFF reading of the self-produced test suite", "[img]")
   const auto tmp_path = sln_test::get_tmp_path();
   const auto test_suite_path = sln_test::full_data_path("tiff_test");
 
-  check_test_suite(test_suite_path, tmp_path, {}, {});
+  check_test_suite(test_suite_path, tmp_path, "test_img.tif", {}, {});
 }
 
-TEST_CASE("TIFF image reading, through TIFFReader interface", "[img]")
+TEST_CASE("TIFF image reading / through TIFFReader interface", "[img]")
 {
   sln::FileReader source(sln_test::full_data_path("stickers_lzw.tif").string());
   REQUIRE(source.is_open());
@@ -350,7 +352,7 @@ void write_multiple_tiff_directories(const sln::DynImage<>& ref_img, SinkArg&& s
 
 }  // namespace _
 
-TEST_CASE("TIFF image writing, through TIFFWriter interface", "[img]")
+TEST_CASE("TIFF image writing / through TIFFWriter interface", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
   sln::FileReader source(sln_test::full_data_path("stickers_lzw.tif").string());

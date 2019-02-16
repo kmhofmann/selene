@@ -10,7 +10,7 @@
 #include <selene/img/pixel/PixelTraits.hpp>
 #include <selene/img/pixel/PixelTypeAliases.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 #include <test/selene/img/dynamic/_Utils.hpp>
 
 #include <algorithm>

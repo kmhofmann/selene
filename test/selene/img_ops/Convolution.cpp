@@ -15,7 +15,7 @@
 
 #include <selene/img_io/IO.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 using namespace sln::literals;
 

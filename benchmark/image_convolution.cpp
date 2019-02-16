@@ -17,7 +17,7 @@
 #include <selene/img_ops/Convolution.hpp>
 #include <selene/img_ops/View.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 #include <benchmark/benchmark.h>
 

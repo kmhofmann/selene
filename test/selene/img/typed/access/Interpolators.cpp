@@ -127,7 +127,7 @@ void test_bilinear_relative_8u3(ImageType& img)
 
 // ---
 
-TEST_CASE("Image interpolators, 8u1", "[img]")
+TEST_CASE("Image interpolators / 8u1", "[img]")
 {
   auto img = sln_test::make_3x3_test_image_8u1();
   const auto view_c = sln::ImageView<sln::Pixel_8u1, sln::ImageModifiability::Constant>(img.byte_ptr(), img.layout());
@@ -159,7 +159,7 @@ TEST_CASE("Image interpolators, 8u1", "[img]")
   // ...
 }
 
-TEST_CASE("Image interpolators, 8u3", "[img]")
+TEST_CASE("Image interpolators / 8u3", "[img]")
 {
   auto img = sln_test::make_3x3_test_image_8u3();
   const auto view_c = sln::ImageView<sln::Pixel_8u3, sln::ImageModifiability::Constant>(img.byte_ptr(), img.layout());

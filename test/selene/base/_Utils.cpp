@@ -14,7 +14,7 @@
 #include <random>
 #include <type_traits>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 namespace {
 

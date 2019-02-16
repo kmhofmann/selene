@@ -31,7 +31,7 @@
 #include <selene/img_io/jpeg/Read.hpp>
 #include <selene/img_io/jpeg/Write.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 using namespace sln::literals;
 
@@ -45,7 +45,7 @@ constexpr std::array<std::array<unsigned int, 6>, 3> pix = {
 constexpr auto compression_factor = 70;
 // clang-format on
 
-TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
+TEST_CASE("JPEG image reading and writing / no conversion", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -93,7 +93,7 @@ TEST_CASE("JPEG image reading and writing, no conversion", "[img]")
   REQUIRE(messages_write.messages().empty());
 }
 
-TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
+TEST_CASE("JPEG image reading and writing / conversion to grayscale", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -160,7 +160,7 @@ TEST_CASE("JPEG image reading and writing, conversion to grayscale", "[img]")
   REQUIRE(dyn_img_2.is_valid());
 }
 
-TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
+TEST_CASE("JPEG image reading / reusing decompression object", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -211,7 +211,7 @@ TEST_CASE("JPEG image reading, reusing decompression object", "[img]")
   }
 }
 
-TEST_CASE("JPEG image writing, reusing compression object", "[img]")
+TEST_CASE("JPEG image writing / reusing compression object", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -228,7 +228,7 @@ TEST_CASE("JPEG image writing, reusing compression object", "[img]")
   for (int i = 0; i < 5; ++i)
   {
     // Test writing of grayscale image
-    sln::FileWriter sink((tmp_path / "test_duck_gray.jpg").string());
+    sln::FileWriter sink((tmp_path / "test_duck_gray_2.jpg").string());
     REQUIRE(sink.is_open());
     sln::MessageLog messages_write;
     bool status_write = sln::write_jpeg(img_data, comp_obj, sink, sln::JPEGCompressionOptions(compression_factor),
@@ -239,7 +239,7 @@ TEST_CASE("JPEG image writing, reusing compression object", "[img]")
 }
 
 #if defined(SELENE_LIBJPEG_PARTIAL_DECODING)
-TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
+TEST_CASE("JPEG image reading and writing / partial image reading", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 
@@ -306,7 +306,7 @@ TEST_CASE("JPEG image reading and writing, partial image reading", "[img]")
 }
 #endif
 
-TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[img]")
+TEST_CASE("JPEG image reading and writing / reading/writing from/to memory", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
   const auto file_contents = sln::read_file_contents(sln_test::full_data_path("bike_duck.jpg").string());
@@ -360,7 +360,7 @@ TEST_CASE("JPEG image reading and writing, reading/writing from/to memory", "[im
   REQUIRE(compressed_data.size() > 80000);  // conservative lower bound estimate; should be around 118000
 }
 
-TEST_CASE("JPEG image reading, through JPEGReader interface", "[img]")
+TEST_CASE("JPEG image reading / through JPEGReader interface", "[img]")
 {
   const auto tmp_path = sln_test::get_tmp_path();
 

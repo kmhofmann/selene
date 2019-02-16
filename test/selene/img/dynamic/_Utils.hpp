@@ -9,7 +9,7 @@
 
 #include <selene/img/pixel/PixelTraits.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 #include <random>
 

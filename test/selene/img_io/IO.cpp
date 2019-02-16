@@ -12,7 +12,7 @@
 
 #include <selene/img_io/IO.hpp>
 
-#include <test/selene/Utils.hpp>
+#include <test/utils/Utils.hpp>
 
 constexpr auto duck_ref_width = 1024;
 constexpr auto duck_ref_height = 684;
