@@ -2,9 +2,11 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#include <catch2/catch.hpp>
+#include <selene/selene_config.hpp>
 
 #if defined(SELENE_WITH_OPENCV)
+
+#include <catch2/catch.hpp>
 
 #include <selene/img/interop/OpenCV.hpp>
 #include <selene/img/pixel/PixelTypeAliases.hpp>
@@ -156,9 +158,9 @@ void test_functions(sln::PixelLength width, sln::PixelLength height)
 
 TEST_CASE("OpenCV interoperability", "[img]")
 {
-  for (auto w = 1_px; w < 32; w += 3)
+  for (auto w = 1_px; w < 32_px; w += 3_px)
   {
-    for (auto h = 1_px; h < 32; h += 3)
+    for (auto h = 1_px; h < 32_px; h += 3_px)
     {
       test_functions<sln::Pixel_8u1>(w, h);
       test_functions<sln::Pixel_8u2>(w, h);

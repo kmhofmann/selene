@@ -212,7 +212,7 @@ Image<PixelType, Allocator> copy_opencv_mat(const cv::Mat& img_cv)
   {
     const auto begin = img_cv.ptr(int(y));
     const auto end = img_cv.ptr(int(y)) + nr_bytes_per_row;
-    std::copy(begin, end, img.byte_ptr(int(y)));
+    std::copy(begin, end, img.byte_ptr(y));
   }
   return img;
 }
