@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.12)
 project(selene VERSION 0.3.1 LANGUAGES CXX)
 
 # User-settable options

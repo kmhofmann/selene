@@ -160,10 +160,7 @@ if(JPEG_FOUND)
             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-    target_include_directories(selene_img_io_jpeg PUBLIC ${JPEG_INCLUDE_DIR})
-    target_link_libraries(selene_img_io_jpeg PUBLIC ${JPEG_LIBRARIES})
-    # Imported target support upcoming in CMake (commit 87f2cf3b1ce0ef7b8e71eae0f44cf9753660d423)
-    #target_link_libraries(selene_img_io_jpeg PUBLIC JPEG::JPEG)
+    target_link_libraries(selene_img_io_jpeg PUBLIC JPEG::JPEG)
     target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img)
 
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_jpeg)
