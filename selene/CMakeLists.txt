@@ -22,21 +22,21 @@ target_sources(selene_base PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/selene_config.hpp
         ${CMAKE_CURRENT_BINARY_DIR}/selene_version.hpp
         ${CMAKE_CURRENT_BINARY_DIR}/selene_version.cpp
-        base/Assert.hpp
-        base/Bitcount.hpp
-        base/Kernel.hpp
-        base/MemoryBlock.hpp
-        base/MessageLog.cpp
-        base/MessageLog.hpp
-        base/Promote.hpp
-        base/Round.hpp
-        base/Types.hpp
-        base/Utils.hpp
-        base/_impl/CompressedPair.hpp
-        base/_impl/ExplicitType.hpp
-        base/_impl/TypeTraits.hpp
-        base/_impl/Utils.cpp
-        base/_impl/Utils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Assert.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Bitcount.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Kernel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/MemoryBlock.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/MessageLog.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Promote.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Round.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Types.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/Utils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/CompressedPair.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/ExplicitType.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/TypeTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/Utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/_impl/Utils.hpp
         )
 
 target_compile_options(selene_base PRIVATE ${SELENE_COMPILER_OPTIONS})
@@ -59,16 +59,16 @@ add_library(selene_base_io "")
 add_library(selene::selene_base_io ALIAS selene_base_io)
 
 target_sources(selene_base_io PRIVATE
-        base/io/FileReader.hpp
-        base/io/FileUtils.cpp
-        base/io/FileUtils.hpp
-        base/io/FileWriter.hpp
-        base/io/MemoryReader.hpp
-        base/io/MemoryRegion.hpp
-        base/io/MemoryWriter.hpp
-        base/io/VectorReader.hpp
-        base/io/VectorWriter.hpp
-        base/io/WriterMode.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileUtils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/FileWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryRegion.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/MemoryWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorReader.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/VectorWriter.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/base/io/WriterMode.hpp
         )
 
 target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILER_OPTIONS})
@@ -84,44 +84,44 @@ add_library(selene_img "")
 add_library(selene::selene_img ALIAS selene_img)
 
 target_sources(selene_img PRIVATE
-        img/common/BoundingBox.hpp
-        img/common/DataPtr.hpp
-        img/common/Iterators.hpp
-        img/common/PixelFormat.cpp
-        img/common/PixelFormat.hpp
-        img/common/Types.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/BoundingBox.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/DataPtr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/Iterators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/PixelFormat.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/common/Types.hpp
 
-        img/pixel/Pixel.hpp
-        img/pixel/PixelTraits.hpp
-        img/pixel/PixelTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/Pixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/PixelTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/pixel/PixelTypeAliases.hpp
 
-        img/dynamic/DynImage.hpp
-        img/dynamic/DynImageView.hpp
-        img/dynamic/UntypedLayout.hpp
-        img/dynamic/_impl/DynImageFwd.hpp
-        img/dynamic/_impl/RuntimeChecks.hpp
-        img/dynamic/_impl/StaticChecks.hpp
-        img/dynamic/_impl/Utils.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/DynImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/UntypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/DynImageFwd.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/RuntimeChecks.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/StaticChecks.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/dynamic/_impl/Utils.hpp
 
-        img/typed/Image.hpp
-        img/typed/ImageBase.hpp
-        img/typed/ImageTypeAliases.hpp
-        img/typed/ImageView.hpp
-        img/typed/ImageViewTypeAliases.hpp
-        img/typed/TypedLayout.hpp
-        img/typed/Utilities.hpp
-        img/typed/_impl/ImageBaseTraits.hpp
-        img/typed/_impl/ImageFwd.hpp
-        img/typed/_impl/StaticChecks.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Image.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageBase.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageViewTypeAliases.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageBaseTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageFwd.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/StaticChecks.hpp
 
-        img/typed/access/BorderAccessors.hpp
-        img/typed/access/GetPixel.hpp
-        img/typed/access/Interpolators.hpp
-        img/typed/access/RelativeAccessor.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/BorderAccessors.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/GetPixel.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/Interpolators.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/access/RelativeAccessor.hpp
 
-        img/interop/DynImageToImage.hpp
-        img/interop/ImageToDynImage.hpp
-        img/interop/OpenCV.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/DynImageToImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/ImageToDynImage.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.hpp
         )
 
 target_compile_options(selene_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
@@ -139,14 +139,14 @@ if(JPEG_FOUND)
     add_library(selene::selene_img_io_jpeg ALIAS selene_img_io_jpeg)
 
     target_sources(selene_img_io_jpeg PRIVATE
-            img_io/jpeg/Common.hpp
-            img_io/jpeg/Read.cpp
-            img_io/jpeg/Read.hpp
-            img_io/jpeg/Write.cpp
-            img_io/jpeg/Write.hpp
-            img_io/jpeg/_impl/Common.hpp
-            img_io/jpeg/_impl/Detail.cpp
-            img_io/jpeg/_impl/Detail.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Common.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Read.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/Write.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Common.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.hpp
             )
 
     target_compile_options(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
@@ -166,12 +166,12 @@ if(PNG_FOUND)
     add_library(selene::selene_img_io_png ALIAS selene_img_io_png)
 
     target_sources(selene_img_io_png PRIVATE
-            img_io/png/Read.cpp
-            img_io/png/Read.hpp
-            img_io/png/Write.cpp
-            img_io/png/Write.hpp
-            img_io/png/_impl/Detail.cpp
-            img_io/png/_impl/Detail.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Read.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/Write.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.hpp
             )
 
     target_compile_options(selene_img_io_png PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
@@ -191,21 +191,21 @@ if(TIFF_FOUND)
     add_library(selene::selene_img_io_tiff ALIAS selene_img_io_tiff)
 
     target_sources(selene_img_io_tiff PRIVATE
-            img_io/tiff/Common.cpp
-            img_io/tiff/Common.hpp
-            img_io/tiff/Read.cpp
-            img_io/tiff/Read.hpp
-            img_io/tiff/Write.cpp
-            img_io/tiff/Write.cpp
-            img_io/tiff/_impl/TIFFDetail.cpp
-            img_io/tiff/_impl/TIFFDetail.hpp
-            img_io/tiff/_impl/TIFFIOFunctions.hpp
-            img_io/tiff/_impl/TIFFReadHighLevel.cpp
-            img_io/tiff/_impl/TIFFReadHighLevel.hpp
-            img_io/tiff/_impl/TIFFReadStrips.cpp
-            img_io/tiff/_impl/TIFFReadStrips.hpp
-            img_io/tiff/_impl/TIFFReadTiles.cpp
-            img_io/tiff/_impl/TIFFReadTiles.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Common.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Read.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/Write.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFDetail.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFIOFunctions.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadHighLevel.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadStrips.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.hpp
             )
 
     target_compile_options(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
@@ -225,9 +225,9 @@ if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
     add_library(selene::selene_img_io ALIAS selene_img_io)
 
     target_sources(selene_img_io PRIVATE
-            img_io/IO.cpp
-            img_io/IO.hpp
-            img_io/_impl/Util.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/IO.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
             )
 
     target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
@@ -254,20 +254,20 @@ add_library(selene_img_ops "")
 add_library(selene::selene_img_ops ALIAS selene_img_ops)
 
 target_sources(selene_img_ops PRIVATE
-        img_ops/Algorithms.hpp
-        img_ops/Allocate.hpp
-        img_ops/ChannelOperations.hpp
-        img_ops/Clone.hpp
-        img_ops/Convolution.hpp
-        img_ops/Crop.hpp
-        img_ops/DynView.hpp
-        img_ops/Fill.hpp
-        img_ops/ImageConversions.hpp
-        img_ops/PixelConversions.cpp
-        img_ops/PixelConversions.hpp
-        img_ops/Resample.hpp
-        img_ops/Transformations.hpp
-        img_ops/View.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Algorithms.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Allocate.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ChannelOperations.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Clone.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Convolution.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Crop.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/DynView.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Fill.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/ImageConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
         )
 
 target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
