@@ -9,6 +9,7 @@
 
 #include <wrappers/fs/Filesystem.hpp>
 
+#include <algorithm>
 #include <numeric>
 #include <random>
 #include <type_traits>
