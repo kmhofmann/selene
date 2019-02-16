@@ -1,0 +1,35 @@
+#include "selene_version.hpp"
+
+namespace sln {
+
+const char* selene_library_name()
+{
+  return "Selene";
+}
+
+const char* selene_version()
+{
+  return "@selene_VERSION@";
+}
+
+unsigned int selene_version_major()
+{
+  return @selene_VERSION_MAJOR@;
+}
+
+unsigned int selene_version_minor()
+{
+  return @selene_VERSION_MINOR@ + 0;
+}
+
+unsigned int selene_version_patch()
+{
+  return @selene_VERSION_PATCH@ + 0;
+}
+
+unsigned int selene_version_tweak()
+{
+  return @selene_VERSION_TWEAK@ + 0;
+}
+
+}  // namespace sln

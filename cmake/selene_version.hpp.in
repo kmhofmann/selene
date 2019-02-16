@@ -1,0 +1,15 @@
+#ifndef SELENE_SELENE_VERSION_HPP
+#define SELENE_SELENE_VERSION_HPP
+
+namespace sln {
+
+const char* selene_library_name();
+const char* selene_version();
+unsigned int selene_version_major();
+unsigned int selene_version_minor();
+unsigned int selene_version_patch();
+unsigned int selene_version_tweak();
+
+}  // namespace sln
+
+#endif  // SELENE_SELENE_VERSION_HPP

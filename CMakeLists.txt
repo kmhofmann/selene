@@ -25,7 +25,7 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard whose features are requ
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Boolean describing whether the value of CXX_STANDARD is a requirement.")
 set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Boolean specifying whether compiler specific extensions are requested.")
 
-# Generate compilation database (e.g. for cquery or YouCompleteMe)
+# Generate compilation database
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SELENE_DIR ${CMAKE_CURRENT_SOURCE_DIR})

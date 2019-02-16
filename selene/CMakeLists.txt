@@ -7,10 +7,21 @@ include(CMakePackageConfigHelpers)
 
 #------------------------------------------------------------------------------
 
+# Write configure files
+
+configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_config.hpp.in selene_config.hpp)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_version.hpp.in selene_version.hpp)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_version.cpp.in selene_version.cpp)
+
+#------------------------------------------------------------------------------
+
 add_library(selene_base "")
 add_library(selene::selene_base ALIAS selene_base)
 
 target_sources(selene_base PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/selene_config.hpp
+        ${CMAKE_CURRENT_BINARY_DIR}/selene_version.hpp
+        ${CMAKE_CURRENT_BINARY_DIR}/selene_version.cpp
         base/Assert.hpp
         base/Bitcount.hpp
         base/Kernel.hpp
@@ -347,12 +358,6 @@ set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene)
 
 #------------------------------------------------------------------------------
 
-# Write configure file
-
-configure_file(${CMAKE_SOURCE_DIR}/cmake/selene_config.hpp.in selene_config.hpp)
-
-#------------------------------------------------------------------------------
-
 # Installation
 
 set(SELENE_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/selene)
@@ -383,9 +388,12 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         FILES_MATCHING PATTERN "*.hpp"
                        PATTERN "_doc.hpp" EXCLUDE)
 
-# Install config file
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/selene_config.hpp
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/selene)
+# Install config headers
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/selene_config.hpp
+        ${CMAKE_CURRENT_BINARY_DIR}/selene_version.hpp
+        DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/selene)
 
 # Install exports
 install(EXPORT selene-targets
@@ -404,7 +412,7 @@ install(FILES
 # Exporting from the build tree
 
 export(EXPORT selene-targets
-        FILE ${CMAKE_CURRENT_BINARY_DIR}/selene-targets.cmake
-        NAMESPACE selene::)
+       FILE ${CMAKE_CURRENT_BINARY_DIR}/selene-targets.cmake
+       NAMESPACE selene::)
 
 export(PACKAGE selene)

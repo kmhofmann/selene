@@ -3,6 +3,7 @@
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
 #include <selene/selene_config.hpp>
+#include <selene/selene_version.hpp>
 
 #if defined(SELENE_WITH_LIBTIFF)
 
@@ -59,7 +60,7 @@ void set_tiff_layout(TIFF* tif, const ConstantDynImageView& view, const TIFFWrit
     set_field<int>(tif, TIFFTAG_JPEGQUALITY, write_options.jpeg_quality);
   }
 
-  const auto software = std::string{"Selene " + std::string{SELENE_VERSION_STR}};
+  const auto software = std::string{selene_library_name()} + " " + std::string{selene_version()};
   set_string_field(tif, TIFFTAG_SOFTWARE, software);
   set_string_field(tif, TIFFTAG_DATETIME, sln::impl::get_date_time_string());
 }
