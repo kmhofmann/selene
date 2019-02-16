@@ -73,13 +73,7 @@ target_sources(selene_base_io PRIVATE
         )
 
 target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILER_OPTIONS})
-
 target_compile_definitions(selene_base_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_base_io PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene_base_io PUBLIC selene_base)
 
@@ -132,13 +126,7 @@ target_sources(selene_img PRIVATE
         )
 
 target_compile_options(selene_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
 target_compile_definitions(selene_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_img PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene_img PUBLIC selene_base)
 
@@ -163,16 +151,9 @@ if(JPEG_FOUND)
             )
 
     target_compile_options(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
     target_compile_definitions(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-    target_include_directories(selene_img_io_jpeg PUBLIC
-            $<BUILD_INTERFACE:${SELENE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-    target_link_libraries(selene_img_io_jpeg PUBLIC JPEG::JPEG)
-    target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img)
+    target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img JPEG::JPEG)
 
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_jpeg)
 
@@ -195,16 +176,9 @@ if(PNG_FOUND)
             )
 
     target_compile_options(selene_img_io_png PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
     target_compile_definitions(selene_img_io_png PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-    target_include_directories(selene_img_io_png PUBLIC
-            $<BUILD_INTERFACE:${SELENE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-    target_link_libraries(selene_img_io_png PUBLIC PNG::PNG)
-    target_link_libraries(selene_img_io_png PUBLIC selene_base_io selene_img)
+    target_link_libraries(selene_img_io_png PUBLIC selene_base_io selene_img PNG::PNG)
 
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_png)
 
@@ -236,16 +210,9 @@ if(TIFF_FOUND)
             )
 
     target_compile_options(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
     target_compile_definitions(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_DEFINITIONS})
 
-    target_include_directories(selene_img_io_tiff PUBLIC
-            $<BUILD_INTERFACE:${SELENE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-    target_link_libraries(selene_img_io_tiff PUBLIC TIFF::TIFF)
-    target_link_libraries(selene_img_io_tiff PUBLIC selene_base_io selene_img)
+    target_link_libraries(selene_img_io_tiff PUBLIC selene_base_io selene_img TIFF::TIFF)
 
     set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_io_tiff)
 
@@ -265,13 +232,7 @@ if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
             )
 
     target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
     target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-    target_include_directories(selene_img_io PUBLIC
-            $<BUILD_INTERFACE:${SELENE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
     target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
     if(JPEG_FOUND)
@@ -311,13 +272,7 @@ target_sources(selene_img_ops PRIVATE
         )
 
 target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-
 target_compile_definitions(selene_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS})
-
-target_include_directories(selene_img_ops PUBLIC
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene_img_ops PUBLIC selene_img)
 
@@ -327,10 +282,6 @@ set(SELENE_INSTALL_TARGETS ${SELENE_INSTALL_TARGETS} selene_img_ops)
 
 add_library(selene INTERFACE)
 add_library(selene::selene ALIAS selene)
-
-target_include_directories(selene INTERFACE
-        $<BUILD_INTERFACE:${SELENE_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(selene INTERFACE
         selene_base
