@@ -39,9 +39,9 @@ target_sources(selene_base PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/_impl/Utils.hpp
         )
 
-target_compile_options(selene_base PRIVATE ${SELENE_COMPILER_OPTIONS})
+target_compile_options(selene_base PRIVATE ${SELENE_COMPILE_OPTIONS})
 
-target_compile_definitions(selene_base PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_definitions(selene_base PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
 if(SELENE_USE_DEFAULT_SINGLE_PRECISION)
     target_compile_definitions(selene_base PUBLIC SELENE_DEFAULT_SCALAR_SINGLE_PRECISION)
@@ -71,8 +71,8 @@ target_sources(selene_base_io PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/base/io/WriterMode.hpp
         )
 
-target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILER_OPTIONS})
-target_compile_definitions(selene_base_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_options(selene_base_io PRIVATE ${SELENE_COMPILE_OPTIONS})
+target_compile_definitions(selene_base_io PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
 target_link_libraries(selene_base_io PUBLIC selene_base)
 
@@ -124,8 +124,8 @@ target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/interop/OpenCV.hpp
         )
 
-target_compile_options(selene_img PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-target_compile_definitions(selene_img PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_options(selene_img PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})
+target_compile_definitions(selene_img PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
 target_link_libraries(selene_img PUBLIC selene_base)
 
@@ -149,8 +149,8 @@ if(JPEG_FOUND)
             ${CMAKE_CURRENT_LIST_DIR}/img_io/jpeg/_impl/Detail.hpp
             )
 
-    target_compile_options(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-    target_compile_definitions(selene_img_io_jpeg PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io_jpeg PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})
+    target_compile_definitions(selene_img_io_jpeg PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
     target_link_libraries(selene_img_io_jpeg PUBLIC selene_base_io selene_img JPEG::JPEG)
 
@@ -174,8 +174,8 @@ if(PNG_FOUND)
             ${CMAKE_CURRENT_LIST_DIR}/img_io/png/_impl/Detail.hpp
             )
 
-    target_compile_options(selene_img_io_png PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-    target_compile_definitions(selene_img_io_png PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io_png PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})
+    target_compile_definitions(selene_img_io_png PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
     target_link_libraries(selene_img_io_png PUBLIC selene_base_io selene_img PNG::PNG)
 
@@ -208,8 +208,8 @@ if(TIFF_FOUND)
             ${CMAKE_CURRENT_LIST_DIR}/img_io/tiff/_impl/TIFFReadTiles.hpp
             )
 
-    target_compile_options(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-    target_compile_definitions(selene_img_io_tiff PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io_tiff PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})
+    target_compile_definitions(selene_img_io_tiff PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
     target_link_libraries(selene_img_io_tiff PUBLIC selene_base_io selene_img TIFF::TIFF)
 
@@ -230,8 +230,8 @@ if(JPEG_FOUND OR PNG_FOUND OR TIFF_FOUND)
             ${CMAKE_CURRENT_LIST_DIR}/img_io/_impl/Util.hpp
             )
 
-    target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-    target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+    target_compile_options(selene_img_io PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})
+    target_compile_definitions(selene_img_io PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
     target_link_libraries(selene_img_io PUBLIC selene_base_io selene_img)
     if(JPEG_FOUND)
@@ -270,8 +270,8 @@ target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
         )
 
-target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILER_OPTIONS} ${SELENE_IMG_COMPILER_OPTIONS})
-target_compile_definitions(selene_img_ops PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})
+target_compile_definitions(selene_img_ops PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 
 target_link_libraries(selene_img_ops PUBLIC selene_img)
 

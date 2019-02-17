@@ -64,8 +64,8 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/View.cpp
         )
 
-target_compile_options(selene_tests PRIVATE ${SELENE_COMPILER_OPTIONS})
-target_compile_definitions(selene_tests PRIVATE ${SELENE_COMPILER_DEFINITIONS})
+target_compile_options(selene_tests PRIVATE ${SELENE_COMPILE_OPTIONS})
+target_compile_definitions(selene_tests PRIVATE ${SELENE_COMPILE_DEFINITIONS})
 target_link_libraries(selene_tests selene selene_test_utils selene_wrapper_fs Catch2::Catch2)
 if (OPENCV_CORE_FOUND)
     target_link_libraries(selene_tests opencv_core)
