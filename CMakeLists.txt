@@ -19,6 +19,7 @@ option(SELENE_USE_OPENCV "Enable looking for OpenCV" ON)
 
 option(SELENE_USE_DEFAULT_SINGLE_PRECISION "Use single precision for floating point calculations by default (instead of double precision)" OFF)
 option(SELENE_WARNINGS_AS_ERRORS "Treat warnings as errors (mainly intended for CI)" OFF)
+option(SELENE_ENABLE_SANITIZERS "If set, enable build flags for building using ASAN and UBSAN saniziters." OFF)
 
 # https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard whose features are requested to build this target.")

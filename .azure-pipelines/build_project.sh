@@ -36,16 +36,15 @@ fi
 
 if [[ -n "${ASAN}" ]]; then
   echo "Building with AddressSanitizer enabled..."
-  SAN_FLAGS="-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fno-optimize-sibling-calls -g -O1"
-  export CXXFLAGS="${SAN_FLAGS} ${CXXFLAGS}"
-  export LDFLAGS="${SAN_FLAGS} ${LDFLAGS}"
+  export LOCAL_ENABLE_SANITIZERS="-DSELENE_ENABLE_SANITIZERS=ON"
 fi
 
 # CMake invocation
 rm -rf build && mkdir -p build && cd build
 cmake -G Ninja \
-  ${LOCAL_BUILD_TYPE} \
   ${LOCAL_VCPKG_TOOLCHAIN} \
+  ${LOCAL_BUILD_TYPE} \
+  ${LOCAL_ENABLE_SANITIZERS} \
   -DSELENE_BUILD_TESTS=ON \
   -DSELENE_BUILD_EXAMPLES=ON \
   -DSELENE_BUILD_BENCHMARKS=OFF \
