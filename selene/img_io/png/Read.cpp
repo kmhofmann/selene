@@ -96,7 +96,8 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
                                                           bool invert_alpha_channel,
                                                           bool invert_monochrome,
                                                           bool convert_gray_to_rgb,
-                                                          bool convert_rgb_to_gray)
+                                                          bool convert_rgb_to_gray,
+                                                          bool keep_big_endian)
 {
   auto png_ptr = impl_->png_ptr;
   auto info_ptr = impl_->info_ptr;
@@ -142,6 +143,11 @@ bool PNGDecompressionObject::set_decompression_parameters(bool force_bit_depth_8
 #else
     png_error(png_ptr, "Conversion from 16 to 8 bit not supported in this libpng version");
 #endif
+  }
+
+  if (bit_depth > 8 && !keep_big_endian)
+  {
+    png_set_swap(png_ptr);
   }
 
   switch (color_type)

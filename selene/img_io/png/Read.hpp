@@ -89,6 +89,7 @@ struct PNGDecompressionOptions
   bool invert_monochrome;  ///< Invert grayscale or grayscale_alpha image values.
   bool convert_gray_to_rgb;  ///< Convert grayscale images to RGB.
   bool convert_rgb_to_gray;  ///< Convert RGB images to grayscale.
+  bool keep_big_endian;  ///< Keep big endian representation. (Defaults to false; data will be converted to little endian.)
 
   /** \brief Constructor. Sets the respective PNG decompression options.
    *
@@ -110,7 +111,8 @@ struct PNGDecompressionOptions
                                    bool invert_alpha_channel_ = false,
                                    bool invert_monochrome_ = false,
                                    bool convert_gray_to_rgb_ = false,
-                                   bool convert_rgb_to_gray_ = false)
+                                   bool convert_rgb_to_gray_ = false,
+                                   bool keep_big_endian_ = false)
       : force_bit_depth_8(force_bit_depth_8_)
       , set_background(set_background_)
       , strip_alpha_channel(strip_alpha_channel_)
@@ -120,6 +122,7 @@ struct PNGDecompressionOptions
       , invert_monochrome(invert_monochrome_)
       , convert_gray_to_rgb(convert_gray_to_rgb_)
       , convert_rgb_to_gray(convert_rgb_to_gray_)
+      , keep_big_endian(keep_big_endian_)
   {
   }
 };
@@ -138,7 +141,7 @@ public:
   MessageLog& message_log();
   const MessageLog& message_log() const;
 
-  bool set_decompression_parameters(bool, bool, bool, bool, bool, bool, bool, bool, bool);
+  bool set_decompression_parameters(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
   PixelFormat get_pixel_format() const;
   /// \endcond
 
@@ -370,7 +373,7 @@ DynImage<Allocator> read_png(PNGDecompressionObject& obj,
   const bool pars_set = obj.set_decompression_parameters(
       options.force_bit_depth_8, options.set_background, options.strip_alpha_channel, options.swap_alpha_channel,
       options.set_bgr, options.invert_alpha_channel, options.invert_monochrome, options.convert_gray_to_rgb,
-      options.convert_rgb_to_gray);
+      options.convert_rgb_to_gray, options.keep_big_endian);
 
   if (!pars_set)
   {
@@ -482,7 +485,7 @@ PNGImageInfo PNGReader<SourceType>::get_output_image_info()
     const bool pars_set = obj_.set_decompression_parameters(
         options_.force_bit_depth_8, options_.set_background, options_.strip_alpha_channel, options_.swap_alpha_channel,
         options_.set_bgr, options_.invert_alpha_channel, options_.invert_monochrome, options_.convert_gray_to_rgb,
-        options_.convert_rgb_to_gray);
+        options_.convert_rgb_to_gray, options_.keep_big_endian);
 
     if (!pars_set)
     {
