@@ -19,13 +19,13 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 
     list(APPEND SELENE_COMPILE_OPTIONS /MP /permissive- /wd4324 /wd4611)
 
-    if (NOT "${CMAKE_GENERATOR}" MATCHES "NMake")
+    if(NOT "${CMAKE_GENERATOR}" MATCHES "NMake")
         string(REGEX REPLACE " /W[0-4]" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
         string(REGEX REPLACE " /W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
         list(APPEND SELENE_COMPILE_OPTIONS /W4)
     endif()
 
-    if (SELENE_WARNINGS_AS_ERRORS)
+    if(SELENE_WARNINGS_AS_ERRORS)
         list(APPEND SELENE_COMPILE_OPTIONS /WX)
     endif()
 

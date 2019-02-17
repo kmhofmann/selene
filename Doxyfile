@@ -152,14 +152,7 @@ VERBATIM_HEADERS       = YES
 CLANG_ASSISTED_PARSING = YES
 CLANG_OPTIONS          = "-std=c++17" \
                          "-I." \
-                         "-I./build" \
-                         "-DSELENE_WITH_LIBJPEG" \
-                         "-DSELENE_LIBJPEG_PARTIAL_DECODING" \
-                         "-DSELENE_LIBJPEG_EXTENDED_COLORSPACES" \
-                         "-DSELENE_WITH_LIBPNG" \
-                         "-DSELENE_WITH_LIBTIFF" \
-                         "-DSELENE_LIBTIFF_ZSTD_WEBP_SUPPORT" \
-                         "-DSELENE_WITH_OPENCV"
+                         "-I./build"
 
 #---------------------------------------------------------------------------
 # Configuration options related to the alphabetical class index
@@ -234,15 +227,9 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = "/home/michael/local/libtiff/include"
+INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             = "SELENE_WITH_LIBJPEG" \
-                         "SELENE_LIBJPEG_PARTIAL_DECODING" \
-                         "SELENE_LIBJPEG_EXTENDED_COLORSPACES" \
-                         "SELENE_WITH_LIBPNG" \
-                         "SELENE_WITH_LIBTIFF" \
-                         "SELENE_LIBTIFF_ZSTD_WEBP_SUPPORT" \
-                         "SELENE_WITH_OPENCV"
+PREDEFINED             =
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 
