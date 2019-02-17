@@ -1,6 +1,11 @@
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 
-    set(SELENE_COMPILER_OPTIONS -Wall -Wextra -Wpedantic -Wconversion)
+    set(SELENE_COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
+
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 8)
+        # GCC 7 emits some spurious warning with -Wconversion enabled, so we don't enable it then.
+        set(SELENE_COMPILER_OPTIONS ${SELENE_COMPILER_OPTIONS} -Wconversion)
+    endif()
 
     if (SELENE_WARNINGS_AS_ERRORS)
         set(SELENE_COMPILER_OPTIONS ${SELENE_COMPILER_OPTIONS} -Werror)
