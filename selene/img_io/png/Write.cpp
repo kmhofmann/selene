@@ -153,7 +153,8 @@ failure_state:
   return false;
 }
 
-bool PNGCompressionObject::set_compression_parameters(int compression_level, bool invert_alpha)
+bool PNGCompressionObject::set_compression_parameters(int compression_level,
+                                                      bool invert_alpha_channel)
 {
   auto png_ptr = impl_->png_ptr;
 
@@ -166,7 +167,7 @@ bool PNGCompressionObject::set_compression_parameters(int compression_level, boo
 
   png_set_compression_level(png_ptr, compression_level);
 
-  if (invert_alpha)
+  if (invert_alpha_channel)
   {
     png_set_invert_alpha(png_ptr);
   }
@@ -194,7 +195,11 @@ namespace impl {
 // ----------------------
 // Compression structures
 
-PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr, bool invert_monochrome)
+PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj,
+                                         bool set_bgr,
+                                         bool invert_monochrome,
+                                         bool keep_endianness,
+                                         int bit_depth)
     : obj_(obj), error_state_(false)
 {
   obj_.reset_if_needed();
@@ -217,6 +222,11 @@ PNGCompressionCycle::PNGCompressionCycle(PNGCompressionObject& obj, bool set_bgr
   if (invert_monochrome)
   {
     png_set_invert_mono(png_ptr);
+  }
+
+  if (bit_depth > 8 && !keep_endianness)
+  {
+    png_set_swap(png_ptr);
   }
 
   return;

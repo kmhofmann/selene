@@ -55,30 +55,34 @@ void set_destination(PNGCompressionObject&, VectorWriter&);
 struct PNGCompressionOptions
 {
   int compression_level;  ///< Compression level; may take values from 0 (no compression) to 9 ("maximal" compression).
-  bool interlaced;  ///< If true, write PNG image as interlaced.
-  bool set_bgr;  ///< If true, convert BGR (supplied) to RGB (written).
-  bool invert_alpha_channel;  ///< If true, invert values in alpha channel (e.g. 0 -> 255).
-  bool invert_monochrome;  ///< If true, invert grayscale or grayscale_alpha image values.
+  bool set_bgr;  ///< If true, convert BGR (supplied) to RGB (written). Defaults to false.
+  bool invert_alpha_channel;  ///< If true, invert values in alpha channel (e.g. 0 -> 255). Defaults to false.
+  bool invert_monochrome;  ///< If true, invert grayscale or grayscale_alpha image values. Defaults to false.
+  bool keep_endianness;  ///< If true, keep endianness. Otherwise, convert endianness (as likely done when reading). Defaults to false.
+  bool interlaced;  ///< If true, write PNG image as interlaced. Defaults to false.
 
   /** \brief Constructor, setting the respective JPEG compression options.
    *
    * @param compression_level_ Compression level; may take values from 0 (no compression) to 9 ("maximal" compression).
    * Defaults to value 6.
-   * @param interlaced_ If true, write PNG image as interlaced.
-   * @param set_bgr_ If true, convert BGR (supplied) to RGB (written).
-   * @param invert_alpha_channel_ If true, invert values in alpha channel (e.g. 0 -> 255).
-   * @param invert_monochrome_ If true, invert grayscale or grayscale_alpha image values.
+   * @param set_bgr_ If true, convert BGR (supplied) to RGB (written). Defaults to false.
+   * @param invert_alpha_channel_ If true, invert values in alpha channel (e.g. 0 -> 255). Defaults to false.
+   * @param invert_monochrome_ If true, invert grayscale or grayscale_alpha image values. Defaults to false.
+   * @param keep_endianness_ If true, keep endianness. Otherwise, convert endianness (as likely done when reading).
+   * @param interlaced_ If true, write PNG image as interlaced. Defaults to false.
    */
   explicit PNGCompressionOptions(int compression_level_ = 6,
-                                 bool interlaced_ = false,
                                  bool set_bgr_ = false,
                                  bool invert_alpha_channel_ = false,
-                                 bool invert_monochrome_ = false)
+                                 bool invert_monochrome_ = false,
+                                 bool keep_endianness_ = false,
+                                 bool interlaced_ = false)
       : compression_level(compression_level_)
-      , interlaced(interlaced_)
       , set_bgr(set_bgr_)
       , invert_alpha_channel(invert_alpha_channel_)
       , invert_monochrome(invert_monochrome_)
+      , keep_endianness(keep_endianness_)
+      , interlaced(interlaced_)
   {
   }
 };
@@ -157,7 +161,7 @@ namespace impl {
 class PNGCompressionCycle
 {
 public:
-  explicit PNGCompressionCycle(PNGCompressionObject& obj, bool, bool);
+  explicit PNGCompressionCycle(PNGCompressionObject& obj, bool, bool, bool, int);
   ~PNGCompressionCycle();
 
   bool error_state() const;
@@ -231,7 +235,8 @@ bool write_png(const DynImageOrView& dyn_img_or_view,
     return false;
   }
 
-  impl::PNGCompressionCycle cycle(obj, options.set_bgr, options.invert_monochrome);
+  impl::PNGCompressionCycle cycle(obj, options.set_bgr, options.invert_monochrome, options.keep_endianness,
+                                  static_cast<int>(bit_depth));
   const auto row_pointers = get_const_row_pointers(dyn_img_or_view);
   cycle.compress(row_pointers);
 
