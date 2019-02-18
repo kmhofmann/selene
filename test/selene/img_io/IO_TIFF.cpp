@@ -189,7 +189,7 @@ TEST_CASE("TIFF image reading / through TIFFReader interface", "[img]")
     REQUIRE(!tiff_reader.advance_directory());
     REQUIRE(!tiff_reader.set_directory(0));
     REQUIRE(tiff_reader.read_image_data() == sln::DynImage{});
-    sln::DynImage dyn_img;
+    sln::DynImage<> dyn_img;
     REQUIRE(!tiff_reader.read_image_data(dyn_img));
     REQUIRE(!tiff_reader.message_log().messages().empty());
   }
@@ -209,7 +209,7 @@ TEST_CASE("TIFF image reading / through TIFFReader interface", "[img]")
       REQUIRE(layouts[0].samples_per_pixel == 3);
       REQUIRE(layouts[0].bits_per_sample == 8);
 
-      sln::DynImage dyn_img({layouts[0].width_px(), layouts[0].height_px(),
+      sln::DynImage<> dyn_img({layouts[0].width_px(), layouts[0].height_px(),
                              layouts[0].nr_channels(), layouts[0].nr_bytes_per_channel()});
       auto res = tiff_reader.read_image_data(dyn_img);
       REQUIRE(res);
@@ -236,7 +236,7 @@ TEST_CASE("TIFF image reading / through TIFFReader interface", "[img]")
     const auto layouts = tiff_reader.read_layouts();
     REQUIRE(layouts.size() == 1);
 
-    sln::DynImage dyn_img({layouts[0].width_px(), layouts[0].height_px(),
+    sln::DynImage<> dyn_img({layouts[0].width_px(), layouts[0].height_px(),
                            layouts[0].nr_channels(), layouts[0].nr_bytes_per_channel()});
     sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
     auto res = tiff_reader.read_image_data(dyn_img_view);
@@ -262,7 +262,7 @@ TEST_CASE("TIFF image reading / through TIFFReader interface", "[img]")
     const auto layouts = tiff_reader.read_layouts();
     REQUIRE(layouts.size() == 1);
 
-    sln::DynImage dyn_img({sln::to_pixel_length(layouts[0].width_px() + 1), layouts[0].height_px(),
+    sln::DynImage<> dyn_img({sln::to_pixel_length(layouts[0].width_px() + 1), layouts[0].height_px(),
                            layouts[0].nr_channels(), layouts[0].nr_bytes_per_channel()});
     sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
     auto res = tiff_reader.read_image_data(dyn_img_view);

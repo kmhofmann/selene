@@ -363,7 +363,7 @@ TEST_CASE("PNG image reading / through PNGReader interface", "[img]")
     REQUIRE(!header.is_valid());
     const auto info = png_reader.get_output_image_info();
     REQUIRE(!info.is_valid());
-    sln::DynImage dyn_img;
+    sln::DynImage<> dyn_img;
     const auto res = png_reader.read_image_data(dyn_img);
     REQUIRE(!res);
   }

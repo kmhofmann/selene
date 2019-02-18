@@ -376,7 +376,7 @@ TEST_CASE("JPEG image reading / through JPEGReader interface", "[img]")
     REQUIRE(!header.is_valid());
     const auto info = jpeg_reader.get_output_image_info();
     REQUIRE(!info.is_valid());
-    sln::DynImage dyn_img;
+    sln::DynImage<> dyn_img;
     const auto res = jpeg_reader.read_image_data(dyn_img);
     REQUIRE(!res);
   }
@@ -403,7 +403,7 @@ TEST_CASE("JPEG image reading / through JPEGReader interface", "[img]")
       REQUIRE(info.nr_channels == 3);
       REQUIRE(info.color_space == sln::JPEGColorSpace::RGB);
 
-      sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+      sln::DynImage<> dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
       auto res = jpeg_reader.read_image_data(dyn_img);
       REQUIRE(res);
 
@@ -432,7 +432,7 @@ TEST_CASE("JPEG image reading / through JPEGReader interface", "[img]")
     const auto info = jpeg_reader.get_output_image_info();
     REQUIRE(info.is_valid());
 
-    sln::DynImage dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    sln::DynImage<> dyn_img({info.width, info.height, info.nr_channels, info.nr_bytes_per_channel()});
     sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
     auto res = jpeg_reader.read_image_data(dyn_img_view);
     REQUIRE(res);
@@ -461,7 +461,7 @@ TEST_CASE("JPEG image reading / through JPEGReader interface", "[img]")
     const auto info = jpeg_reader.get_output_image_info();
     REQUIRE(info.is_valid());
 
-    sln::DynImage dyn_img({info.width + 1, info.height, info.nr_channels, info.nr_bytes_per_channel()});
+    sln::DynImage<> dyn_img({info.width + 1, info.height, info.nr_channels, info.nr_bytes_per_channel()});
     sln::MutableDynImageView dyn_img_view{dyn_img.byte_ptr(), dyn_img.layout(), dyn_img.semantics()};
     auto res = jpeg_reader.read_image_data(dyn_img_view);
     REQUIRE(!res);

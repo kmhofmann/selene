@@ -97,7 +97,7 @@ TEST_CASE("Typed image to dynamic image", "[img]")
 {
   {
     sln::Image_8u1 img;
-    sln::DynImage dyn_img;
+    sln::DynImage<> dyn_img;
     REQUIRE_THROWS(dyn_img = sln::to_dyn_image(std::move(img), sln::PixelFormat::Unknown));
   }
 
