@@ -15,6 +15,7 @@
 #include <selene/img_io/IO.hpp>
 
 #include <selene/img_ops/Convolution.hpp>
+#include <selene/img_ops/ImageConversions.hpp>
 #include <selene/img_ops/View.hpp>
 
 #include <test/utils/Utils.hpp>
@@ -31,28 +32,40 @@ using namespace sln::literals;
 
 namespace {
 
-sln::ImageRGB_8u read_image(const std::string& filename)
+template <sln::PixelFormat pixel_format_dst>
+auto read_image(const std::string& filename)
 {
   const auto full_path = sln_test::full_data_path(filename.c_str());
   auto dyn_img = sln::read_image(sln::FileReader(full_path.string()));
   SELENE_FORCED_ASSERT(dyn_img.is_valid());
-  return sln::to_image<sln::PixelRGB_8u>(std::move(dyn_img));
+
+  if constexpr (pixel_format_dst == sln::PixelFormat::RGB)
+  {
+    return sln::to_image<sln::PixelRGB_8u>(std::move(dyn_img));
+  }
+  else
+  {
+    auto img = sln::to_image<sln::PixelRGB_8u>(std::move(dyn_img));
+    return sln::convert_image<sln::PixelFormat::Y>(img);
+  }
 }
 
+template <sln::PixelFormat pixel_format_dst>
 auto get_stuff()
 {
-  auto img = read_image("stickers.png");
-  auto sub_view = sln::view(img, {10_idx, 10_idx, 20_px, 20_px});  // 20x20 pixel view
+  auto img = read_image<pixel_format_dst>("stickers.png");
+  auto sub_view = sln::view(img, {20_idx, 20_idx, 64_px, 64_px});  // 64x64 pixel view
   auto kernel = sln::gaussian_kernel<7, double>(1.0);
   return std::tuple{std::move(img), sub_view, kernel};
 }
 
 }  // namespace _
 
+template <sln::PixelFormat pixel_format_dst>
 void image_convolution_x_floating_point_kernel(benchmark::State& state)
 {
-  auto [img, sub_view, kernel] = get_stuff();
-  sln::ImageRGB_8u img_dst;
+  auto [img, sub_view, kernel] = get_stuff<pixel_format_dst>();
+  decltype(img) img_dst;
 
   for (auto _ : state)
   {
@@ -60,10 +73,11 @@ void image_convolution_x_floating_point_kernel(benchmark::State& state)
   }
 }
 
+template <sln::PixelFormat pixel_format_dst>
 void image_convolution_y_floating_point_kernel(benchmark::State& state)
 {
-  auto [img, sub_view, kernel] = get_stuff();
-  sln::ImageRGB_8u img_dst;
+  auto [img, sub_view, kernel] = get_stuff<pixel_format_dst>();
+  decltype(img) img_dst;
 
   for (auto _ : state)
   {
@@ -71,12 +85,13 @@ void image_convolution_y_floating_point_kernel(benchmark::State& state)
   }
 }
 
+template <sln::PixelFormat pixel_format_dst>
 void image_convolution_x_integer_kernel(benchmark::State& state)
 {
-  auto [img, sub_view, kernel] = get_stuff();
+  auto [img, sub_view, kernel] = get_stuff<pixel_format_dst>();
   constexpr auto shift = 16u;
   const auto integer_kernel = sln::integer_kernel<std::int32_t, sln::power(2, shift)>(kernel);
-  sln::ImageRGB_8u img_dst;
+  decltype(img) img_dst;
 
   for (auto _ : state)
   {
@@ -84,12 +99,13 @@ void image_convolution_x_integer_kernel(benchmark::State& state)
   }
 }
 
+template <sln::PixelFormat pixel_format_dst>
 void image_convolution_y_integer_kernel(benchmark::State& state)
 {
-  auto [img, sub_view, kernel] = get_stuff();
+  auto [img, sub_view, kernel] = get_stuff<pixel_format_dst>();
   constexpr auto shift = 16u;
   const auto integer_kernel = sln::integer_kernel<std::int32_t, sln::power(2, shift)>(kernel);
-  sln::ImageRGB_8u img_dst;
+  decltype(img) img_dst;
 
   for (auto _ : state)
   {
@@ -103,9 +119,10 @@ void image_convolution_y_integer_kernel(benchmark::State& state)
  * potentially more optimized implementation in the cv::GaussianBlur function. The latter does not support
  * 1-D convolutions, but it does support in-place processing. */
 
+template <sln::PixelFormat pixel_format_dst>
 void image_convolution_x_opencv(benchmark::State& state)
 {
-  auto [img, sub_view, kernel] = get_stuff();
+  auto [img, sub_view, kernel] = get_stuff<pixel_format_dst>();
   cv::Mat sub_view_cv = sln::wrap_in_opencv_mat(sub_view);
   cv::Mat kernel_cv = cv::Mat(1, static_cast<int>(kernel.size()), CV_64FC1, &*kernel.begin(), sizeof(double) * kernel.size());
   cv::Mat img_dst_cv(sub_view_cv.rows, sub_view_cv.cols, sub_view_cv.type()); // pre-allocate
@@ -116,9 +133,10 @@ void image_convolution_x_opencv(benchmark::State& state)
   }
 }
 
+template <sln::PixelFormat pixel_format_dst>
 void image_convolution_y_opencv(benchmark::State& state)
 {
-  auto [img, sub_view, kernel] = get_stuff();
+  auto [img, sub_view, kernel] = get_stuff<pixel_format_dst>();
   cv::Mat sub_view_cv = sln::wrap_in_opencv_mat(sub_view);
   cv::Mat kernel_cv = cv::Mat(static_cast<int>(kernel.size()), 1, CV_64FC1, &*kernel.begin(), sizeof(double) * kernel.size());
   cv::Mat img_dst_cv(sub_view_cv.rows, sub_view_cv.cols, sub_view_cv.type()); // pre-allocate
@@ -131,15 +149,38 @@ void image_convolution_y_opencv(benchmark::State& state)
 
 #endif  // SELENE_IMG_OPENCV_HPP
 
-BENCHMARK(image_convolution_x_floating_point_kernel);
-BENCHMARK(image_convolution_y_floating_point_kernel);
-BENCHMARK(image_convolution_x_integer_kernel);
-BENCHMARK(image_convolution_y_integer_kernel);
+void image_convolution_x_floating_point_kernel_rgb(benchmark::State& state) { image_convolution_x_floating_point_kernel<sln::PixelFormat::RGB>(state); }
+void image_convolution_y_floating_point_kernel_rgb(benchmark::State& state) { image_convolution_y_floating_point_kernel<sln::PixelFormat::RGB>(state); }
+void image_convolution_x_integer_kernel_rgb(benchmark::State& state) { image_convolution_x_integer_kernel<sln::PixelFormat::RGB>(state); }
+void image_convolution_y_integer_kernel_rgb(benchmark::State& state) { image_convolution_y_integer_kernel<sln::PixelFormat::RGB>(state); }
+void image_convolution_x_opencv_rgb(benchmark::State& state) { image_convolution_x_opencv<sln::PixelFormat::RGB>(state); }
+void image_convolution_y_opencv_rgb(benchmark::State& state) { image_convolution_y_opencv<sln::PixelFormat::RGB>(state); }
+
+BENCHMARK(image_convolution_x_floating_point_kernel_rgb);
+BENCHMARK(image_convolution_y_floating_point_kernel_rgb);
+BENCHMARK(image_convolution_x_integer_kernel_rgb);
+BENCHMARK(image_convolution_y_integer_kernel_rgb);
 
 #if defined(SELENE_WITH_OPENCV)
-BENCHMARK(image_convolution_x_opencv);
-BENCHMARK(image_convolution_y_opencv);
+BENCHMARK(image_convolution_x_opencv_rgb);
+BENCHMARK(image_convolution_y_opencv_rgb);
 #endif  // SELENE_IMG_OPENCV_HPP
 
+void image_convolution_x_floating_point_kernel_y(benchmark::State& state) { image_convolution_x_floating_point_kernel<sln::PixelFormat::Y>(state); }
+void image_convolution_y_floating_point_kernel_y(benchmark::State& state) { image_convolution_y_floating_point_kernel<sln::PixelFormat::Y>(state); }
+void image_convolution_x_integer_kernel_y(benchmark::State& state) { image_convolution_x_integer_kernel<sln::PixelFormat::Y>(state); }
+void image_convolution_y_integer_kernel_y(benchmark::State& state) { image_convolution_y_integer_kernel<sln::PixelFormat::Y>(state); }
+void image_convolution_x_opencv_y(benchmark::State& state) { image_convolution_x_opencv<sln::PixelFormat::Y>(state); }
+void image_convolution_y_opencv_y(benchmark::State& state) { image_convolution_y_opencv<sln::PixelFormat::Y>(state); }
+
+BENCHMARK(image_convolution_x_floating_point_kernel_y);
+BENCHMARK(image_convolution_y_floating_point_kernel_y);
+BENCHMARK(image_convolution_x_integer_kernel_y);
+BENCHMARK(image_convolution_y_integer_kernel_y);
+
+#if defined(SELENE_WITH_OPENCV)
+BENCHMARK(image_convolution_x_opencv_y);
+BENCHMARK(image_convolution_y_opencv_y);
+#endif  // SELENE_IMG_OPENCV_HPP
 
 BENCHMARK_MAIN();
