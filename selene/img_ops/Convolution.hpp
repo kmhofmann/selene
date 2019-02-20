@@ -57,7 +57,7 @@ namespace impl {
 
 template <typename ConvolutionResultType, BorderAccessMode access_mode, typename DerivedSrc,
           typename KernelValueType, KernelSize kernel_size>
-auto convolve_pixels_x(const ImageBase<DerivedSrc>& img_src, PixelIndex x, PixelIndex y,
+inline auto convolve_pixels_x(const ImageBase<DerivedSrc>& img_src, PixelIndex x, PixelIndex y,
                        const Kernel<KernelValueType, kernel_size>& kernel,
                        PixelIndex::value_type k_offset)
 {
@@ -75,7 +75,7 @@ auto convolve_pixels_x(const ImageBase<DerivedSrc>& img_src, PixelIndex x, Pixel
 
 template <typename ConvolutionResultType, BorderAccessMode access_mode, typename DerivedSrc,
     typename KernelValueType, KernelSize kernel_size>
-auto convolve_pixels_y(const ImageBase<DerivedSrc>& img_src, PixelIndex x, PixelIndex y,
+inline auto convolve_pixels_y(const ImageBase<DerivedSrc>& img_src, PixelIndex x, PixelIndex y,
                        const Kernel<KernelValueType, kernel_size>& kernel,
                        PixelIndex::value_type k_offset)
 {
