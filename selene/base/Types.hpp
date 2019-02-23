@@ -10,6 +10,8 @@
 #include <selene/base/Assert.hpp>
 #include <selene/base/_impl/ExplicitType.hpp>
 
+#include <type_traits>
+
 namespace sln {
 
 /// \addtogroup group-base
