@@ -14,6 +14,7 @@
 #include <selene/img_ops/Algorithms.hpp>
 #include <selene/img_ops/Clone.hpp>
 #include <selene/img_ops/PixelConversions.hpp>
+#include <selene/img_ops/_impl/ImageConversionExpr.hpp>
 
 namespace sln {
 
@@ -31,12 +32,6 @@ void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
 
 template <PixelFormat pixel_format_dst,
           typename DerivedSrc,
-          typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format != PixelFormat::Unknown>,
-          typename = std::enable_if_t<!conversion_requires_alpha_value(PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format, pixel_format_dst)>>
-auto convert_image(const ImageBase<DerivedSrc>& img_src);
-
-template <PixelFormat pixel_format_dst,
-          typename DerivedSrc,
           typename DerivedDst,
           typename ElementType,
           typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format != PixelFormat::Unknown>,
@@ -44,11 +39,30 @@ template <PixelFormat pixel_format_dst,
 void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst, ElementType alpha_value);
 
 template <PixelFormat pixel_format_dst,
+    typename DerivedSrc,
+    typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format != PixelFormat::Unknown>,
+    typename = std::enable_if_t<!conversion_requires_alpha_value(PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format, pixel_format_dst)>>
+auto convert_image(const ImageBase<DerivedSrc>& img_src);
+
+template <PixelFormat pixel_format_dst,
           typename DerivedSrc,
           typename ElementType,
           typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format != PixelFormat::Unknown>,
           typename = std::enable_if_t<conversion_requires_alpha_value(PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format, pixel_format_dst)>>
 auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alpha_value);
+
+template <PixelFormat pixel_format_dst,
+    typename DerivedSrc,
+    typename = std::enable_if_t<PixelTraits<typename ImageExpr<DerivedSrc>::PixelType>::pixel_format != PixelFormat::Unknown>,
+    typename = std::enable_if_t<!conversion_requires_alpha_value(PixelTraits<typename ImageExpr<DerivedSrc>::PixelType>::pixel_format, pixel_format_dst)>>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src);
+
+template <PixelFormat pixel_format_dst,
+    typename DerivedSrc,
+    typename ElementType,
+    typename = std::enable_if_t<PixelTraits<typename ImageExpr<DerivedSrc>::PixelType>::pixel_format != PixelFormat::Unknown>,
+    typename = std::enable_if_t<conversion_requires_alpha_value(PixelTraits<typename ImageExpr<DerivedSrc>::PixelType>::pixel_format, pixel_format_dst)>>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src, ElementType alpha_value);
 
 // Overloads for unknown source pixel format
 
@@ -63,13 +77,6 @@ void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
 template <PixelFormat pixel_format_src,
     PixelFormat pixel_format_dst,
     typename DerivedSrc,
-    typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format == PixelFormat::Unknown>,
-    typename = std::enable_if_t<!conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
-auto convert_image(const ImageBase<DerivedSrc>& img_src);
-
-template <PixelFormat pixel_format_src,
-    PixelFormat pixel_format_dst,
-    typename DerivedSrc,
     typename DerivedDst,
     typename ElementType,
     typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format == PixelFormat::Unknown>,
@@ -79,10 +86,32 @@ void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& 
 template <PixelFormat pixel_format_src,
     PixelFormat pixel_format_dst,
     typename DerivedSrc,
+    typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format == PixelFormat::Unknown>,
+    typename = std::enable_if_t<!conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
+auto convert_image(const ImageBase<DerivedSrc>& img_src);
+
+template <PixelFormat pixel_format_src,
+    PixelFormat pixel_format_dst,
+    typename DerivedSrc,
     typename ElementType,
     typename = std::enable_if_t<PixelTraits<typename ImageBase<DerivedSrc>::PixelType>::pixel_format == PixelFormat::Unknown>,
     typename = std::enable_if_t<conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
 auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alpha_value);
+
+template <PixelFormat pixel_format_src,
+    PixelFormat pixel_format_dst,
+    typename DerivedSrc,
+    typename = std::enable_if_t<PixelTraits<typename ImageExpr<DerivedSrc>::PixelType>::pixel_format == PixelFormat::Unknown>,
+    typename = std::enable_if_t<!conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src);
+
+template <PixelFormat pixel_format_src,
+    PixelFormat pixel_format_dst,
+    typename DerivedSrc,
+    typename ElementType,
+    typename = std::enable_if_t<PixelTraits<typename ImageExpr<DerivedSrc>::PixelType>::pixel_format == PixelFormat::Unknown>,
+    typename = std::enable_if_t<conversion_requires_alpha_value(pixel_format_src, pixel_format_dst)>>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src, ElementType alpha_value);
 
 /// @}
 
@@ -224,38 +253,6 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
  *
- * This overload returns the target image, for which the type is automatically determined.
- *
- * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
- *
- * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
- * compile-time.
- *
- * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
- * ARGB, ABGR.
- *
- * Example: `convert_image<PixelFormat::RGB, PixelFormat::Y>(img_rgb)` will perform an RGB -> grayscale conversion,
- * returning the output image.
- *
- * @tparam pixel_format_dst The target pixel format.
- * @tparam DerivedSrc The typed source image type (usually automatically deduced).
- * @param img_src The source image.
- * @return The target image.
- */
-template <PixelFormat pixel_format_dst,
-          typename DerivedSrc,
-          typename,
-          typename>
-inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
-{
-  using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
-
-  constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
-  return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
-}
-
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
- *
  * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
  * In this case, the additional alpha value has to be manually specified.
  *
@@ -303,6 +300,38 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
  *
  * This overload returns the target image, for which the type is automatically determined.
  *
+ * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
+ *
+ * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
+ * compile-time.
+ *
+ * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
+ * ARGB, ABGR.
+ *
+ * Example: `convert_image<PixelFormat::RGB, PixelFormat::Y>(img_rgb)` will perform an RGB -> grayscale conversion,
+ * returning the output image.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @return The target image.
+ */
+template <PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename,
+          typename>
+inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
+{
+  using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
+
+  constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
+  return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
+}
+
+/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+ *
+ * This overload returns the target image, for which the type is automatically determined.
+ *
  * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
  * In this case, the additional alpha value has to be manually specified.
  *
@@ -337,6 +366,33 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
+template <PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename,
+          typename>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src)
+{
+  using PixelSrc = typename ImageExpr<DerivedSrc>::PixelType;
+  using PixelDst = typename impl::TargetPixelType<pixel_format_dst, PixelSrc>::type;
+
+  constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
+  return impl::ImageConversionExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ImageExpr<DerivedSrc>>(img_src);
+}
+
+template <PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename ElementType,
+          typename,
+          typename>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src, ElementType alpha_value)
+{
+  using PixelSrc = typename ImageExpr<DerivedSrc>::PixelType;
+  using PixelDst = typename impl::TargetPixelType<pixel_format_dst, PixelSrc>::type;
+
+  constexpr auto pixel_format_src = PixelTraits<PixelSrc>::pixel_format;
+  return impl::ImageConversionAlphaExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ElementType, ImageExpr<DerivedSrc>>(img_src, alpha_value);
+}
+
 
 // Overloads for unknown source pixel format
 
@@ -363,11 +419,11 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
  * @param img_dst The target image. Its pixel type has to be compatible with the target pixel format.
  */
 template <PixelFormat pixel_format_src,
-    PixelFormat pixel_format_dst,
-    typename DerivedSrc,
-    typename DerivedDst,
-    typename,
-    typename>
+          PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename DerivedDst,
+          typename,
+          typename>
 inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst)
 {
   using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -379,43 +435,6 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
                 "Incorrect target number of channels for given pixel format.");
 
   impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst);
-}
-
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
- *
- * This overload returns the target image, for which the type is automatically determined.
- *
- * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
- * will have to be explicitly specified as first template parameter.
- *
- * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
- * compile-time.
- *
- * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
- * ARGB, ABGR.
- *
- * Example: `convert_image<PixelFormat::RGB, PixelFormat::Y>(img_rgb)` will perform an RGB -> grayscale conversion,
- * returning the output image.
- *
- * @tparam pixel_format_src The source pixel format.
- * @tparam pixel_format_dst The target pixel format.
- * @tparam DerivedSrc The typed source image type (usually automatically deduced).
- * @param img_src The source image.
- * @return The target image.
- */
-template <PixelFormat pixel_format_src,
-    PixelFormat pixel_format_dst,
-    typename DerivedSrc,
-    typename,
-    typename>
-inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
-{
-  using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
-
-  static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
-                "Incorrect source number of channels for given pixel format.");
-
-  return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
 }
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
@@ -445,12 +464,12 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
  * @param alpha_value The alpha value to assign to each pixel in the target image.
  */
 template <PixelFormat pixel_format_src,
-    PixelFormat pixel_format_dst,
-    typename DerivedSrc,
-    typename DerivedDst,
-    typename ElementType,
-    typename,
-    typename>
+          PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename DerivedDst,
+          typename ElementType,
+          typename,
+          typename>
 inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst, ElementType alpha_value)
 {
   using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -462,6 +481,43 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
                 "Incorrect target number of channels for given pixel format.");
 
   impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst, alpha_value);
+}
+
+/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+ *
+ * This overload returns the target image, for which the type is automatically determined.
+ *
+ * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
+ * will have to be explicitly specified as first template parameter.
+ *
+ * Not all conversions may be supported. If the desired conversion is unsupported, this will result in an error at
+ * compile-time.
+ *
+ * Currently, conversions from/to the following pixel formats are supported: Y, YA, RGB, BGR, RGBA, BGRA,
+ * ARGB, ABGR.
+ *
+ * Example: `convert_image<PixelFormat::RGB, PixelFormat::Y>(img_rgb)` will perform an RGB -> grayscale conversion,
+ * returning the output image.
+ *
+ * @tparam pixel_format_src The source pixel format.
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @return The target image.
+ */
+template <PixelFormat pixel_format_src,
+          PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename,
+          typename>
+inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
+{
+  using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
+
+  static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
+                "Incorrect source number of channels for given pixel format.");
+
+  return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
 }
 
 /** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
@@ -492,11 +548,11 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
  * @return The target image.
  */
 template <PixelFormat pixel_format_src,
-    PixelFormat pixel_format_dst,
-    typename DerivedSrc,
-    typename ElementType,
-    typename,
-    typename>
+          PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename ElementType,
+          typename,
+          typename>
 inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alpha_value)
 {
   using PixelSrc = typename ImageBase<DerivedSrc>::PixelType;
@@ -505,6 +561,39 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
                 "Incorrect source number of channels for given pixel format.");
 
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
+}
+
+template <PixelFormat pixel_format_src,
+          PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename,
+          typename>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src)
+{
+  using PixelSrc = typename ImageExpr<DerivedSrc>::PixelType;
+  using PixelDst = typename impl::TargetPixelType<pixel_format_dst, PixelSrc>::type;
+
+  static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
+                "Incorrect source number of channels for given pixel format.");
+
+  return impl::ImageConversionExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ImageExpr<DerivedSrc>>(img_src);
+}
+
+template <PixelFormat pixel_format_src,
+          PixelFormat pixel_format_dst,
+          typename DerivedSrc,
+          typename ElementType,
+          typename,
+          typename>
+auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src, ElementType alpha_value)
+{
+  using PixelSrc = typename ImageExpr<DerivedSrc>::PixelType;
+  using PixelDst = typename impl::TargetPixelType<pixel_format_dst, PixelSrc>::type;
+
+  static_assert(get_nr_channels(pixel_format_src) == PixelTraits<PixelSrc>::nr_channels,
+                "Incorrect source number of channels for given pixel format.");
+
+  return impl::ImageConversionAlphaExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ElementType, ImageExpr<DerivedSrc>>(img_src, alpha_value);
 }
 
 }  // namespace sln

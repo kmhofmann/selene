@@ -978,6 +978,24 @@ round(const Pixel<T, nr_channels_, pixel_format_>& px)
  * @return A reference to the provided output stream.
  */
 template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
+std::ostream& operator<<(std::ostream& os, const Pixel<T, nr_channels_, pixel_format_>& px)
+{
+  os << '(';
+  for (auto c = std::size_t{0}; c < nr_channels_ - 1; ++c)
+  {
+    os << static_cast<promote_t<T>>(px[c]) << ", ";
+  }
+  os << static_cast<promote_t<T>>(px[nr_channels_ - 1]) << ')';
+  return os;
+}
+
+/** \brief Converts a pixel value into a character stream representation, e.g. for printing.
+ *
+ * @param os An output stream.
+ * @param px The pixel to be converted.
+ * @return A reference to the provided output stream.
+ */
+template <typename T, std::size_t nr_channels_, PixelFormat pixel_format_>
 std::ostream& operator<<(std::ostream& os, Pixel<T, nr_channels_, pixel_format_>& px)
 {
   os << '(';
