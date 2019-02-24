@@ -13,6 +13,8 @@
 #include <selene/img/typed/_impl/ImageBaseTraits.hpp>
 #include <selene/img/typed/_impl/StaticChecks.hpp>
 
+#include <type_traits>
+
 namespace sln {
 
 /// \addtogroup group-img-typed

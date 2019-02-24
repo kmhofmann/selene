@@ -52,7 +52,7 @@ void swap(Image<PixelType, Allocator>& img_l, Image<PixelType, Allocator>& img_r
  */
 template <typename PixelType_, typename Allocator_>
 class Image
-    : public ImageBase<Image<PixelType_>>
+    : public ImageBase<Image<PixelType_, Allocator_>>
 {
 public:
   using PixelType = PixelType_;
