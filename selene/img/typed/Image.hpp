@@ -63,12 +63,12 @@ public:
   using iterator = typename ImageView<PixelType_, ImageModifiability::Mutable>::iterator;  ///< The iterator type.
   using const_iterator = typename ImageView<PixelType_, ImageModifiability::Mutable>::const_iterator;  ///< The const_iterator type.
 
-  constexpr static bool is_view = impl::ImageBaseTraits<Image<PixelType>>::is_view;
-  constexpr static bool is_modifiable = impl::ImageBaseTraits<Image<PixelType>>::is_modifiable;
+  constexpr static bool is_view = false;
+  constexpr static bool is_modifiable = true;
 
   constexpr static ImageModifiability modifiability()
   {
-    return impl::ImageBaseTraits<Image<PixelType>>::modifiability();
+    return ImageModifiability::Mutable;
   }
 
   Image() = default;  ///< Default constructor.
@@ -96,6 +96,9 @@ public:
 
   template <ImageModifiability modifiability>
   Image<PixelType>& operator=(const ImageView<PixelType, modifiability>&);
+
+  template <typename ImgExpr>
+  explicit Image(const ImageExpr<ImgExpr>& expr);
 
   const TypedLayout& layout() const noexcept;
 
@@ -354,6 +357,23 @@ Image<PixelType_>& Image<PixelType_, Allocator_>::operator=(const ImageView<Pixe
   copy_rows_from(other);
 
   return *this;
+}
+
+template <typename PixelType_, typename Allocator_>
+template <typename ImgExpr>
+Image<PixelType_, Allocator_>::Image(const ImageExpr<ImgExpr>& expr)
+    : view_and_alloc_(ImageView<PixelType, ImageModifiability::Mutable>{}, Allocator{})
+{
+  mem_view() = allocate_memory(expr.layout());
+
+  // TODO: optimize?
+  for (auto y = 0_idx; y < expr.height(); ++y)
+  {
+    for (auto x = 0_idx; x < expr.width(); ++x)
+    {
+      this->operator()(x, y) = expr(x, y);
+    }
+  }
 }
 
 /** \brief Returns the image layout.

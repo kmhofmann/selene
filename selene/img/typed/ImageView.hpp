@@ -69,12 +69,12 @@ public:
   using iterator = ImageRowIterator<ImageView<PixelType, modifiability_>, IteratorRow>;  ///< The iterator type.
   using const_iterator = ImageRowIterator<ImageView<PixelType, modifiability_>, ConstIteratorRow>;  ///< The const_iterator type.
 
-  constexpr static bool is_view = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_view;
-  constexpr static bool is_modifiable = impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::is_modifiable;
+  constexpr static bool is_view = true;
+  constexpr static bool is_modifiable = (modifiability_ == ImageModifiability::Mutable);
 
   constexpr static ImageModifiability modifiability()
   {
-    return impl::ImageBaseTraits<ImageView<PixelType_, modifiability_>>::modifiability();
+    return modifiability_;
   }
 
   ImageView() = default;

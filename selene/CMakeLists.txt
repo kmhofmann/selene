@@ -110,7 +110,7 @@ target_sources(selene_img PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/ImageViewTypeAliases.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/TypedLayout.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/Utilities.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageBaseTraits.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageExprTraits.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/ImageFwd.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img/typed/_impl/StaticChecks.hpp
 
@@ -267,7 +267,11 @@ target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/PixelConversions.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Resample.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/TransformationDirections.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/FlipExpr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/IdentityExpr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/TransposeExpr.hpp
         )
 
 target_compile_options(selene_img_ops PRIVATE ${SELENE_COMPILE_OPTIONS} ${SELENE_IMG_COMPILE_OPTIONS})

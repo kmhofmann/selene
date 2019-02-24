@@ -15,6 +15,10 @@
 #include <selene/img/typed/Image.hpp>
 
 #include <selene/img_ops/Allocate.hpp>
+#include <selene/img_ops/TransformationDirections.hpp>
+#include <selene/img_ops/_impl/FlipExpr.hpp>
+#include <selene/img_ops/_impl/IdentityExpr.hpp>
+#include <selene/img_ops/_impl/TransposeExpr.hpp>
 
 #include <algorithm>
 #include <utility>
@@ -25,26 +29,7 @@ namespace sln {
 /// \addtogroup group-img-ops
 /// @{
 
-/** \brief Describes the flip direction. */
-enum class FlipDirection
-{
-  Horizontal,  ///< Horizontal flip.
-  Vertical,  ///< Vertical flip.
-  Both,  ///< Combined horizontal and vertical flip.
-};
-
-/** \brief Describes the rotation direction. */
-enum class RotationDirection
-{
-  Clockwise0,  ///< Rotation by 0 degrees clockwise.
-  Clockwise90,  ///< Rotation by 90 degrees clockwise.
-  Clockwise180,  ///< Rotation by 180 degrees clockwise.
-  Clockwise270,  ///< Rotation by 270 degrees clockwise.
-  Counterclockwise0,  ///< Rotation by 0 degrees counterclockwise.
-  Counterclockwise90,  ///< Rotation by 90 degrees counterclockwise.
-  Counterclockwise180,  ///< Rotation by 180 degrees counterclockwise.
-  Counterclockwise270,  ///< Rotation by 270 degrees counterclockwise.
-};
+// Flip:
 
 template <FlipDirection flip_dir, typename DerivedSrcDst>
 void flip(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img_dst);
@@ -52,11 +37,16 @@ void flip(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img
 template <FlipDirection flip_dir, typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> flip(const ImageBase<DerivedSrc>& img);
 
+template <FlipDirection flip_dir, typename DerivedSrc>
+auto flip_expr(const ImageExpr<DerivedSrc>& img);
+
 template <typename DerivedSrcDst>
 void flip_horizontally_in_place(ImageBase<DerivedSrcDst>& img);
 
 template <typename DerivedSrcDst>
 void flip_vertically_in_place(ImageBase<DerivedSrcDst>& img);
+
+// Transpose:
 
 template <bool flip_h = false, bool flip_v = false, typename DerivedSrcDst>
 void transpose(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img_dst);
@@ -64,11 +54,19 @@ void transpose(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>
 template <bool flip_h = false, bool flip_v = false, typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> transpose(const ImageBase<DerivedSrc>& img);
 
+template <bool flip_h = false, bool flip_v = false, typename DerivedSrc>
+auto transpose_expr(const ImageExpr<DerivedSrc>& img);
+
+// Rotate:
+
 template <RotationDirection rot_dir, typename DerivedSrcDst>
 void rotate(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img_dst);
 
 template <RotationDirection rot_dir, typename DerivedSrc>
 Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img);
+
+template <RotationDirection rot_dir, typename DerivedSrc>
+auto rotate_expr(const ImageExpr<DerivedSrc>& img);
 
 /// @}
 
@@ -132,6 +130,12 @@ Image<typename DerivedSrc::PixelType> flip(const ImageBase<DerivedSrc>& img)
   Image<typename DerivedSrc::PixelType> img_flip;
   flip<flip_dir>(img, img_flip);
   return img_flip;
+}
+
+template <FlipDirection flip_dir, typename DerivedSrc>
+auto flip_expr(const ImageExpr<DerivedSrc>& img)
+{
+  return impl::FlipExpr<flip_dir, ImageExpr<DerivedSrc>>(img);
 }
 
 /** \brief Flips the image horizontally, in-place.
@@ -220,7 +224,7 @@ void transpose(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>
       const auto src_x = flip_v ? PixelIndex{img_src.width() - 1 - dst_y} : dst_y;  // branch determined at
       const auto src_y = flip_h ? PixelIndex{img_src.height() - 1 - dst_x} : dst_x;  // compile time
       img_dst(dst_x, dst_y) = img_src(src_x, src_y);
-   }
+    }
   }
 }
 
@@ -243,44 +247,40 @@ Image<typename DerivedSrc::PixelType> transpose(const ImageBase<DerivedSrc>& img
   return img_t;
 }
 
+template <bool flip_h, bool flip_v, typename DerivedSrc>
+auto transpose_expr(const ImageExpr<DerivedSrc>& img)
+{
+  return impl::TransposeExpr<flip_h, flip_v, ImageExpr<DerivedSrc>>(img);
+}
+
 /** \brief Rotates the image (in 90 degree increments) by the specified amount and direction.
  *
  * @tparam rot_dir The rotation amount and direction. Must be provided.
  * @tparam DerivedSrcDst The typed source/target image type.
  * @param img_src The source image.
  * @param[out] img_dst The rotated output image.
+ *
  */
 template <RotationDirection rot_dir, typename DerivedSrcDst>
 void rotate(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img_dst)
 {
   SELENE_ASSERT(&img_src != &img_dst);
 
-  switch (rot_dir)  // known at compile time
+  if constexpr (rot_dir == RotationDirection::Clockwise0 || rot_dir == RotationDirection::Counterclockwise0)
   {
-    case RotationDirection::Clockwise0:
-    case RotationDirection::Counterclockwise0:
-    {
-      clone(img_src, img_dst);
-      break;
-    }
-    case RotationDirection::Clockwise90:
-    case RotationDirection::Counterclockwise270:
-    {
-      transpose<true, false>(img_src, img_dst);
-      break;
-    }
-    case RotationDirection::Clockwise180:
-    case RotationDirection::Counterclockwise180:
-    {
-      flip<FlipDirection::Both>(img_src, img_dst);
-      break;
-    }
-    case RotationDirection::Clockwise270:
-    case RotationDirection::Counterclockwise90:
-    {
-      transpose<false, true>(img_src, img_dst);
-      break;
-    }
+    clone(img_src, img_dst);
+  }
+  else if constexpr (rot_dir == RotationDirection::Clockwise90 || rot_dir == RotationDirection::Counterclockwise270)
+  {
+    transpose<true, false>(img_src, img_dst);
+  }
+  else if constexpr (rot_dir == RotationDirection::Clockwise180 || rot_dir == RotationDirection::Counterclockwise180)
+  {
+    flip<FlipDirection::Both>(img_src, img_dst);
+  }
+  else if constexpr (rot_dir == RotationDirection::Clockwise270 || rot_dir == RotationDirection::Counterclockwise90)
+  {
+    transpose<false, true>(img_src, img_dst);
   }
 }
 
@@ -297,6 +297,27 @@ Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img)
   Image<typename DerivedSrc::PixelType> img_r;
   rotate<rot_dir>(img, img_r);
   return img_r;
+}
+
+template <RotationDirection rot_dir, typename DerivedSrc>
+auto rotate_expr(const ImageExpr<DerivedSrc>& img)
+{
+  if constexpr (rot_dir == RotationDirection::Clockwise0 || rot_dir == RotationDirection::Counterclockwise0)
+  {
+    return impl::IdentityExpr<ImageExpr<DerivedSrc>>(img);
+  }
+  else if constexpr (rot_dir == RotationDirection::Clockwise90 || rot_dir == RotationDirection::Counterclockwise270)
+  {
+    return impl::TransposeExpr<true, false, ImageExpr<DerivedSrc>>(img);
+  }
+  else if constexpr (rot_dir == RotationDirection::Clockwise180 || rot_dir == RotationDirection::Counterclockwise180)
+  {
+    return impl::FlipExpr<FlipDirection::Both, ImageExpr<DerivedSrc>>(img);
+  }
+  else if constexpr (rot_dir == RotationDirection::Clockwise270 || rot_dir == RotationDirection::Counterclockwise90)
+  {
+    return impl::TransposeExpr<false, true, ImageExpr<DerivedSrc>>(img);
+  }
 }
 
 }  // namespace sln
