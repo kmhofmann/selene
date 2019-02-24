@@ -9,7 +9,7 @@
 
 #include <selene/img/pixel/PixelTraits.hpp>
 
-#include <selene/img/typed/ImageBase.hpp>
+#include <selene/img/typed/Image.hpp>
 
 #include <selene/img_ops/TransformationDirections.hpp>
 

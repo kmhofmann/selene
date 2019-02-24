@@ -2,10 +2,12 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMPL_IDENTITY_EXPR_HPP
-#define SELENE_IMG_IMPL_IDENTITY_EXPR_HPP
+#ifndef SELENE_IMG_IMPL_CROP_EXPR_HPP
+#define SELENE_IMG_IMPL_CROP_EXPR_HPP
 
 /// @file
+
+#include <selene/img/common/BoundingBox.hpp>
 
 #include <selene/img/pixel/PixelTraits.hpp>
 
@@ -13,10 +15,10 @@
 
 namespace sln::impl {
 
-template <typename Expr> class IdentityExpr;
+template <typename Expr> class CropExpr;
 
 template <typename Expr>
-struct ImageExprTraits<IdentityExpr<Expr>>
+struct ImageExprTraits<CropExpr<Expr>>
 {
   using PixelType = typename Expr::PixelType;
   constexpr static bool is_view = false;
@@ -24,22 +26,22 @@ struct ImageExprTraits<IdentityExpr<Expr>>
 };
 
 template <typename Expr>
-class IdentityExpr : public ImageExpr<IdentityExpr<Expr>>
+class CropExpr : public ImageExpr<CropExpr<Expr>>
 {
 public:
-  using PixelType = typename ImageExprTraits<IdentityExpr<Expr>>::PixelType;
+  using PixelType = typename ImageExprTraits<CropExpr<Expr>>::PixelType;
 
-  explicit IdentityExpr(const Expr& e) : e_(e) {}
+  explicit CropExpr(const Expr& e, BoundingBox region) : e_(e), region_(region) {}
 
   TypedLayout layout() const noexcept { return TypedLayout{this->width(), this->height(), this->stride_bytes()}; }
 
-  PixelLength width() const noexcept { return e_.width(); }
-  PixelLength height() const noexcept { return e_.height(); }
+  PixelLength width() const noexcept { return region_.width(); }
+  PixelLength height() const noexcept { return region_.height(); }
   Stride stride_bytes() const noexcept { return Stride{PixelTraits<PixelType>::nr_bytes * this->width()}; }
 
   decltype(auto) operator()(PixelIndex x, PixelIndex y) const noexcept
   {
-    return e_(x, y);
+    return e_(x + region_.x0(), y + region_.y0());
   }
 
   template <typename Allocator = default_bytes_allocator>
@@ -50,8 +52,9 @@ public:
 
 private:
   const Expr& e_;
+  BoundingBox region_;
 };
 
 }  // namespace sln::impl
 
-#endif  // SELENE_IMG_IMPL_IDENTITY_EXPR_HPP
+#endif  // SELENE_IMG_IMPL_CROP_EXPR_HPP

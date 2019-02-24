@@ -12,6 +12,7 @@
 #include <selene/img/typed/ImageBase.hpp>
 
 #include <selene/img_ops/Clone.hpp>
+#include <selene/img_ops/_impl/CropExpr.hpp>
 
 #include <utility>
 
@@ -25,6 +26,12 @@ void crop(ImageBase<DerivedSrcDst>& img, const BoundingBox& region)
 {
   auto cropped_clone = clone(img, region);
   img = std::move(cropped_clone);
+}
+
+template <typename DerivedSrc>
+auto crop_expr(const ImageExpr<DerivedSrc>& img, const BoundingBox& region)
+{
+  return impl::CropExpr<ImageExpr<DerivedSrc>>(img, region);
 }
 
 /// @}
