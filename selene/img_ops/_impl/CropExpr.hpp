@@ -19,10 +19,9 @@ template <typename Expr> class CropExpr;
 
 template <typename Expr>
 struct ImageExprTraits<CropExpr<Expr>>
+    : public ExprTraitsBase
 {
   using PixelType = typename Expr::PixelType;
-  constexpr static bool is_view = false;
-  constexpr static bool is_modifiable = true;
 };
 
 template <typename Expr>

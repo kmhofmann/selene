@@ -269,9 +269,12 @@ target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/Transformations.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/TransformationDirections.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/View.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/CropExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/FlipExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/IdentityExpr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/ImageConversionAlphaExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/ImageConversionExpr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/TransformExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/TransposeExpr.hpp
         )
 

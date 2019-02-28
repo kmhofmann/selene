@@ -15,13 +15,16 @@ namespace sln::impl {
 
 template <typename Derived> struct ImageExprTraits;
 
-template <typename PixelType_, typename Allocator_>
-struct ImageExprTraits<Image<PixelType_, Allocator_>>
+struct ExprTraitsBase
 {
-  using PixelType = PixelType_;
-
   constexpr static bool is_view = false;
   constexpr static bool is_modifiable = true;
+};
+
+template <typename PixelType_, typename Allocator_>
+struct ImageExprTraits<Image<PixelType_, Allocator_>> : public ExprTraitsBase
+{
+  using PixelType = PixelType_;
 };
 
 template <typename PixelType_, ImageModifiability modifiability_>

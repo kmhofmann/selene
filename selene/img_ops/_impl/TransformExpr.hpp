@@ -2,8 +2,8 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMPL_IDENTITY_EXPR_HPP
-#define SELENE_IMG_IMPL_IDENTITY_EXPR_HPP
+#ifndef SELENE_IMG_IMPL_TRANSFORM_EXPR_HPP
+#define SELENE_IMG_IMPL_TRANSFORM_EXPR_HPP
 
 /// @file
 
@@ -13,22 +13,22 @@
 
 namespace sln::impl {
 
-template <typename Expr> class IdentityExpr;
+template <typename Expr, typename UnaryFunction> class TransformExpr;
 
-template <typename Expr>
-struct ImageExprTraits<IdentityExpr<Expr>>
+template <typename Expr, typename UnaryFunction>
+struct ImageExprTraits<TransformExpr<Expr, UnaryFunction>>
     : public ExprTraitsBase
 {
-  using PixelType = typename Expr::PixelType;
+  using PixelType = decltype(std::declval<UnaryFunction>().operator()(typename Expr::PixelType{}));
 };
 
-template <typename Expr>
-class IdentityExpr : public ImageExpr<IdentityExpr<Expr>>
+template <typename Expr, typename UnaryFunction>
+class TransformExpr : public ImageExpr<TransformExpr<Expr, UnaryFunction>>
 {
 public:
-  using PixelType = typename ImageExprTraits<IdentityExpr<Expr>>::PixelType;
+  using PixelType = typename ImageExprTraits<TransformExpr<Expr, UnaryFunction>>::PixelType;
 
-  explicit IdentityExpr(const Expr& e) : e_(e) {}
+  explicit TransformExpr(const Expr& e, const UnaryFunction& func) : e_(e), func_(func) {}
 
   const TypedLayout& layout() const noexcept { return e_.layout(); }
 
@@ -38,7 +38,7 @@ public:
 
   decltype(auto) operator()(PixelIndex x, PixelIndex y) const noexcept
   {
-    return e_(x, y);
+    return func_(e_(x, y));
   }
 
   template <typename Allocator = default_bytes_allocator>
@@ -49,8 +49,9 @@ public:
 
 private:
   const Expr& e_;
+  const UnaryFunction& func_;
 };
 
 }  // namespace sln::impl
 
-#endif  // SELENE_IMG_IMPL_IDENTITY_EXPR_HPP
+#endif  // SELENE_IMG_IMPL_TRANSFORM_EXPR_HPP

@@ -19,10 +19,9 @@ template <FlipDirection flip_dir, typename Expr> class FlipExpr;
 
 template <FlipDirection flip_dir, typename Expr>
 struct ImageExprTraits<FlipExpr<flip_dir, Expr>>
+    : public ExprTraitsBase
 {
   using PixelType = typename Expr::PixelType;
-  constexpr static bool is_view = false;
-  constexpr static bool is_modifiable = true;
 };
 
 template <FlipDirection flip_dir, typename Expr>
@@ -33,11 +32,11 @@ public:
 
   explicit FlipExpr(const Expr& e) : e_(e) {}
 
-  TypedLayout layout() const noexcept { return TypedLayout{this->width(), this->height(), this->stride_bytes()}; }
+  const TypedLayout& layout() const noexcept { return e_.layout(); }
 
   PixelLength width() const noexcept { return e_.width(); }
   PixelLength height() const noexcept { return e_.height(); }
-  Stride stride_bytes() const noexcept { return Stride{PixelTraits<PixelType>::nr_bytes * this->width()}; }
+  Stride stride_bytes() const noexcept { return e_.stride_bytes(); }
 
   decltype(auto) operator()(PixelIndex x, PixelIndex y) const noexcept
   {

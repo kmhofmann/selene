@@ -11,6 +11,7 @@
 #include <selene/img/typed/ImageBase.hpp>
 
 #include <selene/img_ops/Allocate.hpp>
+#include <selene/img_ops/_impl/TransformExpr.hpp>
 
 namespace sln {
 
@@ -77,11 +78,17 @@ void transform_pixels(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst
  * @return The destination image.
  */
 template <typename PixelTypeDst, typename DerivedSrc, typename UnaryOperation>
-Image<PixelTypeDst> transform_pixels(const ImageBase<DerivedSrc>& img_src, UnaryOperation op)
+Image<PixelTypeDst> transform_pixels(const ImageBase<DerivedSrc>& img, UnaryOperation op)
 {
-  Image<PixelTypeDst> img_dst({img_src.width(), img_src.height()});
-  transform_pixels(img_src, img_dst, op);
+  Image<PixelTypeDst> img_dst({img.width(), img.height()});
+  transform_pixels(img, img_dst, op);
   return img_dst;
+}
+
+template <typename DerivedSrc, typename UnaryFunction>
+auto transform_pixels_expr(const ImageExpr<DerivedSrc>& img, UnaryFunction func)
+{
+  return impl::TransformExpr<ImageExpr<DerivedSrc>, UnaryFunction>(img, func);
 }
 
 /// @}

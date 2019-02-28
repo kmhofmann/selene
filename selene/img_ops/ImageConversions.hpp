@@ -15,6 +15,7 @@
 #include <selene/img_ops/Clone.hpp>
 #include <selene/img_ops/PixelConversions.hpp>
 #include <selene/img_ops/_impl/ImageConversionExpr.hpp>
+#include <selene/img_ops/_impl/ImageConversionAlphaExpr.hpp>
 
 namespace sln {
 

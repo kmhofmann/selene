@@ -19,10 +19,9 @@ template <bool flip_h, bool flip_v, typename Expr> class TransposeExpr;
 
 template <bool flip_h, bool flip_v, typename Expr>
 struct ImageExprTraits<TransposeExpr<flip_h, flip_v, Expr>>
+    : public ExprTraitsBase
 {
   using PixelType = typename Expr::PixelType;
-  constexpr static bool is_view = false;
-  constexpr static bool is_modifiable = true;
 };
 
 template <bool flip_h, bool flip_v, typename Expr>
