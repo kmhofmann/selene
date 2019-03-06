@@ -22,7 +22,7 @@ std::size_t simple_bitcount(T x)
 
   while (x > 0)
   {
-    count += x & T{1};
+    count += static_cast<std::size_t>(x & T{1});
     x = T(x >> 1);
   };
 

@@ -33,7 +33,7 @@ constexpr std::size_t bit_count(T x)
   x = static_cast<T>(x - ((x >> 1) & static_cast<T>(~T{0}) / 3));
   x = static_cast<T>((x & static_cast<T>(~T{0}) / 15 * 3) + ((x >> 2) & static_cast<T>(~T{0}) / 15 * 3));
   x = static_cast<T>((x + (x >> 4)) & static_cast<T>(~T{0}) / 255 * 15);
-  const std::size_t c = static_cast<T>(x * ((T)~T{0} / 255)) >> (sizeof(T) - 1) * CHAR_BIT;
+  const std::size_t c = static_cast<std::size_t>(static_cast<T>(x * ((T)~T{0} / 255)) >> (sizeof(T) - 1) * CHAR_BIT);
   return c;
 }
 
