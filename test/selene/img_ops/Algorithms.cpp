@@ -46,7 +46,7 @@ TEST_CASE("Image algorithms", "[img]")
     {
       for (auto x = 0_idx; x < img.width(); ++x)
       {
-        REQUIRE(img(x, y) == 67 + (int{x} % 4) + (int{y} % 7));
+        REQUIRE(img(x, y) == static_cast<std::uint8_t>(67 + (int{x} % 4) + (int{y} % 7)));
       }
     }
   }
@@ -78,7 +78,7 @@ TEST_CASE("Image algorithms", "[img]")
     {
       for (auto x = 0_idx; x < img.width(); ++x)
       {
-        REQUIRE(img2(x, y) == 21 + (int{x} % 4) + (int{y} % 7));
+        REQUIRE(img2(x, y) == static_cast<std::uint8_t>(21 + (int{x} % 4) + (int{y} % 7)));
       }
     }
   }
@@ -111,7 +111,7 @@ TEST_CASE("Image algorithms", "[img]")
     {
       for (auto x = 0_idx; x < img.width(); ++x)
       {
-        REQUIRE(img2(x, y) == 21 + (int{x} % 4) + (int{y} % 7));
+        REQUIRE(img2(x, y) == static_cast<std::uint8_t>(21 + (int{x} % 4) + (int{y} % 7)));
       }
     }
   }
