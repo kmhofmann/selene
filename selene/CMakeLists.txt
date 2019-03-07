@@ -275,6 +275,7 @@ target_sources(selene_img_ops PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/ImageConversionAlphaExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/ImageConversionExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/TransformExpr.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/TransformWithPositionExpr.hpp
         ${CMAKE_CURRENT_LIST_DIR}/img_ops/_impl/TransposeExpr.hpp
         )
 

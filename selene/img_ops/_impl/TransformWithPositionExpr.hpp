@@ -2,8 +2,8 @@
 // Copyright 2017-2019 Michael Hofmann (https://github.com/kmhofmann).
 // Distributed under MIT license. See accompanying LICENSE file in the top-level directory.
 
-#ifndef SELENE_IMG_IMPL_TRANSFORM_EXPR_HPP
-#define SELENE_IMG_IMPL_TRANSFORM_EXPR_HPP
+#ifndef SELENE_IMG_IMPL_TRANSFORM_WITH_POSITION_EXPR_HPP
+#define SELENE_IMG_IMPL_TRANSFORM_WITH_POSITION_EXPR_HPP
 
 /// @file
 
@@ -13,22 +13,24 @@
 
 namespace sln::impl {
 
-template <typename Expr, typename Function> class TransformExpr;
+template <typename Expr, typename Function> class TransformWithPositionExpr;
 
 template <typename Expr, typename Function>
-struct ImageExprTraits<TransformExpr<Expr, Function>>
+struct ImageExprTraits<TransformWithPositionExpr<Expr, Function>>
     : public ExprTraitsBase
 {
-  using PixelType = decltype(std::declval<Function>().operator()(typename Expr::PixelType{}));
+  using PixelType = decltype(std::declval<Function>().operator()(typename Expr::PixelType{},
+                                                                 PixelIndex{},
+                                                                 PixelIndex{}));
 };
 
 template <typename Expr, typename Function>
-class TransformExpr : public ImageExpr<TransformExpr<Expr, Function>>
+class TransformWithPositionExpr : public ImageExpr<TransformWithPositionExpr<Expr, Function>>
 {
 public:
-  using PixelType = typename ImageExprTraits<TransformExpr<Expr, Function>>::PixelType;
+  using PixelType = typename ImageExprTraits<TransformWithPositionExpr<Expr, Function>>::PixelType;
 
-  explicit TransformExpr(const Expr& e, const Function& func) : e_(e), func_(func) {}
+  explicit TransformWithPositionExpr(const Expr& e, const Function& func) : e_(e), func_(func) {}
 
   const TypedLayout& layout() const noexcept { return e_.layout(); }
 
@@ -38,7 +40,7 @@ public:
 
   decltype(auto) operator()(PixelIndex x, PixelIndex y) const noexcept
   {
-    return func_(e_(x, y));
+    return func_(e_(x, y), x, y);
   }
 
   template <typename Allocator = default_bytes_allocator>
@@ -54,4 +56,4 @@ private:
 
 }  // namespace sln::impl
 
-#endif  // SELENE_IMG_IMPL_TRANSFORM_EXPR_HPP
+#endif  // SELENE_IMG_IMPL_TRANSFORM_WITH_POSITION_EXPR_HPP

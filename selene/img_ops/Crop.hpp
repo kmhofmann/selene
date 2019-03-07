@@ -28,6 +28,7 @@ void crop(ImageBase<DerivedSrcDst>& img, const BoundingBox& region)
   img = std::move(cropped_clone);
 }
 
+// TODO: Add documentation.
 template <typename DerivedSrc>
 auto crop_expr(const ImageExpr<DerivedSrc>& img, const BoundingBox& region)
 {

@@ -132,6 +132,7 @@ Image<typename DerivedSrc::PixelType> flip(const ImageBase<DerivedSrc>& img)
   return img_flip;
 }
 
+// TODO: Add documentation.
 template <FlipDirection flip_dir, typename DerivedSrc>
 auto flip_expr(const ImageExpr<DerivedSrc>& img)
 {
@@ -247,6 +248,7 @@ Image<typename DerivedSrc::PixelType> transpose(const ImageBase<DerivedSrc>& img
   return img_t;
 }
 
+// TODO: Add documentation.
 template <bool flip_h, bool flip_v, typename DerivedSrc>
 auto transpose_expr(const ImageExpr<DerivedSrc>& img)
 {
@@ -299,6 +301,7 @@ Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img)
   return img_r;
 }
 
+// TODO: Add documentation.
 template <RotationDirection rot_dir, typename DerivedSrc>
 auto rotate_expr(const ImageExpr<DerivedSrc>& img)
 {

@@ -367,6 +367,7 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
+// TODO: Add documentation.
 template <PixelFormat pixel_format_dst,
           typename DerivedSrc,
           typename,
@@ -380,6 +381,7 @@ auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src)
   return impl::ImageConversionExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ImageExpr<DerivedSrc>>(img_src);
 }
 
+// TODO: Add documentation.
 template <PixelFormat pixel_format_dst,
           typename DerivedSrc,
           typename ElementType,
@@ -564,6 +566,7 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
+// TODO: Add documentation.
 template <PixelFormat pixel_format_src,
           PixelFormat pixel_format_dst,
           typename DerivedSrc,
@@ -580,6 +583,7 @@ auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src)
   return impl::ImageConversionExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ImageExpr<DerivedSrc>>(img_src);
 }
 
+// TODO: Add documentation.
 template <PixelFormat pixel_format_src,
           PixelFormat pixel_format_dst,
           typename DerivedSrc,
