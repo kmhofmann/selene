@@ -66,7 +66,7 @@ void copy_rows_from(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>&
   static_assert(ImageBase<DerivedDst>::is_modifiable);
   static_check_copy_compatibility(img_src, img_dst);
 
-  SELENE_ASSERT(img_src.data() && img_dst.data());
+  SELENE_ASSERT((img_src.data() || img_src.is_empty()) && (img_dst.data() || img_dst.is_empty()));
   SELENE_ASSERT(img_src.width() == img_dst.width() && img_src.height() == img_dst.height());
 
   for (PixelIndex y = 0_idx; y < img_dst.height(); ++y)

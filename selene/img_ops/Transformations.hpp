@@ -73,7 +73,7 @@ auto rotate_expr(const ImageExpr<DerivedSrc>& img);
 // ----------
 // Implementation:
 
-/** \brief Flips the image contents according to the specified flip direction.
+/** \brief Flip the image contents according to the specified flip direction.
  *
  * @tparam flip_dir The flip direction. Must be provided
  * @tparam DerivedSrcDst The typed source/target image type.
@@ -117,7 +117,7 @@ void flip(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& img
   }
 }
 
-/** \brief Flips the image contents according to the specified flip direction.
+/** \brief Flip the image contents according to the specified flip direction.
  *
  * @tparam flip_dir The flip direction. Must be provided
  * @tparam DerivedSrc The typed source image type.
@@ -132,14 +132,24 @@ Image<typename DerivedSrc::PixelType> flip(const ImageBase<DerivedSrc>& img)
   return img_flip;
 }
 
-// TODO: Add documentation.
+/** \brief Flip the image contents according to the specified flip direction.
+ *
+ * This function returns an expression that is convertible to the flipped image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * @tparam flip_dir The flip direction. Must be provided
+ * @tparam DerivedSrc The typed source image type.
+ * @param img The source image.
+ * @return An expression that is convertible to the flipped output image.
+ */
 template <FlipDirection flip_dir, typename DerivedSrc>
 auto flip_expr(const ImageExpr<DerivedSrc>& img)
 {
   return impl::FlipExpr<flip_dir, ImageExpr<DerivedSrc>>(img);
 }
 
-/** \brief Flips the image horizontally, in-place.
+/** \brief Flip the image horizontally, in-place.
  *
  * @tparam DerivedSrcDst The typed source/target image type.
  * @param img The image to be flipped horizontally.
@@ -162,7 +172,7 @@ void flip_horizontally_in_place(ImageBase<DerivedSrcDst>& img)
   }
 }
 
-/** \brief Flips the image vertically, in-place.
+/** \brief Flip the image vertically, in-place.
  *
  * @tparam DerivedSrcDst The typed source/target image type.
  * @param img The image to be flipped vertically.
@@ -201,7 +211,7 @@ void flip_vertically_in_place(ImageBase<DerivedSrcDst>& img)
 #endif
 }
 
-/** \brief Transposes the image.
+/** \brief Transpose the image.
  *
  * The output image will have transposed extents, i.e. output width will be input height, and output height will be
  * input width.
@@ -229,7 +239,7 @@ void transpose(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>
   }
 }
 
-/** \brief Transposes the image.
+/** \brief Transpose the image.
  *
  * The output image will have transposed extents, i.e. output width will be input height, and output height will be
  * input width.
@@ -248,14 +258,28 @@ Image<typename DerivedSrc::PixelType> transpose(const ImageBase<DerivedSrc>& img
   return img_t;
 }
 
-// TODO: Add documentation.
+/** \brief Transpose the image.
+ *
+ * This function returns an expression that is convertible to the transposed image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * The output image will have transposed extents, i.e. output width will be input height, and output height will be
+ * input width.
+ *
+ * @tparam flip_h If true, the output will additionally be horizontally flipped.
+ * @tparam flip_v If true, the output will additionally be vertically flipped.
+ * @tparam DerivedSrc The typed source image type.
+ * @param img The source image.
+ * @return An expression that is convertible to the transposed output image.
+ */
 template <bool flip_h, bool flip_v, typename DerivedSrc>
 auto transpose_expr(const ImageExpr<DerivedSrc>& img)
 {
   return impl::TransposeExpr<flip_h, flip_v, ImageExpr<DerivedSrc>>(img);
 }
 
-/** \brief Rotates the image (in 90 degree increments) by the specified amount and direction.
+/** \brief Rotate the image (in 90 degree increments) by the specified amount and direction.
  *
  * @tparam rot_dir The rotation amount and direction. Must be provided.
  * @tparam DerivedSrcDst The typed source/target image type.
@@ -286,7 +310,7 @@ void rotate(const ImageBase<DerivedSrcDst>& img_src, ImageBase<DerivedSrcDst>& i
   }
 }
 
-/** \brief Rotates the image (in 90 degree increments) by the specified amount and direction.
+/** \brief Rotate the image (in 90 degree increments) by the specified amount and direction.
  *
  * @tparam rot_dir The rotation amount and direction. Must be provided.
  * @tparam DerivedSrc The typed source image type.
@@ -301,7 +325,17 @@ Image<typename DerivedSrc::PixelType> rotate(const ImageBase<DerivedSrc>& img)
   return img_r;
 }
 
-// TODO: Add documentation.
+/** \brief Rotate the image (in 90 degree increments) by the specified amount and direction.
+ *
+ * This function returns an expression that is convertible to the transposed image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * @tparam rot_dir The rotation amount and direction. Must be provided.
+ * @tparam DerivedSrc The typed source image type.
+ * @param img The source image.
+ * @return An expression that is convertible to the rotated output image.
+ */
 template <RotationDirection rot_dir, typename DerivedSrc>
 auto rotate_expr(const ImageExpr<DerivedSrc>& img)
 {

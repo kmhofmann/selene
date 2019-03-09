@@ -848,7 +848,7 @@ template <typename PixelType_, typename Allocator_>
 template <typename Derived>
 void Image<PixelType_, Allocator_>::copy_rows_from(const ImageBase<Derived>& src)
 {
-  SELENE_ASSERT(data() && src.data());
+  SELENE_ASSERT((data() || is_empty()) && (src.data() || is_empty()));
   SELENE_ASSERT(width() == src.width() && height() == src.height());
 
   for (PixelIndex y = 0_idx; y < mem_view().height(); ++y)

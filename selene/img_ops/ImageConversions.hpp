@@ -213,7 +213,7 @@ struct ImageConversion<pixel_format_src,
 // Overloads for known source pixel format
 
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
  *
@@ -252,7 +252,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
   impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst);
 }
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
  * In this case, the additional alpha value has to be manually specified.
@@ -297,7 +297,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
   impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst, alpha_value);
 }
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This overload returns the target image, for which the type is automatically determined.
  *
@@ -329,7 +329,7 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
 }
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This overload returns the target image, for which the type is automatically determined.
  *
@@ -367,7 +367,19 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
-// TODO: Add documentation.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
+ *
+ * This function returns an expression that is convertible to the target image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @return An expression that is convertible to the target image.
+ */
 template <PixelFormat pixel_format_dst,
           typename DerivedSrc,
           typename,
@@ -381,7 +393,23 @@ auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src)
   return impl::ImageConversionExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ImageExpr<DerivedSrc>>(img_src);
 }
 
-// TODO: Add documentation.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
+ *
+ * This function returns an expression that is convertible to the target image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
+ * In this case, the additional alpha value has to be manually specified.
+ *
+ * This overload is valid if the source pixel has a known pixel format, i.e. pixel format is not PixelFormat::Unknown.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @param alpha_value The alpha value to assign to each pixel in the target image.
+ * @return An expression that is convertible to the target image.
+ */
 template <PixelFormat pixel_format_dst,
           typename DerivedSrc,
           typename ElementType,
@@ -400,7 +428,7 @@ auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src, ElementType alpha_
 // Overloads for unknown source pixel format
 
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
  * will have to be explicitly specified as first template parameter.
@@ -440,7 +468,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
   impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst);
 }
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
  * In this case, the additional alpha value has to be manually specified.
@@ -486,7 +514,7 @@ inline void convert_image(const ImageBase<DerivedSrc>& img_src, ImageBase<Derive
   impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, img_dst, alpha_value);
 }
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This overload returns the target image, for which the type is automatically determined.
  *
@@ -523,7 +551,7 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src)
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src);
 }
 
-/** \brief Converts an image (i.e. each pixel) from a source to a target pixel format.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
  *
  * This overload returns the target image, for which the type is automatically determined.
  *
@@ -566,7 +594,20 @@ inline auto convert_image(const ImageBase<DerivedSrc>& img_src, ElementType alph
   return impl::ImageConversion<pixel_format_src, pixel_format_dst>::apply(img_src, alpha_value);
 }
 
-// TODO: Add documentation.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
+ *
+ * This function returns an expression that is convertible to the target image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
+ * will have to be explicitly specified as first template parameter.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @return An expression that is convertible to the target image.
+ */
 template <PixelFormat pixel_format_src,
           PixelFormat pixel_format_dst,
           typename DerivedSrc,
@@ -583,7 +624,24 @@ auto convert_image_expr(const ImageExpr<DerivedSrc>& img_src)
   return impl::ImageConversionExpr<pixel_format_src, pixel_format_dst, PixelSrc, PixelDst, ImageExpr<DerivedSrc>>(img_src);
 }
 
-// TODO: Add documentation.
+/** \brief Convert an image (i.e. each pixel) from a source to a target pixel format.
+ *
+ * This function returns an expression that is convertible to the target image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * This is an overload for performing conversions that add an alpha channel (e.g. RGB -> RGBA).
+ * In this case, the additional alpha value has to be manually specified.
+ *
+ * This overload is valid if the source pixel has pixel format PixelFormat::Unknown. In this case, the source format
+ * will have to be explicitly specified as first template parameter.
+ *
+ * @tparam pixel_format_dst The target pixel format.
+ * @tparam DerivedSrc The typed source image type (usually automatically deduced).
+ * @param img_src The source image.
+ * @param alpha_value The alpha value to assign to each pixel in the target image.
+ * @return An expression that is convertible to the target image.
+ */
 template <PixelFormat pixel_format_src,
           PixelFormat pixel_format_dst,
           typename DerivedSrc,
