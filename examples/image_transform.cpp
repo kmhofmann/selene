@@ -25,7 +25,7 @@ constexpr auto output_filename_transformed = "bike_duck_transformed.png";
 
 using namespace sln::literals;
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
   // Read data path as optional command line argument
   const char* data_path = (argc >= 2) ? argv[1] : nullptr;

@@ -57,6 +57,7 @@ target_sources(selene_tests PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Crop.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/DynView.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Fill.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Generate.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/ImageConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/PixelConversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img_ops/Resample.cpp

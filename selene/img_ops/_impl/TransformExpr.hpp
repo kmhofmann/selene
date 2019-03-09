@@ -11,6 +11,8 @@
 
 #include <selene/img/typed/Image.hpp>
 
+#include <type_traits>
+
 namespace sln::impl {
 
 template <typename Expr, typename Function> class TransformExpr;
@@ -19,7 +21,7 @@ template <typename Expr, typename Function>
 struct ImageExprTraits<TransformExpr<Expr, Function>>
     : public ExprTraitsBase
 {
-  using PixelType = decltype(std::declval<Function>().operator()(typename Expr::PixelType{}));
+  using PixelType = std::invoke_result_t<Function, typename Expr::PixelType>;
 };
 
 template <typename Expr, typename Function>

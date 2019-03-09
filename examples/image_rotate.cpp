@@ -38,7 +38,7 @@ constexpr auto output_filename_rot_ccw_270 = "bike_duck_rot_ccw_270.jpg";
 
 using namespace sln::literals;
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
   // Read data path as optional command line argument
   const char* data_path = (argc >= 2) ? argv[1] : nullptr;
