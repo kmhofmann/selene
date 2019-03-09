@@ -10,6 +10,7 @@
 
 #include <selene/img_io/png/Write.hpp>
 
+#include <selene/img_ops/Algorithms.hpp>
 #include <selene/img_ops/Generate.hpp>
 
 #include <cmath>
@@ -19,6 +20,9 @@
 
 constexpr auto output_filename_mandelbrot = "mandelbrot.png";
 constexpr auto output_filename_collatz = "collatz.png";
+constexpr auto output_filename_collatz_gray = "collatz_gray.png";
+
+constexpr auto PI = 3.141592653589793238462;
 
 using namespace sln::literals;
 
@@ -53,7 +57,7 @@ double collatz(double px, double py)
 
   for (int i = 0; i < N; ++i)
   {
-    z = 0.25 * (1.0 + 4.0 * z - (1.0 + 2.0 * z) * std::cos(M_PI * z));
+    z = 0.25 * (1.0 + 4.0 * z - (1.0 + 2.0 * z) * std::cos(PI * z));
 
     if (std::abs(z.imag()) > 16.0)
     {
@@ -72,6 +76,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
   constexpr auto col0 = sln::PixelRGB_8u(0, 0, 255);
   constexpr auto col1 = sln::PixelRGB_8u(0, 0, 0);
 
+  // Define the Mandelbrot fractal generation function.
   auto func_mandelbrot = [width, height, col0, col1](sln::PixelIndex x, sln::PixelIndex y) {
     const double fx = double{x} / double{width} * 3.5 - 2.5;
     const double fy = double{y} / double{height} * 2.0 - 1.0;
@@ -80,6 +85,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     return static_cast<sln::PixelRGB_8u>(f * col0 + (1.0 - f) * col1);
   };
 
+  // Define the Collatz fractal generation function.
   auto func_collatz = [width, height, col0, col1](sln::PixelIndex x, sln::PixelIndex y) {
     const double fx = double{x} / double{width} * 5.0 - 2.5;
     const double fy = double{y} / double{height} * 3.0 - 1.5;
@@ -88,16 +94,22 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     return static_cast<sln::PixelRGB_8u>(f * col0 + (1.0 - f) * col1);
   };
 
+  // Generate the Mandelbrot fractal by creating a new image.
   std::cout << "Generating Mandelbrot fractal...\n";
   const auto mandelbrot_img = sln::generate(func_mandelbrot, width, height);
 
+  // Generate the Collatz fractal by first creating an expression that is convertible to an image,
+  // and then evaluating the expression to an image.
   std::cout << "Generating & evaluating Collatz fractal expression...\n";
   const auto collatz_expr = sln::generate_expr(func_collatz, width, height);
   const auto collatz_img = collatz_expr.eval();
+  const auto collatz_img_gray = sln::transform_pixels_expr(collatz_expr,
+                                                           [](const auto& px) { return sln::PixelY_8u{px[2]}; }).eval();
 
   std::cout << "Writing images...\n";
   sln::write_png(sln::to_dyn_image_view(mandelbrot_img), sln::FileWriter(output_filename_mandelbrot));
   sln::write_png(sln::to_dyn_image_view(collatz_img), sln::FileWriter(output_filename_collatz));
+  sln::write_png(sln::to_dyn_image_view(collatz_img_gray), sln::FileWriter(output_filename_collatz_gray));
 
   return 0;
 }

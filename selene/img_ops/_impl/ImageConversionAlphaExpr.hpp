@@ -48,7 +48,7 @@ public:
 
   explicit ImageConversionAlphaExpr(const Expr& e, ElementType alpha) : e_(e), alpha_(alpha) {}
 
-  const TypedLayout& layout() const noexcept { return e_.layout(); }
+  TypedLayout layout() const noexcept { return e_.layout(); }
 
   PixelLength width() const noexcept { return e_.width(); }
   PixelLength height() const noexcept { return e_.height(); }

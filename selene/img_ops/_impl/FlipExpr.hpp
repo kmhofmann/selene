@@ -32,7 +32,7 @@ public:
 
   explicit FlipExpr(const Expr& e) : e_(e) {}
 
-  const TypedLayout& layout() const noexcept { return e_.layout(); }
+  TypedLayout layout() const noexcept { return e_.layout(); }
 
   PixelLength width() const noexcept { return e_.width(); }
   PixelLength height() const noexcept { return e_.height(); }
