@@ -21,14 +21,30 @@ namespace sln {
 /// \addtogroup group-img-ops
 /// @{
 
+/** \brief Crop the supplied image using the specified region.
+ *
+ * @tparam DerivedSrcDst The typed source & destination image type.
+ * @param img The source and destination image.
+ * @param region The bounding box region that designates the cropping area.
+ */
 template <typename DerivedSrcDst>
 void crop(ImageBase<DerivedSrcDst>& img, const BoundingBox& region)
 {
   auto cropped_clone = clone(img, region);
-  img = std::move(cropped_clone);
+  img.derived() = std::move(cropped_clone);
 }
 
-// TODO: Add documentation.
+/** \brief Crop the supplied image using the specified region.
+ *
+ * This function returns an expression that is convertible to the cropped image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * @tparam DerivedSrcDst The typed source & destination image type.
+ * @param img The source and destination image.
+ * @param region The bounding box region that designates the cropping area.
+ * @return An expression that is convertible to the cropped image.
+ */
 template <typename DerivedSrc>
 auto crop_expr(const ImageExpr<DerivedSrc>& img, const BoundingBox& region)
 {

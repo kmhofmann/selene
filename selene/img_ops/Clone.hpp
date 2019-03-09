@@ -14,6 +14,7 @@
 #include <selene/img/typed/ImageView.hpp>
 
 #include <selene/img_ops/Allocate.hpp>
+#include <selene/img_ops/View.hpp>
 
 namespace sln {
 

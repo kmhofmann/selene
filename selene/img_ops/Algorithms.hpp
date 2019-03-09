@@ -22,7 +22,7 @@ namespace sln {
 /// \addtogroup group-img-ops
 /// @{
 
-/** \brief Applies a function to each pixel element of an image.
+/** \brief Apply a function to each pixel element of an image.
  *
  * Each pixel element in the image is overwritten with the result of the function application.
  *
@@ -54,7 +54,7 @@ Function for_each_pixel(ImageBase<DerivedSrc>& img, Function func)
   return std::move(func);
 }
 
-/** \brief Applies a function to each pixel element of an image.
+/** \brief Apply a function to each pixel element of an image.
  *
  * Each pixel element in the image is overwritten with the result of the function application.
  *
@@ -88,7 +88,7 @@ Function for_each_pixel_with_position(ImageBase<DerivedSrc>& img, Function func)
   return std::move(func);
 }
 
-/** \brief Transforms one image into another by applying a function to each pixel element.
+/** \brief Transform one image into another by applying a function to each pixel element.
  *
  * The supplied function receives a constant reference (or value) to the respective pixel element as first (and only)
  * parameter.
@@ -125,7 +125,7 @@ void transform_pixels(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst
   }
 }
 
-/** \brief Transforms one image into another by applying a function to each pixel element.
+/** \brief Transform one image into another by applying a function to each pixel element.
  *
  * The supplied function receives a constant reference (or value) to the respective pixel element as first (and only)
  * parameter.
@@ -148,7 +148,7 @@ Image<PixelTypeDst> transform_pixels(const ImageBase<DerivedSrc>& img, Function 
   return img_dst;
 }
 
-/** \brief Transforms one image into another by applying a function to each pixel element.
+/** \brief Transform one image into another by applying a function to each pixel element.
  *
  * The supplied function receives a constant reference (or value) to the respective pixel element as first parameter,
  * followed by both the x and y pixel coordinates for the respective invocation.
@@ -163,7 +163,7 @@ Image<PixelTypeDst> transform_pixels(const ImageBase<DerivedSrc>& img, Function 
  * @param img_src The source image.
  * @param[out] img_dst The destination image.
  * @param func The function to apply to each pixel element.
- *             Its signature should be `PixelTypeDst f(const PixelTypeSrc&)` or `PixelTypeDst f(PixelTypeSrc)`.
+ *             Its signature should be `PixelTypeDst f(const PixelTypeSrc&, PixelIndex, PixelIndex)` or `PixelTypeDst f(PixelTypeSrc, PixelIndex, PixelIndex)`.
  */
 template <typename DerivedDst, typename DerivedSrc, typename Function>
 void transform_pixels_with_position(const ImageBase<DerivedSrc>& img_src, ImageBase<DerivedDst>& img_dst, Function func)
@@ -186,7 +186,7 @@ void transform_pixels_with_position(const ImageBase<DerivedSrc>& img_src, ImageB
   }
 }
 
-/** \brief Transforms one image into another by applying a function to each pixel element.
+/** \brief Transform one image into another by applying a function to each pixel element.
  *
  * The supplied function receives a constant reference (or value) to the respective pixel element as first parameter,
  * followed by both the x and y pixel coordinates for the respective invocation.
@@ -198,7 +198,7 @@ void transform_pixels_with_position(const ImageBase<DerivedSrc>& img_src, ImageB
  * @tparam Function The function type.
  * @param img_src The source image.
  * @param func The function to apply to each pixel element.
- *             Its signature should be `PixelTypeDst f(const PixelTypeSrc&)` or `PixelTypeDst f(PixelTypeSrc)`.
+ *             Its signature should be `PixelTypeDst f(const PixelTypeSrc&, PixelIndex, PixelIndex)` or `PixelTypeDst f(PixelTypeSrc, PixelIndex, PixelIndex)`.
  * @return The destination image.
  */
 template <typename PixelTypeDst, typename DerivedSrc, typename Function>
@@ -209,7 +209,23 @@ Image<PixelTypeDst> transform_pixels_with_position(const ImageBase<DerivedSrc>& 
   return img_dst;
 }
 
-// TODO: Add documentation.
+/** \brief Transform one image into another by applying a function to each pixel element.
+ *
+ * This function returns an expression that is convertible to the transformed image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * The supplied function receives a constant reference (or value) to the respective pixel element as first (and only)
+ * parameter.
+ * Its return type shall be of the type of a pixel element of the destination image.
+ *
+ * @tparam DerivedSrc The typed source image type.
+ * @tparam Function The function type.
+ * @param img The source image.
+ * @param func The function to apply to each pixel element.
+ *             Its signature should be `PixelTypeDst f(const PixelTypeSrc&)` or `PixelTypeDst f(PixelTypeSrc)`.
+ * @return An expression that is convertible to the transformed image.
+ */
 template <typename DerivedSrc, typename Function>
 auto transform_pixels_expr(const ImageExpr<DerivedSrc>& img, Function func)
 {
@@ -220,7 +236,23 @@ auto transform_pixels_expr(const ImageExpr<DerivedSrc>& img, Function func)
   return impl::TransformExpr<ImageExpr<DerivedSrc>, Function>(img, func);
 }
 
-// TODO: Add documentation.
+/** \brief Transform one image into another by applying a function to each pixel element.
+ *
+ * This function returns an expression that is convertible to the transformed image.
+ * As such, it enables delayed evaluation; the evaluation shall take place at the moment of conversion.
+ * Evaluation can also be triggered by calling the `eval()` member function of the return expression.
+ *
+ * The supplied function receives a constant reference (or value) to the respective pixel element as first parameter,
+ * followed by both the x and y pixel coordinates for the respective invocation.
+ * Its return type shall be of the type of a pixel element of the destination image.
+ *
+ * @tparam DerivedSrc The typed source image type.
+ * @tparam Function The function type.
+ * @param img The source image.
+ * @param func The function to apply to each pixel element.
+ *             Its signature should be `PixelTypeDst f(const PixelTypeSrc&, PixelIndex, PixelIndex)` or `PixelTypeDst f(PixelTypeSrc, PixelIndex, PixelIndex)`.
+ * @return An expression that is convertible to the transformed image.
+ */
 template <typename DerivedSrc, typename Function>
 auto transform_pixels_with_position_expr(const ImageExpr<DerivedSrc>& img, Function func)
 {

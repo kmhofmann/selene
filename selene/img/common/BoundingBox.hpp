@@ -67,8 +67,8 @@ constexpr BoundingBox::BoundingBox() noexcept
 constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept
     : x0_(x0), y0_(y0), width_(width), height_(height)
 {
-  SELENE_ASSERT(width_ > 0);
-  SELENE_ASSERT(height_ > 0);
+  SELENE_ASSERT(width_ >= 0);
+  SELENE_ASSERT(height_ >= 0);
 }
 
 /** Constructs a bounding box of from top-left corner (x0, y0) and bottom-right corner (x1, y1).
@@ -85,8 +85,8 @@ constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength wid
 constexpr BoundingBox::BoundingBox(PixelIndex x0, PixelIndex y0, PixelIndex x1, PixelIndex y1) noexcept
     : x0_(x0), y0_(y0), width_(x1 - x0), height_(y1 - y0)
 {
-  SELENE_ASSERT(width_ > 0);
-  SELENE_ASSERT(height_ > 0);
+  SELENE_ASSERT(width_ >= 0);
+  SELENE_ASSERT(height_ >= 0);
 }
 
 /** Returns the x-coordinate of the top-left corner, i.e. the x-coordinate of the left box side.
