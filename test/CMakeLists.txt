@@ -30,6 +30,7 @@ target_sources(selene_tests PRIVATE
 
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Image.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/ImageAllocation.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/ImageView.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Iterators.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/TypedLayout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/selene/img/typed/Utilities.cpp

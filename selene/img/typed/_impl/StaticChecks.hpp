@@ -7,6 +7,8 @@
 
 /// @file
 
+#include <selene/img/pixel/PixelTraits.hpp>
+
 #include <selene/img/typed/_impl/ImageFwd.hpp>
 
 #include <type_traits>
@@ -48,6 +50,15 @@ constexpr void static_assert_is_image_or_mutable_view()
 {
   static_assert(is_image_v<ImgOrView> || is_mutable_image_view_v<ImgOrView>,
                 "Supplied type needs be either a sln::Image<> or a sln::ImageView<>.");
+}
+
+template <typename PixelType0, typename PixelType1>
+constexpr void static_assert_are_pixel_types_compatible()
+{
+  static_assert(std::is_same_v<typename PixelTraits<PixelType0>::Element,
+                               typename PixelTraits<PixelType1>::Element>
+                && PixelTraits<PixelType0>::nr_channels == PixelTraits<PixelType1>::nr_channels,
+                "Pixel types are not compatible");
 }
 
 }  // namespace sln::impl

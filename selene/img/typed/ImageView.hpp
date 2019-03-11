@@ -80,6 +80,9 @@ public:
   ImageView() = default;
   ImageView(DataPtr<modifiability_> ptr, TypedLayout layout);
 
+  template <typename ImgExpr, typename = std::enable_if_t<!impl::is_image_type_v<ImgExpr>>>
+      ImageView<PixelType_, modifiability_>& operator=(const ImageExpr<ImgExpr>& expr);
+
   const TypedLayout& layout() const noexcept;
 
   PixelLength width() const noexcept;
@@ -150,6 +153,44 @@ ImageView<PixelType_, modifiability_>::ImageView(DataPtr<modifiability_> ptr, Ty
 {
   // adjust stride_bytes (may have been set to 0 in TypedLayout constructor)
   layout_.stride_bytes = std::max(layout_.stride_bytes, Stride(PixelTraits<PixelType>::nr_bytes * layout_.width));
+}
+
+/** \brief Assign the result of an image expression to the view.
+ *
+ * Note that this is only legal for views that are of the same size as the image expression; if this is not the case,
+ * a run-time exception will be thrown.
+ *
+ * Also note that if the image expression is evaluated on the same data as the view, and if the expression is more
+ * than just a pixel-wise transformation (e.g. a geometric transformation), then unexpected side-effect may occur,
+ * due to pixel elements being overwritten during evaluation.
+ *
+ * @tparam PixelType_ The pixel type.
+ * @tparam modifiability_ Determines whether image contents are constant or mutable.
+ * @tparam ImgExpr The expression type.
+ * @param expr The image expression to evaluate.
+ * @return A reference to `*this`.
+ */
+template <typename PixelType_, ImageModifiability modifiability_>
+template <typename ImgExpr, typename>
+ImageView<PixelType_, modifiability_>& ImageView<PixelType_, modifiability_>::operator=(const ImageExpr<ImgExpr>& expr)
+{
+  impl::static_assert_are_pixel_types_compatible<PixelType, typename ImageExpr<ImgExpr>::PixelType>();
+
+  if (expr.width() != this->width() || expr.height() != this->height())
+  {
+    throw std::runtime_error("Cannot assign expression result to image view of different size.");
+  }
+
+  // TODO: optimize?
+  for (auto y = 0_idx; y < expr.height(); ++y)
+  {
+    for (auto x = 0_idx; x < expr.width(); ++x)
+    {
+      this->operator()(x, y) = expr(x, y);
+    }
+  }
+
+  return *this;
 }
 
 /** \brief Returns the image view layout.

@@ -95,10 +95,13 @@ public:
   explicit Image(const ImageView<PixelType, modifiability>&, const Allocator& alloc = Allocator{});
 
   template <ImageModifiability modifiability>
-  Image<PixelType>& operator=(const ImageView<PixelType, modifiability>&);
+  Image<PixelType, Allocator>& operator=(const ImageView<PixelType, modifiability>&);
 
   template <typename ImgExpr>
   explicit Image(const ImageExpr<ImgExpr>& expr);
+
+  template <typename ImgExpr>
+  Image<PixelType, Allocator>& operator=(const ImageExpr<ImgExpr>& expr);
 
   const TypedLayout& layout() const noexcept;
 
@@ -335,7 +338,7 @@ Image<PixelType_, Allocator_>::Image(const ImageView<PixelType, modifiability_>&
  */
 template <typename PixelType_, typename Allocator_>
 template <ImageModifiability modifiability_>
-Image<PixelType_>& Image<PixelType_, Allocator_>::operator=(const ImageView<PixelType, modifiability_>& other)
+Image<PixelType_, Allocator_>& Image<PixelType_, Allocator_>::operator=(const ImageView<PixelType, modifiability_>& other)
 {
   // Check for self-assignment
   if (&this->mem_view() == &other)
@@ -374,6 +377,27 @@ Image<PixelType_, Allocator_>::Image(const ImageExpr<ImgExpr>& expr)
       this->operator()(x, y) = expr(x, y);
     }
   }
+}
+
+template <typename PixelType_, typename Allocator_>
+template <typename ImgExpr>
+Image<PixelType_, Allocator_>& Image<PixelType_, Allocator_>::operator=(const ImageExpr<ImgExpr>& expr)
+{
+  if (expr.width() != this->width() || expr.height() != this->height())
+  {
+    mem_view() = allocate_memory(expr.layout());
+  }
+
+  // TODO: optimize?
+  for (auto y = 0_idx; y < expr.height(); ++y)
+  {
+    for (auto x = 0_idx; x < expr.width(); ++x)
+    {
+      this->operator()(x, y) = expr(x, y);
+    }
+  }
+
+  return *this;
 }
 
 /** \brief Returns the image layout.
