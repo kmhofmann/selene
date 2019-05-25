@@ -2,6 +2,7 @@
 .idea/
 .vscode/
 .vs/
+.ccls-cache/
 /_build*/
 /build*/
 /cmake-build-*/
