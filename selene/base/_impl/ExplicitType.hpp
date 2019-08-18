@@ -46,12 +46,6 @@ public:
   {
   }
 
-  template <typename ValueType2, typename TagType2>
-  constexpr explicit ExplicitType(const ExplicitType<ValueType2, TagType2>& other)
-  {
-    value_ = other.value();
-  }
-
   constexpr explicit operator value_type&() noexcept
   {
     return value_;

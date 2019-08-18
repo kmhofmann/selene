@@ -51,7 +51,7 @@ Function for_each_pixel(ImageBase<DerivedSrc>& img, Function func)
     }
   }
 
-  return std::move(func);
+  return func;
 }
 
 /** \brief Apply a function to each pixel element of an image.
@@ -85,7 +85,7 @@ Function for_each_pixel_with_position(ImageBase<DerivedSrc>& img, Function func)
     }
   }
 
-  return std::move(func);
+  return func;
 }
 
 /** \brief Transform one image into another by applying a function to each pixel element.
