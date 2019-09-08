@@ -19,8 +19,7 @@
 #include <selene/img_io/tiff/Common.hpp>
 #include <selene/img_io/tiff/_impl/TIFFDetail.hpp>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 template <typename DynImageOrView>
 bool read_data_tiles(TIFF* tif,
@@ -31,8 +30,7 @@ bool read_data_tiles(TIFF* tif,
                      DynImageOrView& dyn_img_or_view,
                      sln::MessageLog& message_log);
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBTIFF)
 

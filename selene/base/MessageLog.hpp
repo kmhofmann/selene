@@ -43,7 +43,7 @@ public:
   using Messages = std::vector<Message>;  ///< A message collection.
   MessageLog() = default;
 
-  const Messages& messages() const;
+  [[nodiscard]] const Messages& messages() const;
 
   // TODO: Replace by std::string_view
   void add(const char* text, MessageType type);

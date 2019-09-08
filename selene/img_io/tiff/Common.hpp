@@ -203,49 +203,49 @@ struct TiffImageLayout
   {
   }
 
-  bool inverted() const
+  [[nodiscard]] bool inverted() const
   {
     return samples_per_pixel == 1 && photometric == TIFFPhotometricTag::MinIsWhite;
   }
 
-  bool is_format_grayscale() const
+  [[nodiscard]] bool is_format_grayscale() const
   {
     return photometric == TIFFPhotometricTag::MinIsBlack || photometric == TIFFPhotometricTag::MinIsWhite;
   }
 
-  bool is_format_ycbcr() const
+  [[nodiscard]] bool is_format_ycbcr() const
   {
     return photometric == TIFFPhotometricTag::YCbCr;
   }
 
-  bool is_format_lab() const
+  [[nodiscard]] bool is_format_lab() const
   {
     return photometric == TIFFPhotometricTag::CIELab
         || photometric == TIFFPhotometricTag::ICCLab
         || photometric == TIFFPhotometricTag::ITULab;
   }
 
-  bool is_format_palette() const
+  [[nodiscard]] bool is_format_palette() const
   {
     return photometric == TIFFPhotometricTag::Palette;
   }
 
-  PixelLength width_px() const
+  [[nodiscard]] PixelLength width_px() const
   {
     return to_pixel_length(width);
   }
 
-  PixelLength height_px() const
+  [[nodiscard]] PixelLength height_px() const
   {
     return to_pixel_length(height);
   }
 
-  std::int16_t nr_channels() const
+  [[nodiscard]] std::int16_t nr_channels() const
   {
     return static_cast<std::int16_t>(samples_per_pixel);
   }
 
-  std::int16_t nr_bytes_per_channel() const
+  [[nodiscard]] std::int16_t nr_bytes_per_channel() const
   {
     return std::min(std::int16_t{1}, static_cast<std::int16_t>(bits_per_sample >> 3));
   }

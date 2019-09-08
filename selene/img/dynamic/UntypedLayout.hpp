@@ -21,13 +21,7 @@ namespace sln {
 class UntypedLayout
 {
 public:
-  constexpr UntypedLayout() noexcept
-      : width{PixelLength{0}}
-      , height{PixelLength{0}}
-      , nr_channels{0}
-      , nr_bytes_per_channel{0}
-      , stride_bytes{Stride{0}}
-  { }
+  constexpr UntypedLayout() noexcept = default;
 
   constexpr UntypedLayout(PixelLength width_,
                           PixelLength height_,
@@ -52,16 +46,16 @@ public:
       , stride_bytes(stride_bytes_)
   { }
 
-  PixelLength width;  ///< The image width in pixels.
-  PixelLength height;  ///< The image height in pixels.
-  std::int16_t nr_channels;  ///< The number of image channels
-  std::int16_t nr_bytes_per_channel;  ///< The number of bytes used for a channel value.
-  Stride stride_bytes;  ///< The image row stride in bytes. The layout may include additional padding bytes.
+  PixelLength width = PixelLength{0};  ///< The image width in pixels.
+  PixelLength height = PixelLength{0};  ///< The image height in pixels.
+  std::int16_t nr_channels = 0;  ///< The number of image channels
+  std::int16_t nr_bytes_per_channel = 0;  ///< The number of bytes used for a channel value.
+  Stride stride_bytes = Stride{0};  ///< The image row stride in bytes. The layout may include additional padding bytes.
 
-  constexpr std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
-  constexpr std::ptrdiff_t row_bytes() const noexcept;
-  constexpr std::ptrdiff_t total_bytes() const noexcept;
-  constexpr bool is_packed() const noexcept;
+  [[nodiscard]] constexpr std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
+  [[nodiscard]] constexpr std::ptrdiff_t row_bytes() const noexcept;
+  [[nodiscard]] constexpr std::ptrdiff_t total_bytes() const noexcept;
+  [[nodiscard]] constexpr bool is_packed() const noexcept;
 };
 
 constexpr bool operator==(const UntypedLayout& l, const UntypedLayout& r);
@@ -73,10 +67,7 @@ constexpr bool operator!=(const UntypedLayout& l, const UntypedLayout& r);
 class UntypedImageSemantics
 {
 public:
-  constexpr UntypedImageSemantics() noexcept
-      : pixel_format(PixelFormat::Unknown)
-      , sample_format(SampleFormat::Unknown)
-  { }
+  constexpr UntypedImageSemantics() noexcept = default;
 
   constexpr UntypedImageSemantics(PixelFormat pixel_format_,
                                   SampleFormat sample_format_)
@@ -84,8 +75,8 @@ public:
       , sample_format(sample_format_)
   { }
 
-  PixelFormat pixel_format;
-  SampleFormat sample_format;
+  PixelFormat pixel_format = PixelFormat::Unknown;
+  SampleFormat sample_format = SampleFormat::Unknown;
 };
 
 constexpr bool operator==(const UntypedImageSemantics& l, const UntypedImageSemantics& r);

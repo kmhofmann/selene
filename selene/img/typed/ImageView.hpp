@@ -83,17 +83,17 @@ public:
   template <typename ImgExpr, typename = std::enable_if_t<!impl::is_image_type_v<ImgExpr>>>
       ImageView<PixelType_, modifiability_>& operator=(const ImageExpr<ImgExpr>& expr);
 
-  const TypedLayout& layout() const noexcept;
+  [[nodiscard]] const TypedLayout& layout() const noexcept;
 
-  PixelLength width() const noexcept;
-  PixelLength height() const noexcept;
-  Stride stride_bytes() const noexcept;
-  std::ptrdiff_t row_bytes() const noexcept;
-  std::ptrdiff_t total_bytes() const noexcept;
+  [[nodiscard]] PixelLength width() const noexcept;
+  [[nodiscard]] PixelLength height() const noexcept;
+  [[nodiscard]] Stride stride_bytes() const noexcept;
+  [[nodiscard]] std::ptrdiff_t row_bytes() const noexcept;
+  [[nodiscard]] std::ptrdiff_t total_bytes() const noexcept;
 
-  bool is_packed() const noexcept;
-  bool is_empty() const noexcept;
-  bool is_valid() const noexcept;
+  [[nodiscard]] bool is_packed() const noexcept;
+  [[nodiscard]] bool is_empty() const noexcept;
+  [[nodiscard]] bool is_valid() const noexcept;
 
   iterator begin() noexcept;
   const_iterator begin() const noexcept;
@@ -129,8 +129,8 @@ private:
   DataPtr<modifiability_> ptr_;
   TypedLayout layout_;
 
-  std::ptrdiff_t compute_data_offset(PixelIndex y) const noexcept;
-  std::ptrdiff_t compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
+  [[nodiscard]] std::ptrdiff_t compute_data_offset(PixelIndex y) const noexcept;
+  [[nodiscard]] std::ptrdiff_t compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
    friend void swap<PixelType_, modifiability_>(ImageView<PixelType_, modifiability_>&, ImageView<PixelType_, modifiability_>&) noexcept;
 };

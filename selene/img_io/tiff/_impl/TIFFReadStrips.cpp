@@ -23,8 +23,7 @@
 #include <sstream>
 #include <vector>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 namespace {
 
@@ -296,7 +295,7 @@ sln::impl::tiff::OutputLayout get_output_layout(TIFF* tif,
   return out;
 }
 
-} // namespace _
+} // namespace
 
 
 template <typename DynImageOrView>
@@ -357,7 +356,6 @@ template bool read_data_strips(TIFF*,
                                sln::MutableDynImageView&,
                                sln::MessageLog&);
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBTIFF)

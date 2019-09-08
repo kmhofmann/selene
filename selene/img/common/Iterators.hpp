@@ -97,7 +97,7 @@ public:
    *
    * @return Row index.
    */
-  PixelIndex index() const noexcept
+  [[nodiscard]] PixelIndex index() const noexcept
   {
     return row_index_;
   }
@@ -218,7 +218,7 @@ public:
    *
    * @return Row index.
    */
-  PixelIndex index() const noexcept
+  [[nodiscard]] PixelIndex index() const noexcept
   {
     return row_index_;
   }

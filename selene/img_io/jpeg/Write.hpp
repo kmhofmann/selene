@@ -25,9 +25,9 @@
 #include <selene/img/dynamic/DynImageView.hpp>
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
 
+#include <selene/img_io/_impl/Util.hpp>
 #include <selene/img_io/jpeg/Common.hpp>
 #include <selene/img_io/jpeg/_impl/Common.hpp>
-#include <selene/img_io/_impl/Util.hpp>
 
 #include <array>
 #include <cstdio>
@@ -84,12 +84,18 @@ class JPEGCompressionObject
 public:
   /// \cond INTERNAL
   JPEGCompressionObject();
+
+  JPEGCompressionObject(const JPEGCompressionObject&) = delete;
+  JPEGCompressionObject& operator=(const JPEGCompressionObject&) = delete;
+  JPEGCompressionObject(JPEGCompressionObject&&) = default;
+  JPEGCompressionObject& operator=(JPEGCompressionObject&&) = default;
+
   ~JPEGCompressionObject();
 
-  bool valid() const;
-  bool error_state() const;
+  [[nodiscard]] bool valid() const;
+  [[nodiscard]] bool error_state() const;
   MessageLog& message_log();
-  const MessageLog& message_log() const;
+  [[nodiscard]] const MessageLog& message_log() const;
 
   bool set_image_info(int width, int height, int nr_channels, int nr_bytes_per_channel, JPEGColorSpace in_color_space);
   bool set_compression_parameters(int quality,
@@ -156,6 +162,12 @@ class JPEGCompressionCycle
 {
 public:
   explicit JPEGCompressionCycle(JPEGCompressionObject& obj);
+
+  JPEGCompressionCycle(const JPEGCompressionCycle&) = default;
+  JPEGCompressionCycle& operator=(const JPEGCompressionCycle&) = delete;
+  JPEGCompressionCycle(JPEGCompressionCycle&&) = default;
+  JPEGCompressionCycle& operator=(JPEGCompressionCycle&&) = delete;
+
   ~JPEGCompressionCycle();
 
   void compress(const ConstRowPointers& row_pointers);

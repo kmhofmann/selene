@@ -22,13 +22,13 @@
 #include <selene/img/common/RowPointers.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
-#include <selene/img/dynamic/_impl/Utils.hpp>
 #include <selene/img/dynamic/_impl/RuntimeChecks.hpp>
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
+#include <selene/img/dynamic/_impl/Utils.hpp>
 
+#include <selene/img_io/_impl/Util.hpp>
 #include <selene/img_io/jpeg/Common.hpp>
 #include <selene/img_io/jpeg/_impl/Common.hpp>
-#include <selene/img_io/_impl/Util.hpp>
 
 #include <array>
 #include <cstdio>
@@ -64,10 +64,10 @@ struct JPEGImageInfo
                          std::int16_t nr_channels_ = 0,
                          JPEGColorSpace color_space_ = JPEGColorSpace::Unknown);
 
-  bool is_valid() const;
-  std::int16_t nr_bytes_per_channel() const { return 1; }
+  [[nodiscard]] bool is_valid() const;
+  [[nodiscard]] std::int16_t nr_bytes_per_channel() const { return 1; }
 
-  std::size_t required_bytes() const { return std::size_t((width * nr_channels) * height); }
+  [[nodiscard]] std::size_t required_bytes() const { return std::size_t((width * nr_channels) * height); }
 };
 
 /** \brief JPEG decompression options.
@@ -104,14 +104,20 @@ class JPEGDecompressionObject
 public:
   /// \cond INTERNAL
   JPEGDecompressionObject();
+
+  JPEGDecompressionObject(const JPEGDecompressionObject&) = delete;
+  JPEGDecompressionObject& operator=(const JPEGDecompressionObject&) = delete;
+  JPEGDecompressionObject(JPEGDecompressionObject&&) = default;
+  JPEGDecompressionObject& operator=(JPEGDecompressionObject&&) = default;
+
   ~JPEGDecompressionObject();
 
-  bool valid() const;
-  bool error_state() const;
+  [[nodiscard]] bool valid() const;
+  [[nodiscard]] bool error_state() const;
   MessageLog& message_log();
-  const MessageLog& message_log() const;
+  [[nodiscard]] const MessageLog& message_log() const;
 
-  JPEGImageInfo get_header_info() const;
+  [[nodiscard]] JPEGImageInfo get_header_info() const;
   void set_decompression_parameters(JPEGColorSpace out_color_space = JPEGColorSpace::Auto);
   /// \endcond
 
@@ -256,9 +262,15 @@ class JPEGDecompressionCycle
 {
 public:
   JPEGDecompressionCycle(JPEGDecompressionObject& obj, const BoundingBox& region);
+
+  JPEGDecompressionCycle(const JPEGDecompressionCycle&) = default;
+  JPEGDecompressionCycle& operator=(const JPEGDecompressionCycle&) = delete;
+  JPEGDecompressionCycle(JPEGDecompressionCycle&&) = default;
+  JPEGDecompressionCycle& operator=(JPEGDecompressionCycle&&) = delete;
+
   ~JPEGDecompressionCycle();
 
-  JPEGImageInfo get_output_info() const;
+  [[nodiscard]] JPEGImageInfo get_output_info() const;
   bool decompress(RowPointers& row_pointers);
 
 private:
@@ -370,7 +382,7 @@ DynImage<Allocator> read_jpeg(JPEGDecompressionObject& obj,
 
 template <typename SourceType>
 JPEGReader<SourceType>::JPEGReader()
-    : source_(nullptr), options_(JPEGDecompressionOptions())
+    : source_(nullptr)
 {
 
 }
@@ -503,12 +515,7 @@ bool JPEGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 
   reset();
 
-  if (!dec_success)
-  {
-    return false;
-  }
-
-  return true;
+  return dec_success;
 }
 
 template <typename SourceType>

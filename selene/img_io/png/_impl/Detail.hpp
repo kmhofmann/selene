@@ -16,8 +16,7 @@
 #include <csetjmp>
 #include <cstdio>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 /// \cond INTERNAL
 
@@ -32,8 +31,7 @@ void warning_handler(png_structp png_ptr, const char* msg);
 
 /// \endcond
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif   // defined(SELENE_WITH_LIBPNG)
 

@@ -14,8 +14,7 @@
 #include <selene/img/common/PixelFormat.hpp>
 #include <selene/img_io/jpeg/Common.hpp>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 inline JPEGColorSpace pixel_format_to_color_space(PixelFormat pixel_format)
 {
@@ -62,8 +61,7 @@ inline PixelFormat color_space_to_pixel_format(JPEGColorSpace color_space)
   }
 }
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 

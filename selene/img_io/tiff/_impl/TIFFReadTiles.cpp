@@ -23,8 +23,7 @@
 #include <sstream>
 #include <vector>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 namespace {
 
@@ -235,7 +234,7 @@ bool read_data_tiles_planar(TIFF* tif,
   return true;
 }
 
-} // namespace _
+} // namespace
 
 
 template <typename DynImageOrView>
@@ -311,7 +310,6 @@ template bool read_data_tiles(TIFF*,
                               sln::MutableDynImageView&,
                               sln::MessageLog&);
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBTIFF)

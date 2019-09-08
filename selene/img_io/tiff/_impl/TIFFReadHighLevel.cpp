@@ -10,9 +10,9 @@
 
 #include <selene/base/MessageLog.hpp>
 
-#include <selene/img/typed/Image.hpp>
 #include <selene/img/dynamic/DynImage.hpp>
 #include <selene/img/interop/DynImageToImage.hpp>
+#include <selene/img/typed/Image.hpp>
 
 #include <selene/img_io/tiff/_impl/TIFFDetail.hpp>
 
@@ -21,8 +21,7 @@
 #include <sstream>
 #include <vector>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 namespace {
 
@@ -46,7 +45,7 @@ std::uint8_t get_a(std::uint32_t x) // ABGR
   return static_cast<std::uint8_t>((x >> 24) & 0x000000ff);
 }
 
-}  // namespace _
+}  // namespace
 
 bool read_data_high_level(TIFF* tif,
                           const sln::TiffImageLayout& src,
@@ -58,7 +57,7 @@ bool read_data_high_level(TIFF* tif,
 
   const auto nr_pixels = std::size_t{width * height};
   const auto raster_len = std::size_t{nr_pixels * sizeof (uint32)};
-  auto raster = (uint32*)_TIFFmalloc(static_cast<tmsize_t>(raster_len));
+  auto raster = static_cast<uint32*>(_TIFFmalloc(static_cast<tmsize_t>(raster_len)));
   assert (raster != nullptr);
 
   int res = TIFFReadRGBAImage(tif, width, height, raster, 0);
@@ -100,7 +99,6 @@ bool read_data_high_level(TIFF* tif,
   return true;
 }
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBTIFF)

@@ -10,8 +10,7 @@
 
 #include <stdexcept>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 void error_handler(png_structp png_ptr, const char* msg)
 {
@@ -27,7 +26,6 @@ void warning_handler(png_structp png_ptr, const char* msg)
   err_man.message_log.add(std::string("Warning: ") + std::string(msg), MessageType::Warning);
 }
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBPNG)

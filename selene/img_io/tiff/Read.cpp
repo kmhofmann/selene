@@ -18,8 +18,8 @@
 #include <selene/img_io/tiff/_impl/TIFFReadStrips.hpp>
 #include <selene/img_io/tiff/_impl/TIFFReadTiles.hpp>
 
-#include <type_traits>
 #include <tuple>
+#include <type_traits>
 
 #include <tiff.h>
 #include <tiffio.h>
@@ -31,7 +31,8 @@ namespace {
 
 TIFFAuxiliaryInfo get_tiff_auxiliary_info(TIFF* tif, uint16 bits_per_sample)
 {
-  using namespace impl::tiff;
+  using impl::tiff::get_field;
+  using impl::tiff::get_string_field;
   const auto min_sample_value = get_field<uint16>(tif, TIFFTAG_MINSAMPLEVALUE, uint16{0});
   const auto max_sample_value = get_field<uint16>(tif, TIFFTAG_MAXSAMPLEVALUE,
                                                   static_cast<uint16>(sln::power(uint16{2}, bits_per_sample) - 1));
@@ -55,7 +56,8 @@ TIFFAuxiliaryInfo get_tiff_auxiliary_info(TIFF* tif, uint16 bits_per_sample)
 
 TiffImageLayout get_tiff_layout(TIFF* tif)
 {
-  using namespace impl::tiff;
+  using impl::tiff::get_field;
+  using impl::tiff::get_field_2;
   const auto width = get_field<uint32>(tif, TIFFTAG_IMAGEWIDTH);
   const auto height = get_field<uint32>(tif, TIFFTAG_IMAGELENGTH);
   const auto depth = get_field<uint32>(tif, TIFFTAG_IMAGEDEPTH, 1);
@@ -75,11 +77,11 @@ TiffImageLayout get_tiff_layout(TIFF* tif)
   auto auxiliary_info = get_tiff_auxiliary_info(tif, bits_per_sample);
 
   return TiffImageLayout(width, height, depth, samples_per_pixel, bits_per_sample,
-                         planar_config_lib_to_pub(planar_config),
-                         photometric_tag_lib_to_pub(photometric),
-                         sample_format_lib_to_pub(sample_format),
-                         compression_lib_to_pub(compression),
-                         orientation_lib_to_pub(orientation),
+                         impl::tiff::planar_config_lib_to_pub(planar_config),
+                         impl::tiff::photometric_tag_lib_to_pub(photometric),
+                         impl::tiff::sample_format_lib_to_pub(sample_format),
+                         impl::tiff::compression_lib_to_pub(compression),
+                         impl::tiff::orientation_lib_to_pub(orientation),
                          subfile_type,
                          page_number.first,
                          std::move(auxiliary_info));
@@ -95,7 +97,8 @@ struct ConversionStructures
 ConversionStructures
 get_tiff_color_conversion_structures(TIFF* tif)
 {
-  using namespace impl::tiff;
+  using impl::tiff::get_field;
+  using impl::tiff::get_field_2;
   auto reference_blackwhite = get_field<float*>(tif, TIFFTAG_REFERENCEBLACKWHITE);
   auto ycbcr_coefficients = get_field<float*>(tif, TIFFTAG_YCBCRCOEFFICIENTS);
   const auto ycbcr_coefficients_red = ycbcr_coefficients[0];
@@ -107,10 +110,10 @@ get_tiff_color_conversion_structures(TIFF* tif)
   const auto ycbcr_subsampling_vert = ycbcr_subsampling.second;
   auto white_point_coefficients = get_field<float*>(tif, TIFFTAG_WHITEPOINT);
 
-  YCbCrInfo ycbcr_info(ycbcr_coefficients_red, ycbcr_coefficients_green, ycbcr_coefficients_blue,
-                           ycbcr_positioning, ycbcr_subsampling_horz, ycbcr_subsampling_vert);
-  YCbCrConverter ycbcr_converter(ycbcr_coefficients, reference_blackwhite);
-  LabConverter lab_converter(white_point_coefficients);
+  impl::tiff::YCbCrInfo ycbcr_info(ycbcr_coefficients_red, ycbcr_coefficients_green, ycbcr_coefficients_blue,
+                                   ycbcr_positioning, ycbcr_subsampling_horz, ycbcr_subsampling_vert);
+  impl::tiff::YCbCrConverter ycbcr_converter(ycbcr_coefficients, reference_blackwhite);
+  impl::tiff::LabConverter lab_converter(white_point_coefficients);
 
   return ConversionStructures{ycbcr_info, std::move(ycbcr_converter), std::move(lab_converter)};
 }
@@ -161,7 +164,7 @@ bool check_suitability(const TiffImageLayout& layout, MessageLog& message_log)
   return true;
 }
 
-}  // namespace _
+}  // namespace
 
 template <typename SourceType>
 struct TIFFReadObject<SourceType>::Impl
@@ -296,10 +299,8 @@ bool tiff_read_current_directory(TIFFReadObject<SourceType>& tiff_obj,
     {
       return impl::read_data_strips(tif, layout, cs.ycbcr_info, cs.ycbcr_converter, cs.lab_converter, dyn_img_or_view, message_log);
     }
-    else
-    {
-      return impl::read_data_tiles(tif, layout, cs.ycbcr_info, cs.ycbcr_converter, cs.lab_converter, dyn_img_or_view, message_log);
-    }
+
+    return impl::read_data_tiles(tif, layout, cs.ycbcr_info, cs.ycbcr_converter, cs.lab_converter, dyn_img_or_view, message_log);
   }();
 
   return read_successfully;

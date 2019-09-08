@@ -94,12 +94,18 @@ class PNGCompressionObject
 public:
   /// \cond INTERNAL
   PNGCompressionObject();
+
+  PNGCompressionObject(const PNGCompressionObject&) = delete;
+  PNGCompressionObject& operator=(const PNGCompressionObject&) = delete;
+  PNGCompressionObject(PNGCompressionObject&&) = default;
+  PNGCompressionObject& operator=(PNGCompressionObject&&) = default;
+
   ~PNGCompressionObject();
 
-  bool valid() const;
-  bool error_state() const;
+  [[nodiscard]] bool valid() const;
+  [[nodiscard]] bool error_state() const;
   MessageLog& message_log();
-  const MessageLog& message_log() const;
+  [[nodiscard]] const MessageLog& message_log() const;
 
   bool set_image_info(int width, int height, int nr_channels, int bit_depth, bool interlaced, PixelFormat pixel_format);
   bool set_compression_parameters(int, bool);
@@ -162,9 +168,15 @@ class PNGCompressionCycle
 {
 public:
   explicit PNGCompressionCycle(PNGCompressionObject& obj, bool, bool, bool, int);
+
+  PNGCompressionCycle(const PNGCompressionCycle&) = default;
+  PNGCompressionCycle& operator=(const PNGCompressionCycle&) = delete;
+  PNGCompressionCycle(PNGCompressionCycle&&) = default;
+  PNGCompressionCycle& operator=(PNGCompressionCycle&&) = delete;
+
   ~PNGCompressionCycle();
 
-  bool error_state() const;
+  [[nodiscard]] bool error_state() const;
   void compress(const ConstRowPointers& row_pointers);
 
 private:

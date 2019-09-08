@@ -576,7 +576,7 @@ failure_state:
 PNGImageInfo read_header(FileReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
-  std::array<std::uint8_t, 8> header_bytes;
+  std::array<std::uint8_t, 8> header_bytes = {0, 0, 0, 0, 0, 0, 0, 0};
   source.template read<std::uint8_t>(header_bytes.data(), 8);
 
   return read_header_info(obj, header_bytes, source.is_eof());
@@ -585,7 +585,7 @@ PNGImageInfo read_header(FileReader& source, PNGDecompressionObject& obj)
 PNGImageInfo read_header(MemoryReader& source, PNGDecompressionObject& obj)
 {
   // Check if the file is a PNG file (look at first 8 bytes)
-  std::array<std::uint8_t, 8> header_bytes;
+  std::array<std::uint8_t, 8> header_bytes = {0, 0, 0, 0, 0, 0, 0, 0};
   source.template read<std::uint8_t>(header_bytes.data(), 8);
 
   return read_header_info(obj, header_bytes, source.is_eof());

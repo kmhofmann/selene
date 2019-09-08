@@ -7,8 +7,8 @@
 
 /// @file
 
-#include <selene/img/dynamic/DynImageView.hpp>
 #include <selene/img/dynamic/DynImage.hpp>
+#include <selene/img/dynamic/DynImageView.hpp>
 
 #include <selene/img/typed/Image.hpp>
 #include <selene/img/typed/ImageView.hpp>

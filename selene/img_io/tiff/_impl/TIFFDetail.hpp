@@ -29,9 +29,7 @@
 #include <tiff.h>
 #include <tiffio.h>
 
-namespace sln {
-namespace impl {
-namespace tiff {
+namespace sln::impl::tiff {
 
 std::uint16_t planar_config_pub_to_lib(TIFFPlanarConfig cfg);
 TIFFPlanarConfig planar_config_lib_to_pub(std::uint16_t cfg);
@@ -408,9 +406,7 @@ std::vector<std::uint8_t> convert_lab_to_rgb_interleaved(const std::vector<std::
                                                          std::uint32_t height,
                                                          const LabConverter& lab_converter);
 
-}  // namespace tiff
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl::tiff
 
 #endif  // defined(SELENE_WITH_LIBTIFF)
 

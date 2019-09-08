@@ -10,8 +10,7 @@
 
 #include <stdexcept>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 J_COLOR_SPACE color_space_pub_to_lib(JPEGColorSpace color_space)
 {
@@ -81,7 +80,6 @@ void output_message(j_common_ptr cinfo)
   err_man.message_log.add(std::string("Error: ") + std::string(buffer), MessageType::Error);
 }
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBJPEG)

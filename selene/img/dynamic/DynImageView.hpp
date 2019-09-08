@@ -110,22 +110,22 @@ public:
                UntypedLayout layout,
                UntypedImageSemantics semantics = UntypedImageSemantics{});
 
-  const UntypedLayout& layout() const noexcept;
-  const UntypedImageSemantics& semantics() const noexcept;
+  [[nodiscard]] const UntypedLayout& layout() const noexcept;
+  [[nodiscard]] const UntypedImageSemantics& semantics() const noexcept;
 
-  PixelLength width() const noexcept;
-  PixelLength height() const noexcept;
-  std::int16_t nr_channels() const noexcept;
-  std::int16_t nr_bytes_per_channel() const noexcept;
-  Stride stride_bytes() const noexcept;
-  std::ptrdiff_t row_bytes() const noexcept;
-  std::ptrdiff_t total_bytes() const noexcept;
-  PixelFormat pixel_format() const noexcept;
-  SampleFormat sample_format() const noexcept;
+  [[nodiscard]] PixelLength width() const noexcept;
+  [[nodiscard]] PixelLength height() const noexcept;
+  [[nodiscard]] std::int16_t nr_channels() const noexcept;
+  [[nodiscard]] std::int16_t nr_bytes_per_channel() const noexcept;
+  [[nodiscard]] Stride stride_bytes() const noexcept;
+  [[nodiscard]] std::ptrdiff_t row_bytes() const noexcept;
+  [[nodiscard]] std::ptrdiff_t total_bytes() const noexcept;
+  [[nodiscard]] PixelFormat pixel_format() const noexcept;
+  [[nodiscard]] SampleFormat sample_format() const noexcept;
 
-  bool is_packed() const noexcept;
-  bool is_empty() const noexcept;
-  bool is_valid() const noexcept;
+  [[nodiscard]] bool is_packed() const noexcept;
+  [[nodiscard]] bool is_empty() const noexcept;
+  [[nodiscard]] bool is_valid() const noexcept;
 
   template <typename PixelType> iterator<PixelType> begin() noexcept;
   template <typename PixelType> const_iterator<PixelType> begin() const noexcept;
@@ -162,8 +162,8 @@ private:
   UntypedLayout layout_;
   UntypedImageSemantics semantics_;
 
-  std::ptrdiff_t compute_data_offset(PixelIndex y) const noexcept;
-  std::ptrdiff_t compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
+  [[nodiscard]] std::ptrdiff_t compute_data_offset(PixelIndex y) const noexcept;
+  [[nodiscard]] std::ptrdiff_t compute_data_offset(PixelIndex x, PixelIndex y) const noexcept;
 
   friend void swap<modifiability_>(DynImageView<modifiability_>&, DynImageView<modifiability_>&) noexcept;
 };

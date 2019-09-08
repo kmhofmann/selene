@@ -23,9 +23,9 @@
 #include <selene/img/common/RowPointers.hpp>
 
 #include <selene/img/dynamic/DynImage.hpp>
-#include <selene/img/dynamic/_impl/Utils.hpp>
 #include <selene/img/dynamic/_impl/RuntimeChecks.hpp>
 #include <selene/img/dynamic/_impl/StaticChecks.hpp>
+#include <selene/img/dynamic/_impl/Utils.hpp>
 
 #include <selene/img_io/_impl/Util.hpp>
 
@@ -67,10 +67,10 @@ public:
                         std::int16_t nr_channels_ = 0,
                         std::int16_t bit_depth_ = 0);
 
-  bool is_valid() const;
-  std::int16_t nr_bytes_per_channel() const { return int16_t(bit_depth / 8); }
+  [[nodiscard]] bool is_valid() const;
+  [[nodiscard]] std::int16_t nr_bytes_per_channel() const { return int16_t(bit_depth / 8); }
 
-  std::size_t required_bytes() const { return std::size_t((width * nr_channels * nr_bytes_per_channel()) * height); }
+  [[nodiscard]] std::size_t required_bytes() const { return std::size_t((width * nr_channels * nr_bytes_per_channel()) * height); }
 };
 
 /** \brief PNG decompression options.
@@ -134,15 +134,21 @@ class PNGDecompressionObject
 public:
   /// \cond INTERNAL
   PNGDecompressionObject();
+
+  PNGDecompressionObject(const PNGDecompressionObject&) = delete;
+  PNGDecompressionObject& operator=(const PNGDecompressionObject&) = delete;
+  PNGDecompressionObject(PNGDecompressionObject&&) = default;
+  PNGDecompressionObject& operator=(PNGDecompressionObject&&) = default;
+
   ~PNGDecompressionObject();
 
-  bool valid() const;
-  bool error_state() const;
+  [[nodiscard]] bool valid() const;
+  [[nodiscard]] bool error_state() const;
   MessageLog& message_log();
-  const MessageLog& message_log() const;
+  [[nodiscard]] const MessageLog& message_log() const;
 
   bool set_decompression_parameters(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
-  PixelFormat get_pixel_format() const;
+  [[nodiscard]] PixelFormat get_pixel_format() const;
   /// \endcond
 
 private:
@@ -287,10 +293,16 @@ class PNGDecompressionCycle
 {
 public:
   explicit PNGDecompressionCycle(PNGDecompressionObject& obj);
+
+  PNGDecompressionCycle(const PNGDecompressionCycle&) = default;
+  PNGDecompressionCycle& operator=(const PNGDecompressionCycle&) = delete;
+  PNGDecompressionCycle(PNGDecompressionCycle&&) = default;
+  PNGDecompressionCycle& operator=(PNGDecompressionCycle&&) = delete;
+
   ~PNGDecompressionCycle();
 
-  bool error_state() const;
-  PNGImageInfo get_output_info() const;
+  [[nodiscard]] bool error_state() const;
+  [[nodiscard]] PNGImageInfo get_output_info() const;
   bool decompress(RowPointers& row_pointers);
 
 private:
@@ -418,7 +430,7 @@ DynImage<Allocator> read_png(PNGDecompressionObject& obj,
 
 template <typename SourceType>
 PNGReader<SourceType>::PNGReader()
-    : source_(nullptr), options_(PNGDecompressionOptions())
+    : source_(nullptr)
 {
 }
 
@@ -553,12 +565,7 @@ bool PNGReader<SourceType>::read_image_data(DynImageOrView& dyn_img_or_view)
 
   reset();
 
-  if (!dec_success)
-  {
-    return false;
-  }
-
-  return true;
+  return dec_success;
 }
 
 template <typename SourceType>

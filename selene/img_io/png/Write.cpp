@@ -72,7 +72,7 @@ PNGCompressionObject::PNGCompressionObject() : impl_(std::make_unique<PNGCompres
 
   if (!impl_->info_ptr)
   {
-    png_destroy_write_struct(&impl_->png_ptr, (png_infopp) nullptr);
+    png_destroy_write_struct(&impl_->png_ptr, static_cast<png_infopp>(nullptr));
     return;
   }
 

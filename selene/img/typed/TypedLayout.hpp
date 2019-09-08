@@ -10,8 +10,8 @@
 #include <selene/base/Assert.hpp>
 
 #include <selene/img/common/PixelFormat.hpp>
-#include <selene/img/pixel/PixelTraits.hpp>
 #include <selene/img/common/Types.hpp>
+#include <selene/img/pixel/PixelTraits.hpp>
 
 namespace sln {
 
@@ -24,11 +24,7 @@ namespace sln {
 class TypedLayout
 {
 public:
-  constexpr TypedLayout() noexcept
-      : width{PixelLength{0}}
-      , height{PixelLength{0}}
-      , stride_bytes{Stride{0}}
-  { }
+  constexpr TypedLayout() noexcept = default;
 
   constexpr TypedLayout(PixelLength width_,
                         PixelLength height_) noexcept
@@ -45,14 +41,14 @@ public:
       , stride_bytes(stride_bytes_)
   { }
 
-  PixelLength width;  ///< The image width in pixels.
-  PixelLength height;  ///< The image height in pixels.
-  Stride stride_bytes;  ///< The image row stride in bytes. The layout may include additional padding bytes.
+  PixelLength width = PixelLength{0};  ///< The image width in pixels.
+  PixelLength height = PixelLength{0};  ///< The image height in pixels.
+  Stride stride_bytes = Stride{0};  ///< The image row stride in bytes. The layout may include additional padding bytes.
 
-  template <typename PixelType> constexpr std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
-  template <typename PixelType> constexpr std::ptrdiff_t row_bytes() const noexcept;
-  template <typename PixelType> constexpr std::ptrdiff_t total_bytes() const noexcept;
-  template <typename PixelType> constexpr bool is_packed() const noexcept;
+  template <typename PixelType> [[nodiscard]] constexpr std::ptrdiff_t nr_bytes_per_pixel() const noexcept;
+  template <typename PixelType> [[nodiscard]] constexpr std::ptrdiff_t row_bytes() const noexcept;
+  template <typename PixelType> [[nodiscard]] constexpr std::ptrdiff_t total_bytes() const noexcept;
+  template <typename PixelType> [[nodiscard]] constexpr bool is_packed() const noexcept;
 };
 
 constexpr bool operator==(const TypedLayout& l, const TypedLayout& r);

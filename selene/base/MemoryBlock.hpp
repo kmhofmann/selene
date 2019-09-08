@@ -47,8 +47,8 @@ public:
   MemoryBlock(MemoryBlock&& other) noexcept = default;
   MemoryBlock& operator=(MemoryBlock&& other) noexcept = default;
 
-  std::uint8_t* data() const noexcept;
-  std::size_t size() const noexcept;
+  [[nodiscard]] std::uint8_t* data() const noexcept;
+  [[nodiscard]] std::size_t size() const noexcept;
 
   std::uint8_t* transfer_data() noexcept;
 

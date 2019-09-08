@@ -40,9 +40,9 @@ public:
 
   decltype(auto) layout() const noexcept { return this->derived().layout(); }
 
-  PixelLength width() const noexcept { return derived().width(); }
-  PixelLength height() const noexcept { return derived().height(); }
-  Stride stride_bytes() const noexcept { return this->derived().stride_bytes(); }
+  [[nodiscard]] PixelLength width() const noexcept { return derived().width(); }
+  [[nodiscard]] PixelLength height() const noexcept { return derived().height(); }
+  [[nodiscard]] Stride stride_bytes() const noexcept { return this->derived().stride_bytes(); }
 
   decltype(auto) operator()(PixelIndex x, PixelIndex y) noexcept       { return derived().operator()(x, y); }
   decltype(auto) operator()(PixelIndex x, PixelIndex y) const noexcept { return derived().operator()(x, y); }
@@ -55,12 +55,12 @@ class ImageBase : public ImageExpr<Derived>
 public:
   using PixelType = typename ImageExpr<Derived>::PixelType;
 
-  std::ptrdiff_t row_bytes() const noexcept { return this->derived().row_bytes(); }
-  std::ptrdiff_t total_bytes() const noexcept { return this->derived().total_bytes(); }
-  bool is_packed() const noexcept { return this->derived().is_packed(); }
+  [[nodiscard]] std::ptrdiff_t row_bytes() const noexcept { return this->derived().row_bytes(); }
+  [[nodiscard]] std::ptrdiff_t total_bytes() const noexcept { return this->derived().total_bytes(); }
+  [[nodiscard]] bool is_packed() const noexcept { return this->derived().is_packed(); }
 
-  bool is_empty() const noexcept { return this->derived().is_empty(); }
-  bool is_valid() const noexcept { return this->derived().is_valid(); }
+  [[nodiscard]] bool is_empty() const noexcept { return this->derived().is_empty(); }
+  [[nodiscard]] bool is_valid() const noexcept { return this->derived().is_valid(); }
 
   decltype(auto) begin() noexcept { return this->derived().begin(); }
   decltype(auto) begin() const noexcept { return this->derived().begin(); }

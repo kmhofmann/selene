@@ -7,8 +7,7 @@
 
 #include <selene/base/MessageLog.hpp>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 template <typename T>
 inline void assign_message_log(const T& obj, MessageLog* messages)
@@ -19,7 +18,6 @@ inline void assign_message_log(const T& obj, MessageLog* messages)
   }
 }
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // SELENE_IMG_IMPL_UTIL_HPP

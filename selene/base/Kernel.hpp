@@ -67,7 +67,7 @@ public:
   const_iterator end() const noexcept;
   const_iterator cend() const noexcept;
 
-  constexpr std::size_t size() const noexcept;
+  [[nodiscard]] constexpr std::size_t size() const noexcept;
   constexpr value_type operator[](std::size_t idx) const noexcept;
 
   constexpr void normalize(value_type sum) noexcept;

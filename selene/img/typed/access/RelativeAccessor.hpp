@@ -50,11 +50,13 @@ public:
   RelativeAccessor(RelativeAccessor<ImageType_>&&) noexcept = default;  ///< Move constructor.
   RelativeAccessor<ImageType_>& operator=(RelativeAccessor<ImageType_>&&) noexcept = default;  ///< Move assignment operator.
 
+  ~RelativeAccessor() = default;
+
   const ImageType& image() const noexcept;
   ImageType& image() noexcept;
 
-  PixelIndex anchor_x() const noexcept;
-  PixelIndex anchor_y() const noexcept;
+  [[nodiscard]] PixelIndex anchor_x() const noexcept;
+  [[nodiscard]] PixelIndex anchor_y() const noexcept;
 
   template <typename T>
   XY<T> absolute_coordinates(T x, T y) const noexcept;

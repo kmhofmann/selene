@@ -19,9 +19,7 @@
 #include <tiff.h>
 #include <tiffio.h>
 
-namespace sln {
-namespace impl {
-namespace tiff {
+namespace sln::impl::tiff {
 
 template <typename Source> struct SourceStruct
 {
@@ -179,9 +177,7 @@ void w_unmap_func([[maybe_unused]] thandle_t data, [[maybe_unused]] void* base, 
 {
 }
 
-}  // namespace tiff
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl::tiff
 
 #endif  // defined(SELENE_WITH_LIBTIFF)
 

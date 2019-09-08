@@ -19,7 +19,6 @@ namespace sln {
 
 std::ostream& operator<<(std::ostream& os, const TIFFAuxiliaryInfo& info)
 {
-  using namespace impl::tiff;
   os << "TIFFAuxiliaryInfo:\n";
   os << "- min_sample_value = " << info.min_sample_value << '\n';
   os << "- max_sample_value = " << info.max_sample_value << '\n';
@@ -94,7 +93,7 @@ namespace {
     TIFFSetErrorHandler(error_handler);
   }
 
-}  // namespace _
+}  // namespace
 
 /** \brief Returns a copy of the global *libtiff* message log.
  *

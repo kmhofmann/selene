@@ -27,15 +27,15 @@ public:
   constexpr BoundingBox(PixelIndex x0, PixelIndex y0, PixelLength width, PixelLength height) noexcept;
   constexpr BoundingBox(PixelIndex x0, PixelIndex y0, PixelIndex x1, PixelIndex y1) noexcept;
 
-  constexpr PixelIndex x0() const noexcept;
-  constexpr PixelIndex y0() const noexcept;
-  constexpr PixelLength width() const noexcept;
-  constexpr PixelLength height() const noexcept;
+  [[nodiscard]] constexpr PixelIndex x0() const noexcept;
+  [[nodiscard]] constexpr PixelIndex y0() const noexcept;
+  [[nodiscard]] constexpr PixelLength width() const noexcept;
+  [[nodiscard]] constexpr PixelLength height() const noexcept;
 
-  constexpr PixelIndex x1() const noexcept;
-  constexpr PixelIndex y1() const noexcept;
+  [[nodiscard]] constexpr PixelIndex x1() const noexcept;
+  [[nodiscard]] constexpr PixelIndex y1() const noexcept;
 
-  constexpr bool empty() const noexcept;
+  [[nodiscard]] constexpr bool empty() const noexcept;
   constexpr void sanitize(PixelLength max_img_width, PixelLength max_img_height) noexcept;
 
 private:

@@ -18,8 +18,7 @@
 #include <csetjmp>
 #include <cstdio>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 /// \cond INTERNAL
 
@@ -42,8 +41,7 @@ void output_message(j_common_ptr cinfo);
 
 /// \endcond
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBJPEG)
 

@@ -18,16 +18,14 @@
 #include <tiff.h>
 #include <tiffio.h>
 
-namespace sln {
-namespace impl {
+namespace sln::impl {
 
 bool read_data_high_level(TIFF* tif,
                           const sln::TiffImageLayout& src,
                           sln::DynImage<>& dyn_img,
                           sln::MessageLog& message_log);
 
-}  // namespace impl
-}  // namespace sln
+}  // namespace sln::impl
 
 #endif  // defined(SELENE_WITH_LIBTIFF)
 
