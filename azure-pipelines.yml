@@ -3,7 +3,7 @@
 # The Docker based jobs require specially prepared Docker images, where either
 # the respective libraries are pre-installed via apt (test_apt) or vcpkg
 # (test_vcpkg). These Docker images are based on 'ubuntu:rolling' (currently
-# Ubuntu 18.10), to provide GCC 8 and Clang 7 out of the box.
+# Ubuntu 19.10), to provide GCC 9 and Clang 9 out of the box.
 #
 # See https://github.com/kmhofmann/selene_ci_docker on how they are created.
 
