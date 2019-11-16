@@ -153,14 +153,15 @@ void image_convolution_x_floating_point_kernel_rgb(benchmark::State& state) { im
 void image_convolution_y_floating_point_kernel_rgb(benchmark::State& state) { image_convolution_y_floating_point_kernel<sln::PixelFormat::RGB>(state); }
 void image_convolution_x_integer_kernel_rgb(benchmark::State& state) { image_convolution_x_integer_kernel<sln::PixelFormat::RGB>(state); }
 void image_convolution_y_integer_kernel_rgb(benchmark::State& state) { image_convolution_y_integer_kernel<sln::PixelFormat::RGB>(state); }
+#if defined(SELENE_WITH_OPENCV)
 void image_convolution_x_opencv_rgb(benchmark::State& state) { image_convolution_x_opencv<sln::PixelFormat::RGB>(state); }
 void image_convolution_y_opencv_rgb(benchmark::State& state) { image_convolution_y_opencv<sln::PixelFormat::RGB>(state); }
+#endif  // SELENE_IMG_OPENCV_HPP
 
 BENCHMARK(image_convolution_x_floating_point_kernel_rgb);
 BENCHMARK(image_convolution_y_floating_point_kernel_rgb);
 BENCHMARK(image_convolution_x_integer_kernel_rgb);
 BENCHMARK(image_convolution_y_integer_kernel_rgb);
-
 #if defined(SELENE_WITH_OPENCV)
 BENCHMARK(image_convolution_x_opencv_rgb);
 BENCHMARK(image_convolution_y_opencv_rgb);
@@ -170,14 +171,15 @@ void image_convolution_x_floating_point_kernel_y(benchmark::State& state) { imag
 void image_convolution_y_floating_point_kernel_y(benchmark::State& state) { image_convolution_y_floating_point_kernel<sln::PixelFormat::Y>(state); }
 void image_convolution_x_integer_kernel_y(benchmark::State& state) { image_convolution_x_integer_kernel<sln::PixelFormat::Y>(state); }
 void image_convolution_y_integer_kernel_y(benchmark::State& state) { image_convolution_y_integer_kernel<sln::PixelFormat::Y>(state); }
+#if defined(SELENE_WITH_OPENCV)
 void image_convolution_x_opencv_y(benchmark::State& state) { image_convolution_x_opencv<sln::PixelFormat::Y>(state); }
 void image_convolution_y_opencv_y(benchmark::State& state) { image_convolution_y_opencv<sln::PixelFormat::Y>(state); }
+#endif  // SELENE_IMG_OPENCV_HPP
 
 BENCHMARK(image_convolution_x_floating_point_kernel_y);
 BENCHMARK(image_convolution_y_floating_point_kernel_y);
 BENCHMARK(image_convolution_x_integer_kernel_y);
 BENCHMARK(image_convolution_y_integer_kernel_y);
-
 #if defined(SELENE_WITH_OPENCV)
 BENCHMARK(image_convolution_x_opencv_y);
 BENCHMARK(image_convolution_y_opencv_y);

@@ -1,11 +1,11 @@
 [requires]
-libjpeg-turbo/[>=1.5.0]@bincrafters/stable
+libjpeg-turbo/[>=2.0.0]@bincrafters/stable
 libpng/[>=1.2.0]@bincrafters/stable
 libtiff/[>=4.0.9]@bincrafters/stable
+benchmark/[>=1.5.0]@_/_
 
+# opencv/[>4.0.0]@conan/stable    # Does not seem to be working (Eigen3 package resolution errors during CMake invocation).
 # boost/[>1.66.0]@conan/stable    # Only required if standard library filesystem support is missing.
-# opencv/[>3.0.0]@conan/stable    # This seems buggy. Leads to: "'/lib/libz.a', needed by 'test/selene/selene_tests', missing and no known rule to make it"
-# google-benchmark/1.4.1@mpusz/stable    # conan remote add conan-mpusz https://api.bintray.com/conan/mpusz/conan-mpusz
 
 [generators]
 cmake_find_package
