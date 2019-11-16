@@ -20,42 +20,64 @@ include(CheckCXXSourceCompiles)
 # Try to detect if we can compile a simple program that includes the filesystem
 # library.
 
-check_cxx_source_compiles("
-#include <filesystem>
-struct X { std::filesystem::path p; };
-int main() {}"
+set(SELENE_FILESYSTEM_TEST_PROGRAM "
+    #include <filesystem>
+    struct X { std::filesystem::path p; };
+    int main() {}")
+
+set(SELENE_FILESYSTEM_EXPERIMENTAL_TEST_PROGRAM "
+    #include <experimental/filesystem>
+    struct X { std::experimental::filesystem::path p; };
+    int main() {}")
+
+# Check if we have std::filesystem at our disposal.
+check_cxx_source_compiles(
+        "${SELENE_FILESYSTEM_TEST_PROGRAM}"
         SELENE_CAN_COMPILE_STD_FILESYSTEM)
 
-check_cxx_source_compiles("
-#include <experimental/filesystem>
-struct X { std::experimental::filesystem::path p; };
-int main() {}"
+# Check if we have std::experimental::filesystem at our disposal.
+check_cxx_source_compiles(
+        "${SELENE_FILESYSTEM_EXPERIMENTAL_TEST_PROGRAM}"
         SELENE_CAN_COMPILE_STD_EXPERIMENTAL_FILESYSTEM)
 
-# Try to detect if we're using libstdc++ or libc++.
-
 if (NOT MSVC)
+    # Try to detect if we're using libstdc++ or libc++.
+
     check_cxx_source_compiles("
-    #include <ciso646>
-    int test =
-    #ifdef __GLIBCXX__
-      1;
-    #else
-      xxx;
-    #endif
-    int main() { }"
+            #include <ciso646>
+            int test =
+            #ifdef __GLIBCXX__
+            1;
+            #else
+            xxx;
+            #endif
+            int main() { }"
             SELENE_USING_LIBSTDCXX)
 
     check_cxx_source_compiles("
-    #include <ciso646>
-    int test =
-    #ifdef _LIBCPP_VERSION
-      1;
-    #else
-      xxx;
-    #endif
-    int main() { }"
+            #include <ciso646>
+            int test =
+            #ifdef _LIBCPP_VERSION
+            1;
+            #else
+            xxx;
+            #endif
+            int main() { }"
             SELENE_USING_LIBCXX)
+
+    # Try to detect whether we require linking to c++fs (prior to Clang 9.0)
+
+    if (SELENE_USING_LIBCXX)
+        set(CMAKE_REQUIRED_LIBRARIES "c++fs")
+        check_cxx_source_compiles(
+                "${SELENE_FILESYSTEM_TEST_PROGRAM}"
+                SELENE_CAN_COMPILE_LIBCXX_WITH_CXXFS)
+
+        set(CMAKE_REQUIRED_LIBRARIES "")
+        check_cxx_source_compiles(
+                "${SELENE_FILESYSTEM_TEST_PROGRAM}"
+                SELENE_CAN_COMPILE_LIBCXX_WITHOUT_CXXFS)
+    endif()
 endif()
 
 # Now put everything together, using Boost.Filesystem as a fallback.
@@ -71,18 +93,26 @@ if (NOT (SELENE_CAN_COMPILE_STD_FILESYSTEM OR SELENE_CAN_COMPILE_STD_EXPERIMENTA
     use_boost_filesystem()
 else()
     if (SELENE_USING_LIBSTDCXX)
+
         if (SELENE_CAN_COMPILE_STD_FILESYSTEM)
             target_link_libraries(selene_wrapper_fs INTERFACE stdc++fs)
         elseif(SELENE_CAN_COMPILE_STD_EXPERIMENTAL_FILESYSTEM)
             target_link_libraries(selene_wrapper_fs INTERFACE stdc++experimental)
             target_compile_definitions(selene_wrapper_fs INTERFACE SELENE_WITH_EXPERIMENTAL_STD_FILESYSTEM)
+
         endif()
     elseif(SELENE_USING_LIBCXX)
+
         if (SELENE_CAN_COMPILE_STD_FILESYSTEM)
-            target_link_libraries(selene_wrapper_fs INTERFACE c++fs)
+            if (SELENE_CAN_COMPILE_LIBCXX_WITH_CXXFS)
+                target_link_libraries(selene_wrapper_fs INTERFACE c++fs)
+            elseif (NOT SELENE_CAN_COMPILE_LIBCXX_WITHOUT_CXXFS)
+                message(FATAL_ERROR "Cannot link to libc++ filesystem library (reason unknown).")
+            endif()
         elseif(SELENE_CAN_COMPILE_STD_EXPERIMENTAL_FILESYSTEM)
             target_link_libraries(selene_wrapper_fs INTERFACE c++experimental)
             target_compile_definitions(selene_wrapper_fs INTERFACE SELENE_WITH_EXPERIMENTAL_STD_FILESYSTEM)
         endif()
+
     endif()
 endif()
