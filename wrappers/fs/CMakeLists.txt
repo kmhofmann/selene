@@ -17,19 +17,22 @@ target_include_directories(selene_wrapper_fs INTERFACE
 
 include(CheckCXXSourceCompiles)
 
-# Try to detect if we can compile a simple program that includes the filesystem library
+# Try to detect if we can compile a simple program that includes the filesystem
+# library.
 
 check_cxx_source_compiles("
 #include <filesystem>
+struct X { std::filesystem::path p; };
 int main() {}"
         SELENE_CAN_COMPILE_STD_FILESYSTEM)
 
 check_cxx_source_compiles("
 #include <experimental/filesystem>
+struct X { std::experimental::filesystem::path p; };
 int main() {}"
         SELENE_CAN_COMPILE_STD_EXPERIMENTAL_FILESYSTEM)
 
-# Try to detect if we're using libstdc++ or libc++
+# Try to detect if we're using libstdc++ or libc++.
 
 if (NOT MSVC)
     check_cxx_source_compiles("
@@ -55,7 +58,7 @@ if (NOT MSVC)
             SELENE_USING_LIBCXX)
 endif()
 
-# Now put everything together, using Boost.Filesystem as a fallback
+# Now put everything together, using Boost.Filesystem as a fallback.
 
 function(use_boost_filesystem)
     message(STATUS "Standard library filesystem support not detected. Trying to use Boost.Filesystem as a fallback.")

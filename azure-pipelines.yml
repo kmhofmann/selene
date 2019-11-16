@@ -232,6 +232,10 @@ jobs:
       vmImage: 'macOS-10.14'
     steps:
     - script: |
+        # https://github.com/microsoft/vcpkg/issues/7585#issuecomment-534121249
+        sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+      displayName: 'Fix macOS things to build vcpkg'
+    - script: |
         brew update
         brew install gcc ninja gnu-sed
         # Remove conflicting headers (e.g. png.h)
@@ -244,7 +248,7 @@ jobs:
         export BOOST_MODULAR_CMAKE="../vcpkg/ports/boost-modular-build-helper/CMakeLists.txt"
         export LN=$(grep -n "WORKING_DIRECTORY" ${BOOST_MODULAR_CMAKE} | awk -F ":" '{print $1}')
         gsed -i "${LN}i\        cxxstd=17" ${BOOST_MODULAR_CMAKE}
-        ../vcpkg/bootstrap-vcpkg.sh
+        ../vcpkg/bootstrap-vcpkg.sh 
       displayName: 'Bootstrap vcpkg'
     - script: |
         ../vcpkg/vcpkg install libjpeg-turbo libpng tiff boost-filesystem
