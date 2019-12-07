@@ -7,6 +7,7 @@
 
 #include <selene/base/Assert.hpp>
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>

@@ -330,7 +330,7 @@ jobs:
     - task: CMake@1
       inputs:
         workingDirectory: 'build'
-        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_ALL=ON -DSELENE_USE_OPENCV=OFF -DSELENE_WARNINGS_AS_ERRORS=ON ..'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_ALL=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
       displayName: 'Run CMake'
 
     - task: MSBuild@1
@@ -381,10 +381,10 @@ jobs:
 
 # ----------
 
-  - job: Windows_vcpkg_VS2019_x86
+  - job: Windows_vcpkg_VS2017_x64
     timeoutInMinutes: 120
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'vs2017-win2016'
     steps:
     - task: CacheBeta@1
       inputs:
@@ -400,7 +400,7 @@ jobs:
       condition: ne(variables.VCPKG_CACHE_RESTORED, 'true')
       displayName: 'Bootstrap vcpkg'
     - script: |
-        ..\vcpkg\vcpkg.exe install $(vcpkg_libraries_windows)
+        ..\vcpkg\vcpkg.exe install $(vcpkg_libraries_windows) --triplet x64-windows
         rd /s /q ..\vcpkg\buildtrees
         rd /s /q ..\vcpkg\downloads
         rd /s /q ..\vcpkg\packages
@@ -413,14 +413,14 @@ jobs:
     - task: CMake@1
       inputs:
         workingDirectory: 'build'
-        cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_ALL=ON -DSELENE_USE_OPENCV=OFF -DSELENE_BUILD_EXAMPLES=ON -DSELENE_NO_OPENCV=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DSELENE_BUILD_ALL=ON -DSELENE_WARNINGS_AS_ERRORS=ON ..'
       displayName: 'Run CMake'
 
     - task: MSBuild@1
       inputs:
         solution: 'build/ALL_BUILD.vcxproj'
         maximumCpuCount: true
-        platform: 'x86'
+        platform: 'x64'
       displayName: 'Build, debug'
     - script: |
         cd build
@@ -431,7 +431,7 @@ jobs:
       inputs:
         solution: 'build/ALL_BUILD.vcxproj'
         maximumCpuCount: true
-        platform: 'x86'
+        platform: 'x64'
         configuration: 'Release'
       displayName: 'Build, release'
     - script: |
@@ -443,20 +443,20 @@ jobs:
         cp .\package\vcpkg\CONTROL ..\vcpkg\ports\selene
         cp .\package\vcpkg\portfile.cmake ..\vcpkg\ports\selene
         ..\vcpkg\vcpkg.exe remove selene
-        ..\vcpkg\vcpkg.exe install --head selene
+        ..\vcpkg\vcpkg.exe install --head selene --triplet x64-windows
         cd package\test_vcpkg
         mkdir build
       displayName: 'Install selene via vcpkg'
     - task: CMake@1
       inputs:
         workingDirectory: 'package\test_vcpkg\build'
-        cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=../../../../vcpkg/scripts/buildsystems/vcpkg.cmake ..'
+        cmakeArgs: '-A x64 -DCMAKE_TOOLCHAIN_FILE=../../../../vcpkg/scripts/buildsystems/vcpkg.cmake ..'
       displayName: 'Run CMake on vcpkg example'
     - task: MSBuild@1
       inputs:
         solution: 'package\test_vcpkg\build\ALL_BUILD.vcxproj'
         maximumCpuCount: true
-        platform: 'x86'
+        platform: 'x64'
       displayName: 'Build vcpkg example, debug'
     - script: |
         .\package\test_vcpkg\build\Debug\example

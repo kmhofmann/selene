@@ -143,7 +143,8 @@ constexpr auto uniform_kernel();
 template <typename ValueType = default_float_t>
 auto uniform_kernel(KernelSize size);
 
-template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k>
+template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k,
+          typename = std::enable_if_t<k != kernel_size_dynamic>>
 constexpr Kernel<OutValueType, k> integer_kernel(const Kernel<ValueType, k>& kernel);
 
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType>
@@ -172,7 +173,7 @@ constexpr Kernel<ValueType_, k_>::Kernel(const std::array<ValueType_, k_>& data)
  * @return An iterator to the beginning of the kernel data.
  */
 template <typename ValueType_, KernelSize k_>
-auto Kernel<ValueType_, k_>::begin() noexcept  -> iterator
+auto Kernel<ValueType_, k_>::begin() noexcept -> iterator
 {
   return data_.begin();
 }
@@ -446,7 +447,7 @@ namespace impl {
 template <typename ValueType = default_float_t>
 inline auto gaussian_pdf(ValueType x, ValueType mu, ValueType sigma)
 {
-  constexpr auto f = ValueType(0.3989422804014326779); // 1.0 / sqrt(2.0 * M_PI)
+  constexpr auto f = ValueType(0.3989422804014326779);  // 1.0 / sqrt(2.0 * M_PI)
   const auto diff = x - mu;
   return (f / sigma) * std::exp(-(diff * diff / (ValueType{2} * sigma * sigma)));
 }
@@ -632,8 +633,9 @@ inline auto uniform_kernel(KernelSize size)
  * @param kernel The input floating point kernel.
  * @return An integer kernel, scaled by the respective factor
  */
-template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k>
-constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel) -> Kernel<OutValueType, k>
+template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType, KernelSize k, typename>
+constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel)
+    -> Kernel<OutValueType, k>
 {
   static_assert(std::is_integral_v<OutValueType>, "Output type has to be integral");
   std::array<OutValueType, k> arr = {{OutValueType{}}};
@@ -655,7 +657,8 @@ constexpr auto integer_kernel(const Kernel<ValueType, k>& kernel) -> Kernel<OutV
  * @return An integer kernel, scaled by the respective factor
  */
 template <typename OutValueType, std::ptrdiff_t scale_factor, typename ValueType>
-inline auto integer_kernel(const Kernel<ValueType, kernel_size_dynamic>& kernel) -> Kernel<OutValueType, kernel_size_dynamic>
+inline auto integer_kernel(const Kernel<ValueType, kernel_size_dynamic>& kernel)
+    -> Kernel<OutValueType, kernel_size_dynamic>
 {
   static_assert(std::is_integral_v<OutValueType>, "Output type has to be integral");
   std::vector<OutValueType> vec(kernel.size());
