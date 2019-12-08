@@ -139,7 +139,7 @@ inline bool opencv_mat_type_is_unsigned(const cv::Mat& img_cv)
 template <typename PixelType>
 inline MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv)
 {
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
+  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step[0]) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<PixelType>::nr_channels);
   SELENE_ASSERT(impl::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<PixelType>::nr_bytes_per_channel);
@@ -150,7 +150,7 @@ inline MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv)
   const auto data = img_cv.data;
   const auto width = to_pixel_length(img_cv.cols);
   const auto height = to_pixel_length(img_cv.rows);
-  const auto stride_bytes = to_stride(img_cv.step);
+  const auto stride_bytes = to_stride(img_cv.step[0]);
   return MutableImageView<PixelType>(data, {width, height, stride_bytes});
 }
 
@@ -166,7 +166,7 @@ inline MutableImageView<PixelType> wrap_opencv_mat(cv::Mat& img_cv)
 template <typename PixelType>
 inline ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv)
 {
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
+  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step[0]) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<PixelType>::nr_channels);
   SELENE_ASSERT(impl::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<PixelType>::nr_bytes_per_channel);
@@ -177,7 +177,7 @@ inline ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv)
   const auto data = img_cv.data;
   const auto width = to_pixel_length(img_cv.cols);
   const auto height = to_pixel_length(img_cv.rows);
-  const auto stride_bytes = to_stride(img_cv.step);
+  const auto stride_bytes = to_stride(img_cv.step[0]);
   return ConstantImageView<PixelType>(data, {width, height, stride_bytes});
 }
 
@@ -193,7 +193,7 @@ inline ConstantImageView<PixelType> wrap_opencv_mat(const cv::Mat& img_cv)
 template <typename PixelType, typename Allocator>
 Image<PixelType, Allocator> copy_opencv_mat(const cv::Mat& img_cv)
 {
-  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step) > 0);
+  SELENE_ASSERT(static_cast<std::int64_t>(img_cv.step[0]) > 0);
 
   SELENE_ASSERT(img_cv.channels() == PixelTraits<PixelType>::nr_channels);
   SELENE_ASSERT(impl::opencv_nr_bytes_per_channel(img_cv) == PixelTraits<PixelType>::nr_bytes_per_channel);
@@ -203,7 +203,7 @@ Image<PixelType, Allocator> copy_opencv_mat(const cv::Mat& img_cv)
 
   const auto width = to_pixel_length(img_cv.cols);
   const auto height = to_pixel_length(img_cv.rows);
-  const auto stride_bytes = to_stride(img_cv.step);
+  const auto stride_bytes = to_stride(img_cv.step[0]);
 
   const auto nr_bytes_per_row = width * PixelTraits<PixelType>::nr_bytes;
 
