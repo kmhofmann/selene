@@ -84,7 +84,7 @@ endif()
 
 function(use_boost_filesystem)
     message(STATUS "Standard library filesystem support not detected. Trying to use Boost.Filesystem as a fallback.")
-    find_package(Boost REQUIRED filesystem system)
+    find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem CONFIG)
     target_compile_definitions(selene_wrapper_fs INTERFACE SELENE_WITH_BOOST_FILESYSTEM)
     target_link_libraries(selene_wrapper_fs INTERFACE Boost::filesystem)
 endfunction()
