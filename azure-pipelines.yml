@@ -12,7 +12,7 @@
 # ***************************************************
 
 variables:
-  vcpkg_tag: "2019.11"
+  vcpkg_tag: "2019.12"
   vcpkg_base_dir_bionic: "/tmp"
   vcpkg_base_dir_macos: "/tmp"
   vcpkg_libraries_bionic:  "libjpeg-turbo libpng tiff opencv benchmark"
