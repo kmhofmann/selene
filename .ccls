@@ -1,0 +1,8 @@
+clang
+%cpp -std=c++17
+-I.
+-Ibuild
+-Wall
+-Wextra
+-Wpedantic
+-Wconversion
