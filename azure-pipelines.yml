@@ -12,7 +12,7 @@
 # ***************************************************
 
 variables:
-  vcpkg_tag: "2019.12"
+  vcpkg_tag: "2020.01"
   vcpkg_base_dir_bionic: "/tmp"
   vcpkg_base_dir_macos: "/tmp"
   vcpkg_libraries_bionic:  "libjpeg-turbo libpng tiff opencv benchmark"
@@ -466,12 +466,8 @@ jobs:
 
   - job: MacOS_vcpkg
     pool:
-      vmImage: 'macOS-10.14'
+      vmImage: 'macOS-10.15'
     steps:
-    - script: |
-        # https://github.com/microsoft/vcpkg/issues/7585#issuecomment-534121249
-        sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-      displayName: 'Fix macOS things to build vcpkg'
     - script: |
         brew update
         brew install gcc ninja gnu-sed
@@ -525,7 +521,7 @@ jobs:
 
   - job: MacOS_brew
     pool:
-      vmImage: 'macOS-10.14'
+      vmImage: 'macOS-10.15'
     steps:
     - script: |
         # Remove conflicting headers (e.g. png.h)
