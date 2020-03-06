@@ -1,7 +1,12 @@
 clang
 %cpp -std=c++17
+-DSELENE_WITH_LIBJPEG
+-DSELENE_WITH_LIBPNG
+-DSELENE_WITH_LIBTIFF
+-DSELENE_WITH_OPENCV
 -I.
 -Ibuild
+-Itest
 -Wall
 -Wextra
 -Wpedantic
