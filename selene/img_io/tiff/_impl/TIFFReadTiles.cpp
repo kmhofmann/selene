@@ -45,7 +45,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
     ycbcr_info.check_tile_size(src.width, src.height, tile_layout.width, tile_layout.height, message_log);
   }
 
-  constexpr uint16 sample_index = 0;
+  constexpr std::uint16_t sample_index = 0;
 
   // For each tile...
   for (auto src_y = 0_idx; src_y < static_cast<value_type>(src.height); src_y += to_pixel_index(tile_layout.height))
@@ -54,7 +54,7 @@ bool read_data_tiles_interleaved(TIFF* tif,
     {
       // Read tile data into buffer
       std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
-      auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<uint32>(src_x), static_cast<uint32>(src_y), 0, sample_index);
+      auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<std::uint32_t>(src_x), static_cast<std::uint32_t>(src_y), 0, sample_index);
       SELENE_ASSERT(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
 
       if (nr_bytes_read < 0)
@@ -169,7 +169,7 @@ bool read_data_tiles_planar(TIFF* tif,
   SELENE_ASSERT(nr_channels == static_cast<std::int16_t>(src.samples_per_pixel));
   SELENE_ASSERT(nr_bytes_per_channel == static_cast<std::int16_t>(src.bits_per_sample >> 3));
 
-  for (uint16 sample_index = 0; sample_index < src.samples_per_pixel; ++sample_index)
+  for (std::uint16_t sample_index = 0; sample_index < src.samples_per_pixel; ++sample_index)
   {
     const auto width = to_pixel_index(src.width);
     const auto height = to_pixel_index(src.height);
@@ -179,7 +179,7 @@ bool read_data_tiles_planar(TIFF* tif,
       for (auto src_x = 0_idx; src_x < width; src_x += to_pixel_index(tile_layout.width))
       {
         std::vector<std::uint8_t> buf(static_cast<std::size_t>(tile_layout.size_bytes));
-        const auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<uint32>(src_x), static_cast<uint32>(src_y), 0, sample_index);
+        const auto nr_bytes_read = TIFFReadTile(tif, buf.data(), static_cast<std::uint32_t>(src_x), static_cast<std::uint32_t>(src_y), 0, sample_index);
         SELENE_ASSERT(nr_bytes_read <= static_cast<std::ptrdiff_t>(buf.size()));
 
         if (nr_bytes_read < 0)
@@ -247,9 +247,9 @@ bool read_data_tiles(TIFF* tif,
                      sln::MessageLog& message_log)
 {
   const sln::impl::tiff::ImageLayoutTiles tile_layout(
-      impl::tiff::get_field<uint32>(tif, TIFFTAG_TILEWIDTH),
-      impl::tiff::get_field<uint32>(tif, TIFFTAG_TILELENGTH),
-      impl::tiff::get_field<uint32>(tif, TIFFTAG_TILEDEPTH, 1),
+      impl::tiff::get_field<std::uint32_t>(tif, TIFFTAG_TILEWIDTH),
+      impl::tiff::get_field<std::uint32_t>(tif, TIFFTAG_TILELENGTH),
+      impl::tiff::get_field<std::uint32_t>(tif, TIFFTAG_TILEDEPTH, 1),
       TIFFTileSize(tif));
 
 //  message_log.add(str(oss() << tile_layout), MessageType::Message);

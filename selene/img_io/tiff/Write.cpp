@@ -36,26 +36,26 @@ void set_tiff_layout(TIFF* tif, const ConstantDynImageView& view, const TIFFWrit
 {
   using impl::tiff::set_field;
   using impl::tiff::set_string_field;
-  set_field<uint32>(tif, TIFFTAG_IMAGEWIDTH, static_cast<uint32>(view.width()));
-  set_field<uint32>(tif, TIFFTAG_IMAGELENGTH, static_cast<uint32>(view.height()));
-  set_field<uint32>(tif, TIFFTAG_IMAGEDEPTH, uint32{1});
+  set_field<std::uint32_t>(tif, TIFFTAG_IMAGEWIDTH, static_cast<std::uint32_t>(view.width()));
+  set_field<std::uint32_t>(tif, TIFFTAG_IMAGELENGTH, static_cast<std::uint32_t>(view.height()));
+  set_field<std::uint32_t>(tif, TIFFTAG_IMAGEDEPTH, uint32{1});
 
-  set_field<uint16>(tif, TIFFTAG_SAMPLESPERPIXEL, static_cast<uint16>(view.nr_channels()));
-  set_field<uint16>(tif, TIFFTAG_BITSPERSAMPLE, static_cast<uint16>(view.nr_bytes_per_channel() * 8));
-  set_field<uint16>(tif, TIFFTAG_PHOTOMETRIC, impl::tiff::pixel_format_to_photometric(view.pixel_format()));
-  set_field<uint16>(tif, TIFFTAG_SAMPLEFORMAT, impl::tiff::sample_format_to_sample_format(view.sample_format()));
+  set_field<std::uint16_t>(tif, TIFFTAG_SAMPLESPERPIXEL, static_cast<std::uint16_t>(view.nr_channels()));
+  set_field<std::uint16_t>(tif, TIFFTAG_BITSPERSAMPLE, static_cast<std::uint16_t>(view.nr_bytes_per_channel() * 8));
+  set_field<std::uint16_t>(tif, TIFFTAG_PHOTOMETRIC, impl::tiff::pixel_format_to_photometric(view.pixel_format()));
+  set_field<std::uint16_t>(tif, TIFFTAG_SAMPLEFORMAT, impl::tiff::sample_format_to_sample_format(view.sample_format()));
 
   if (view.pixel_format() == PixelFormat::RGBA)
   {
     // We need to specify the extra sample.
     std::array<uint16, 1> extra_sample_types = {{EXTRASAMPLE_ASSOCALPHA}};
-    set_field<uint16>(tif, TIFFTAG_EXTRASAMPLES, 1, extra_sample_types.data());
+    set_field<std::uint16_t>(tif, TIFFTAG_EXTRASAMPLES, 1, extra_sample_types.data());
   }
 
-  set_field<uint16>(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);  // we only write interleaved data
-  set_field<uint16>(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+  set_field<std::uint16_t>(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);  // we only write interleaved data
+  set_field<std::uint16_t>(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 
-  set_field<uint16>(tif, TIFFTAG_COMPRESSION, impl::tiff::compression_pub_to_lib(write_options.compression_type));
+  set_field<std::uint16_t>(tif, TIFFTAG_COMPRESSION, impl::tiff::compression_pub_to_lib(write_options.compression_type));
   if (write_options.compression_type == TIFFCompression::JPEG)
   {
     set_field<int>(tif, TIFFTAG_JPEGQUALITY, write_options.jpeg_quality);
@@ -76,15 +76,15 @@ void set_tiff_layout_tiles(TIFF* tif, std::size_t tile_width, std::size_t tile_h
 {
   using impl::tiff::set_field;
   SELENE_ASSERT(tile_width % 8 == 0 && tile_height % 8 == 0);
-  set_field<uint32>(tif, TIFFTAG_TILEWIDTH, static_cast<uint32>(tile_width));
-  set_field<uint32>(tif, TIFFTAG_TILELENGTH, static_cast<uint32>(tile_height));
-  set_field<uint32>(tif, TIFFTAG_TILEDEPTH, uint32{1});
+  set_field<std::uint32_t>(tif, TIFFTAG_TILEWIDTH, static_cast<std::uint32_t>(tile_width));
+  set_field<std::uint32_t>(tif, TIFFTAG_TILELENGTH, static_cast<std::uint32_t>(tile_height));
+  set_field<std::uint32_t>(tif, TIFFTAG_TILEDEPTH, uint32{1});
 }
 
 bool check_tiff_tile_size(TIFF* tif, const ConstantDynImageView& /*view*/, TIFFWriteOptions& opts, MessageLog& /*message_log*/)
 {
-  auto tw = static_cast<uint32>(opts.tile_width);
-  auto th = static_cast<uint32>(opts.tile_height);
+  auto tw = static_cast<std::uint32_t>(opts.tile_width);
+  auto th = static_cast<std::uint32_t>(opts.tile_height);
   TIFFDefaultTileSize(tif, &tw, &th);
   opts.tile_width = static_cast<std::size_t>(tw);
   opts.tile_height = static_cast<std::size_t>(th);
@@ -242,7 +242,7 @@ bool tiff_write_to_current_directory_strips(TIFF* tif, const TIFFWriteOptions& w
       return buffer.data();
     }();
 
-    tstrip_t strip = TIFFComputeStrip(tif, static_cast<uint32>(cur_row), 0);
+    tstrip_t strip = TIFFComputeStrip(tif, static_cast<std::uint32_t>(cur_row), 0);
     SELENE_ASSERT(static_cast<std::size_t>(strip) == strip_idx);
 
     auto size_written = TIFFWriteEncodedStrip(tif, strip, const_cast<void*>(static_cast<const void*>(buf_ptr)), buf_size);
@@ -272,13 +272,13 @@ bool tiff_write_to_current_directory_tiles(TIFF* tif, const TIFFWriteOptions& wr
   std::vector<std::uint8_t> buffer(tile_width * tile_height * to_unsigned(nr_bytes_per_pixel));
 
   // For each tile...
-  uint32 tile_ctr = 0;
+  std::uint32_t tile_ctr = 0;
   for (auto src_y = 0_idx; src_y < height; src_y += to_pixel_index(tile_height))
   {
     for (auto src_x = 0_idx; src_x < width; src_x += to_pixel_index(tile_width))
     {
-      const auto x = static_cast<uint32>(src_x);
-      const auto y = static_cast<uint32>(src_y);
+      const auto x = static_cast<std::uint32_t>(src_x);
+      const auto y = static_cast<std::uint32_t>(src_y);
       uint16 sample = 0;
       const auto tile_idx = TIFFComputeTile(tif, x, y, uint32{0}, sample);
       SELENE_ASSERT(tile_idx == tile_ctr); // ???
@@ -333,8 +333,8 @@ bool tiff_write_to_current_directory(TIFFWriteObject<SinkType>& tiff_obj,
     // This is necessary to write a multi-page TIFF, i.e. with multiple directories.
     // The only tangible information that can be found on the web about this seems to be here:
     // https://www.asmail.be/msg0055065771.html
-    impl::tiff::set_field<uint32>(tif, TIFFTAG_SUBFILETYPE, FILETYPE_PAGE);
-    impl::tiff::set_field<uint16>(tif, TIFFTAG_PAGENUMBER, static_cast<uint16_t>(directory_index), uint16_t{0});
+    impl::tiff::set_field<std::uint32_t>(tif, TIFFTAG_SUBFILETYPE, FILETYPE_PAGE);
+    impl::tiff::set_field<std::uint16_t>(tif, TIFFTAG_PAGENUMBER, static_cast<std::uint16_t>(directory_index), std::uint16_t{0});
   }
 
   if (write_options.layout == TIFFWriteOptions::Layout::Strips)

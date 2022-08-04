@@ -66,7 +66,7 @@ std::string sample_format_to_string(std::uint16_t value);
 std::string compression_to_string(std::uint16_t value);
 std::string orientation_to_string(std::uint16_t value);
 
-template <typename T> T get_field(TIFF* tif, uint32 tag)
+template <typename T> T get_field(TIFF* tif, std::uint32_t tag)
 {
   T var{};
   [[maybe_unused]] const int val = TIFFGetFieldDefaulted(tif, tag, &var);
@@ -74,14 +74,14 @@ template <typename T> T get_field(TIFF* tif, uint32 tag)
   return var;
 }
 
-template <typename T> T get_field(TIFF* tif, uint32 tag, T default_value)
+template <typename T> T get_field(TIFF* tif, std::uint32_t tag, T default_value)
 {
   T var{};
   const auto val = TIFFGetFieldDefaulted(tif, tag, &var);
   return (val == 1) ? var : default_value;
 }
 
-template <typename T> std::pair<T, T> get_field_2(TIFF* tif, uint32 tag)
+template <typename T> std::pair<T, T> get_field_2(TIFF* tif, std::uint32_t tag)
 {
   T var0{}, var1{};
   [[maybe_unused]] const int val = TIFFGetFieldDefaulted(tif, tag, &var0, &var1);
@@ -89,14 +89,14 @@ template <typename T> std::pair<T, T> get_field_2(TIFF* tif, uint32 tag)
   return std::make_pair(var0, var1);
 }
 
-template <typename T> std::pair<T, T> get_field_2(TIFF* tif, uint32 tag, T default_value)
+template <typename T> std::pair<T, T> get_field_2(TIFF* tif, std::uint32_t tag, T default_value)
 {
   T var0{}, var1{};
   const int val = TIFFGetFieldDefaulted(tif, tag, &var0, &var1);
   return (val == 1) ? std::make_pair(var0, var1) : std::make_pair(default_value, default_value);
 }
 
-inline std::string get_string_field(TIFF* tif, uint32 tag)
+inline std::string get_string_field(TIFF* tif, std::uint32_t tag)
 {
   char* buf = nullptr;
   const int val = TIFFGetFieldDefaulted(tif, tag, &buf);
@@ -108,13 +108,13 @@ inline std::string get_string_field(TIFF* tif, uint32 tag)
 }
 
 template <typename... Ts>
-inline void set_field(TIFF* tif, uint32 tag, Ts... values)
+inline void set_field(TIFF* tif, std::uint32_t tag, Ts... values)
 {
   [[maybe_unused]] int res = TIFFSetField(tif, tag, values...);
   SELENE_ASSERT(res != 0);
 }
 
-inline void set_string_field(TIFF* tif, uint32 tag, const std::string& str)
+inline void set_string_field(TIFF* tif, std::uint32_t tag, const std::string& str)
 {
   [[maybe_unused]] int res = TIFFSetField(tif, tag, str.c_str());
   SELENE_ASSERT(res != 0);
@@ -122,11 +122,11 @@ inline void set_string_field(TIFF* tif, uint32 tag, const std::string& str)
 
 struct ImageLayoutStrips
 {
-  uint32 nr_strips;
+  std::uint32_t nr_strips;
   tmsize_t size_bytes;
-  uint32 rows_per_strip;
+  std::uint32_t rows_per_strip;
 
-  ImageLayoutStrips(uint32 nr_strips_, tmsize_t strip_size_, uint32 rows_per_strip_)
+  ImageLayoutStrips(std::uint32_t nr_strips_, tmsize_t strip_size_, std::uint32_t rows_per_strip_)
       : nr_strips(nr_strips_), size_bytes(strip_size_), rows_per_strip(rows_per_strip_)
   {
   }
@@ -134,13 +134,13 @@ struct ImageLayoutStrips
 
 struct ImageLayoutTiles
 {
-  uint32 width;
-  uint32 height;
-  uint32 depth;
+  std::uint32_t width;
+  std::uint32_t height;
+  std::uint32_t depth;
 
   tmsize_t size_bytes;
 
-  ImageLayoutTiles(uint32 tile_width, uint32 tile_height, uint32 tile_depth, tmsize_t tile_size)
+  ImageLayoutTiles(std::uint32_t tile_width, std::uint32_t tile_height, std::uint32_t tile_depth, tmsize_t tile_size)
       : width(tile_width), height(tile_height), depth(tile_depth), size_bytes(tile_size)
   {
     SELENE_ASSERT(depth == 1);
@@ -152,18 +152,18 @@ struct YCbCrInfo
   float coeff_red;
   float coeff_green;
   float coeff_blue;
-  uint16 positioning;
-  uint16 subsampling_horz;
-  uint16 subsampling_vert;
+  std::uint16_t positioning;
+  std::uint16_t subsampling_horz;
+  std::uint16_t subsampling_vert;
 
-  YCbCrInfo(float coeff_red_, float coeff_green_, float coeff_blue_, uint16 positioning_,
-                uint16 subsampling_horz_, uint16 subsampling_vert_)
+  YCbCrInfo(float coeff_red_, float coeff_green_, float coeff_blue_, std::uint16_t positioning_,
+                std::uint16_t subsampling_horz_, std::uint16_t subsampling_vert_)
       : coeff_red(coeff_red_), coeff_green(coeff_green_), coeff_blue(coeff_blue_), positioning(positioning_),
         subsampling_horz(subsampling_horz_), subsampling_vert(subsampling_vert_)
   {
   }
 
-  bool check_strip_size(uint32 width, uint32 height, uint32 rows_per_strip, MessageLog& message_log) const
+  bool check_strip_size(std::uint32_t width, std::uint32_t height, std::uint32_t rows_per_strip, MessageLog& message_log) const
   {
     bool subsample_pars_check = check_subsampling_parameters(message_log);
     bool size_pars_check = check_size(width, height, message_log);
@@ -182,7 +182,7 @@ struct YCbCrInfo
     return true;
   }
 
-  bool check_tile_size(uint32 width, uint32 height, uint32 tile_width, uint32 tile_height, MessageLog& message_log) const
+  bool check_tile_size(std::uint32_t width, std::uint32_t height, std::uint32_t tile_width, std::uint32_t tile_height, MessageLog& message_log) const
   {
     bool subsample_pars_check = check_subsampling_parameters(message_log);
     bool size_pars_check = check_size(width, height, message_log);
@@ -226,7 +226,7 @@ private:
     return true;
   }
 
-  [[nodiscard]] bool check_size(uint32 width, uint32 height, MessageLog& message_log) const
+  [[nodiscard]] bool check_size(std::uint32_t width, std::uint32_t height, MessageLog& message_log) const
   {
     if (width % subsampling_horz != 0 || height % subsampling_vert != 0)
     {
@@ -244,7 +244,7 @@ public:
   YCbCrConverter(float* ycbcr_coefficients, float* reference_blackwhite)
   {
     ycbcr_ = (TIFFYCbCrToRGB*)_TIFFmalloc(std::max(sizeof(TIFFYCbCrToRGB), sizeof(long))
-                                          + 4*256*sizeof(TIFFRGBValue) + 2*256*sizeof(int) + 3*256*sizeof(int32));
+                                          + 4*256*sizeof(TIFFRGBValue) + 2*256*sizeof(int) + 3*256*sizeof(std::int32_t));
     SELENE_ASSERT(ycbcr_ != nullptr);
     [[maybe_unused]] const auto success = TIFFYCbCrToRGBInit(ycbcr_, ycbcr_coefficients, reference_blackwhite);
     SELENE_ASSERT(success >= 0);
@@ -274,7 +274,7 @@ public:
     return *this;
   }
 
-  void convert(uint32 Y, int32 Cb, int32 Cr, uint32& r, uint32& g, uint32& b) const
+  void convert(std::uint32_t Y, std::int32_t Cb, std::int32_t Cr, std::uint32_t& r, std::uint32_t& g, std::uint32_t& b) const
   {
     TIFFYCbCrtoRGB(ycbcr_, Y, Cb, Cr, &r, &g, &b);
   }
@@ -330,7 +330,7 @@ public:
     return *this;
   }
 
-  void convert(uint32 lab_L, int32 lab_a, int32 lab_b, uint32& r, uint32& g, uint32& b) const
+  void convert(std::uint32_t lab_L, std::int32_t lab_a, std::int32_t lab_b, std::uint32_t& r, std::uint32_t& g, std::uint32_t& b) const
   {
     float X;
     float Y;
