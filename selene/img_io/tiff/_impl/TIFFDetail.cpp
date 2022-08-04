@@ -522,7 +522,7 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
   std::vector<std::uint8_t> out_buf(3 * width * height);
   sln::MutableImageView_8u3 out_img(out_buf.data(), {sln::to_pixel_length(width), sln::to_pixel_length(height)});
 
-  std::vector<uint32> y_data_unit(sh * sv);
+  std::vector<std::uint32_t> y_data_unit(sh * sv);
   for (std::uint32_t y = 0; y < height; y += sv)
   {
     for (std::uint32_t x = 0; x < width; x += sh)
@@ -530,8 +530,8 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
       // https://www.awaresystems.be/imaging/tiff/specification/TIFF6.pdf#page=93
       // Read "data unit" of sv * sh Y values, followed by Cb and Cr values
       std::generate(y_data_unit.begin(), y_data_unit.end(), consume_buf);
-      const int32 Cb = consume_buf();
-      const int32 Cr = consume_buf();
+      const std::int32_t Cb = consume_buf();
+      const std::int32_t Cr = consume_buf();
 
       SELENE_ASSERT(buf_ptr <= buf.data() + nr_bytes_read);
 
@@ -539,9 +539,9 @@ std::vector<std::uint8_t> convert_ycbcr_to_rgb_interleaved(const std::vector<std
       {
         for (std::uint32_t dx = 0; dx < sh; ++dx)
         {
-          uint32 r = 0;
-          uint32 g = 0;
-          uint32 b = 0;
+          std::uint32_t r = 0;
+          std::uint32_t g = 0;
+          std::uint32_t b = 0;
           const auto Y = y_data_unit[dy * sh + dx];
           ycbcr_converter.convert(Y, Cb, Cr, r, g, b);
           out_img(sln::to_pixel_index(x + dx), sln::to_pixel_index(y + dy))
@@ -573,12 +573,12 @@ std::vector<std::uint8_t> convert_lab_to_rgb_interleaved(const std::vector<std::
   const auto out_buf_end = out_buf.data() + out_buf.size();
   while (out_buf_ptr < out_buf_end)
   {
-    const uint32 lab_L = *buf_ptr++;
-    const int32 lab_a = *buf_ptr++;
-    const int32 lab_b = *buf_ptr++;
-    uint32 r;
-    uint32 g;
-    uint32 b;
+    const std::uint32_t lab_L = *buf_ptr++;
+    const std::int32_t lab_a = *buf_ptr++;
+    const std::int32_t lab_b = *buf_ptr++;
+    std::uint32_t r;
+    std::uint32_t g;
+    std::uint32_t b;
     lab_converter.convert(lab_L, lab_a, lab_b, r, g, b);
     *out_buf_ptr++ = static_cast<std::uint8_t>(r);
     *out_buf_ptr++ = static_cast<std::uint8_t>(g);

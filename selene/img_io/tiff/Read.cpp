@@ -29,16 +29,16 @@ namespace sln {
 
 namespace {
 
-TIFFAuxiliaryInfo get_tiff_auxiliary_info(TIFF* tif, uint16 bits_per_sample)
+TIFFAuxiliaryInfo get_tiff_auxiliary_info(TIFF* tif, std::uint16_t bits_per_sample)
 {
   using impl::tiff::get_field;
   using impl::tiff::get_string_field;
-  const auto min_sample_value = get_field<uint16>(tif, TIFFTAG_MINSAMPLEVALUE, uint16{0});
-  const auto max_sample_value = get_field<uint16>(tif, TIFFTAG_MAXSAMPLEVALUE,
-                                                  static_cast<uint16>(sln::power(uint16{2}, bits_per_sample) - 1));
+  const auto min_sample_value = get_field<std::uint16_t>(tif, TIFFTAG_MINSAMPLEVALUE, std::uint16_t{0});
+  const auto max_sample_value = get_field<std::uint16_t>(tif, TIFFTAG_MAXSAMPLEVALUE,
+                                                  static_cast<std::uint16_t>(sln::power(std::uint16_t{2}, bits_per_sample) - 1));
   const auto x_resolution = get_field<float>(tif, TIFFTAG_XRESOLUTION, 1.0f);
   const auto y_resolution = get_field<float>(tif, TIFFTAG_YRESOLUTION, 1.0f);
-  const auto resolution_unit = get_field<uint16>(tif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
+  const auto resolution_unit = get_field<std::uint16_t>(tif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
 
   auto software = get_string_field(tif, TIFFTAG_SOFTWARE);
   auto date_time = get_string_field(tif, TIFFTAG_DATETIME);
@@ -58,21 +58,21 @@ TiffImageLayout get_tiff_layout(TIFF* tif)
 {
   using impl::tiff::get_field;
   using impl::tiff::get_field_2;
-  const auto width = get_field<uint32>(tif, TIFFTAG_IMAGEWIDTH);
-  const auto height = get_field<uint32>(tif, TIFFTAG_IMAGELENGTH);
-  const auto depth = get_field<uint32>(tif, TIFFTAG_IMAGEDEPTH, 1);
+  const auto width = get_field<std::uint32_t>(tif, TIFFTAG_IMAGEWIDTH);
+  const auto height = get_field<std::uint32_t>(tif, TIFFTAG_IMAGELENGTH);
+  const auto depth = get_field<std::uint32_t>(tif, TIFFTAG_IMAGEDEPTH, 1);
 
-  const auto samples_per_pixel = get_field<uint16>(tif, TIFFTAG_SAMPLESPERPIXEL);
-  const auto bits_per_sample = get_field<uint16>(tif, TIFFTAG_BITSPERSAMPLE);
-  const auto planar_config = get_field<uint16>(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-  const auto photometric = get_field<uint16>(tif, TIFFTAG_PHOTOMETRIC);
-  const auto sample_format = get_field<uint16>(tif, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
-  const auto compression = get_field<uint16>(tif, TIFFTAG_COMPRESSION);
+  const auto samples_per_pixel = get_field<std::uint16_t>(tif, TIFFTAG_SAMPLESPERPIXEL);
+  const auto bits_per_sample = get_field<std::uint16_t>(tif, TIFFTAG_BITSPERSAMPLE);
+  const auto planar_config = get_field<std::uint16_t>(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+  const auto photometric = get_field<std::uint16_t>(tif, TIFFTAG_PHOTOMETRIC);
+  const auto sample_format = get_field<std::uint16_t>(tif, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
+  const auto compression = get_field<std::uint16_t>(tif, TIFFTAG_COMPRESSION);
 
-  const auto orientation = get_field<uint16>(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+  const auto orientation = get_field<std::uint16_t>(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 
-  const auto subfile_type = get_field<uint32>(tif, TIFFTAG_SUBFILETYPE, uint32{0});
-  const auto page_number = get_field_2<uint16>(tif, TIFFTAG_PAGENUMBER, uint16{0});
+  const auto subfile_type = get_field<std::uint32_t>(tif, TIFFTAG_SUBFILETYPE, std::uint32_t{0});
+  const auto page_number = get_field_2<std::uint16_t>(tif, TIFFTAG_PAGENUMBER, std::uint16_t{0});
 
   auto auxiliary_info = get_tiff_auxiliary_info(tif, bits_per_sample);
 
@@ -104,8 +104,8 @@ get_tiff_color_conversion_structures(TIFF* tif)
   const auto ycbcr_coefficients_red = ycbcr_coefficients[0];
   const auto ycbcr_coefficients_green = ycbcr_coefficients[1];
   const auto ycbcr_coefficients_blue = ycbcr_coefficients[2];
-  const auto ycbcr_positioning = get_field<uint16>(tif, TIFFTAG_YCBCRPOSITIONING);
-  const auto ycbcr_subsampling = get_field_2<uint16>(tif, TIFFTAG_YCBCRSUBSAMPLING);
+  const auto ycbcr_positioning = get_field<std::uint16_t>(tif, TIFFTAG_YCBCRPOSITIONING);
+  const auto ycbcr_subsampling = get_field_2<std::uint16_t>(tif, TIFFTAG_YCBCRSUBSAMPLING);
   const auto ycbcr_subsampling_horz = ycbcr_subsampling.first;
   const auto ycbcr_subsampling_vert = ycbcr_subsampling.second;
   auto white_point_coefficients = get_field<float*>(tif, TIFFTAG_WHITEPOINT);

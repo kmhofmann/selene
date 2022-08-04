@@ -83,7 +83,7 @@ bool read_data_strips_interleaved(TIFF* tif,
           std::to_string(expected_nr_bytes) + ")", MessageType::Warning);
     }
 
-    const auto rows_in_this_strip = static_cast<uint32>(strip_layout.rows_per_strip * nr_bytes_read / expected_nr_bytes);
+    const auto rows_in_this_strip = static_cast<std::uint32_t>(strip_layout.rows_per_strip * nr_bytes_read / expected_nr_bytes);
 
     // Modify the buffer, if necessary
 
@@ -265,9 +265,9 @@ sln::impl::tiff::OutputLayout get_output_layout(TIFF* tif,
                                     + ((src.height % strip_layout.rows_per_strip) ? 1 : 0);
 
   // do some sanity checks that strip layout is as expected
-  for (uint16 sample = 0; sample < spp; ++sample)
+  for (std::uint16_t sample = 0; sample < spp; ++sample)
   {
-    for (uint32 row = 0; row < src.height; ++row)
+    for (std::uint32_t row = 0; row < src.height; ++row)
     {
       [[maybe_unused]] const auto strip_index = TIFFComputeStrip(tif, row, sample);
       [[maybe_unused]] const auto expected_strip_index = sample * nr_strips_per_sample + (row / strip_layout.rows_per_strip);
@@ -307,7 +307,7 @@ bool read_data_strips(TIFF* tif,
                       DynImageOrView& dyn_img_or_view,
                       sln::MessageLog& message_log)
 {
-  const auto nr_rows_per_strip = std::min(src.height, impl::tiff::get_field<uint32>(tif, TIFFTAG_ROWSPERSTRIP));
+  const auto nr_rows_per_strip = std::min(src.height, impl::tiff::get_field<std::uint32_t>(tif, TIFFTAG_ROWSPERSTRIP));
   const sln::impl::tiff::ImageLayoutStrips strip_layout(TIFFNumberOfStrips(tif), TIFFStripSize(tif), nr_rows_per_strip);
 
   const auto out = get_output_layout(tif, src, ycbcr_info, strip_layout, message_log);
